@@ -3,6 +3,10 @@ package de.rettichlp.pkutils.common.registry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.command.ADropMoneyCommand;
+import de.rettichlp.pkutils.command.ASMSCommand;
+import de.rettichlp.pkutils.command.ASetBlacklistCommand;
+import de.rettichlp.pkutils.command.CheckActivityCommand;
+import de.rettichlp.pkutils.command.ClearActivityCommand;
 import de.rettichlp.pkutils.command.MiCommand;
 import de.rettichlp.pkutils.command.MiaCommand;
 import de.rettichlp.pkutils.command.ModCommand;
@@ -71,6 +75,7 @@ public class Registry {
     private final Set<Class<?>> commands = Set.of(
             ACallCommand.class,
             ADropMoneyCommand.class,
+            ASetBlacklistCommand.class,
             ASMSCommand.class,
             ActivityCommand.class,
             AllianceCommand.class,
