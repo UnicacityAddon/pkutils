@@ -121,9 +121,9 @@ public class SyncService extends PKUtilsBase {
             storage.getBlacklistReasons().clear();
 
             try (InputStreamReader reader = new InputStreamReader(URI.create("https://gist.githubusercontent.com/rettichlp/54e97f4dbb3988bf22554c01d62af666/raw/pkutils-blacklistreasons.json").toURL().openStream(), UTF_8)) {
-                Type type = new TypeToken<Map<Faction, List<BlacklistReason>>>(){}.getType();
-                Map<Faction, List<BlacklistReason>> factionBlacklistReasons = new Gson().fromJson(reader, type);
-                factionBlacklistReasons.forEach((faction, blacklistReasons) -> storage.getBlacklistReasons().put(faction, blacklistReasons));
+                Type type = new TypeToken<Map<String, List<BlacklistReason>>>(){}.getType();
+                Map<String, List<BlacklistReason>> factionBlacklistReasons = new Gson().fromJson(reader, type);
+                factionBlacklistReasons.forEach((factionString, blacklistReasons) -> storage.getBlacklistReasons().put(Faction.valueOf(factionString), blacklistReasons));
             } catch (Exception e) {
                 LOGGER.error("Failed to fetch blacklist reasons", e);
             }
