@@ -37,6 +37,12 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
 
                     // handle money withdraw
                     delayedAction(() -> {
+                        // check atm has money
+                        if (this.atmMoneyAmount <= 0) {
+                            sendModMessage("Der ATM hat kein Geld.", false);
+                            return;
+                        }
+
                         // check player has rich taxes
                         if (this.moneyBankAmount <= 100000) {
                             sendModMessage("Du hast nicht ausreichend Geld auf der Bank.", false);
