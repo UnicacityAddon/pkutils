@@ -87,7 +87,7 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
 
         if (optionalTargetBlacklistEntry.isPresent()) {
             newTargetDisplayNameColor = RED;
-            newTargetDisplayNamePrefix = !optionalTargetBlacklistEntry.get().outlaw() ? empty() : empty()
+            newTargetDisplayNamePrefix = !optionalTargetBlacklistEntry.get().getReason().isOutlaw() ? empty() : empty()
                     .append(of("[").copy().formatted(DARK_GRAY))
                     .append(of("V").copy().formatted(DARK_RED))
                     .append(of("]").copy().formatted(DARK_GRAY));

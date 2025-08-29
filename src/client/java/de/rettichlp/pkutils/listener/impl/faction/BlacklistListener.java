@@ -3,6 +3,8 @@ package de.rettichlp.pkutils.listener.impl.faction;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
+import de.rettichlp.pkutils.common.storage.schema.BlacklistEntry;
+import de.rettichlp.pkutils.common.storage.schema.BlacklistReason;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.text.Text;
 
@@ -42,7 +44,8 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
             int kills = parseInt(blacklistEntryMatcher.group("kills"));
             int price = parseInt(blacklistEntryMatcher.group("price"));
 
-            BlacklistEntry blacklistEntry = new BlacklistEntry(playerName, reason, outlaw, kills, price);
+            BlacklistReason blacklistReason = new BlacklistReason(reason, outlaw, kills, price);
+            BlacklistEntry blacklistEntry = new BlacklistEntry(playerName, blacklistReason);
             storage.addBlacklistEntry(blacklistEntry);
             return !syncService.isGameSyncProcessActive();
         }
@@ -50,7 +53,8 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
         Matcher blacklistEntryAddMatcher = BLACKLIST_ENTRY_ADD.matcher(message);
         if (blacklistEntryAddMatcher.find()) {
             String targetName = blacklistEntryAddMatcher.group("targetName");
-            BlacklistEntry blacklistEntry = new BlacklistEntry(targetName, "Unbekannt", false, 0, 0);
+            BlacklistReason blacklistReason = new BlacklistReason("Unbekannt", false, 0, 0);
+            BlacklistEntry blacklistEntry = new BlacklistEntry(targetName, blacklistReason);
             storage.addBlacklistEntry(blacklistEntry);
             return true;
         }
