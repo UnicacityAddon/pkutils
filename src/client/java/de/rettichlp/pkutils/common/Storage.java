@@ -1,5 +1,10 @@
 package de.rettichlp.pkutils.common;
 
+import de.rettichlp.pkutils.common.storage.schema.BlacklistEntry;
+import de.rettichlp.pkutils.common.storage.schema.BlacklistReason;
+import de.rettichlp.pkutils.common.storage.schema.Faction;
+import de.rettichlp.pkutils.common.storage.schema.FactionMember;
+import de.rettichlp.pkutils.common.storage.schema.WantedEntry;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
@@ -32,6 +37,9 @@ public class Storage {
 
     @Getter
     private final List<BlacklistEntry> blacklistEntries = new ArrayList<>();
+
+    @Getter
+    private final Map<Faction, List<BlacklistReason>> blacklistReasons = new HashMap<>();
 
     @Getter
     private final List<WantedEntry> wantedEntries = new ArrayList<>();
