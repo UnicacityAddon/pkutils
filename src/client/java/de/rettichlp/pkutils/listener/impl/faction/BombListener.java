@@ -25,6 +25,7 @@ import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.regex.Pattern.compile;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.literal;
 import static net.minecraft.util.Formatting.BOLD;
@@ -35,8 +36,8 @@ import static net.minecraft.util.Formatting.RED;
 @PKUtilsListener
 public class BombListener extends PKUtilsBase implements IMessageReceiveListener, IHudRenderListener {
 
-    private static final Pattern BOMB_FOUND_PATTERN = Pattern.compile("^News: ACHTUNG! Es wurde eine Bombe in der Nähe von (?<location>.+) gefunden!$");
-    private static final Pattern BOMB_STOP_PATTERN = Pattern.compile("^News: Die Bombe konnte (erfolgreich entschärft werden|nicht entschärft werden)!$");
+    private static final Pattern BOMB_FOUND_PATTERN = compile("^News: ACHTUNG! Es wurde eine Bombe in der Nähe von (?<location>.+) gefunden!$");
+    private static final Pattern BOMB_STOP_PATTERN = compile("^News: Die Bombe konnte (erfolgreich|nicht) entschärft werden!$");
 
     private LocalDateTime bombPlantedTime = null;
     private String bombLocationString = "";
