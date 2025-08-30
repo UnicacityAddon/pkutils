@@ -27,8 +27,9 @@ public class Request<T extends IRequest> {
     public void send(Consumer<Response> successCallback, Runnable failureCallback) {
         supplyAsync(() -> {
             try {
-                HttpResponse<String> response = HTTP_CLIENT.send(getHttpRequest(), HttpResponse.BodyHandlers.ofString());
-                LOGGER.info("Received response: {}", response.body());
+                HttpRequest httpRequest = getHttpRequest();
+                HttpResponse<String> response = HTTP_CLIENT.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                LOGGER.info("Sent request: {} -> [{}] {}", httpRequest, response.statusCode(), response.body());
                 return GSON.fromJson(response.body(), Response.class);
             } catch (IOException | InterruptedException e) {
                 throw new CompletionException(e);
@@ -41,15 +42,12 @@ public class Request<T extends IRequest> {
     }
 
     private HttpRequest getHttpRequest() {
-        HttpRequest httpRequest = HttpRequest.newBuilder()
+        return HttpRequest.newBuilder()
                 .uri(this.body.getUrl())
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + SESSION_TOKEN)
                 .POST(HttpRequest.BodyPublishers.ofString(getJsonBody()))
                 .build();
-
-        LOGGER.info("Created HttpRequest: {}", httpRequest);
-        return httpRequest;
     }
 
     private String getJsonBody() {
