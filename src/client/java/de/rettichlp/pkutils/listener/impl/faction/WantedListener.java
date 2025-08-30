@@ -4,6 +4,7 @@ import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.common.storage.schema.WantedEntry;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -16,6 +17,10 @@ import static de.rettichlp.pkutils.PKUtilsClient.factionService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
+import static de.rettichlp.pkutils.common.api.schema.ActivityType.ARREST;
+import static de.rettichlp.pkutils.common.api.schema.ActivityType.ARREST_KILL;
+import static de.rettichlp.pkutils.common.api.schema.ActivityType.PARK_TICKET;
+import static de.rettichlp.pkutils.common.storage.schema.Faction.POLIZEI;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
@@ -28,6 +33,7 @@ import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.GOLD;
 import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.RED;
+import static net.minecraft.util.TypeFilter.instanceOf;
 
 @PKUtilsListener
 public class WantedListener extends PKUtilsBase implements IMessageReceiveListener {
@@ -145,10 +151,6 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             String playerName = wantedKillMatcher.group("playerName");
             int wpAmount = getWpAmountAndDelete(targetName);
 
-            if (clientPlayerName.equals(playerName)) {
-                activityService.trackActivity("arrest", "Aktivität 'Verhaftung' +1");
-            }
-
             Text modifiedMessage = empty()
                     .append(of("Getötet").copy().formatted(RED)).append(" ")
                     .append(of("-").copy().formatted(GRAY)).append(" ")
@@ -161,6 +163,13 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
 
             player.sendMessage(modifiedMessage, false);
 
+            if (clientPlayerName.equals(playerName)) {
+                player.getWorld().getEntitiesByType(instanceOf(PlayerEntity.class), player.getBoundingBox().expand(60), playerEntity -> true).stream()
+                        .map(playerEntity -> playerEntity.getGameProfile().getName())
+                        .filter(playerEntityName -> storage.getFaction(playerEntityName) == POLIZEI)
+                        .forEach(playerEntityName -> activityService.trackActivity(ARREST_KILL));
+            }
+
             return false;
         }
 
@@ -169,10 +178,6 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             String targetName = wantedJailMatcher.group("targetName");
             String playerName = wantedJailMatcher.group("playerName");
             int wpAmount = getWpAmountAndDelete(targetName);
-
-            if (clientPlayerName.equals(playerName)) {
-                activityService.trackActivity("arrest", "Aktivität 'Verhaftung' +1");
-            }
 
             Text modifiedMessage = empty()
                     .append(of("Eingesperrt").copy().formatted(RED)).append(" ")
@@ -186,6 +191,10 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
 
             player.sendMessage(modifiedMessage, false);
 
+            if (clientPlayerName.equals(playerName)) {
+                activityService.trackActivity(ARREST);
+            }
+
             return false;
         }
 
@@ -194,7 +203,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             String officerName = parkticketMatcher.group("playerName");
 
             if (clientPlayerName.equals(officerName)) {
-                activityService.trackActivity("ticket", "Aktivität 'Strafzettel' +1");
+                activityService.trackActivity(PARK_TICKET);
             }
 
             return true;
