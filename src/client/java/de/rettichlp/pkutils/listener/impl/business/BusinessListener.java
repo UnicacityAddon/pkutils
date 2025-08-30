@@ -37,7 +37,7 @@ public class BusinessListener extends PKUtilsBase implements IMessageReceiveList
 
             MutableText newText = empty()
                     .append(of("Kasse").copy().formatted(GOLD))
-                    .append(of(":").copy().formatted(DARK_GRAY))
+                    .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                     .append(of(amountString + "$").copy().formatted(GRAY))
                     .styled(style -> style
                             .withClickEvent(new ClickEvent(RUN_COMMAND, "/biz kasse get " + amountString))
