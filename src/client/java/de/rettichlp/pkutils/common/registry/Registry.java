@@ -22,6 +22,7 @@ import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
 import de.rettichlp.pkutils.listener.ITickListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
+import de.rettichlp.pkutils.listener.impl.business.BusinessListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
 import de.rettichlp.pkutils.listener.impl.faction.BombListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionListener;
@@ -64,6 +65,8 @@ public class Registry {
     );
 
     private final Set<Class<?>> listeners = Set.of(
+            // business
+            BusinessListener.class,
             // faction
             BombListener.class,
             BlacklistListener.class,
