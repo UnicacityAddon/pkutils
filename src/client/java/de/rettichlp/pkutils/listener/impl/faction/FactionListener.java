@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
+import de.rettichlp.pkutils.common.api.schema.ActivityType;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.common.storage.Storage;
@@ -11,6 +12,7 @@ import net.minecraft.text.Text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtilsClient.activityService;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
@@ -80,6 +82,12 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
 
             Text reinforcementAnswer = REINFORCEMENT_ON_THE_WAY.create(sender, target, distance);
             player.sendMessage(reinforcementAnswer, false);
+
+            String[] splitSender = sender.split(" ");
+            String lastWord = splitSender[splitSender.length - 1];
+            if (player.getName().getString().equals(lastWord)) {
+                activityService.trackActivity(ActivityType.REINFORCEMENT);
+            }
 
             return false;
         }
