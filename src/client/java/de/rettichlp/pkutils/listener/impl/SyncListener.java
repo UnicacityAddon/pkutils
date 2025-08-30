@@ -6,6 +6,7 @@ import de.rettichlp.pkutils.common.storage.schema.Faction;
 import de.rettichlp.pkutils.common.storage.schema.FactionMember;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -42,7 +43,7 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
     }
 
     @Override
-    public boolean onMessageReceive(String message) {
+    public boolean onMessageReceive(Text text, String message) {
         // SERVER INIT
 
         // if a password is not set, start the game sync process

@@ -52,7 +52,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             .append(of(")").copy().formatted(GRAY));
 
     @Override
-    public boolean onMessageReceive(String message) {
+    public boolean onMessageReceive(Text text, String message) {
         Matcher reinforcementMatcher = REINFORCEMENT_PATTERN.matcher(message);
         if (reinforcementMatcher.find()) {
             String type = ofNullable(reinforcementMatcher.group("type")).orElse("Reinforcement");

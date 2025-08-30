@@ -4,6 +4,7 @@ import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.common.storage.schema.BlacklistEntry;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
+import net.minecraft.text.Text;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +26,7 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
     private long activeCheck = 0;
 
     @Override
-    public boolean onMessageReceive(String message) {
+    public boolean onMessageReceive(Text text, String message) {
         Matcher blacklistHeaderMatcher = BLACKLIST_HEADER_PATTERN.matcher(message);
         if (blacklistHeaderMatcher.find()) {
             this.activeCheck = currentTimeMillis();
