@@ -26,6 +26,7 @@ import de.rettichlp.pkutils.listener.impl.business.BusinessListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
 import de.rettichlp.pkutils.listener.impl.faction.BombListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionListener;
+import de.rettichlp.pkutils.listener.impl.faction.ServiceListener;
 import de.rettichlp.pkutils.listener.impl.faction.WantedListener;
 import de.rettichlp.pkutils.listener.impl.job.FisherListener;
 import de.rettichlp.pkutils.listener.impl.job.GarbageManListener;
@@ -40,6 +41,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
+import java.security.Provider;
 import java.util.Set;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
@@ -72,6 +74,7 @@ public class Registry {
             BlacklistListener.class,
             FactionListener.class,
             WantedListener.class,
+            ServiceListener.class,
             // job
             FisherListener.class,
             GarbageManListener.class,
