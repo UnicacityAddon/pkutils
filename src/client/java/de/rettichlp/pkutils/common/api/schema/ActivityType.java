@@ -11,7 +11,9 @@ public enum ActivityType {
     EMERGENCY_SERVICE("Notruf"),
     MAJOR_EVENT("Großereignis"),
     PARK_TICKET("Strafzettel"),
-    REINFORCEMENT("Reinforcement");
+    REINFORCEMENT("Reinforcement"),
+    LOGIN("Login"),
+    LOGOUT("Logout");
 
     private final String displayMessage;
 
