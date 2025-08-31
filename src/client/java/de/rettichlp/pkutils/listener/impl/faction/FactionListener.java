@@ -43,9 +43,9 @@ import static net.minecraft.util.Formatting.RED;
 @PKUtilsListener
 public class FactionListener extends PKUtilsBase implements IMessageReceiveListener, IMessageSendListener, IMoveListener {
 
-    private static final Pattern REINFORCEMENT_PATTERN = compile("^(?:(?<type>.+)! )?(?<sender>.+) benötigt Unterstützung in der Nähe von (?<naviPoint>.+) \\((?<distance>\\d+)m\\)!$");
+    private static final Pattern REINFORCEMENT_PATTERN = compile("^(?:(?<type>.+)! )?(?<senderRank>.+) (?<senderPlayerName>.+) benötigt Unterstützung in der Nähe von (?<naviPoint>.+) \\((?<distance>\\d+)m\\)!$");
     private static final Pattern REINFORCEMENT_BUTTON_PATTERN = compile("^ §7» §cRoute anzeigen §7\\| §cUnterwegs$");
-    private static final Pattern REINFORCMENT_ON_THE_WAY_PATTERN = compile("^(?<sender>.+) kommt zum Verstärkungsruf von (?<target>.+)! \\((?<distance>\\d+) Meter entfernt\\)$");
+    private static final Pattern REINFORCMENT_ON_THE_WAY_PATTERN = compile("^(?<senderRank>.+) (?<senderPlayerName>.+) kommt zum Verstärkungsruf von (?<target>.+)! \\((?<distance>\\d+) Meter entfernt\\)$");
 
     private static final ReinforcementConsumer<String, String, String, String> REINFORCEMENT = (type, sender, naviPoint, distance) -> empty()
             .append(of(type).copy().formatted(RED, BOLD)).append(" ")
@@ -69,15 +69,16 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
         Matcher reinforcementMatcher = REINFORCEMENT_PATTERN.matcher(message);
         if (reinforcementMatcher.find()) {
             String type = ofNullable(reinforcementMatcher.group("type")).orElse("Reinforcement");
-            String sender = reinforcementMatcher.group("sender");
+            String senderRank = reinforcementMatcher.group("senderRank");
+            String senderPlayerName = reinforcementMatcher.group("senderPlayerName");
             String naviPoint = reinforcementMatcher.group("naviPoint");
             String distance = reinforcementMatcher.group("distance");
 
-            Text reinforcementText = REINFORCEMENT.create(type, sender, naviPoint, distance);
+            Text reinforcementText = REINFORCEMENT.create(type, senderRank + " " + senderPlayerName, naviPoint, distance);
             player.sendMessage(empty(), false);
             player.sendMessage(reinforcementText, false);
 
-            Reinforcement reinforcement = new Reinforcement(type, sender, naviPoint, distance);
+            Reinforcement reinforcement = new Reinforcement(type, senderPlayerName, naviPoint, distance);
             storage.getReinforcements().add(reinforcement);
 
             return false;
@@ -117,7 +118,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
                     .toList().getFirst();
 
             Optional<Reinforcement> optionalReinforcement = storage.getReinforcements().stream()
-                    .filter(reinforcement -> reinforcement.getPlayerName().equals(senderName))
+                    .filter(reinforcement -> reinforcement.getSenderPlayerName().equals(senderName))
                     .max(comparing(Reinforcement::getCreatedAt));
 
             optionalReinforcement.ifPresent(reinforcement -> reinforcement.setBlockPos(blockPos));
@@ -130,24 +131,18 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
 
         Matcher reinforcementOnTheWayMatcher = REINFORCMENT_ON_THE_WAY_PATTERN.matcher(message);
         if (reinforcementOnTheWayMatcher.find()) {
-            String sender = reinforcementOnTheWayMatcher.group("sender");
+            String senderRank = reinforcementOnTheWayMatcher.group("senderRank");
+            String senderPlayerName = reinforcementOnTheWayMatcher.group("senderPlayerName");
             String target = reinforcementOnTheWayMatcher.group("target");
             String distance = reinforcementOnTheWayMatcher.group("distance");
 
-            Text reinforcementAnswer = REINFORCEMENT_ON_THE_WAY.create(sender, target, distance);
+            Text reinforcementAnswer = REINFORCEMENT_ON_THE_WAY.create(senderRank + " " + senderPlayerName, target, distance);
             player.sendMessage(reinforcementAnswer, false);
 
-            Optional<Reinforcement> optionalReinforcement = storage.getReinforcements().stream()
-                    .filter(reinforcement -> reinforcement.getPlayerName().equals(target)) // get reinforcements of target
-                    .max(comparing(Reinforcement::getCreatedAt)); // get the latest one
-
-            if (optionalReinforcement.isPresent()) {
-                Reinforcement reinforcement = optionalReinforcement.get();
-
-                String[] splitSender = sender.split(" ");
-                String lastWord = splitSender[splitSender.length - 1]; // "Polizei RettichLP" -> "RettichLP"
-                reinforcement.getAcceptedPlayerNames().add(lastWord);
-            }
+            storage.getReinforcements().stream()
+                    .filter(reinforcement -> reinforcement.getSenderPlayerName().equals(target)) // get reinforcements of target
+                    .max(comparing(Reinforcement::getCreatedAt)) // get the latest one
+                    .ifPresent(reinforcement -> reinforcement.getAcceptedPlayerNames().add(senderPlayerName));
 
             return false;
         }
@@ -172,7 +167,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
         Optional<Reinforcement> optionalReinforcement = storage.getReinforcements().stream()
                 .filter(reinforcement -> nonNull(reinforcement.getBlockPos())) // check if block position is set
                 .filter(reinforcement -> reinforcement.getBlockPos().isWithinDistance(player.getBlockPos(), 60))
-                .filter(reinforcement -> !reinforcement.getPlayerName().equals(player.getGameProfile().getName()))
+                .filter(reinforcement -> !reinforcement.getSenderPlayerName().equals(player.getGameProfile().getName()))
                 .max(comparing(Reinforcement::getCreatedAt));
 
         optionalReinforcement.ifPresent(reinforcement -> {

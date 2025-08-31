@@ -15,7 +15,7 @@ public class Reinforcement {
     private final LocalDateTime createdAt = now();
     private final List<String> acceptedPlayerNames = new ArrayList<>();
     private final String type;
-    private final String playerName;
+    private final String senderPlayerName;
     private final String naviPoint;
     private final String distance;
     private BlockPos blockPos;
