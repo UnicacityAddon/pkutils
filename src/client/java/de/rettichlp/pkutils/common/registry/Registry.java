@@ -81,6 +81,7 @@ public class Registry {
             TransportListener.class,
             // other
             CommandSendListener.class,
+            DepositCommand.class,
             RichTaxesCommand.class, // TODO find better solution for this
             SyncListener.class
     );
