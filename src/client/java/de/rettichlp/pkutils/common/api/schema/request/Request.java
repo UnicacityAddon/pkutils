@@ -24,30 +24,33 @@ public class Request<T extends IRequest> {
 
     private final T body;
 
-    public void send(Consumer<Response> successCallback, Runnable failureCallback) {
+    public void send(Consumer<HttpResponse<String>> successCallback, Consumer<Throwable> failureCallback) {
         supplyAsync(() -> {
             try {
                 HttpRequest httpRequest = getHttpRequest();
                 HttpResponse<String> response = HTTP_CLIENT.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-                LOGGER.info("Sent request: {} -> [{}] {}", httpRequest, response.statusCode(), response.body());
-                return GSON.fromJson(response.body(), Response.class);
+                LOGGER.info("Sent request: {} -> [{}] {}", httpRequest.uri(), response.statusCode(), response.body());
+                return response;
             } catch (IOException | InterruptedException e) {
                 throw new CompletionException(e);
             }
         }).thenAccept(successCallback).exceptionally(throwable -> {
             LOGGER.error("Failed to send request", throwable);
-            failureCallback.run();
+            failureCallback.accept(throwable);
             return null;
         });
     }
 
     private HttpRequest getHttpRequest() {
-        return HttpRequest.newBuilder()
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(this.body.getUrl())
                 .header("Content-Type", "application/json")
                 .header("Authorization", SESSION_TOKEN)
-                .POST(HttpRequest.BodyPublishers.ofString(getJsonBody()))
-                .build();
+                .POST(HttpRequest.BodyPublishers.ofString(getJsonBody()));
+
+        this.body.getHeaders().forEach(builder::header);
+
+        return builder.build();
     }
 
     private String getJsonBody() {
