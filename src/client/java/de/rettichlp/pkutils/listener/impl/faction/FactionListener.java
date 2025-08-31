@@ -79,7 +79,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             player.sendMessage(reinforcementText, false);
 
             Reinforcement reinforcement = new Reinforcement(type, senderPlayerName, naviPoint, distance);
-            storage.getReinforcements().add(reinforcement);
+            storage.trackReinforcement(reinforcement);
 
             return false;
         }

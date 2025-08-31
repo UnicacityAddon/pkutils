@@ -94,6 +94,13 @@ public class Storage {
         this.wantedEntries.clear();
     }
 
+    public void trackReinforcement(Reinforcement reinforcement) {
+        // remove all previous reinforcements of the same sender
+        this.reinforcements.removeIf(r -> r.getSenderPlayerName().equals(reinforcement.getSenderPlayerName()));
+        // add new reinforcement
+        this.reinforcements.add(reinforcement);
+    }
+
     @Getter
     @AllArgsConstructor
     public enum ToggledChat {
