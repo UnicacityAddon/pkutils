@@ -1,5 +1,7 @@
 package de.rettichlp.pkutils.common.services;
 
+import de.rettichlp.pkutils.common.api.schema.request.FactionSyncRequest;
+import de.rettichlp.pkutils.common.api.schema.request.Request;
 import de.rettichlp.pkutils.common.api.schema.request.Request;
 import de.rettichlp.pkutils.common.api.schema.request.UserRegisterRequest;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
@@ -8,6 +10,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static de.rettichlp.pkutils.PKUtilsClient.hudService;
@@ -83,5 +89,35 @@ public class SyncService extends PKUtilsBase {
                 sendModMessage("Die Nummer von " + playerName + " konnte nicht abgerufen werden.", false);
             });
         }, 1000);
+    }
+
+    private void pushFactionDataToServer() {
+        List<Map<String, Object>> membersData = new ArrayList<>();
+        storage.getFactionMembers().forEach((faction, members) -> {
+            if (faction != NULL) {
+                members.forEach(member -> {
+                    Map<String, Object> memberMap = new HashMap<>();
+                    memberMap.put("playerName", member.getPlayerName());
+                    memberMap.put("faction", faction.getDisplayName());
+                    memberMap.put("rank", member.getRank());
+                    membersData.add(memberMap);
+                });
+            }
+        });
+
+        Request<FactionSyncRequest> request = Request.<FactionSyncRequest>builder()
+                .body(new FactionSyncRequest(player.getName().getString(), membersData))
+                .build();
+
+        request.send(
+                response -> {
+                    if (response.statusCode() == 200) {
+                        sendModMessage("Fraktionsdaten zum Server synchronisiert.", true);
+                    } else {
+                        sendModMessage("Fehler bei der Server-Synchronisation.", true);
+                    }
+                },
+                throwable -> sendModMessage("Fehler bei der Server-Synchronisation.", true)
+        );
     }
 }

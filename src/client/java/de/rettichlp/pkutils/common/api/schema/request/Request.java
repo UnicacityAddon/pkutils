@@ -49,7 +49,7 @@ public class Request<T extends IRequest> {
     }
 
     private HttpRequest getHttpRequest() {
-        return HttpRequest.newBuilder()
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(this.body.getUrl())
                 .header("Content-Type", "application/json")
                 .header("X-Minecraft-Session-Token", SESSION_TOKEN)
