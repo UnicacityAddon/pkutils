@@ -45,7 +45,7 @@ public class Request<T extends IRequest> {
         return HttpRequest.newBuilder()
                 .uri(this.body.getUrl())
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + SESSION_TOKEN)
+                .header("Authorization", SESSION_TOKEN)
                 .POST(HttpRequest.BodyPublishers.ofString(getJsonBody()))
                 .build();
     }
