@@ -37,17 +37,16 @@ public class ModCommand extends CommandBase {
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
                 .then(ClientCommandManager.literal("fakeActivity")
+                        .requires(fabricClientCommandSource -> {
+                            String uuidAsString = player.getUuidAsString();
+                            return uuidAsString.equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19") || uuidAsString.equals("929bbc61-2f89-45cd-a351-84f439842832");
+                        })
                         .then(ClientCommandManager.argument("activityType", word())
                                 .suggests((context, builder) -> {
                                     stream(ActivityType.values()).forEach(activityType -> builder.suggest(activityType.name()));
                                     return builder.buildFuture();
                                 })
                                 .executes(context -> {
-                                    String uuidAsString = player.getUuidAsString();
-                                    if (!uuidAsString.equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19") && !uuidAsString.equals("929bbc61-2f89-45cd-a351-84f439842832")) {
-                                        return 1;
-                                    }
-
                                     String activityTypeString = context.getArgument("activityType", String.class);
                                     stream(ActivityType.values())
                                             .filter(activityType -> activityType.name().equals(activityTypeString.toUpperCase()))
