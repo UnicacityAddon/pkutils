@@ -2,7 +2,18 @@ package de.rettichlp.pkutils.common.registry;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.command.*;
+import de.rettichlp.pkutils.command.ACallCommand;
+import de.rettichlp.pkutils.command.ADropMoneyCommand;
+import de.rettichlp.pkutils.command.ASMSCommand;
+import de.rettichlp.pkutils.command.CheckActivityCommand;
+import de.rettichlp.pkutils.command.ClearActivityCommand;
+import de.rettichlp.pkutils.command.DepositCommand;
+import de.rettichlp.pkutils.command.ModCommand;
+import de.rettichlp.pkutils.command.RichTaxesCommand;
+import de.rettichlp.pkutils.command.SyncCommand;
+import de.rettichlp.pkutils.command.ToggleDChatCommand;
+import de.rettichlp.pkutils.command.ToggleFChatCommand;
+import de.rettichlp.pkutils.command.WSUCommand;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
@@ -46,13 +57,13 @@ public class Registry {
             ASMSCommand.class,
             CheckActivityCommand.class,
             ClearActivityCommand.class,
+            DepositCommand.class,
             ModCommand.class,
             RichTaxesCommand.class,
             SyncCommand.class,
             ToggleDChatCommand.class,
             ToggleFChatCommand.class,
-            WSUCommand.class,
-            DepositCommand.class
+            WSUCommand.class
     );
 
     private final Set<Class<?>> listeners = Set.of(
