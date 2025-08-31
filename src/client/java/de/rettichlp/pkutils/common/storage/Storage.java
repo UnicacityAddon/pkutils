@@ -48,6 +48,12 @@ public class Storage {
         LOGGER.info("blacklistEntries[{}]: {}", this.blacklistEntries.size(), this.blacklistEntries);
         // wantedEntries
         LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
+        // reinforcements
+        LOGGER.info("reinforcements[{}]: {}", this.reinforcements.size(), this.reinforcements);
+        // retrievedNumbers
+        LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
+        // toggledChat
+        LOGGER.info("toggledChat: {}", this.toggledChat);
     }
 
     public void addBlacklistEntry(BlacklistEntry entry) {
