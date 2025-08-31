@@ -6,6 +6,7 @@ import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,7 +27,7 @@ public class BusinessListener extends PKUtilsBase implements IMessageReceiveList
     private static final Pattern BUSINESS_CASH_PATTERN = compile("^Kasse: (\\d+)\\$$");
 
     @Override
-    public boolean onMessageReceive(String message) {
+    public boolean onMessageReceive(Text text, String message) {
         Matcher businessCashMatcher = BUSINESS_CASH_PATTERN.matcher(message);
         if (businessCashMatcher.find()) {
             String amountString = businessCashMatcher.group(1);
