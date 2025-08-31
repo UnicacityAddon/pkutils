@@ -3,6 +3,7 @@ package de.rettichlp.pkutils.command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
+import de.rettichlp.pkutils.common.storage.Storage;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,9 @@ public class ToggleDChatCommand extends CommandBase {
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
                 .executes(context -> {
-                    storage.setToggledChat(storage.getToggledChat() == D_CHAT ? NONE : D_CHAT);
+                    Storage.ToggledChat newState = storage.getToggledChat() == D_CHAT ? NONE : D_CHAT;
+                    storage.setToggledChat(newState);
+                    sendModMessage(newState.getToggleMessage(), false);
                     return 1;
                 });
     }
