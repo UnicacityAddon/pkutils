@@ -1,12 +1,8 @@
 package de.rettichlp.pkutils.common.storage.schema;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@ToString
-@AllArgsConstructor
+@Data
 public class FactionMember {
 
     private final String playerName;

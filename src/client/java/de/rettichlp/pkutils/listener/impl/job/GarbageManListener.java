@@ -10,6 +10,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardEntry;
 import net.minecraft.scoreboard.ScoreboardObjective;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Collection;
@@ -38,7 +39,7 @@ public class GarbageManListener extends PKUtilsBase implements IMessageReceiveLi
     private long lastCommandExecution = 0;
 
     @Override
-    public boolean onMessageReceive(String message) {
+    public boolean onMessageReceive(Text text, String message) {
         Matcher garbageManDropStartMatcher = GARBAGE_MAN_DROP_START.matcher(message);
         if (garbageManDropStartMatcher.find()) {
             this.isDropStep = true;

@@ -130,7 +130,7 @@ public class Registry {
                 if (listenerInstance instanceof IMessageReceiveListener iMessageReceiveListener) {
                     ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> {
                         String rawMessage = message.getString();
-                        return iMessageReceiveListener.onMessageReceive(rawMessage);
+                        return iMessageReceiveListener.onMessageReceive(message, rawMessage);
                     });
                 }
 

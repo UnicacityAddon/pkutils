@@ -1,8 +1,10 @@
 package de.rettichlp.pkutils.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import de.rettichlp.pkutils.common.api.schema.ActivityType;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.Person;
@@ -15,10 +17,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.StringJoiner;
 
+import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
+import static de.rettichlp.pkutils.PKUtilsClient.activityService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static java.time.LocalDateTime.MIN;
+import static java.util.Arrays.stream;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
@@ -31,6 +36,25 @@ public class ModCommand extends CommandBase {
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
+                .then(ClientCommandManager.literal("fakeActivity")
+                        .requires(fabricClientCommandSource -> {
+                            String uuidAsString = player.getUuidAsString();
+                            return uuidAsString.equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19") || uuidAsString.equals("929bbc61-2f89-45cd-a351-84f439842832");
+                        })
+                        .then(ClientCommandManager.argument("activityType", word())
+                                .suggests((context, builder) -> {
+                                    stream(ActivityType.values()).forEach(activityType -> builder.suggest(activityType.name()));
+                                    return builder.buildFuture();
+                                })
+                                .executes(context -> {
+                                    String activityTypeString = context.getArgument("activityType", String.class);
+                                    stream(ActivityType.values())
+                                            .filter(activityType -> activityType.name().equals(activityTypeString.toUpperCase()))
+                                            .findFirst()
+                                            .ifPresent(activityType -> activityService.trackActivity(activityType));
+
+                                    return 1;
+                                })))
                 .executes(context -> {
                     String version = getVersion();
                     String authors = getAuthors();

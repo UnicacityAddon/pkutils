@@ -6,6 +6,7 @@ import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -34,7 +35,7 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
     private Collection<FisherJobSpot> currentFisherJobSpots = new ArrayList<>();
 
     @Override
-    public boolean onMessageReceive(String message) {
+    public boolean onMessageReceive(Text text, String message) {
         Matcher fisherStartMatcher = FISHER_START.matcher(message);
         if (fisherStartMatcher.find()) {
             this.currentFisherJobSpots = new ArrayList<>();

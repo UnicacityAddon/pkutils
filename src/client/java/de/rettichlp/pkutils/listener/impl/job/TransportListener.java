@@ -4,6 +4,7 @@ import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.regex.Matcher;
@@ -26,7 +27,7 @@ public class TransportListener extends PKUtilsBase implements IMessageReceiveLis
     private boolean isTabakJobTransportActive = false;
 
     @Override
-    public boolean onMessageReceive(String message) {
+    public boolean onMessageReceive(Text text, String message) {
         Matcher transportDeliverMatcher = TRANSPORT_DELIVER_PATTERN.matcher(message);
         if (transportDeliverMatcher.find()) {
             delayedAction(() -> networkHandler.sendChatCommand("droptransport"), SECONDS.toMillis(10));

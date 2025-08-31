@@ -43,7 +43,7 @@ public class BombListener extends PKUtilsBase implements IMessageReceiveListener
     private String bombLocationString = "";
 
     @Override
-    public boolean onMessageReceive(String message) {
+    public boolean onMessageReceive(Text text, String message) {
         Faction playerFaction = storage.getFaction(player.getName().getString());
         if (playerFaction != POLIZEI && playerFaction != FBI && playerFaction != RETTUNGSDIENST) {
             return true;
