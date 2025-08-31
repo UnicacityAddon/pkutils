@@ -123,9 +123,6 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
 
             optionalReinforcement.ifPresent(reinforcement -> reinforcement.setBlockPos(blockPos));
 
-            LOGGER.info("Reinforcement button detected, stored block position {} for sender {}", blockPos, senderName);
-            LOGGER.info("Last reinforcement of sender: {}", optionalReinforcement.orElse(null));
-
             return true;
         }
 
