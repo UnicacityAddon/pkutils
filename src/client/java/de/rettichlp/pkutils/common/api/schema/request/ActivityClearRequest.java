@@ -5,6 +5,8 @@ import lombok.Builder;
 
 import java.net.URI;
 
+import static java.net.URI.create;
+
 @Builder
 @AllArgsConstructor
 public class ActivityClearRequest implements IRequest {
@@ -13,6 +15,6 @@ public class ActivityClearRequest implements IRequest {
 
     @Override
     public URI getUrl() {
-        return URI.create("https://activitycheck.pkutils.eu/clearactivity");
+        return create("https://activitycheck.pkutils.eu/clearactivity");
     }
 }

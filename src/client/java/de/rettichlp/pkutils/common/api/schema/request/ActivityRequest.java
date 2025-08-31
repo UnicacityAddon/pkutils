@@ -5,6 +5,8 @@ import lombok.Data;
 
 import java.net.URI;
 
+import static java.net.URI.create;
+
 @Data
 public class ActivityRequest implements IRequest {
 
@@ -12,6 +14,6 @@ public class ActivityRequest implements IRequest {
 
     @Override
     public URI getUrl() {
-        return URI.create("https://activitycheck.pkutils.eu/proxy");
+        return create("https://activitycheck.pkutils.eu/proxy");
     }
 }
