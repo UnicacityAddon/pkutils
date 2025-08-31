@@ -6,21 +6,24 @@ import de.rettichlp.pkutils.common.api.schema.request.ActivityRequest;
 import de.rettichlp.pkutils.common.api.schema.request.Request;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ServerInfo;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
+import static java.util.Objects.isNull;
 
 public class ActivityService extends PKUtilsBase {
 
     public void trackActivity(ActivityType activityType) {
-        ServerInfo serverInfo = MinecraftClient.getInstance().getCurrentServerEntry();
-        if (serverInfo == null) {
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
+        if (isNull(networkHandler)) {
             LOGGER.warn("Tried to track activity, but no server info found");
             return;
         }
 
-        String address = serverInfo.address;
-        if (!address.equals("152.53.252.60")) {
+        String addressString = networkHandler.getConnection().getAddress().toString(); // punicakitty.de/152.53.252.60:25565
+        if (!addressString.contains("152.53.252.60")) {
             LOGGER.warn("Tried to track activity, but not on supported server");
             return;
         }
