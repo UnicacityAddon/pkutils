@@ -3,6 +3,7 @@ package de.rettichlp.pkutils.common.storage;
 import de.rettichlp.pkutils.common.storage.schema.BlacklistEntry;
 import de.rettichlp.pkutils.common.storage.schema.Faction;
 import de.rettichlp.pkutils.common.storage.schema.FactionMember;
+import de.rettichlp.pkutils.common.storage.schema.Reinforcement;
 import de.rettichlp.pkutils.common.storage.schema.WantedEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,9 @@ public class Storage {
 
     @Getter
     private final List<WantedEntry> wantedEntries = new ArrayList<>();
+
+    @Getter
+    private final List<Reinforcement> reinforcements = new ArrayList<>();
 
     @Getter
     private final Map<String, Integer> retrievedNumbers = new HashMap<>();
