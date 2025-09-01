@@ -21,6 +21,7 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
 
     private static final Pattern PLAYER_MONEY_BANK_AMOUNT = compile("^Ihr Bankguthaben beträgt: (?<moneyBankAmount>([+-])\\d+)\\$$");
     private static final Pattern MONEY_ATM_AMOUNT = compile("ATM \\d+: (?<moneyAtmAmount>\\d+)/100000\\$");
+    private static final int RICH_TAXES_THRESHOLD = 100000;
 
     private int moneyBankAmount = 0;
     private int atmMoneyAmount = 0;
@@ -44,12 +45,12 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
                         }
 
                         // check player has rich taxes
-                        if (this.moneyBankAmount <= 100000) {
+                        if (this.moneyBankAmount <= RICH_TAXES_THRESHOLD) {
                             sendModMessage("Du hast nicht ausreichend Geld auf der Bank.", false);
                             return;
                         }
 
-                        int moneyThatNeedsToBeWithdrawn = this.moneyBankAmount - 100000;
+                        int moneyThatNeedsToBeWithdrawn = this.moneyBankAmount - RICH_TAXES_THRESHOLD;
 
                         if (this.atmMoneyAmount >= moneyThatNeedsToBeWithdrawn) {
                             networkHandler.sendChatCommand("bank abbuchen " + moneyThatNeedsToBeWithdrawn);
