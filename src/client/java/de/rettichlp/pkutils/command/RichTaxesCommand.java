@@ -23,8 +23,8 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
     private static final Pattern MONEY_ATM_AMOUNT = compile("ATM \\d+: (?<moneyAtmAmount>\\d+)/100000\\$");
     private static final int RICH_TAXES_THRESHOLD = 100000;
 
-    private int moneyBankAmount = 0;
-    private int atmMoneyAmount = 0;
+    private static int moneyBankAmount = 0;
+    private static int moneyAtmAmount = 0;
 
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
@@ -39,24 +39,24 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
                     // handle money withdraw
                     delayedAction(() -> {
                         // check atm has money
-                        if (this.atmMoneyAmount <= 0) {
+                        if (moneyAtmAmount <= 0) {
                             sendModMessage("Der ATM hat kein Geld.", false);
                             return;
                         }
 
                         // check player has rich taxes
-                        if (this.moneyBankAmount <= RICH_TAXES_THRESHOLD) {
+                        if (moneyBankAmount <= RICH_TAXES_THRESHOLD) {
                             sendModMessage("Du hast nicht ausreichend Geld auf der Bank.", false);
                             return;
                         }
 
-                        int moneyThatNeedsToBeWithdrawn = this.moneyBankAmount - RICH_TAXES_THRESHOLD;
+                        int moneyThatNeedsToBeWithdrawn = moneyBankAmount - RICH_TAXES_THRESHOLD;
 
-                        if (this.atmMoneyAmount >= moneyThatNeedsToBeWithdrawn) {
+                        if (moneyAtmAmount >= moneyThatNeedsToBeWithdrawn) {
                             networkHandler.sendChatCommand("bank abbuchen " + moneyThatNeedsToBeWithdrawn);
                         } else {
-                            networkHandler.sendChatCommand("bank abbuchen " + this.atmMoneyAmount);
-                            sendModMessage("Du musst noch " + (moneyThatNeedsToBeWithdrawn - this.atmMoneyAmount) + "$ abbuchen.", false);
+                            networkHandler.sendChatCommand("bank abbuchen " + moneyAtmAmount);
+                            sendModMessage("Du musst noch " + (moneyThatNeedsToBeWithdrawn - moneyAtmAmount) + "$ abbuchen.", false);
                         }
                     }, 2000);
 
@@ -68,13 +68,13 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
     public boolean onMessageReceive(Text text, String message) {
         Matcher playerMoneyBankAmountMatcher = PLAYER_MONEY_BANK_AMOUNT.matcher(message);
         if (playerMoneyBankAmountMatcher.find()) {
-            this.moneyBankAmount = Integer.parseInt(playerMoneyBankAmountMatcher.group("moneyBankAmount"));
+            moneyBankAmount = Integer.parseInt(playerMoneyBankAmountMatcher.group("moneyBankAmount"));
             return true;
         }
 
         Matcher moneyAtmAmountMatcher = MONEY_ATM_AMOUNT.matcher(message);
         if (moneyAtmAmountMatcher.find()) {
-            this.atmMoneyAmount = Integer.parseInt(moneyAtmAmountMatcher.group("moneyAtmAmount"));
+            moneyAtmAmount = Integer.parseInt(moneyAtmAmountMatcher.group("moneyAtmAmount"));
             return true;
         }
 
