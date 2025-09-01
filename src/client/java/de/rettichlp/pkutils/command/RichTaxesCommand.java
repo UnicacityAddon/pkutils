@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
+import static java.lang.Integer.parseInt;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsCommand(label = "reichensteuer")
@@ -21,9 +22,10 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
 
     private static final Pattern PLAYER_MONEY_BANK_AMOUNT = compile("^Ihr Bankguthaben beträgt: (?<moneyBankAmount>([+-])\\d+)\\$$");
     private static final Pattern MONEY_ATM_AMOUNT = compile("ATM \\d+: (?<moneyAtmAmount>\\d+)/100000\\$");
+    private static final int RICH_TAXES_THRESHOLD = 100000;
 
-    private int moneyBankAmount = 0;
-    private int atmMoneyAmount = 0;
+    private static int moneyBankAmount = 0;
+    private static int moneyAtmAmount = 0;
 
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
@@ -33,23 +35,29 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
                     networkHandler.sendChatCommand("bank info");
 
                     // execute command to check money in atm
-                    delayedAction(() -> networkHandler.sendChatCommand("atm info"), 1000);
+                    delayedAction(() -> networkHandler.sendChatCommand("atminfo"), 1000);
 
                     // handle money withdraw
                     delayedAction(() -> {
+                        // check atm has money
+                        if (moneyAtmAmount <= 0) {
+                            sendModMessage("Der ATM hat kein Geld.", false);
+                            return;
+                        }
+
                         // check player has rich taxes
-                        if (this.moneyBankAmount <= 100000) {
+                        if (moneyBankAmount <= RICH_TAXES_THRESHOLD) {
                             sendModMessage("Du hast nicht ausreichend Geld auf der Bank.", false);
                             return;
                         }
 
-                        int moneyThatNeedsToBeWithdrawn = this.moneyBankAmount - 100000;
+                        int moneyThatNeedsToBeWithdrawn = moneyBankAmount - RICH_TAXES_THRESHOLD;
 
-                        if (this.atmMoneyAmount >= moneyThatNeedsToBeWithdrawn) {
+                        if (moneyAtmAmount >= moneyThatNeedsToBeWithdrawn) {
                             networkHandler.sendChatCommand("bank abbuchen " + moneyThatNeedsToBeWithdrawn);
                         } else {
-                            networkHandler.sendChatCommand("bank abbuchen " + this.atmMoneyAmount);
-                            sendModMessage("Du musst noch " + (moneyThatNeedsToBeWithdrawn - this.atmMoneyAmount) + "$ abbuchen.", false);
+                            networkHandler.sendChatCommand("bank abbuchen " + moneyAtmAmount);
+                            sendModMessage("Du musst noch " + (moneyThatNeedsToBeWithdrawn - moneyAtmAmount) + "$ abbuchen.", false);
                         }
                     }, 2000);
 
@@ -61,13 +69,13 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
     public boolean onMessageReceive(Text text, String message) {
         Matcher playerMoneyBankAmountMatcher = PLAYER_MONEY_BANK_AMOUNT.matcher(message);
         if (playerMoneyBankAmountMatcher.find()) {
-            this.moneyBankAmount = Integer.parseInt(playerMoneyBankAmountMatcher.group("moneyBankAmount"));
+            moneyBankAmount = parseInt(playerMoneyBankAmountMatcher.group("moneyBankAmount"));
             return true;
         }
 
         Matcher moneyAtmAmountMatcher = MONEY_ATM_AMOUNT.matcher(message);
         if (moneyAtmAmountMatcher.find()) {
-            this.atmMoneyAmount = Integer.parseInt(moneyAtmAmountMatcher.group("moneyAtmAmount"));
+            moneyAtmAmount = parseInt(moneyAtmAmountMatcher.group("moneyAtmAmount"));
             return true;
         }
 

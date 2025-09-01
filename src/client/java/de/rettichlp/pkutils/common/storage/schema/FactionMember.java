@@ -1,10 +1,5 @@
 package de.rettichlp.pkutils.common.storage.schema;
 
-import lombok.Data;
+public record FactionMember(String playerName, int rank) {
 
-@Data
-public class FactionMember {
-
-    private final String playerName;
-    private final int rank;
 }
