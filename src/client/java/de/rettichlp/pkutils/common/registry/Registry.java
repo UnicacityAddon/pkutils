@@ -7,6 +7,7 @@ import de.rettichlp.pkutils.command.ADropMoneyCommand;
 import de.rettichlp.pkutils.command.ASMSCommand;
 import de.rettichlp.pkutils.command.CheckActivityCommand;
 import de.rettichlp.pkutils.command.ClearActivityCommand;
+import de.rettichlp.pkutils.command.DepositCommand;
 import de.rettichlp.pkutils.command.ModCommand;
 import de.rettichlp.pkutils.command.RichTaxesCommand;
 import de.rettichlp.pkutils.command.SyncCommand;
@@ -56,6 +57,7 @@ public class Registry {
             ASMSCommand.class,
             CheckActivityCommand.class,
             ClearActivityCommand.class,
+            DepositCommand.class,
             ModCommand.class,
             RichTaxesCommand.class,
             SyncCommand.class,
@@ -79,6 +81,7 @@ public class Registry {
             TransportListener.class,
             // other
             CommandSendListener.class,
+            DepositCommand.class,
             RichTaxesCommand.class, // TODO find better solution for this
             SyncListener.class
     );
