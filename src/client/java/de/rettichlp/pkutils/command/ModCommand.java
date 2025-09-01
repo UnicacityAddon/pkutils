@@ -4,7 +4,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.api.schema.ActivityType;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.Person;
@@ -25,6 +24,8 @@ import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static java.time.LocalDateTime.MIN;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Arrays.stream;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
@@ -37,12 +38,12 @@ public class ModCommand extends CommandBase {
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
-                .then(ClientCommandManager.literal("fakeActivity")
+                .then(literal("fakeActivity")
                         .requires(fabricClientCommandSource -> {
                             String uuidAsString = player.getUuidAsString();
                             return uuidAsString.equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19") || uuidAsString.equals("929bbc61-2f89-45cd-a351-84f439842832");
                         })
-                        .then(ClientCommandManager.argument("activityType", word())
+                        .then(argument("activityType", word())
                                 .suggests((context, builder) -> {
                                     stream(ActivityType.values()).forEach(activityType -> builder.suggest(activityType.name()));
                                     return builder.buildFuture();
