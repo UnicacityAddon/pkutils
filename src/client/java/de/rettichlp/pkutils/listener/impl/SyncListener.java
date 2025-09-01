@@ -12,8 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtilsClient.hudService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
+import static de.rettichlp.pkutils.common.services.HudService.NotificationType.WARNING;
 import static de.rettichlp.pkutils.common.storage.schema.Faction.fromDisplayName;
 import static java.lang.Integer.parseInt;
 import static java.lang.System.currentTimeMillis;
@@ -35,7 +37,7 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
     @Override
     public boolean onCommandSend(@NotNull String command) {
         if (syncService.isGameSyncProcessActive() && !command.contains("memberinfoall") && !command.contains("wanteds") && !command.contains("blacklist")) {
-            sendModMessage("Während des Synchronisationsprozesses können keine Befehle ausgeführt werden.", false);
+            hudService.sendNotification("Während des Synchronisationsprozesses können keine Befehle ausgeführt werden.", WARNING);
             return false;
         }
 
