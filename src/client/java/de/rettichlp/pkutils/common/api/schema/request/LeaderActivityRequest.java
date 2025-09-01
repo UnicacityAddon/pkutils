@@ -1,7 +1,9 @@
 package de.rettichlp.pkutils.common.api.schema.request;
 
 import lombok.NoArgsConstructor;
+
 import java.net.URI;
+
 import static java.net.URI.create;
 
 @NoArgsConstructor

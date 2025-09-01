@@ -80,7 +80,6 @@ public class LeaderCheckActivity extends CommandBase {
             );
 
             player.sendMessage(clickableLinkText, false);
-
         }, throwable -> sendModMessage("Fehler: Konnte keinen Zugriffs-Token für das Dashboard erhalten.", true));
     }
 }

@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
+
 @Environment(EnvType.CLIENT)
 public class PKUtilsClient implements ClientModInitializer {
 
@@ -42,11 +43,11 @@ public class PKUtilsClient implements ClientModInitializer {
 
             this.registry.registerListeners();
         }));
-        ClientPlayConnectionEvents.DISCONNECT.register((ClientPlayConnectionEvents.Disconnect)(handler, minecraftClient) -> {
+
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, minecraftClient) -> {
             if (player != null && activityService != null) {
                 activityService.trackActivity(ActivityType.LOGOUT);
             }
-
         });
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {

@@ -107,7 +107,6 @@ public class CheckActivityCommand extends CommandBase {
             );
 
             player.sendMessage(clickableLinkText, false);
-
         }, throwable -> sendModMessage("Fehler: Konnte keinen Zugriffs-Token für " + playerName + " erhalten.", true));
     }
 }
