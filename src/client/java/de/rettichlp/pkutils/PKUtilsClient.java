@@ -19,12 +19,15 @@ import net.minecraft.client.network.ClientPlayerEntity;
 public class PKUtilsClient implements ClientModInitializer {
 
     public static final Storage storage = new Storage();
+
     public static ClientPlayerEntity player;
     public static ClientPlayNetworkHandler networkHandler;
+
     public static ActivityService activityService;
     public static FactionService factionService;
     public static HudService hudService;
     public static SyncService syncService;
+
     private final Registry registry = new Registry();
 
     @Override

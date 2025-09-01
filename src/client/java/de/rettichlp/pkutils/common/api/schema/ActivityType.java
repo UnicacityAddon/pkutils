@@ -9,11 +9,11 @@ public enum ActivityType {
     ARREST("Verhaftung"),
     ARREST_KILL("Verhaftung (Kill)"),
     EMERGENCY_SERVICE("Notruf"),
+    LOGIN("Login"),
+    LOGOUT("Logout"),
     MAJOR_EVENT("Großereignis"),
     PARK_TICKET("Strafzettel"),
-    REINFORCEMENT("Reinforcement"),
-    LOGIN("Login"),
-    LOGOUT("Logout");
+    REINFORCEMENT("Reinforcement");
 
     private final String displayMessage;
 

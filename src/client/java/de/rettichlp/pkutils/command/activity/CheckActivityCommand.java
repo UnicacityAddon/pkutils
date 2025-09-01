@@ -71,18 +71,18 @@ public class CheckActivityCommand extends CommandBase {
                                 return 1;
                             }
 
-                            requestAndOpenActivityLink(targetName);
+                            sendActivityLink(targetName);
                             return 1;
                         })
                 )
                 .executes(context -> {
                     String playerName = player.getName().getString();
-                    requestAndOpenActivityLink(playerName);
+                    sendActivityLink(playerName);
                     return 1;
                 });
     }
 
-    private void requestAndOpenActivityLink(String playerName) {
+    private void sendActivityLink(String playerName) {
         Request<ViewTokenRequest> request = Request.<ViewTokenRequest>builder()
                 .body(new ViewTokenRequest(playerName))
                 .build();
