@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
+import static de.rettichlp.pkutils.PKUtilsClient.hudService;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
@@ -28,7 +29,7 @@ public class SyncService extends PKUtilsBase {
 
     public void executeSync() {
         this.gameSyncProcessActive = true;
-        sendModMessage("PKUtils wird synchronisiert...", false);
+        hudService.sendNotification("PKUtils wird synchronisiert...");
 
         // seconds 1-13: execute commands for all factions -> blocks command input for 13 * 1000 ms
         for (Faction faction : Faction.values()) {
@@ -53,7 +54,7 @@ public class SyncService extends PKUtilsBase {
         // end: init commands dons
         delayedAction(() -> {
             this.gameSyncProcessActive = false;
-            sendModMessage("PKUtils synchronisiert.", false);
+            hudService.sendNotification("PKUtils synchronisiert.");
             this.lastSyncTimestamp = now();
         }, Faction.values().length * 1000L + 200);
     }

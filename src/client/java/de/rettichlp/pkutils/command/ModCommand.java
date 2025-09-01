@@ -4,27 +4,27 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.api.schema.ActivityType;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import de.rettichlp.pkutils.common.services.HudService;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.Person;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.StringJoiner;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
 import static de.rettichlp.pkutils.PKUtilsClient.activityService;
+import static de.rettichlp.pkutils.PKUtilsClient.hudService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static java.time.LocalDateTime.MIN;
-import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
@@ -37,12 +37,9 @@ public class ModCommand extends CommandBase {
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
-                .then(ClientCommandManager.literal("fakeActivity")
-                        .requires(fabricClientCommandSource -> {
-                            String uuidAsString = player.getUuidAsString();
-                            return uuidAsString.equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19") || uuidAsString.equals("929bbc61-2f89-45cd-a351-84f439842832");
-                        })
-                        .then(ClientCommandManager.argument("activityType", word())
+                .then(literal("fakeActivity")
+                        .requires(fabricClientCommandSource -> isSuperUser())
+                        .then(argument("activityType", word())
                                 .suggests((context, builder) -> {
                                     stream(ActivityType.values()).forEach(activityType -> builder.suggest(activityType.name()));
                                     return builder.buildFuture();
@@ -56,6 +53,15 @@ public class ModCommand extends CommandBase {
 
                                     return 1;
                                 })))
+                .then(literal("sendNotification")
+                        .requires(fabricClientCommandSource -> isSuperUser())
+                        .executes(context -> {
+                            // random notification type
+                            HudService.NotificationType[] values = HudService.NotificationType.values();
+                            HudService.NotificationType notificationType = values[(int) (Math.random() * values.length)];
+                            hudService.sendNotification("Notification at " + dateTimeToFriendlyString(now()), notificationType);
+                            return 1;
+                        }))
                 .executes(context -> {
                     String version = getVersion();
                     String authors = getAuthors();
@@ -85,7 +91,7 @@ public class ModCommand extends CommandBase {
                             .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                             .append(of(lastSyncTimestamp.equals(MIN)
                                     ? "Nie"
-                                    : timeToFriendlyString(lastSyncTimestamp)).copy().formatted(WHITE)), false);
+                                    : dateTimeToFriendlyString(lastSyncTimestamp)).copy().formatted(WHITE)), false);
 
                     player.sendMessage(empty(), false);
 
@@ -108,10 +114,5 @@ public class ModCommand extends CommandBase {
         authors.forEach(person -> stringJoiner.add(person.getName()));
 
         return stringJoiner.toString();
-    }
-
-    private String timeToFriendlyString(@NotNull ChronoLocalDateTime<LocalDate> dateTime) {
-        DateTimeFormatter formatter = ofPattern("dd.MM.yyyy HH:mm:ss");
-        return dateTime.format(formatter);
     }
 }

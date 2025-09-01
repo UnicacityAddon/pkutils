@@ -9,6 +9,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
+import static de.rettichlp.pkutils.PKUtilsClient.hudService;
+import static de.rettichlp.pkutils.common.services.HudService.NotificationType.ACTIVITY;
+import static de.rettichlp.pkutils.common.services.HudService.NotificationType.ERROR;
 import static java.util.Objects.isNull;
 
 public class ActivityService extends PKUtilsBase {
@@ -32,7 +35,7 @@ public class ActivityService extends PKUtilsBase {
                 .body(new ActivityRequest(activityType))
                 .build();
 
-        request.send(response -> sendModMessage(activityType.getSuccessMessage(), true), () -> sendModMessage("Fehler beim Tracken der Aktivität!", true));
+        request.send(response -> hudService.sendNotification(activityType.getSuccessMessage(), ACTIVITY), () -> hudService.sendNotification("Fehler beim Tracken der Aktivität!", ERROR));
     }
 
     public void clearActivity(String targetName) {
@@ -40,6 +43,6 @@ public class ActivityService extends PKUtilsBase {
                 .body(new ActivityClearRequest(targetName))
                 .build();
 
-        request.send(response -> sendModMessage(response.message(), true), () -> sendModMessage("Fehler beim zurücksetzen der Aktivität!", true));
+        request.send(response -> sendModMessage(response.message(), true), () -> hudService.sendNotification("Fehler beim zurücksetzen der Aktivität!", ERROR));
     }
 }

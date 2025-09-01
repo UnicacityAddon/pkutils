@@ -3,6 +3,7 @@ package de.rettichlp.pkutils;
 import de.rettichlp.pkutils.common.registry.Registry;
 import de.rettichlp.pkutils.common.services.ActivityService;
 import de.rettichlp.pkutils.common.services.FactionService;
+import de.rettichlp.pkutils.common.services.HudService;
 import de.rettichlp.pkutils.common.services.SyncService;
 import de.rettichlp.pkutils.common.storage.Storage;
 import net.fabricmc.api.ClientModInitializer;
@@ -20,6 +21,7 @@ public class PKUtilsClient implements ClientModInitializer {
 
     public static ActivityService activityService;
     public static FactionService factionService;
+    public static HudService hudService;
     public static SyncService syncService;
 
     private final Registry registry = new Registry();
@@ -30,6 +32,7 @@ public class PKUtilsClient implements ClientModInitializer {
 
         activityService = new ActivityService();
         factionService = new FactionService();
+        hudService = new HudService();
         syncService = new SyncService();
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, minecraftClient) -> minecraftClient.execute(() -> {
