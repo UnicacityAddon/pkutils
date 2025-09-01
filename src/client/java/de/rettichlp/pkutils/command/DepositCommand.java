@@ -3,6 +3,7 @@ package de.rettichlp.pkutils.command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
+import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
@@ -16,6 +17,7 @@ import static java.lang.Integer.parseInt;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsCommand(label = "einzahlen")
+@PKUtilsListener
 public class DepositCommand extends CommandBase implements IMessageReceiveListener {
 
     private static final Pattern PLAYER_MONEY_AMOUNT_PATTERN = compile("- Geld: (?<moneyAmount>\\d+)\\$");
