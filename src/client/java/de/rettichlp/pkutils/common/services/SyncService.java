@@ -54,7 +54,7 @@ public class SyncService extends PKUtilsBase {
         // end: init commands dons
         delayedAction(() -> {
             this.gameSyncProcessActive = false;
-            hudService.sendNotification("PKUtils synchronisiert.");
+            hudService.sendNotification("PKUtils synchronisiert");
             this.lastSyncTimestamp = now();
         }, Faction.values().length * 1000L + 200);
     }

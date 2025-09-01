@@ -37,7 +37,7 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
     @Override
     public boolean onCommandSend(@NotNull String command) {
         if (syncService.isGameSyncProcessActive() && !command.contains("memberinfoall") && !command.contains("wanteds") && !command.contains("blacklist")) {
-            hudService.sendNotification("Während des Synchronisationsprozesses können keine Befehle ausgeführt werden.", WARNING);
+            hudService.sendNotification("Synchronisierung aktiv - Befehle blockiert", WARNING);
             return false;
         }
 

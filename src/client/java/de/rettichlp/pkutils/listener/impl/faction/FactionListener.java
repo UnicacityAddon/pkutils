@@ -160,11 +160,14 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
 
     @Override
     public void onMove(BlockPos blockPos) {
-        // get the nearest reinforcement within 60 blocks that is not from yourself
+        String playerName = player.getGameProfile().getName();
+
+        // get the nearest reinforcement within 60 blocks that is not from yourself and was accepted
         Optional<Reinforcement> optionalReinforcement = storage.getReinforcements().stream()
-                .filter(reinforcement -> nonNull(reinforcement.getBlockPos())) // check if block position is set
+                .filter(reinforcement -> nonNull(reinforcement.getBlockPos())) // check if the block position was set
                 .filter(reinforcement -> reinforcement.getBlockPos().isWithinDistance(player.getBlockPos(), 60))
-                .filter(reinforcement -> !reinforcement.getSenderPlayerName().equals(player.getGameProfile().getName()))
+                .filter(reinforcement -> !reinforcement.getSenderPlayerName().equals(playerName))
+                .filter(reinforcement -> reinforcement.getAcceptedPlayerNames().contains(playerName))
                 .max(comparing(Reinforcement::getCreatedAt));
 
         optionalReinforcement.ifPresent(reinforcement -> {
