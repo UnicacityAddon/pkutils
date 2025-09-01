@@ -33,7 +33,7 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
                     networkHandler.sendChatCommand("bank info");
 
                     // execute command to check money in atm
-                    delayedAction(() -> networkHandler.sendChatCommand("atm info"), 1000);
+                    delayedAction(() -> networkHandler.sendChatCommand("atminfo"), 1000);
 
                     // handle money withdraw
                     delayedAction(() -> {
