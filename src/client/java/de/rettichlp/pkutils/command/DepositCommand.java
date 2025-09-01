@@ -18,9 +18,9 @@ import static java.util.regex.Pattern.compile;
 @PKUtilsCommand(label = "einzahlen")
 public class DepositCommand extends CommandBase implements IMessageReceiveListener {
 
-    private static final Pattern PLAYER_MONEY_AMOUNT_PATTERN = compile("^ - Geld: (?<moneyAmount>\\d+)\\$$");
+    private static final Pattern PLAYER_MONEY_AMOUNT_PATTERN = compile("- Geld: (?<moneyAmount>\\d+)\\$");
 
-    private int amount = 0;
+    private static int amount = 0;
 
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
@@ -29,12 +29,11 @@ public class DepositCommand extends CommandBase implements IMessageReceiveListen
                     networkHandler.sendChatCommand("stats");
 
                     delayedAction(() -> {
-                        if (this.amount <= 0) {
+                        if (amount <= 0) {
                             sendModMessage("Du hast kein Geld zum Einzahlen.", false);
-                            return;
+                        } else {
+                            networkHandler.sendChatCommand("bank einzahlen " + amount);
                         }
-
-                        networkHandler.sendChatCommand("bank einzahlen " + this.amount);
                     }, 1000);
 
                     return 1;
@@ -45,7 +44,7 @@ public class DepositCommand extends CommandBase implements IMessageReceiveListen
     public boolean onMessageReceive(Text text, String message) {
         Matcher playerMoneyAmountMatcher = PLAYER_MONEY_AMOUNT_PATTERN.matcher(message);
         if (playerMoneyAmountMatcher.find()) {
-            this.amount = parseInt(playerMoneyAmountMatcher.group("moneyAmount"));
+            amount = parseInt(playerMoneyAmountMatcher.group("moneyAmount"));
         }
 
         return true;
