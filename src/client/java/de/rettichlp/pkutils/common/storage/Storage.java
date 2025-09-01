@@ -105,9 +105,9 @@ public class Storage {
     @AllArgsConstructor
     public enum ToggledChat {
 
-        NONE("", "Dauerhafter Fraktionschat deaktiviert."),
-        D_CHAT("d", "Dauerhafter D-Chat aktiviert."),
-        F_CHAT("f", "Dauerhafter F-Chat aktiviert.");
+        NONE("", "Dauerhafter Fraktionschat deaktiviert"),
+        D_CHAT("d", "Dauerhafter D-Chat aktiviert"),
+        F_CHAT("f", "Dauerhafter F-Chat aktiviert");
 
         private final String command;
         private final String toggleMessage;
