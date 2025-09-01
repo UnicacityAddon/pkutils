@@ -15,11 +15,9 @@ import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.text.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.text.HoverEvent.Action.SHOW_TEXT;
-import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
-import static net.minecraft.util.Formatting.DARK_GRAY;
-import static net.minecraft.util.Formatting.GOLD;
 import static net.minecraft.util.Formatting.GRAY;
+import static net.minecraft.util.Formatting.UNDERLINE;
 
 @PKUtilsListener
 public class BusinessListener extends PKUtilsBase implements IMessageReceiveListener {
@@ -32,20 +30,14 @@ public class BusinessListener extends PKUtilsBase implements IMessageReceiveList
         if (businessCashMatcher.find()) {
             String amountString = businessCashMatcher.group(1);
 
-            if (amountString.equals("0")) {
-                return true;
-            }
-
-            MutableText newText = empty()
-                    .append(of("Kasse").copy().formatted(GOLD))
-                    .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                    .append(of(amountString + "$").copy().formatted(GRAY))
+            MutableText appendedText = text.copy().append(" ")
+                    .append(of("Geld entnehmen").copy().formatted(GRAY, UNDERLINE))
                     .styled(style -> style
                             .withClickEvent(new ClickEvent(RUN_COMMAND, "/biz kasse get " + amountString))
                             .withHoverEvent(new HoverEvent(SHOW_TEXT, of("Klicke, um " + amountString + "$ aus der Kasse zu nehmen.")))
                     );
 
-            player.sendMessage(newText, false);
+            player.sendMessage(appendedText, false);
             return false;
         }
 
