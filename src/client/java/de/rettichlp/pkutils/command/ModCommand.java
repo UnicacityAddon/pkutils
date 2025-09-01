@@ -39,10 +39,7 @@ public class ModCommand extends CommandBase {
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
                 .then(literal("fakeActivity")
-                        .requires(fabricClientCommandSource -> {
-                            String uuidAsString = player.getUuidAsString();
-                            return uuidAsString.equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19") || uuidAsString.equals("929bbc61-2f89-45cd-a351-84f439842832");
-                        })
+                        .requires(fabricClientCommandSource -> isSuperUser())
                         .then(argument("activityType", word())
                                 .suggests((context, builder) -> {
                                     stream(ActivityType.values()).forEach(activityType -> builder.suggest(activityType.name()));

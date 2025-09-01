@@ -40,4 +40,9 @@ public abstract class PKUtilsBase {
             }
         }, milliseconds);
     }
+
+    public boolean isSuperUser() {
+        String uuidAsString = player.getUuidAsString();
+        return uuidAsString.equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19");
+    }
 }
