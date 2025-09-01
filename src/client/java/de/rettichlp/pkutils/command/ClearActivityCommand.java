@@ -28,7 +28,7 @@ public class ClearActivityCommand extends CommandBase {
                         .suggests((context, builder) -> {
                             Faction faction = storage.getFaction(player.getName().getString());
                             return faction == NULL ? empty() : suggestMatching(faction.getMembers().stream()
-                                    .map(FactionMember::getPlayerName), builder);
+                                    .map(FactionMember::playerName), builder);
                         })
                         .executes(context -> {
                             String targetName = getString(context, "player");

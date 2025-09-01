@@ -58,7 +58,7 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
         Matcher blacklistEntryRemoveMatcher = BLACKLIST_ENTRY_REMOVE.matcher(message);
         if (blacklistEntryRemoveMatcher.find()) {
             String targetName = blacklistEntryRemoveMatcher.group("targetName");
-            storage.getBlacklistEntries().removeIf(blacklistEntry -> blacklistEntry.getPlayerName().equals(targetName));
+            storage.getBlacklistEntries().removeIf(blacklistEntry -> blacklistEntry.playerName().equals(targetName));
             return true;
         }
 

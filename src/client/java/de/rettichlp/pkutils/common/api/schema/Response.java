@@ -1,11 +1,5 @@
 package de.rettichlp.pkutils.common.api.schema;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public record Response(String message) {
 
-@Getter
-@AllArgsConstructor
-public class Response {
-
-    private final String message;
 }

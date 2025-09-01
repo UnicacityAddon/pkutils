@@ -40,6 +40,6 @@ public class ActivityService extends PKUtilsBase {
                 .body(new ActivityClearRequest(targetName))
                 .build();
 
-        request.send(response -> sendModMessage(response.getMessage(), true), () -> sendModMessage("Fehler beim zurücksetzen der Aktivität!", true));
+        request.send(response -> sendModMessage(response.message(), true), () -> sendModMessage("Fehler beim zurücksetzen der Aktivität!", true));
     }
 }
