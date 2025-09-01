@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
+import static java.lang.Integer.parseInt;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsCommand(label = "reichensteuer")
@@ -68,13 +69,13 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
     public boolean onMessageReceive(Text text, String message) {
         Matcher playerMoneyBankAmountMatcher = PLAYER_MONEY_BANK_AMOUNT.matcher(message);
         if (playerMoneyBankAmountMatcher.find()) {
-            moneyBankAmount = Integer.parseInt(playerMoneyBankAmountMatcher.group("moneyBankAmount"));
+            moneyBankAmount = parseInt(playerMoneyBankAmountMatcher.group("moneyBankAmount"));
             return true;
         }
 
         Matcher moneyAtmAmountMatcher = MONEY_ATM_AMOUNT.matcher(message);
         if (moneyAtmAmountMatcher.find()) {
-            moneyAtmAmount = Integer.parseInt(moneyAtmAmountMatcher.group("moneyAtmAmount"));
+            moneyAtmAmount = parseInt(moneyAtmAmountMatcher.group("moneyAtmAmount"));
             return true;
         }
 

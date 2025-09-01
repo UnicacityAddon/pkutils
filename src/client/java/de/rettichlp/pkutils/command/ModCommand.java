@@ -23,6 +23,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.activityService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static java.time.LocalDateTime.MIN;
+import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Arrays.stream;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
@@ -110,7 +111,7 @@ public class ModCommand extends CommandBase {
     }
 
     private String timeToFriendlyString(@NotNull ChronoLocalDateTime<LocalDate> dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        DateTimeFormatter formatter = ofPattern("dd.MM.yyyy HH:mm:ss");
         return dateTime.format(formatter);
     }
 }
