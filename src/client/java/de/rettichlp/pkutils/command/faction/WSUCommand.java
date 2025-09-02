@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.command;
+package de.rettichlp.pkutils.command.faction;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;

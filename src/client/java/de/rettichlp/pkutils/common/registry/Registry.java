@@ -2,18 +2,19 @@ package de.rettichlp.pkutils.common.registry;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.command.ACallCommand;
 import de.rettichlp.pkutils.command.ADropMoneyCommand;
-import de.rettichlp.pkutils.command.ASMSCommand;
-import de.rettichlp.pkutils.command.CheckActivityCommand;
-import de.rettichlp.pkutils.command.ClearActivityCommand;
-import de.rettichlp.pkutils.command.DepositCommand;
 import de.rettichlp.pkutils.command.ModCommand;
-import de.rettichlp.pkutils.command.RichTaxesCommand;
 import de.rettichlp.pkutils.command.SyncCommand;
-import de.rettichlp.pkutils.command.ToggleDChatCommand;
-import de.rettichlp.pkutils.command.ToggleFChatCommand;
-import de.rettichlp.pkutils.command.WSUCommand;
+import de.rettichlp.pkutils.command.activity.CheckActivityCommand;
+import de.rettichlp.pkutils.command.activity.ClearActivityCommand;
+import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
+import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
+import de.rettichlp.pkutils.command.chat.ToggleWChatCommand;
+import de.rettichlp.pkutils.command.faction.WSUCommand;
+import de.rettichlp.pkutils.command.mobile.ACallCommand;
+import de.rettichlp.pkutils.command.mobile.ASMSCommand;
+import de.rettichlp.pkutils.command.money.DepositCommand;
+import de.rettichlp.pkutils.command.money.RichTaxesCommand;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
@@ -64,6 +65,7 @@ public class Registry {
             SyncCommand.class,
             ToggleDChatCommand.class,
             ToggleFChatCommand.class,
+            ToggleWChatCommand.class,
             WSUCommand.class
     );
 

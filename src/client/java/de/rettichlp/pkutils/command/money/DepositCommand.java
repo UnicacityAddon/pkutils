@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.command;
+package de.rettichlp.pkutils.command.money;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.registry.CommandBase;
