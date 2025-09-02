@@ -105,7 +105,7 @@ public class Storage {
     @AllArgsConstructor
     public enum ToggledChat {
 
-        NONE("", "Dauerhafter Fraktionschat deaktiviert"),
+        NONE("", "Dauerhafter Chat deaktiviert"),
         D_CHAT("d", "Dauerhafter D-Chat aktiviert"),
         F_CHAT("f", "Dauerhafter F-Chat aktiviert"),
         W_CHAT("w", "Dauerhafter Flüster-Chat aktiviert");
