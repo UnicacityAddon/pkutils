@@ -9,6 +9,7 @@ import de.rettichlp.pkutils.command.activity.CheckActivityCommand;
 import de.rettichlp.pkutils.command.activity.ClearActivityCommand;
 import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
+import de.rettichlp.pkutils.command.chat.ToggleWChatCommand;
 import de.rettichlp.pkutils.command.faction.WSUCommand;
 import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
@@ -64,6 +65,7 @@ public class Registry {
             SyncCommand.class,
             ToggleDChatCommand.class,
             ToggleFChatCommand.class,
+            ToggleWChatCommand.class,
             WSUCommand.class
     );
 
