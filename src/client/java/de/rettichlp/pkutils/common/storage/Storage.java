@@ -107,7 +107,8 @@ public class Storage {
 
         NONE("", "Dauerhafter Fraktionschat deaktiviert"),
         D_CHAT("d", "Dauerhafter D-Chat aktiviert"),
-        F_CHAT("f", "Dauerhafter F-Chat aktiviert");
+        F_CHAT("f", "Dauerhafter F-Chat aktiviert"),
+        W_CHAT("w", "Dauerhafter Flüster-Chat aktiviert");
 
         private final String command;
         private final String toggleMessage;
