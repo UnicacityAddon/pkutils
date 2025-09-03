@@ -1,10 +1,6 @@
 package de.rettichlp.pkutils.command.activity;
 
-import com.google.gson.Gson;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.common.api.schema.request.Request;
-import de.rettichlp.pkutils.common.api.schema.request.ViewTokenRequest;
-import de.rettichlp.pkutils.common.api.schema.response.ViewTokenResponse;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import de.rettichlp.pkutils.common.storage.schema.Faction;
@@ -32,7 +28,6 @@ import static net.minecraft.text.Text.of;
 public class CheckActivityCommand extends CommandBase {
 
     private static final String BASE_URL = "https://activitycheck.pkutils.eu";
-    private static final Gson GSON = new Gson();
 
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
@@ -83,30 +78,18 @@ public class CheckActivityCommand extends CommandBase {
     }
 
     private void sendActivityLink(String playerName) {
-        Request<ViewTokenRequest> request = Request.<ViewTokenRequest>builder()
-                .body(new ViewTokenRequest(playerName))
-                .build();
+        String personalUrl = BASE_URL + "/user/" + playerName;
 
-        request.send(response -> {
-            ViewTokenResponse viewTokenResponse = GSON.fromJson(response.body(), ViewTokenResponse.class);
+        MutableText linkText = modMessagePrefix.copy()
+                .append(of("Klicke hier, um die Aktivitäten von")).append(" ")
+                .append(of(playerName).copy().formatted(Formatting.BLUE, Formatting.UNDERLINE)).append(" ")
+                .append(of("anzuzeigen."));
 
-            if (response.statusCode() >= 400 || viewTokenResponse.getAccessToken() == null) {
-                String errorMessage = viewTokenResponse.getError() != null ? viewTokenResponse.getError() : "Unbekannter Fehler.";
-                sendModMessage("Fehler: " + errorMessage, true);
-                return;
-            }
+        MutableText clickableLinkText = linkText.styled(style -> style
+                .withClickEvent(new ClickEvent(OPEN_URL, personalUrl))
+                .withHoverEvent(new HoverEvent(SHOW_TEXT, of("Öffnet: " + personalUrl)))
+        );
 
-            String personalUrl = BASE_URL + "/user/" + playerName + "?token=" + viewTokenResponse.getAccessToken();
-
-            MutableText linkText = modMessagePrefix.copy()
-                    .append(of("Klicke hier, um die Aktivitäten von ")).append(of(playerName).copy().formatted(Formatting.BLUE, Formatting.UNDERLINE)).append(of(" anzuzeigen."));
-
-            MutableText clickableLinkText = linkText.styled(style -> style
-                    .withClickEvent(new ClickEvent(OPEN_URL, personalUrl))
-                    .withHoverEvent(new HoverEvent(SHOW_TEXT, of("Öffnet einen gesicherten Link")))
-            );
-
-            player.sendMessage(clickableLinkText, false);
-        }, throwable -> sendModMessage("Fehler: Konnte keinen Zugriffs-Token für " + playerName + " erhalten.", true));
+        player.sendMessage(clickableLinkText, false);
     }
 }
