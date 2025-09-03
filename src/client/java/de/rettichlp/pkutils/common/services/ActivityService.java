@@ -2,7 +2,6 @@ package de.rettichlp.pkutils.common.services;
 
 import com.google.gson.Gson;
 import de.rettichlp.pkutils.common.api.schema.ActivityType;
-import de.rettichlp.pkutils.common.api.schema.request.ActivityClearRequest;
 import de.rettichlp.pkutils.common.api.schema.request.ActivityRequest;
 import de.rettichlp.pkutils.common.api.schema.request.Request;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
