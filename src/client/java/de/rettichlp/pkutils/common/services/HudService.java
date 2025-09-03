@@ -61,14 +61,4 @@ public class HudService extends PKUtilsBase {
         private Color borderColor = new Color(255, 255, 255, 255);
         private Color backgroundColor = new Color(127, 127, 127, 100);
     }
-
-    @Data
-    public static class Notification {
-
-        private final Text text;
-        private final long durationInMillis;
-        private final LocalDateTime timestamp = now();
-        private int borderColor = 0xFFFFFFFF;
-        private int backgroundColor = 0xAA000000;
-    }
 }
