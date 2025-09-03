@@ -6,10 +6,10 @@ import java.net.URI;
 
 import static java.net.URI.create;
 
-public record ActivityRequest(ActivityType activity) implements IRequest {
+public record ActivityRequest(ActivityType activityType) implements IRequest {
 
     @Override
     public URI getUrl() {
-        return create("https://activitycheck.pkutils.eu/proxy");
+        return create("https://pkutils.rettichlp.de/v1/activity/add");
     }
 }

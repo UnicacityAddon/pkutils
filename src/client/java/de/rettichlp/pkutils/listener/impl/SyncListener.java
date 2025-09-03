@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import static de.rettichlp.pkutils.PKUtilsClient.hudService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
-import static de.rettichlp.pkutils.common.services.HudService.NotificationType.WARNING;
 import static de.rettichlp.pkutils.common.storage.schema.Faction.fromDisplayName;
 import static java.lang.Integer.parseInt;
 import static java.lang.System.currentTimeMillis;
@@ -37,7 +36,7 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
     @Override
     public boolean onCommandSend(@NotNull String command) {
         if (syncService.isGameSyncProcessActive() && !command.contains("memberinfoall") && !command.contains("wanteds") && !command.contains("blacklist")) {
-            hudService.sendNotification("Synchronisierung aktiv - Befehle blockiert", WARNING);
+            hudService.sendWarningNotification("Synchronisierung aktiv - Befehle blockiert");
             return false;
         }
 

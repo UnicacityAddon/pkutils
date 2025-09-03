@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static de.rettichlp.pkutils.PKUtilsClient.hudService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
-import static de.rettichlp.pkutils.common.services.HudService.NotificationType.DEFAULT;
 import static de.rettichlp.pkutils.common.storage.Storage.ToggledChat.D_CHAT;
 import static de.rettichlp.pkutils.common.storage.Storage.ToggledChat.NONE;
 
@@ -22,7 +21,7 @@ public class ToggleDChatCommand extends CommandBase {
                 .executes(context -> {
                     Storage.ToggledChat newState = storage.getToggledChat() == D_CHAT ? NONE : D_CHAT;
                     storage.setToggledChat(newState);
-                    hudService.sendNotification(newState.getToggleMessage(), DEFAULT);
+                    hudService.sendInfoNotification(newState.getToggleMessage());
                     return 1;
                 });
     }
