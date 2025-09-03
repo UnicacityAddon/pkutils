@@ -16,7 +16,7 @@ import static java.util.regex.Pattern.compile;
 @PKUtilsListener
 public class ServiceListener extends PKUtilsBase implements IMessageReceiveListener {
 
-    private static final Pattern SERVICE_ACCEPT_PATTERN = compile("^HQ: (?<playerName>[a-zA-Z0-9_]) hat den Notruf von (?<targetName>[a-zA-Z0-9_]) angenommen\\.$");
+    private static final Pattern SERVICE_ACCEPT_PATTERN = compile("^HQ: (?<playerName>[a-zA-Z0-9_]+) hat den Notruf von (?<targetName>[a-zA-Z0-9_]+) angenommen\\.$");
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
