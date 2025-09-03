@@ -6,7 +6,7 @@ import java.net.URI;
 
 import static java.net.URI.create;
 
-public record ActivityRequest(ActivityType activity) implements IRequest {
+public record ActivityRequest(ActivityType activityType) implements IRequest {
 
     @Override
     public URI getUrl() {
