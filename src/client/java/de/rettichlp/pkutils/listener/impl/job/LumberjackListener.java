@@ -4,6 +4,7 @@ import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -27,7 +28,7 @@ public class LumberjackListener extends PKUtilsBase implements ICommandSendListe
     }
 
     @Override
-    public boolean onMessageReceive(String message) {
+    public boolean onMessageReceive(Text text, String message) {
         Matcher lumberjackStartMatcher = LUMBERJACK_START_PATTERN.matcher(message);
         if (lumberjackStartMatcher.find()) {
             delayedAction(() -> networkHandler.sendChatCommand("findtree"), 1000);

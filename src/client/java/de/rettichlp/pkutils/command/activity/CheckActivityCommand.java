@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.command;
+package de.rettichlp.pkutils.command.activity;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.registry.CommandBase;
@@ -36,7 +36,7 @@ public class CheckActivityCommand extends CommandBase {
                         .suggests((context, builder) -> {
                             Faction faction = storage.getFaction(player.getName().getString());
                             return faction == NULL ? empty() : suggestMatching(faction.getMembers().stream()
-                                    .map(FactionMember::getPlayerName), builder);
+                                    .map(FactionMember::playerName), builder);
                         })
                         .executes(context -> {
                             String playerName = player.getName().getString();
@@ -58,9 +58,9 @@ public class CheckActivityCommand extends CommandBase {
                             }
 
                             if (isNotSuperUser && storage.getFactionMembers(faction).stream()
-                                    .filter(factionMember -> factionMember.getPlayerName().equals(playerName))
+                                    .filter(factionMember -> factionMember.playerName().equals(playerName))
                                     .findFirst()
-                                    .map(factionMember -> factionMember.getRank() < 4)
+                                    .map(factionMember -> factionMember.rank() < 4)
                                     .orElse(true)) {
                                 sendModMessage("Du musst Rang 4 oder höher sein, um die Aktivitäten von anderen Mitgliedern einsehen zu können.", false);
                                 return 1;

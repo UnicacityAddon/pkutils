@@ -6,11 +6,13 @@ import de.rettichlp.pkutils.common.storage.schema.Faction;
 import de.rettichlp.pkutils.common.storage.schema.FactionMember;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtilsClient.hudService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static de.rettichlp.pkutils.common.storage.schema.Faction.fromDisplayName;
@@ -34,7 +36,7 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
     @Override
     public boolean onCommandSend(@NotNull String command) {
         if (syncService.isGameSyncProcessActive() && !command.contains("memberinfoall") && !command.contains("wanteds") && !command.contains("blacklist")) {
-            sendModMessage("Während des Synchronisationsprozesses können keine Befehle ausgeführt werden.", false);
+            hudService.sendWarningNotification("Synchronisierung aktiv - Befehle blockiert");
             return false;
         }
 
@@ -42,7 +44,7 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
     }
 
     @Override
-    public boolean onMessageReceive(String message) {
+    public boolean onMessageReceive(Text text, String message) {
         // SERVER INIT
 
         // if a password is not set, start the game sync process

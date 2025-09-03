@@ -2,27 +2,33 @@ package de.rettichlp.pkutils.common.registry;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.command.ACallCommand;
 import de.rettichlp.pkutils.command.ADropMoneyCommand;
-import de.rettichlp.pkutils.command.ASMSCommand;
-import de.rettichlp.pkutils.command.CheckActivityCommand;
-import de.rettichlp.pkutils.command.ClearActivityCommand;
 import de.rettichlp.pkutils.command.ModCommand;
-import de.rettichlp.pkutils.command.RichTaxesCommand;
 import de.rettichlp.pkutils.command.SyncCommand;
-import de.rettichlp.pkutils.command.ToggleDChatCommand;
-import de.rettichlp.pkutils.command.ToggleFChatCommand;
-import de.rettichlp.pkutils.command.WSUCommand;
+import de.rettichlp.pkutils.command.activity.CheckActivityCommand;
+import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
+import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
+import de.rettichlp.pkutils.command.chat.ToggleWChatCommand;
+import de.rettichlp.pkutils.command.faction.WSUCommand;
+import de.rettichlp.pkutils.command.mobile.ACallCommand;
+import de.rettichlp.pkutils.command.mobile.ASMSCommand;
+import de.rettichlp.pkutils.command.money.DepositCommand;
+import de.rettichlp.pkutils.command.money.RichTaxesCommand;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
+import de.rettichlp.pkutils.listener.IHudRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
 import de.rettichlp.pkutils.listener.IMoveListener;
 import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
 import de.rettichlp.pkutils.listener.ITickListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
+import de.rettichlp.pkutils.listener.impl.HudListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
+import de.rettichlp.pkutils.listener.impl.business.BusinessListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
+import de.rettichlp.pkutils.listener.impl.faction.BombListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionListener;
+import de.rettichlp.pkutils.listener.impl.faction.ServiceListener;
 import de.rettichlp.pkutils.listener.impl.faction.WantedListener;
 import de.rettichlp.pkutils.listener.impl.job.FisherListener;
 import de.rettichlp.pkutils.listener.impl.job.GarbageManListener;
@@ -32,6 +38,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,19 +58,25 @@ public class Registry {
             ADropMoneyCommand.class,
             ASMSCommand.class,
             CheckActivityCommand.class,
-            ClearActivityCommand.class,
+            DepositCommand.class,
             ModCommand.class,
             RichTaxesCommand.class,
             SyncCommand.class,
             ToggleDChatCommand.class,
             ToggleFChatCommand.class,
+            ToggleWChatCommand.class,
             WSUCommand.class
     );
 
     private final Set<Class<?>> listeners = Set.of(
+            // business
+            BusinessListener.class,
             // faction
+            BombListener.class,
             BlacklistListener.class,
             FactionListener.class,
+            HudListener.class,
+            ServiceListener.class,
             WantedListener.class,
             // job
             FisherListener.class,
@@ -72,6 +85,7 @@ public class Registry {
             TransportListener.class,
             // other
             CommandSendListener.class,
+            DepositCommand.class,
             RichTaxesCommand.class, // TODO find better solution for this
             SyncListener.class
     );
@@ -116,10 +130,14 @@ public class Registry {
                     ClientSendMessageEvents.ALLOW_COMMAND.register(iCommandSendListener::onCommandSend);
                 }
 
+                if (listenerInstance instanceof IHudRenderListener iHudRenderListener) {
+                    HudRenderCallback.EVENT.register(iHudRenderListener::onHudRender);
+                }
+
                 if (listenerInstance instanceof IMessageReceiveListener iMessageReceiveListener) {
                     ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> {
                         String rawMessage = message.getString();
-                        return iMessageReceiveListener.onMessageReceive(rawMessage);
+                        return iMessageReceiveListener.onMessageReceive(message, rawMessage);
                     });
                 }
 
