@@ -28,6 +28,7 @@ import de.rettichlp.pkutils.listener.impl.business.BusinessListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
 import de.rettichlp.pkutils.listener.impl.faction.BombListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionListener;
+import de.rettichlp.pkutils.listener.impl.faction.ServiceListener;
 import de.rettichlp.pkutils.listener.impl.faction.WantedListener;
 import de.rettichlp.pkutils.listener.impl.job.FisherListener;
 import de.rettichlp.pkutils.listener.impl.job.GarbageManListener;
@@ -75,6 +76,7 @@ public class Registry {
             BlacklistListener.class,
             FactionListener.class,
             HudListener.class,
+            ServiceListener.class,
             WantedListener.class,
             // job
             FisherListener.class,
