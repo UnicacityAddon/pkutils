@@ -6,7 +6,6 @@ import de.rettichlp.pkutils.command.ADropMoneyCommand;
 import de.rettichlp.pkutils.command.ModCommand;
 import de.rettichlp.pkutils.command.SyncCommand;
 import de.rettichlp.pkutils.command.activity.CheckActivityCommand;
-import de.rettichlp.pkutils.command.activity.ClearActivityCommand;
 import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleWChatCommand;
@@ -58,7 +57,6 @@ public class Registry {
             ADropMoneyCommand.class,
             ASMSCommand.class,
             CheckActivityCommand.class,
-            ClearActivityCommand.class,
             DepositCommand.class,
             ModCommand.class,
             RichTaxesCommand.class,

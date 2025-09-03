@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.common.services;
 
 import de.rettichlp.pkutils.common.api.schema.ActivityType;
-import de.rettichlp.pkutils.common.api.schema.request.ActivityClearRequest;
 import de.rettichlp.pkutils.common.api.schema.request.ActivityRequest;
 import de.rettichlp.pkutils.common.api.schema.request.Request;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
@@ -10,8 +9,6 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.hudService;
-import static de.rettichlp.pkutils.common.services.HudService.NotificationType.ACTIVITY;
-import static de.rettichlp.pkutils.common.services.HudService.NotificationType.ERROR;
 import static java.util.Objects.isNull;
 
 public class ActivityService extends PKUtilsBase {
@@ -36,13 +33,5 @@ public class ActivityService extends PKUtilsBase {
                 .build();
 
         request.send(response -> hudService.sendNotification(activityType.getSuccessMessage(), ACTIVITY), () -> hudService.sendNotification("Fehler beim Tracken der Aktivität!", ERROR));
-    }
-
-    public void clearActivity(String targetName) {
-        Request<ActivityClearRequest> request = Request.<ActivityClearRequest>builder()
-                .body(new ActivityClearRequest(targetName))
-                .build();
-
-        request.send(response -> sendModMessage(response.message(), true), () -> hudService.sendNotification("Fehler beim zurücksetzen der Aktivität!", ERROR));
     }
 }
