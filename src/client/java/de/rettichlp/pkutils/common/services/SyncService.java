@@ -90,34 +90,4 @@ public class SyncService extends PKUtilsBase {
             });
         }, 1000);
     }
-
-    private void pushFactionDataToServer() {
-        List<Map<String, Object>> membersData = new ArrayList<>();
-        storage.getFactionMembers().forEach((faction, members) -> {
-            if (faction != NULL) {
-                members.forEach(member -> {
-                    Map<String, Object> memberMap = new HashMap<>();
-                    memberMap.put("playerName", member.getPlayerName());
-                    memberMap.put("faction", faction.getDisplayName());
-                    memberMap.put("rank", member.getRank());
-                    membersData.add(memberMap);
-                });
-            }
-        });
-
-        Request<FactionSyncRequest> request = Request.<FactionSyncRequest>builder()
-                .body(new FactionSyncRequest(player.getName().getString(), membersData))
-                .build();
-
-        request.send(
-                response -> {
-                    if (response.statusCode() == 200) {
-                        sendModMessage("Fraktionsdaten zum Server synchronisiert.", true);
-                    } else {
-                        sendModMessage("Fehler bei der Server-Synchronisation.", true);
-                    }
-                },
-                throwable -> sendModMessage("Fehler bei der Server-Synchronisation.", true)
-        );
-    }
 }
