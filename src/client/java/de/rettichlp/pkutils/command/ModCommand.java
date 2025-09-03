@@ -4,7 +4,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.api.schema.ActivityType;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
-import de.rettichlp.pkutils.common.services.HudService;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.Person;
@@ -57,9 +56,7 @@ public class ModCommand extends CommandBase {
                         .requires(fabricClientCommandSource -> isSuperUser())
                         .executes(context -> {
                             // random notification type
-                            HudService.NotificationType[] values = HudService.NotificationType.values();
-                            HudService.NotificationType notificationType = values[(int) (Math.random() * values.length)];
-                            hudService.sendNotification("Notification at " + dateTimeToFriendlyString(now()), notificationType);
+                            hudService.sendInfoNotification("Notification at " + dateTimeToFriendlyString(now()));
                             return 1;
                         }))
                 .executes(context -> {
