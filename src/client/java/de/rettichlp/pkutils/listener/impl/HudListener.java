@@ -53,7 +53,7 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
                     y - NOTIFICATION_PADDING,
                     x + textWidth + NOTIFICATION_PADDING,
                     y + textHeight + NOTIFICATION_PADDING,
-                    notification.getBackgroundColor()
+                    notification.getBackgroundColor().getRGB()
             );
 
             drawContext.drawBorder(
@@ -61,7 +61,7 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
                     y - NOTIFICATION_PADDING,
                     textWidth + NOTIFICATION_PADDING * 2,
                     textHeight + NOTIFICATION_PADDING * 2,
-                    notification.getBorderColor()
+                    notification.getBorderColor().getRGB()
             );
 
             drawContext.drawTextWithShadow(textRenderer, notificationText, x, y, 0xFFFFFF);
