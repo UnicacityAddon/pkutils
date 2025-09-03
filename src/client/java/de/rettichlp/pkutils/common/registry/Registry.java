@@ -76,8 +76,8 @@ public class Registry {
             BlacklistListener.class,
             FactionListener.class,
             HudListener.class,
-            WantedListener.class,
             ServiceListener.class,
+            WantedListener.class,
             // job
             FisherListener.class,
             GarbageManListener.class,
