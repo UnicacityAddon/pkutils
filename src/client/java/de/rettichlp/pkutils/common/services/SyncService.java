@@ -35,6 +35,12 @@ public class SyncService extends PKUtilsBase {
         this.gameSyncProcessActive = true;
         hudService.sendNotification("PKUtils wird synchronisiert...", CYAN, Faction.values().length * 1000L + 1000);
 
+        // api login
+        Request<UserRegisterRequest> request = Request.<UserRegisterRequest>builder()
+                .body(new UserRegisterRequest())
+                .build();
+        request.send(response -> hudService.sendSuccessNotification("API Login erfolgreich"), errorResponse -> hudService.sendErrorNotification("API Login fehlgeschlagen"));
+
         // seconds 1-13: execute commands for all factions -> blocks command input for 13 * 1000 ms
         for (Faction faction : Faction.values()) {
             if (faction == NULL) {

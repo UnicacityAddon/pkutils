@@ -10,6 +10,6 @@ public record ActivityRequest(ActivityType activity) implements IRequest {
 
     @Override
     public URI getUrl() {
-        return create("https://activitycheck.pkutils.eu/proxy");
+        return create("https://pkutils.rettichlp.de/v1/activity/add");
     }
 }

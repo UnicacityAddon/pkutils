@@ -32,6 +32,6 @@ public class ActivityService extends PKUtilsBase {
                 .body(new ActivityRequest(activityType))
                 .build();
 
-        request.send(response -> hudService.sendNotification(activityType.getSuccessMessage(), ACTIVITY), () -> hudService.sendNotification("Fehler beim Tracken der Aktivität!", ERROR));
+        request.send(response -> hudService.sendInfoNotification(activityType.getSuccessMessage()), errorResponse -> hudService.sendErrorNotification("Fehler beim Tracken der Aktivität!"));
     }
 }

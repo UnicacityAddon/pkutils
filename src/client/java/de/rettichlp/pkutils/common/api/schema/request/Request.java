@@ -1,6 +1,7 @@
 package de.rettichlp.pkutils.common.api.schema.request;
 
 import com.google.gson.Gson;
+import de.rettichlp.pkutils.common.api.schema.ErrorResponse;
 import de.rettichlp.pkutils.common.api.schema.Response;
 import lombok.Builder;
 import net.minecraft.client.MinecraftClient;
@@ -24,20 +25,26 @@ public class Request<T extends IRequest> {
 
     private final T body;
 
-    public void send(Consumer<Response> successCallback, Runnable failureCallback) {
+    public void send(Consumer<Response> successCallback, Consumer<ErrorResponse> failureCallback) {
         supplyAsync(() -> {
             try {
                 HttpRequest httpRequest = getHttpRequest();
-                HttpResponse<String> response = HTTP_CLIENT.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-                LOGGER.info("Sent request: {} -> [{}] {}", httpRequest, response.statusCode(), response.body());
-                return GSON.fromJson(response.body(), Response.class);
+                HttpResponse<String> httpResponse = HTTP_CLIENT.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+                if (httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300) {
+                    LOGGER.info("Request successful: {} -> [{}] {}", httpRequest, httpResponse.statusCode(), httpResponse.body());
+                    Response response = GSON.fromJson(httpResponse.body(), Response.class);
+                    successCallback.accept(response);
+                } else {
+                    LOGGER.warn("Request failed: {} -> [{}] {}", httpRequest, httpResponse.statusCode(), httpResponse.body());
+                    ErrorResponse response = GSON.fromJson(httpResponse.body(), ErrorResponse.class);
+                    failureCallback.accept(response);
+                }
             } catch (IOException | InterruptedException e) {
                 throw new CompletionException(e);
             }
-        }).thenAccept(successCallback).exceptionally(throwable -> {
-            LOGGER.error("Failed to send request", throwable);
-            failureCallback.run();
-            return null;
+
+            return null; // return nothing, everything was already handled in the callbacks
         });
     }
 
@@ -45,7 +52,7 @@ public class Request<T extends IRequest> {
         return HttpRequest.newBuilder()
                 .uri(this.body.getUrl())
                 .header("Content-Type", "application/json")
-                .header("Authorization", SESSION_TOKEN)
+                .header("X-Minecraft-Session-Token", SESSION_TOKEN)
                 .POST(HttpRequest.BodyPublishers.ofString(getJsonBody()))
                 .build();
     }
