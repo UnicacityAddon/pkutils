@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.api.schema.request;
 
+import de.rettichlp.pkutils.common.api.IRequest;
 import de.rettichlp.pkutils.common.storage.schema.Faction;
 import de.rettichlp.pkutils.common.storage.schema.FactionMember;
 
