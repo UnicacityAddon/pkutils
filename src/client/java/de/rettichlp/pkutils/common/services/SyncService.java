@@ -1,7 +1,5 @@
 package de.rettichlp.pkutils.common.services;
 
-import de.rettichlp.pkutils.common.api.schema.request.Request;
-import de.rettichlp.pkutils.common.api.schema.request.UserRegisterRequest;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.storage.schema.Faction;
 import lombok.Getter;
@@ -10,6 +8,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
+import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.hudService;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
@@ -63,11 +62,7 @@ public class SyncService extends PKUtilsBase {
         // end: init commands dons
         delayedAction(() -> {
             // api login
-            Request<UserRegisterRequest> request = Request.<UserRegisterRequest>builder()
-                    .body(new UserRegisterRequest(storage.getFactionMembers()))
-                    .build();
-
-            request.send(response -> hudService.sendSuccessNotification("API Login erfolgreich"), errorResponse -> hudService.sendErrorNotification("API Login fehlgeschlagen"));
+            api.registerPlayer();
 
             this.gameSyncProcessActive = false;
             hudService.sendSuccessNotification("PKUtils synchronisiert");

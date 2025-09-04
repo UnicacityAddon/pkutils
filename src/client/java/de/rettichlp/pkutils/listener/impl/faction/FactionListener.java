@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
-import de.rettichlp.pkutils.common.api.schema.ActivityType;
+import de.rettichlp.pkutils.common.api.schema.Activity;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.common.storage.Storage;
@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
-import static de.rettichlp.pkutils.PKUtilsClient.activityService;
+import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
@@ -177,7 +177,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             }
 
             reinforcement.setAddedAsActivity(true);
-            activityService.trackActivity(ActivityType.REINFORCEMENT);
+            api.trackActivity(Activity.Type.REINFORCEMENT);
             LOGGER.info("Reinforcement reached, tracked activity");
         });
     }

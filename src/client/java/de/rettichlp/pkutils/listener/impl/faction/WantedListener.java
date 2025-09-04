@@ -12,14 +12,14 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.activityService;
+import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.factionService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
-import static de.rettichlp.pkutils.common.api.schema.ActivityType.ARREST;
-import static de.rettichlp.pkutils.common.api.schema.ActivityType.ARREST_KILL;
-import static de.rettichlp.pkutils.common.api.schema.ActivityType.PARK_TICKET;
+import static de.rettichlp.pkutils.common.api.schema.Activity.Type.ARREST;
+import static de.rettichlp.pkutils.common.api.schema.Activity.Type.ARREST_KILL;
+import static de.rettichlp.pkutils.common.api.schema.Activity.Type.PARK_TICKET;
 import static de.rettichlp.pkutils.common.storage.schema.Faction.POLIZEI;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
@@ -167,7 +167,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
                 player.getWorld().getEntitiesByType(instanceOf(PlayerEntity.class), player.getBoundingBox().expand(60), playerEntity -> true).stream()
                         .map(playerEntity -> playerEntity.getGameProfile().getName())
                         .filter(playerEntityName -> storage.getFaction(playerEntityName) == POLIZEI)
-                        .forEach(playerEntityName -> activityService.trackActivity(ARREST_KILL));
+                        .forEach(playerEntityName -> api.trackActivity(ARREST_KILL));
             }
 
             return false;
@@ -192,7 +192,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             player.sendMessage(modifiedMessage, false);
 
             if (clientPlayerName.equals(playerName)) {
-                activityService.trackActivity(ARREST);
+                api.trackActivity(ARREST);
             }
 
             return false;
@@ -203,7 +203,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             String officerName = parkticketMatcher.group("playerName");
 
             if (clientPlayerName.equals(officerName)) {
-                activityService.trackActivity(PARK_TICKET);
+                api.trackActivity(PARK_TICKET);
             }
 
             return true;
