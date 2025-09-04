@@ -1,16 +1,19 @@
 package de.rettichlp.pkutils.common.api.request;
 
-import de.rettichlp.pkutils.common.api.schema.ActivityType;
 import de.rettichlp.pkutils.common.api.IRequest;
+import de.rettichlp.pkutils.common.api.schema.Activity;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 
 import static java.net.URI.create;
 
-public record ActivityRequest(ActivityType activityType) implements IRequest {
+public record ActivityAddRequest(Activity.Type activityType) implements IRequest {
 
+    @Contract(" -> new")
     @Override
-    public URI getUrl() {
+    public @NotNull URI getUrl() {
         return create("https://pkutils.rettichlp.de/v1/activity/add");
     }
 }
