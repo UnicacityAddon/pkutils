@@ -2,7 +2,6 @@ package de.rettichlp.pkutils;
 
 import de.rettichlp.pkutils.common.api.Api;
 import de.rettichlp.pkutils.common.registry.Registry;
-import de.rettichlp.pkutils.common.services.ActivityService;
 import de.rettichlp.pkutils.common.services.FactionService;
 import de.rettichlp.pkutils.common.services.HudService;
 import de.rettichlp.pkutils.common.services.SyncService;
@@ -21,7 +20,6 @@ public class PKUtilsClient implements ClientModInitializer {
     public static ClientPlayerEntity player;
     public static ClientPlayNetworkHandler networkHandler;
 
-    public static ActivityService activityService;
     public static FactionService factionService;
     public static HudService hudService;
     public static SyncService syncService;
@@ -32,7 +30,6 @@ public class PKUtilsClient implements ClientModInitializer {
     public void onInitializeClient() {
         // This entrypoint is suitable for setting up client-specific logic, such as rendering.
 
-        activityService = new ActivityService();
         factionService = new FactionService();
         hudService = new HudService();
         syncService = new SyncService();
