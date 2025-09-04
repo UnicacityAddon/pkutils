@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils;
 
+import de.rettichlp.pkutils.common.api.Api;
 import de.rettichlp.pkutils.common.registry.Registry;
 import de.rettichlp.pkutils.common.services.ActivityService;
 import de.rettichlp.pkutils.common.services.FactionService;
@@ -14,6 +15,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 public class PKUtilsClient implements ClientModInitializer {
 
+    public static final Api api = new Api();
     public static final Storage storage = new Storage();
 
     public static ClientPlayerEntity player;
