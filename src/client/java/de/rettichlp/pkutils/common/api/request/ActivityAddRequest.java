@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.api.schema.request;
+package de.rettichlp.pkutils.common.api.request;
 
 import de.rettichlp.pkutils.common.api.schema.ActivityType;
 import de.rettichlp.pkutils.common.api.IRequest;

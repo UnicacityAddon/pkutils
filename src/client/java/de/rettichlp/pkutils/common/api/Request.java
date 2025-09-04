@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.api.schema.request;
+package de.rettichlp.pkutils.common.api;
 
 import com.google.gson.Gson;
 import de.rettichlp.pkutils.common.api.schema.ErrorResponse;
