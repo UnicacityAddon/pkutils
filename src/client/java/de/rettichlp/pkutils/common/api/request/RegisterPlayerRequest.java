@@ -10,7 +10,7 @@ import java.util.Set;
 
 import static java.net.URI.create;
 
-public record UserRegisterRequest(Map<Faction, Set<FactionMember>> factionMembers) implements IRequest {
+public record RegisterPlayerRequest(Map<Faction, Set<FactionMember>> factionMembers) implements IRequest {
 
     @Override
     public URI getUrl() {
