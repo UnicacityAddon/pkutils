@@ -1,6 +1,7 @@
 package de.rettichlp.pkutils.common.api.schema.request;
 
 import de.rettichlp.pkutils.common.api.schema.ActivityType;
+import de.rettichlp.pkutils.common.api.IRequest;
 
 import java.net.URI;
 

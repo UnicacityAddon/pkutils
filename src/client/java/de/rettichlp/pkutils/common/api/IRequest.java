@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.api.schema.request;
+package de.rettichlp.pkutils.common.api;
 
 import java.net.URI;
 
