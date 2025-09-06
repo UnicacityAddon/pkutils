@@ -26,11 +26,7 @@ public class ActivityService extends PKUtilsBase {
             return;
         }
 
-        String addressString = networkHandler.getConnection().getAddress().toString();
-        if (!addressString.contains("152.53.252.60")) {
-            LOGGER.warn("Tried to track activity, but not on supported server");
-            return;
-        }
+        // KORREKTUR: Die IP-Überprüfung wurde entfernt.
 
         Request<ActivityRequest> request = Request.<ActivityRequest>builder()
                 .body(new ActivityRequest(activityType))
