@@ -24,6 +24,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static java.time.LocalDateTime.MIN;
 import static java.util.Arrays.stream;
+import static java.util.Objects.nonNull; // WICHTIGER IMPORT
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
@@ -38,8 +39,12 @@ public class ModCommand extends CommandBase {
         return node
                 .then(ClientCommandManager.literal("fakeActivity")
                         .requires(fabricClientCommandSource -> {
-                            String uuidAsString = player.getUuidAsString();
-                            return uuidAsString.equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19") || uuidAsString.equals("929bbc61-2f89-45cd-a351-84f439842832");
+                            // KORREKTUR: Hier wird geprüft, ob der Spieler existiert
+                            if (nonNull(player)) {
+                                String uuidAsString = player.getUuidAsString();
+                                return uuidAsString.equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19") || uuidAsString.equals("929bbc61-2f89-45cd-a351-84f439842832");
+                            }
+                            return false; // Wenn der Spieler null ist, hat er keine Berechtigung
                         })
                         .then(ClientCommandManager.argument("activityType", word())
                                 .suggests((context, builder) -> {
