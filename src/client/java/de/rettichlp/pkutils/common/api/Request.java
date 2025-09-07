@@ -12,13 +12,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
+import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 @Builder
 public class Request<T extends IRequest> {
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
-    private static final Gson GSON = new Gson();
     private static final String SESSION_TOKEN = MinecraftClient.getInstance().getSession().getAccessToken();
 
     private final T requestData;
@@ -46,6 +46,6 @@ public class Request<T extends IRequest> {
     }
 
     private String getJsonBody() {
-        return GSON.toJson(this.requestData);
+        return api.getGson().toJson(this.requestData);
     }
 }

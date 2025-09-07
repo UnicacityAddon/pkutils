@@ -1,12 +1,17 @@
 package de.rettichlp.pkutils.common.api;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import de.rettichlp.pkutils.common.api.request.ActivityAddRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
 import de.rettichlp.pkutils.common.api.request.RegisterPlayerRequest;
 import de.rettichlp.pkutils.common.api.schema.Activity;
+import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 
@@ -24,7 +29,11 @@ import static java.util.Objects.isNull;
 @SuppressWarnings("unchecked")
 public class Api {
 
-    private static final Gson GSON = new Gson();
+    @Getter
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Instant.class, (JsonDeserializer<Instant>) (json, typeOfT, context) -> Instant.parse(json.getAsString()))
+            .registerTypeAdapter(Instant.class, (JsonSerializer<Instant>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
+            .create();
 
     public void registerPlayer() {
         Request<RegisterPlayerRequest> request = Request.<RegisterPlayerRequest>builder()
@@ -45,7 +54,7 @@ public class Api {
 
         return request.send().thenApply(httpResponse -> {
             Type type = TypeToken.getParameterized(List.class, Activity.class).getType();
-            return (List<Activity>) GSON.fromJson(httpResponse.body(), type);
+            return (List<Activity>) this.gson.fromJson(httpResponse.body(), type);
         }).exceptionally(throwable -> {
             LOGGER.error("Error while fetching activities", throwable);
             return new ArrayList<>();
@@ -59,7 +68,7 @@ public class Api {
 
         return request.send().thenApply(httpResponse -> {
             Type type = TypeToken.getParameterized(List.class, Activity.class).getType();
-            return (List<Activity>) GSON.fromJson(httpResponse.body(), type);
+            return (List<Activity>) this.gson.fromJson(httpResponse.body(), type);
         }).exceptionally(throwable -> {
             LOGGER.error("Error while fetching activities for player {}", playerName, throwable);
             return new ArrayList<>();
