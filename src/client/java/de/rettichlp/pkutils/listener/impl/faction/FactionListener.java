@@ -14,6 +14,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -160,9 +161,10 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
 
     @Override
     public void onMove(BlockPos blockPos) {
-        // get the nearest reinforcement within 60 blocks that is not from yourself
+        // get the nearest reinforcement within 60 blocks that is not from yourself AND NOT OLDER THAN 10 MINUTES
         Optional<Reinforcement> optionalReinforcement = storage.getReinforcements().stream()
                 .filter(reinforcement -> nonNull(reinforcement.getBlockPos())) // check if block position is set
+                .filter(reinforcement -> reinforcement.getCreatedAt().isAfter(LocalDateTime.now().minusMinutes(10)))
                 .filter(reinforcement -> reinforcement.getBlockPos().isWithinDistance(player.getBlockPos(), 60))
                 .filter(reinforcement -> !reinforcement.getSenderPlayerName().equals(player.getGameProfile().getName()))
                 .max(comparing(Reinforcement::getCreatedAt));
