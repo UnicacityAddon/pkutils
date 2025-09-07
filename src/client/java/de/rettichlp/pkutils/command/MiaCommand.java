@@ -17,8 +17,8 @@ import static java.util.Arrays.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.minecraft.command.CommandSource.suggestMatching;
 
-@PKUtilsCommand(label = "mi")
-public class MiCommand extends CommandBase {
+@PKUtilsCommand(label = "mia")
+public class MiaCommand extends CommandBase {
 
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
@@ -29,7 +29,7 @@ public class MiCommand extends CommandBase {
                         .executes(context -> {
                             String input = getString(context, "faction");
                             fromDisplayName(input).ifPresentOrElse(faction -> {
-                                networkHandler.sendChatCommand("memberinfo " + faction.getMemberInfoCommandName());
+                                networkHandler.sendChatCommand("memberinfoall " + faction.getMemberInfoCommandName());
                             }, () -> {
                                 sendModMessage("Die Fraktion" + input + " konnte nicht gefunden werden.", false);
                             });
@@ -40,7 +40,7 @@ public class MiCommand extends CommandBase {
                 .executes(context -> {
                     String playerName = player.getName().getString();
                     Faction faction = storage.getFaction(playerName);
-                    networkHandler.sendChatCommand("memberinfo " + faction.getMemberInfoCommandName());
+                    networkHandler.sendChatCommand("memberinfoall " + faction.getMemberInfoCommandName());
                     return 1;
                 });
     }

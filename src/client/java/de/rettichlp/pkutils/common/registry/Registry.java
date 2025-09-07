@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.command.ADropMoneyCommand;
 import de.rettichlp.pkutils.command.MiCommand;
+import de.rettichlp.pkutils.command.MiaCommand;
 import de.rettichlp.pkutils.command.ModCommand;
 import de.rettichlp.pkutils.command.SyncCommand;
 import de.rettichlp.pkutils.command.activity.CheckActivityCommand;
@@ -61,6 +62,7 @@ public class Registry {
             CheckActivityCommand.class,
             DepositCommand.class,
             MiCommand.class,
+            MiaCommand.class,
             ModCommand.class,
             RichTaxesCommand.class,
             SyncCommand.class,
