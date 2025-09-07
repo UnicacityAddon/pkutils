@@ -18,6 +18,7 @@ import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
 import de.rettichlp.pkutils.command.money.DepositCommand;
 import de.rettichlp.pkutils.command.money.RichTaxesCommand;
+import de.rettichlp.pkutils.command.vehicle.ToggleCarlockCommand;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
@@ -39,6 +40,7 @@ import de.rettichlp.pkutils.listener.impl.job.FisherListener;
 import de.rettichlp.pkutils.listener.impl.job.GarbageManListener;
 import de.rettichlp.pkutils.listener.impl.job.LumberjackListener;
 import de.rettichlp.pkutils.listener.impl.job.TransportListener;
+import de.rettichlp.pkutils.listener.impl.vehicle.CarListener;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -72,6 +74,7 @@ public class Registry {
             RichTaxesCommand.class,
             SyncCommand.class,
             TodoCommand.class,
+            ToggleCarlockCommand.class,
             ToggleDChatCommand.class,
             ToggleFChatCommand.class,
             ToggleWChatCommand.class
@@ -93,6 +96,8 @@ public class Registry {
             GarbageManListener.class,
             LumberjackListener.class,
             TransportListener.class,
+            // vehicle
+            CarListener.class,
             // other
             CommandSendListener.class,
             DepositCommand.class,
