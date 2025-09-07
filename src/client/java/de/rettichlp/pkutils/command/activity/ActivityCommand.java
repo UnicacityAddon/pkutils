@@ -33,13 +33,12 @@ public class ActivityCommand extends CommandBase {
 
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
-        String playerName = player.getName().getString();
-        Faction faction = storage.getFaction(playerName);
-
         return node
                 .then(literal("lastWeek")
                         .then(argument("player", word())
                                 .requires(fabricClientCommandSource -> {
+                                    String playerName = player.getName().getString();
+                                    Faction faction = storage.getFaction(playerName);
                                     // rank 4 or higher in own faction
                                     return storage.getFactionMembers(faction).stream()
                                             .filter(factionMember -> factionMember.playerName().equals(playerName))
@@ -47,10 +46,18 @@ public class ActivityCommand extends CommandBase {
                                             .map(factionMember -> factionMember.rank() >= 4)
                                             .orElse(false);
                                 })
-                                .suggests((context, builder) -> faction != NULL ? suggestMatching(faction.getMembers().stream()
-                                        .map(FactionMember::playerName), builder) : empty())
+                                .suggests((context, builder) -> {
+                                    String playerName = player.getName().getString();
+                                    Faction faction = storage.getFaction(playerName);
+
+                                    return faction != NULL ? suggestMatching(faction.getMembers().stream()
+                                            .map(FactionMember::playerName), builder) : empty();
+                                })
                                 .then(literal("lastWeek")
                                         .executes(context -> {
+                                            String playerName = player.getName().getString();
+                                            Faction faction = storage.getFaction(playerName);
+
                                             String targetName = getString(context, "player");
                                             Faction targetFaction = storage.getFaction(targetName);
 
@@ -65,6 +72,9 @@ public class ActivityCommand extends CommandBase {
                                             return 1;
                                         }))
                                 .executes(context -> {
+                                    String playerName = player.getName().getString();
+                                    Faction faction = storage.getFaction(playerName);
+
                                     String targetName = getString(context, "player");
                                     Faction targetFaction = storage.getFaction(targetName);
 
