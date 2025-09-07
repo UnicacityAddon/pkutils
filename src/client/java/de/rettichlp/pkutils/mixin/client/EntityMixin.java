@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Entity.class)
 public abstract class EntityMixin {
 
-    @Inject(method = "startRiding*", at = @At("RETURN"))
+    @Inject(method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z", at = @At("RETURN"))
     private void onStartRiding(Entity vehicle, boolean force, CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValue()) { // only for successful start riding
             Entity self = (Entity) (Object) this;
