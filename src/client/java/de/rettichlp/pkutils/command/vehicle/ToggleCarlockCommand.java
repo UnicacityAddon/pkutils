@@ -17,7 +17,7 @@ public class ToggleCarlockCommand extends CommandBase {
         return node.executes(context -> {
             boolean newState = !storage.isCarLock();
             storage.setCarLock(newState);
-            hudService.sendInfoNotification(newState ? "Automatische Fahrzeugverriegelung aktiviert" : "Automatische Fahrzeugverriegelung deaktiviert");
+            hudService.sendInfoNotification("Automatische Fahrzeugverriegelung " + (newState ? "aktiviert" : "deaktiviert"));
             return 1;
         });
     }

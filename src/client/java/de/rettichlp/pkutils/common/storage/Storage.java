@@ -58,7 +58,7 @@ public class Storage {
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
-
+        // carLock
         LOGGER.info("carLock: {}", this.carLock);
     }
 

@@ -68,10 +68,10 @@ public class Registry {
             ModCommand.class,
             RichTaxesCommand.class,
             SyncCommand.class,
+            ToggleCarlockCommand.class,
             ToggleDChatCommand.class,
             ToggleFChatCommand.class,
             ToggleWChatCommand.class,
-            ToggleCarlockCommand.class,
             WSUCommand.class
     );
 
