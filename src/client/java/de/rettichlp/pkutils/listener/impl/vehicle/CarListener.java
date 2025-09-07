@@ -52,7 +52,7 @@ public class CarListener extends PKUtilsBase implements IMessageReceiveListener,
             return;
         }
 
-        // Phase 1: Player unlocked car and is now inside it
+        // Phase 1: Player unlocked a car and is now inside it
         if (this.carUnlocked && isCarScoreboardVisible()) {
             networkHandler.sendChatCommand("car lock");
             this.carUnlocked = false;
