@@ -20,12 +20,14 @@ import de.rettichlp.pkutils.command.money.DepositCommand;
 import de.rettichlp.pkutils.command.money.RichTaxesCommand;
 import de.rettichlp.pkutils.command.vehicle.ToggleCarlockCommand;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
+import de.rettichlp.pkutils.listener.IEnterVehicleListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
 import de.rettichlp.pkutils.listener.IMoveListener;
 import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
 import de.rettichlp.pkutils.listener.ITickListener;
+import de.rettichlp.pkutils.listener.callback.PlayerEnterVehicleCallback;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
 import de.rettichlp.pkutils.listener.impl.HudListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
@@ -143,6 +145,10 @@ public class Registry {
 
                 if (listenerInstance instanceof ICommandSendListener iCommandSendListener) {
                     ClientSendMessageEvents.ALLOW_COMMAND.register(iCommandSendListener::onCommandSend);
+                }
+
+                if (listenerInstance instanceof IEnterVehicleListener iEnterVehicleListener) {
+                    PlayerEnterVehicleCallback.EVENT.register(iEnterVehicleListener::onEnterVehicle);
                 }
 
                 if (listenerInstance instanceof IHudRenderListener iHudRenderListener) {
