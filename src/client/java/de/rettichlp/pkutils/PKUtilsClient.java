@@ -34,13 +34,12 @@ public class PKUtilsClient implements ClientModInitializer {
         hudService = new HudService();
         syncService = new SyncService();
 
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, minecraftClient) -> minecraftClient.execute(() -> {
-            assert minecraftClient.player != null; // cannot be null at this point
-            player = minecraftClient.player;
-            networkHandler = minecraftClient.player.networkHandler;
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            player = client.player;
+            networkHandler = handler;
 
             this.registry.registerListeners();
-        }));
+        });
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             this.registry.registerCommands(dispatcher);
