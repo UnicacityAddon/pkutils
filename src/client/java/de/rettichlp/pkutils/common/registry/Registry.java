@@ -7,7 +7,7 @@ import de.rettichlp.pkutils.command.MiCommand;
 import de.rettichlp.pkutils.command.MiaCommand;
 import de.rettichlp.pkutils.command.ModCommand;
 import de.rettichlp.pkutils.command.SyncCommand;
-import de.rettichlp.pkutils.command.activity.CheckActivityCommand;
+import de.rettichlp.pkutils.command.activity.ActivityCommand;
 import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleWChatCommand;
@@ -57,9 +57,9 @@ public class Registry {
 
     private final Set<Class<?>> commands = Set.of(
             ACallCommand.class,
+            ActivityCommand.class,
             ADropMoneyCommand.class,
             ASMSCommand.class,
-            CheckActivityCommand.class,
             DepositCommand.class,
             MiCommand.class,
             MiaCommand.class,
@@ -123,7 +123,7 @@ public class Registry {
     public void registerListeners() {
         // ignore messages until the player is initialized
         if (player == null || networkHandler == null || this.initialized) {
-            return;
+            throw new IllegalStateException("Tried to register listeners too early");
         }
 
         for (Class<?> listenerClass : this.listeners /*ClassIndex.getAnnotated(PKUtilsListener.class)*/) {
