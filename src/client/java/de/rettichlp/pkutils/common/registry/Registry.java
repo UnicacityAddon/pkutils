@@ -123,7 +123,7 @@ public class Registry {
     public void registerListeners() {
         // ignore messages until the player is initialized
         if (player == null || networkHandler == null || this.initialized) {
-            return;
+            throw new IllegalStateException("Tried to register listeners too early");
         }
 
         for (Class<?> listenerClass : this.listeners /*ClassIndex.getAnnotated(PKUtilsListener.class)*/) {
