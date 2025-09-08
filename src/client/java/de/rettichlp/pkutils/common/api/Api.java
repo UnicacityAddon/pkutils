@@ -34,6 +34,7 @@ public class Api {
 
     @Getter
     private final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
             .registerTypeAdapter(Instant.class, (JsonDeserializer<Instant>) (json, typeOfT, context) -> Instant.parse(json.getAsString()))
             .registerTypeAdapter(Instant.class, (JsonSerializer<Instant>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
             .create();
