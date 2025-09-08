@@ -45,6 +45,7 @@ public class ActivityCommand extends CommandBase {
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
                 .then(argument("weeksAgo", integer(MIN_VALUE, 0))
+                        .suggests((context, builder) -> suggestMatching(List.of("0", "-1", "-2", "-3", "-4", "-5"), builder))
                         .executes(context -> {
                             int weeksAgo = context.getArgument("weeksAgo", Integer.class);
                             fetchAndShowActivitiesFor(weeksAgo);
@@ -70,6 +71,7 @@ public class ActivityCommand extends CommandBase {
                                             .map(FactionMember::playerName), builder) : empty();
                                 })
                                 .then(argument("weeksAgo", integer(MIN_VALUE, 0))
+                                        .suggests((context, builder) -> suggestMatching(List.of("0", "-1", "-2", "-3", "-4", "-5"), builder))
                                         .executes(context -> {
                                             String playerName = player.getName().getString();
                                             Faction faction = storage.getFaction(playerName);
