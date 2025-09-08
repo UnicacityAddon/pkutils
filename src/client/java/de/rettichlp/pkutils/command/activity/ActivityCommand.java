@@ -48,7 +48,7 @@ public class ActivityCommand extends CommandBase {
                                     String playerName = player.getName().getString();
                                     Faction faction = storage.getFaction(playerName);
                                     // rank 4 or higher in own faction
-                                    return storage.getFactionMembers(faction).stream()
+                                    return isSuperUser() || storage.getFactionMembers(faction).stream()
                                             .filter(factionMember -> factionMember.playerName().equals(playerName))
                                             .findFirst()
                                             .map(factionMember -> factionMember.rank() >= 4)
