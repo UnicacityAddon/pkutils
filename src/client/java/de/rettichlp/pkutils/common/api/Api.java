@@ -38,6 +38,9 @@ public class Api {
             .registerTypeAdapter(Instant.class, (JsonSerializer<Instant>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
             .create();
 
+    @Getter
+    private final String baseUrl = "https://pkutils.rettichlp.de/v1";
+
     public void registerPlayer() {
         Request<RegisterPlayerRequest> request = Request.<RegisterPlayerRequest>builder()
                 .method("POST")

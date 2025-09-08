@@ -8,12 +8,13 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
+import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static java.net.URI.create;
 
 public record RegisterPlayerRequest(Map<Faction, Set<FactionMember>> factionMembers) implements IRequest {
 
     @Override
     public URI getUrl() {
-        return create("https://pkutils.rettichlp.de/v1/user/register");
+        return create(api.getBaseUrl() + "/user/register");
     }
 }

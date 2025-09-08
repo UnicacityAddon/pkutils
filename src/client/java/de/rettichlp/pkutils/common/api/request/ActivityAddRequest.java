@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 
+import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static java.net.URI.create;
 
 public record ActivityAddRequest(Activity.Type activityType) implements IRequest {
@@ -14,6 +15,6 @@ public record ActivityAddRequest(Activity.Type activityType) implements IRequest
     @Contract(" -> new")
     @Override
     public @NotNull URI getUrl() {
-        return create("https://pkutils.rettichlp.de/v1/activity/add");
+        return create(api.getBaseUrl() + "/activity/add");
     }
 }

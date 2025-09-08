@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URI;
 import java.time.Instant;
 
+import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static java.net.URI.create;
 
 public record ActivityGetPlayerRequest(String minecraftName, Instant from, Instant to) implements IRequest {
@@ -14,6 +15,6 @@ public record ActivityGetPlayerRequest(String minecraftName, Instant from, Insta
     @Contract(" -> new")
     @Override
     public @NotNull URI getUrl() {
-        return create("https://pkutils.rettichlp.de/v1/activity/" + this.minecraftName + "?from=" + this.from.toString() + "&to=" + this.to.toString());
+        return create(api.getBaseUrl() + "/activity/" + this.minecraftName + "?from=" + this.from.toString() + "&to=" + this.to.toString());
     }
 }
