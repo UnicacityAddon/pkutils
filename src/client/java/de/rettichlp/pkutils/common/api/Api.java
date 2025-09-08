@@ -40,9 +40,16 @@ public class Api {
                 .requestData(new RegisterPlayerRequest(storage.getFactionMembers()))
                 .build();
 
-        request.send().thenAccept(httpResponse -> hudService.sendSuccessNotification("API Login erfolgreich")).exceptionally(throwable -> {
-            hudService.sendErrorNotification("API Login fehlgeschlagen");
+        request.send().thenAccept(httpResponse -> {
+            validate(httpResponse);
+            hudService.sendSuccessNotification("API Login erfolgreich");
+        }).exceptionally(throwable -> {
             LOGGER.error("Error while registering player", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
             return null;
         });
     }
@@ -53,10 +60,15 @@ public class Api {
                 .build();
 
         return request.send().thenApply(httpResponse -> {
-            Type type = TypeToken.getParameterized(List.class, Activity.class).getType();
-            return (List<Activity>) this.gson.fromJson(httpResponse.body(), type);
+            Type type = getParameterized(List.class, Activity.class).getType();
+            return (List<Activity>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
             LOGGER.error("Error while fetching activities", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
             return new ArrayList<>();
         });
     }
@@ -67,10 +79,15 @@ public class Api {
                 .build();
 
         return request.send().thenApply(httpResponse -> {
-            Type type = TypeToken.getParameterized(List.class, Activity.class).getType();
-            return (List<Activity>) this.gson.fromJson(httpResponse.body(), type);
+            Type type = getParameterized(List.class, Activity.class).getType();
+            return (List<Activity>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
             LOGGER.error("Error while fetching activities for player {}", playerName, throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
             return new ArrayList<>();
         });
     }
@@ -94,10 +111,34 @@ public class Api {
                 .requestData(new ActivityAddRequest(activityType))
                 .build();
 
-        request.send().thenAccept(httpResponse -> hudService.sendInfoNotification(activityType.getSuccessMessage())).exceptionally(throwable -> {
-            hudService.sendErrorNotification("Fehler beim Tracken der Aktivität!");
+        request.send().thenAccept(httpResponse -> {
+            validate(httpResponse);
+            hudService.sendInfoNotification(activityType.getSuccessMessage());
+        }).exceptionally(throwable -> {
             LOGGER.error("Error while tracking activity {}", activityType, throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
             return null;
         });
+    }
+
+    private void validate(@NotNull HttpResponse<String> httpResponse) {
+        int statusCode = httpResponse.statusCode();
+        if (statusCode < 200 || statusCode >= 300) {
+            ErrorResponse errorResponse = this.gson.fromJson(httpResponse.body(), ErrorResponse.class);
+            throw new PKUtilsApiException(errorResponse);
+        }
+    }
+
+    private <T> T validateAndParse(@NotNull HttpResponse<String> httpResponse, Type type) {
+        validate(httpResponse);
+        return this.gson.fromJson(httpResponse.body(), type);
+    }
+
+    public record ErrorResponse(int httpStatusCode, String httpStatus, String info) {
+
     }
 }
