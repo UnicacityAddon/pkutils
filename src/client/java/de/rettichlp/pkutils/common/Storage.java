@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.storage;
+package de.rettichlp.pkutils.common;
 
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.Faction;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
-import static de.rettichlp.pkutils.common.storage.Storage.ToggledChat.NONE;
+import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 
 public class Storage {

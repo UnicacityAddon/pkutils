@@ -5,7 +5,7 @@ import de.rettichlp.pkutils.common.registry.Registry;
 import de.rettichlp.pkutils.common.services.FactionService;
 import de.rettichlp.pkutils.common.services.HudService;
 import de.rettichlp.pkutils.common.services.SyncService;
-import de.rettichlp.pkutils.common.storage.Storage;
+import de.rettichlp.pkutils.common.Storage;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
