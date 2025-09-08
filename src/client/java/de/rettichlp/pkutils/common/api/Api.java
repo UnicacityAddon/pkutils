@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
-import com.google.gson.reflect.TypeToken;
 import de.rettichlp.pkutils.common.api.request.ActivityAddRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
@@ -14,13 +13,17 @@ import de.rettichlp.pkutils.common.api.schema.Activity;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
+import static com.google.gson.reflect.TypeToken.getParameterized;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.hudService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
@@ -37,6 +40,7 @@ public class Api {
 
     public void registerPlayer() {
         Request<RegisterPlayerRequest> request = Request.<RegisterPlayerRequest>builder()
+                .method("POST")
                 .requestData(new RegisterPlayerRequest(storage.getFactionMembers()))
                 .build();
 
@@ -56,6 +60,7 @@ public class Api {
 
     public CompletableFuture<List<Activity>> getActivities(Instant from, Instant to) {
         Request<ActivityGetRequest> request = Request.<ActivityGetRequest>builder()
+                .method("GET")
                 .requestData(new ActivityGetRequest(from, to))
                 .build();
 
@@ -75,6 +80,7 @@ public class Api {
 
     public CompletableFuture<List<Activity>> getActivitiesForPlayer(String playerName, Instant from, Instant to) {
         Request<ActivityGetPlayerRequest> request = Request.<ActivityGetPlayerRequest>builder()
+                .method("GET")
                 .requestData(new ActivityGetPlayerRequest(playerName, from, to))
                 .build();
 
@@ -108,6 +114,7 @@ public class Api {
         }
 
         Request<ActivityAddRequest> request = Request.<ActivityAddRequest>builder()
+                .method("POST")
                 .requestData(new ActivityAddRequest(activityType))
                 .build();
 
