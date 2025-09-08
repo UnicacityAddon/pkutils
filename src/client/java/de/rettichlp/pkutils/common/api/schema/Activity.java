@@ -1,12 +1,14 @@
 package de.rettichlp.pkutils.common.api.schema;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 
 public record Activity(String id, Instant timeStamp, Type type) {
 
+    @Getter
     @AllArgsConstructor
     public enum Type {
 

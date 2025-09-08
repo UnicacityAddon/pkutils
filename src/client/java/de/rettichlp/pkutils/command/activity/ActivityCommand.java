@@ -7,11 +7,13 @@ import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import de.rettichlp.pkutils.common.storage.schema.Faction;
 import de.rettichlp.pkutils.common.storage.schema.FactionMember;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
@@ -24,6 +26,8 @@ import static de.rettichlp.pkutils.common.storage.schema.Faction.NULL;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.ZonedDateTime.now;
 import static java.time.temporal.TemporalAdjusters.nextOrSame;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.command.CommandSource.suggestMatching;
@@ -103,7 +107,14 @@ public class ActivityCommand extends CommandBase {
         CompletableFuture<List<Activity>> activitiesFuture = api.getActivities(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
 
         activitiesFuture.thenAccept(activities -> {
-            activities.forEach(System.out::println);
+            // summarize by type
+            Map<Activity.Type, Long> activityAmountPerType = activities.stream()
+                    .collect(groupingBy(Activity::type, counting()));
+
+            player.sendMessage(Text.empty(), false);
+            player.sendMessage(Text.of("Aktivitäten:"), false);
+            activityAmountPerType.forEach((type, amount) -> sendModMessage(type.getDisplayMessage() + ": " + amount + "x", false));
+            player.sendMessage(Text.empty(), false);
         });
     }
 
@@ -112,7 +123,14 @@ public class ActivityCommand extends CommandBase {
         CompletableFuture<List<Activity>> activitiesFuture = api.getActivitiesForPlayer(playerName, range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
 
         activitiesFuture.thenAccept(activities -> {
-            activities.forEach(System.out::println);
+            // summarize by type
+            Map<Activity.Type, Long> activityAmountPerType = activities.stream()
+                    .collect(groupingBy(Activity::type, counting()));
+
+            player.sendMessage(Text.empty(), false);
+            player.sendMessage(Text.of("Aktivitäten von " + playerName + ":"), false);
+            activityAmountPerType.forEach((type, amount) -> sendModMessage(type.getDisplayMessage() + ": " + amount + "x", false));
+            player.sendMessage(Text.empty(), false);
         });
     }
 
