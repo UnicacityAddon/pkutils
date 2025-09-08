@@ -31,6 +31,10 @@ import static java.util.stream.Collectors.groupingBy;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.command.CommandSource.suggestMatching;
+import static net.minecraft.text.Text.of;
+import static net.minecraft.util.Formatting.DARK_GRAY;
+import static net.minecraft.util.Formatting.GRAY;
+import static net.minecraft.util.Formatting.WHITE;
 
 @PKUtilsCommand(label = "activity")
 public class ActivityCommand extends CommandBase {
@@ -112,8 +116,11 @@ public class ActivityCommand extends CommandBase {
                     .collect(groupingBy(Activity::type, counting()));
 
             player.sendMessage(Text.empty(), false);
-            player.sendMessage(Text.of("Aktivitäten:"), false);
-            activityAmountPerType.forEach((type, amount) -> sendModMessage(type.getDisplayMessage() + ": " + amount + "x", false));
+            sendModMessage("Aktivitäten:", false);
+            activityAmountPerType.forEach((type, amount) -> sendModMessage(Text.empty()
+                    .append(of(type.getDisplayMessage()).copy().formatted(GRAY))
+                    .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                    .append(of(amount + "x").copy().formatted(WHITE)), false));
             player.sendMessage(Text.empty(), false);
         });
     }
@@ -128,8 +135,11 @@ public class ActivityCommand extends CommandBase {
                     .collect(groupingBy(Activity::type, counting()));
 
             player.sendMessage(Text.empty(), false);
-            player.sendMessage(Text.of("Aktivitäten von " + playerName + ":"), false);
-            activityAmountPerType.forEach((type, amount) -> sendModMessage(type.getDisplayMessage() + ": " + amount + "x", false));
+            sendModMessage("Aktivitäten von " + playerName + ":", false);
+            activityAmountPerType.forEach((type, amount) -> sendModMessage(Text.empty()
+                    .append(of(type.getDisplayMessage()).copy().formatted(GRAY))
+                    .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                    .append(of(amount + "x").copy().formatted(WHITE)), false));
             player.sendMessage(Text.empty(), false);
         });
     }
