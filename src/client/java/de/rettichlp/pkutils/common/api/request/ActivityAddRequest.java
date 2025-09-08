@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.common.api.request;
 
 import de.rettichlp.pkutils.common.api.IRequest;
-import de.rettichlp.pkutils.common.api.schema.Activity;
+import de.rettichlp.pkutils.common.models.Activity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

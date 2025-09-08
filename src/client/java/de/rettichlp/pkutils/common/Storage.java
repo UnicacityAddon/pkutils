@@ -1,10 +1,10 @@
 package de.rettichlp.pkutils.common.storage;
 
-import de.rettichlp.pkutils.common.storage.schema.BlacklistEntry;
-import de.rettichlp.pkutils.common.storage.schema.Faction;
-import de.rettichlp.pkutils.common.storage.schema.FactionMember;
-import de.rettichlp.pkutils.common.storage.schema.Reinforcement;
-import de.rettichlp.pkutils.common.storage.schema.WantedEntry;
+import de.rettichlp.pkutils.common.models.BlacklistEntry;
+import de.rettichlp.pkutils.common.models.Faction;
+import de.rettichlp.pkutils.common.models.FactionMember;
+import de.rettichlp.pkutils.common.models.Reinforcement;
+import de.rettichlp.pkutils.common.models.WantedEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +18,7 @@ import java.util.Set;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.common.storage.Storage.ToggledChat.NONE;
-import static de.rettichlp.pkutils.common.storage.schema.Faction.NULL;
+import static de.rettichlp.pkutils.common.models.Faction.NULL;
 
 public class Storage {
 

@@ -9,7 +9,7 @@ import de.rettichlp.pkutils.common.api.request.ActivityAddRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
 import de.rettichlp.pkutils.common.api.request.RegisterPlayerRequest;
-import de.rettichlp.pkutils.common.api.schema.Activity;
+import de.rettichlp.pkutils.common.models.Activity;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;

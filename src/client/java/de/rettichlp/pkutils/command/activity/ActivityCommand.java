@@ -1,11 +1,11 @@
 package de.rettichlp.pkutils.command.activity;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.common.api.schema.Activity;
+import de.rettichlp.pkutils.common.models.Activity;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
-import de.rettichlp.pkutils.common.storage.schema.Faction;
-import de.rettichlp.pkutils.common.storage.schema.FactionMember;
+import de.rettichlp.pkutils.common.models.Faction;
+import de.rettichlp.pkutils.common.models.FactionMember;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ import static com.mojang.brigadier.suggestion.Suggestions.empty;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
-import static de.rettichlp.pkutils.common.storage.schema.Faction.NULL;
+import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.lang.Integer.MIN_VALUE;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.ZonedDateTime.now;

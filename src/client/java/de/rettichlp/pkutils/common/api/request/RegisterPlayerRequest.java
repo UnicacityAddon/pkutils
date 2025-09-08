@@ -1,8 +1,8 @@
 package de.rettichlp.pkutils.common.api.request;
 
 import de.rettichlp.pkutils.common.api.IRequest;
-import de.rettichlp.pkutils.common.storage.schema.Faction;
-import de.rettichlp.pkutils.common.storage.schema.FactionMember;
+import de.rettichlp.pkutils.common.models.Faction;
+import de.rettichlp.pkutils.common.models.FactionMember;
 
 import java.net.URI;
 import java.util.Map;

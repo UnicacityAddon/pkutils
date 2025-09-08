@@ -1,8 +1,8 @@
 package de.rettichlp.pkutils.mixin.client;
 
-import de.rettichlp.pkutils.common.storage.schema.BlacklistEntry;
-import de.rettichlp.pkutils.common.storage.schema.Faction;
-import de.rettichlp.pkutils.common.storage.schema.WantedEntry;
+import de.rettichlp.pkutils.common.models.BlacklistEntry;
+import de.rettichlp.pkutils.common.models.Faction;
+import de.rettichlp.pkutils.common.models.WantedEntry;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
@@ -18,7 +18,7 @@ import java.util.Optional;
 import static de.rettichlp.pkutils.PKUtilsClient.factionService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
-import static de.rettichlp.pkutils.common.storage.schema.Faction.NULL;
+import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.util.Objects.nonNull;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
