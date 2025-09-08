@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
-import static de.rettichlp.pkutils.common.api.schema.Activity.Type.EMERGENCY_SERVICE;
+import static de.rettichlp.pkutils.common.models.Activity.Type.EMERGENCY_SERVICE;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener

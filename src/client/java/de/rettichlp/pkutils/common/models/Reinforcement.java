@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.storage.schema;
+package de.rettichlp.pkutils.common.models;
 
 import lombok.Data;
 import net.minecraft.util.math.BlockPos;

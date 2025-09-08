@@ -9,7 +9,7 @@ import de.rettichlp.pkutils.common.api.request.ActivityAddRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
 import de.rettichlp.pkutils.common.api.request.RegisterPlayerRequest;
-import de.rettichlp.pkutils.common.api.schema.Activity;
+import de.rettichlp.pkutils.common.models.Activity;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -34,6 +34,7 @@ public class Api {
 
     @Getter
     private final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
             .registerTypeAdapter(Instant.class, (JsonDeserializer<Instant>) (json, typeOfT, context) -> Instant.parse(json.getAsString()))
             .registerTypeAdapter(Instant.class, (JsonSerializer<Instant>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
             .create();

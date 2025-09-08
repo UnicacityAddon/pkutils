@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.api.schema;
+package de.rettichlp.pkutils.common.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
