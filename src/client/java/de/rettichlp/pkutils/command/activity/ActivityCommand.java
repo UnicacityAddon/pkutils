@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static com.mojang.brigadier.suggestion.Suggestions.empty;
@@ -23,6 +24,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.storage.schema.Faction.NULL;
+import static java.lang.Integer.MIN_VALUE;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.ZonedDateTime.now;
 import static java.time.temporal.TemporalAdjusters.nextOrSame;
@@ -42,7 +44,13 @@ public class ActivityCommand extends CommandBase {
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
-                .then(literal("lastWeek")
+                .then(argument("weeksAgo", integer(MIN_VALUE, 0))
+                        .executes(context -> {
+                            int weeksAgo = context.getArgument("weeksAgo", Integer.class);
+                            fetchAndShowActivitiesFor(weeksAgo);
+                            return 1;
+                        }))
+                .then(literal("player")
                         .then(argument("player", word())
                                 .requires(fabricClientCommandSource -> {
                                     String playerName = player.getName().getString();
@@ -61,7 +69,7 @@ public class ActivityCommand extends CommandBase {
                                     return faction != NULL ? suggestMatching(faction.getMembers().stream()
                                             .map(FactionMember::playerName), builder) : empty();
                                 })
-                                .then(literal("lastWeek")
+                                .then(argument("weeksAgo", integer(MIN_VALUE, 0))
                                         .executes(context -> {
                                             String playerName = player.getName().getString();
                                             Faction faction = storage.getFaction(playerName);
@@ -69,13 +77,15 @@ public class ActivityCommand extends CommandBase {
                                             String targetName = getString(context, "player");
                                             Faction targetFaction = storage.getFaction(targetName);
 
+                                            int weeksAgo = context.getArgument("weeksAgo", Integer.class);
+
                                             // check faction
                                             if (faction != targetFaction) {
                                                 sendModMessage("Der Spieler ist nicht in deiner Fraktion.", false);
                                                 return 1;
                                             }
 
-                                            fetchAndShowActivitiesFor(targetName, -1);
+                                            fetchAndShowActivitiesFor(targetName, weeksAgo);
 
                                             return 1;
                                         }))
@@ -95,11 +105,7 @@ public class ActivityCommand extends CommandBase {
                                     fetchAndShowActivitiesFor(targetName, 0);
 
                                     return 1;
-                                }))
-                        .executes(context -> {
-                            fetchAndShowActivitiesFor(-1);
-                            return 1;
-                        }))
+                                })))
                 .executes(context -> {
                     fetchAndShowActivitiesFor(0);
                     return 1;
