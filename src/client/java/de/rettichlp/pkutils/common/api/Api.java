@@ -110,8 +110,8 @@ public class Api {
             return;
         }
 
-        String addressString = networkHandler.getConnection().getAddress().toString(); // punicakitty.de/152.53.252.60:25565
-        if (!addressString.contains("152.53.252.60")) {
+        String addressString = networkHandler.getConnection().getAddress().toString(); // punicakitty.de/50.114.4.0:25565
+        if (!addressString.contains("50.114.4.0")) {
             LOGGER.warn("Tried to track activity, but not on supported server");
             return;
         }
