@@ -1,8 +1,8 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
+import de.rettichlp.pkutils.common.models.WantedEntry;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
-import de.rettichlp.pkutils.common.models.WantedEntry;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
