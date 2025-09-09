@@ -41,7 +41,7 @@ public class PKUtilsClient implements ClientModInitializer {
             player = client.player;
             networkHandler = handler;
 
-            this.registry.registerListeners();
+            client.execute(this.registry::registerListeners);
         });
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
