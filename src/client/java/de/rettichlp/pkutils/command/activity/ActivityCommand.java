@@ -2,10 +2,10 @@ package de.rettichlp.pkutils.command.activity;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.models.Activity;
-import de.rettichlp.pkutils.common.registry.CommandBase;
-import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
+import de.rettichlp.pkutils.common.registry.CommandBase;
+import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;

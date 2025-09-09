@@ -1,9 +1,9 @@
 package de.rettichlp.pkutils.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
-import de.rettichlp.pkutils.common.models.Faction;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.jetbrains.annotations.NotNull;
 
