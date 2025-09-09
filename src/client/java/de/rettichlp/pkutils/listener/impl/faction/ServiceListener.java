@@ -8,9 +8,9 @@ import net.minecraft.text.Text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.activityService;
+import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
-import static de.rettichlp.pkutils.common.api.schema.ActivityType.EMERGENCY_SERVICE;
+import static de.rettichlp.pkutils.common.models.Activity.Type.EMERGENCY_SERVICE;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
@@ -24,7 +24,7 @@ public class ServiceListener extends PKUtilsBase implements IMessageReceiveListe
         if (serviceAcceptMatcher.find()) {
             String playerName = serviceAcceptMatcher.group("playerName");
             if (player.getName().getString().equals(playerName)) {
-                activityService.trackActivity(EMERGENCY_SERVICE);
+                api.trackActivity(EMERGENCY_SERVICE);
             }
         }
 

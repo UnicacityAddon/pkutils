@@ -1,8 +1,8 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
+import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
-import de.rettichlp.pkutils.common.storage.schema.Faction;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.client.MinecraftClient;
@@ -17,9 +17,9 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
-import static de.rettichlp.pkutils.common.storage.schema.Faction.FBI;
-import static de.rettichlp.pkutils.common.storage.schema.Faction.POLIZEI;
-import static de.rettichlp.pkutils.common.storage.schema.Faction.RETTUNGSDIENST;
+import static de.rettichlp.pkutils.common.models.Faction.FBI;
+import static de.rettichlp.pkutils.common.models.Faction.POLIZEI;
+import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
 import static java.lang.String.format;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;

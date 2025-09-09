@@ -1,8 +1,8 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
+import de.rettichlp.pkutils.common.models.WantedEntry;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
-import de.rettichlp.pkutils.common.storage.schema.WantedEntry;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -12,15 +12,15 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.activityService;
+import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.factionService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
-import static de.rettichlp.pkutils.common.api.schema.ActivityType.ARREST;
-import static de.rettichlp.pkutils.common.api.schema.ActivityType.ARREST_KILL;
-import static de.rettichlp.pkutils.common.api.schema.ActivityType.PARK_TICKET;
-import static de.rettichlp.pkutils.common.storage.schema.Faction.POLIZEI;
+import static de.rettichlp.pkutils.common.models.Activity.Type.ARREST;
+import static de.rettichlp.pkutils.common.models.Activity.Type.ARREST_KILL;
+import static de.rettichlp.pkutils.common.models.Activity.Type.PARK_TICKET;
+import static de.rettichlp.pkutils.common.models.Faction.POLIZEI;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
@@ -38,23 +38,23 @@ import static net.minecraft.util.TypeFilter.instanceOf;
 @PKUtilsListener
 public class WantedListener extends PKUtilsBase implements IMessageReceiveListener {
 
-    private static final Pattern WANTED_GIVEN_POINTS_PATTERN = compile("^HQ: ([a-zA-Z0-9_]+)'s momentanes WantedLevel: (\\d+)$");
-    private static final Pattern WANTED_GIVEN_REASON_PATTERN = compile("^HQ: Gesuchter: (?<playerName>[a-zA-Z0-9_]+)\\. Grund: (?<reason>.+)$");
+    private static final Pattern WANTED_GIVEN_POINTS_PATTERN = compile("^HQ: (\\[PK])?([a-zA-Z0-9_]+)'s momentanes WantedLevel: (\\d+)$");
+    private static final Pattern WANTED_GIVEN_REASON_PATTERN = compile("^HQ: Gesuchter: (\\[PK])?(?<playerName>[a-zA-Z0-9_]+)\\. Grund: (?<reason>.+)$");
     private static final Pattern WANTED_REASON_PATTERN = compile("^HQ: Fahndungsgrund: (?<reason>.+) \\| Fahndungszeit: (?<time>.+)$");
-    private static final Pattern WANTED_DELETE_PATTERN = compile("^HQ: (?<playerName>[a-zA-Z0-9_]+) hat (?<targetName>[a-zA-Z0-9_]+)(?:'s)* Akten gelöscht, over\\.$");
-    private static final Pattern WANTED_KILL_PATTERN = compile("^HQ: (?<targetName>[a-zA-Z0-9_]+) wurde von (?<playerName>[a-zA-Z0-9_]+) getötet\\.$");
-    private static final Pattern WANTED_ARREST_PATTERN = compile("^HQ: (?<targetName>[a-zA-Z0-9_]+) wurde von (?<playerName>[a-zA-Z0-9_]+) eingesperrt\\.$");
-    private static final Pattern PARKTICKET_PATTERN = compile("^HQ: (?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel an das Fahrzeug \\[[A-Z0-9-]+] vergeben\\.$");
-    private static final Pattern WANTED_UNARREST_PATTERN = compile("^HQ: (?<playerName>[a-zA-Z0-9_]+) hat (?<targetName>[a-zA-Z0-9_]+) aus dem Gefängnis entlassen\\.$");
+    private static final Pattern WANTED_DELETE_PATTERN = compile("^HQ: (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Akten gelöscht, over\\.$");
+    private static final Pattern WANTED_KILL_PATTERN = compile("^HQ: (\\[PK])?(?<targetName>[a-zA-Z0-9_]+) wurde von (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) getötet\\.$");
+    private static final Pattern WANTED_ARREST_PATTERN = compile("^HQ: (\\[PK])?(?<targetName>[a-zA-Z0-9_]+) wurde von (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) eingesperrt\\.$");
+    private static final Pattern PARKTICKET_PATTERN = compile("^HQ: (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel an das Fahrzeug \\[[A-Z0-9-]+] vergeben\\.$");
+    private static final Pattern WANTED_UNARREST_PATTERN = compile("^HQ: (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (\\[PK])?(?<targetName>[a-zA-Z0-9_]+) aus dem Gefängnis entlassen\\.$");
     private static final Pattern WANTED_LIST_HEADER_PATTERN = compile("Online Spieler mit WantedPunkten:");
-    private static final Pattern WANTED_LIST_ENTRY_PATTERN = compile("- (?<playerName>[a-zA-Z0-9_]+) \\| (?<wantedPointAmount>\\d+) \\| (?<reason>.+)(?<afk> \\| AFK|)");
-    private static final Pattern GIVE_DRIVING_LICENSE_PATTERN = compile("^(Agent|Beamter) (?<playerName>[a-zA-Z0-9_]+) hat (?<targetName>[a-zA-Z0-9_]+)(?:'s)* Führerschein zurückgegeben\\.$");
-    private static final Pattern TAKE_DRIVING_LICENSE_PATTERN = compile("^(Agent|Beamter) (?<playerName>[a-zA-Z0-9_]+) hat (?<targetName>[a-zA-Z0-9_]+)(?:'s)* Führerschein abgenommen\\.$");
-    private static final Pattern GIVE_GUN_LICENSE_PATTERN = compile("^(Agent|Beamter) (?<playerName>[a-zA-Z0-9_]+) hat (?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein zurückgegeben\\.$");
-    private static final Pattern TAKE_GUN_LICENSE_PATTERN = compile("^(Agent|Beamter) (?<playerName>[a-zA-Z0-9_]+) hat (?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein abgenommen\\.$");
-    private static final Pattern TAKE_GUNS_PATTERN = compile("^(Beamtin|Beamter) (?<playerName>[a-zA-Z0-9_]+) hat (?<targetName>[a-zA-Z0-9_]+) die Waffen abgenommen\\.$");
-    private static final Pattern TAKE_DRUGS_PATTERN = compile("^(Beamtin|Beamter) (?<playerName>[a-zA-Z0-9_]+) hat (?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Drogen abgenommen!$");
-    private static final Pattern TRACKER_AGENT_PATTERN = compile("^HQ: Agent (?<playerName>[a-zA-Z0-9_]+) hat ein Peilsender an (?<targetName>[a-zA-Z0-9_]+) befestigt, over\\.$");
+    private static final Pattern WANTED_LIST_ENTRY_PATTERN = compile("- (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) \\| (?<wantedPointAmount>\\d+) \\| (?<reason>.+)(?<afk> \\| AFK|)");
+    private static final Pattern GIVE_DRIVING_LICENSE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Führerschein zurückgegeben\\.$");
+    private static final Pattern TAKE_DRIVING_LICENSE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Führerschein abgenommen\\.$");
+    private static final Pattern GIVE_GUN_LICENSE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein zurückgegeben\\.$");
+    private static final Pattern TAKE_GUN_LICENSE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein abgenommen\\.$");
+    private static final Pattern TAKE_GUNS_PATTERN = compile("^(Beamter|Beamtin) (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (\\[PK])?(?<targetName>[a-zA-Z0-9_]+) die Waffen abgenommen\\.$");
+    private static final Pattern TAKE_DRUGS_PATTERN = compile("^(Beamter|Beamtin) (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Drogen abgenommen!$");
+    private static final Pattern TRACKER_AGENT_PATTERN = compile("^HQ: (Agent|Agentin) (\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Peilsender an (\\[PK])?(?<targetName>[a-zA-Z0-9_]+) befestigt, over\\.$");
 
     private long activeCheck = 0;
 
@@ -167,7 +167,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
                 player.getWorld().getEntitiesByType(instanceOf(PlayerEntity.class), player.getBoundingBox().expand(60), playerEntity -> true).stream()
                         .map(playerEntity -> playerEntity.getGameProfile().getName())
                         .filter(playerEntityName -> storage.getFaction(playerEntityName) == POLIZEI)
-                        .forEach(playerEntityName -> activityService.trackActivity(ARREST_KILL));
+                        .forEach(playerEntityName -> api.trackActivity(ARREST_KILL));
             }
 
             return false;
@@ -192,7 +192,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             player.sendMessage(modifiedMessage, false);
 
             if (clientPlayerName.equals(playerName)) {
-                activityService.trackActivity(ARREST);
+                api.trackActivity(ARREST);
             }
 
             return false;
@@ -203,7 +203,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             String officerName = parkticketMatcher.group("playerName");
 
             if (clientPlayerName.equals(officerName)) {
-                activityService.trackActivity(PARK_TICKET);
+                api.trackActivity(PARK_TICKET);
             }
 
             return true;

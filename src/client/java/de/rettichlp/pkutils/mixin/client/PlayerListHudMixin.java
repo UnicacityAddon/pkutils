@@ -16,19 +16,24 @@ import java.util.Comparator;
 import java.util.List;
 
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
+import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.util.Comparator.comparing;
+import static net.minecraft.text.Text.of;
 import static net.minecraft.text.TextColor.fromFormatting;
 import static net.minecraft.util.Formatting.BLUE;
+import static net.minecraft.util.Formatting.BOLD;
 import static net.minecraft.util.Formatting.DARK_BLUE;
 import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.DARK_RED;
 import static net.minecraft.util.Formatting.GOLD;
+import static net.minecraft.util.Formatting.RED;
 
 @Mixin(PlayerListHud.class)
 public abstract class PlayerListHudMixin {
 
     @Unique
     private static final Comparator<PlayerListEntry> PKUTILS_ENTRY_ORDERING = comparing((PlayerListEntry playerListEntry) -> {
+        String playerName = playerListEntry.getProfile().getName();
         Text displayName = playerListEntry.getDisplayName();
 
         if (displayName == null) {
@@ -61,10 +66,37 @@ public abstract class PlayerListHudMixin {
             return 3; // MEDIC
         } else if (firstSiblingStyleColor.equals(fromFormatting(GOLD))) {
             return 4; // NEWS
+        } else if (storage.getWantedEntries().stream().anyMatch(wantedEntry -> wantedEntry.getPlayerName().equals(playerName))) {
+            return 6; // WANTED
+        } else if (storage.getBlacklistEntries().stream().anyMatch(blacklistEntry -> blacklistEntry.playerName().equals(playerName))) {
+            return 7; // BLACKLIST
+        } else if (false) { // TODO
+            return 8; // CONTRACT
         } else {
-            return 6; // OTHER
+            return 9; // OTHER
         }
     }).thenComparing(playerListEntry -> playerListEntry.getProfile().getName());
+
+    @Inject(method = "getPlayerName", at = @At("RETURN"), cancellable = true)
+    private void onGetPlayerName(PlayerListEntry playerListEntry, @NotNull CallbackInfoReturnable<Text> cir) {
+        String playerName = playerListEntry.getProfile().getName();
+        Text originText = cir.getReturnValue();
+
+        String icon = "";
+
+        if (storage.getWantedEntries().stream()
+                .anyMatch(wantedEntry -> wantedEntry.getPlayerName().equals(playerName))) {
+            icon = " 🔍";
+        } else if (storage.getBlacklistEntries().stream()
+                .anyMatch(blacklistEntry -> blacklistEntry.playerName().equals(playerName))) {
+            icon = " 💀";
+        }
+
+        if (!icon.isBlank()) {
+            cir.setReturnValue(originText.copy().append(" ")
+                    .append(of(icon).copy().formatted(RED, BOLD)));
+        }
+    }
 
     @Inject(method = "collectPlayerEntries", at = @At("RETURN"), cancellable = true)
     private void onCollectPlayerEntries(@NotNull CallbackInfoReturnable<List<PlayerListEntry>> cir) {

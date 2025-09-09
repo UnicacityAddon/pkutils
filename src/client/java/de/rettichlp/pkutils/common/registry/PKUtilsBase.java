@@ -12,6 +12,7 @@ import java.util.TimerTask;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.lang.Boolean.getBoolean;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.Objects.nonNull;
 import static net.minecraft.client.MinecraftClient.getInstance;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
@@ -48,7 +49,7 @@ public abstract class PKUtilsBase {
     }
 
     public boolean isSuperUser() {
-        return player.getUuidAsString().equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19") || getBoolean("fabric.development");
+        return nonNull(player) && (player.getUuidAsString().equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19") || getBoolean("fabric.development"));
     }
 
     public String dateTimeToFriendlyString(@NotNull ChronoLocalDateTime<LocalDate> dateTime) {

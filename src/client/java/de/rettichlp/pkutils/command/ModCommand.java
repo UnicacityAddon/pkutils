@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.common.api.schema.ActivityType;
+import de.rettichlp.pkutils.common.models.Activity;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -15,7 +15,7 @@ import java.util.StringJoiner;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
-import static de.rettichlp.pkutils.PKUtilsClient.activityService;
+import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.hudService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
@@ -40,15 +40,15 @@ public class ModCommand extends CommandBase {
                         .requires(fabricClientCommandSource -> isSuperUser())
                         .then(argument("activityType", word())
                                 .suggests((context, builder) -> {
-                                    stream(ActivityType.values()).forEach(activityType -> builder.suggest(activityType.name()));
+                                    stream(Activity.Type.values()).forEach(activityType -> builder.suggest(activityType.name()));
                                     return builder.buildFuture();
                                 })
                                 .executes(context -> {
                                     String activityTypeString = context.getArgument("activityType", String.class);
-                                    stream(ActivityType.values())
+                                    stream(Activity.Type.values())
                                             .filter(activityType -> activityType.name().equals(activityTypeString.toUpperCase()))
                                             .findFirst()
-                                            .ifPresent(activityType -> activityService.trackActivity(activityType));
+                                            .ifPresent(api::trackActivity);
 
                                     return 1;
                                 })))

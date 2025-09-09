@@ -1,10 +1,10 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
-import de.rettichlp.pkutils.common.api.schema.ActivityType;
+import de.rettichlp.pkutils.common.Storage;
+import de.rettichlp.pkutils.common.models.Activity;
+import de.rettichlp.pkutils.common.models.Reinforcement;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
-import de.rettichlp.pkutils.common.storage.Storage;
-import de.rettichlp.pkutils.common.storage.schema.Reinforcement;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
 import de.rettichlp.pkutils.listener.IMoveListener;
@@ -21,11 +21,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
-import static de.rettichlp.pkutils.PKUtilsClient.activityService;
+import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
-import static de.rettichlp.pkutils.common.storage.Storage.ToggledChat.NONE;
+import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static java.lang.Integer.parseInt;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.nonNull;
@@ -177,7 +177,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             }
 
             reinforcement.setAddedAsActivity(true);
-            activityService.trackActivity(ActivityType.REINFORCEMENT);
+            api.trackActivity(Activity.Type.REINFORCEMENT);
             LOGGER.info("Reinforcement reached, tracked activity");
         });
     }
