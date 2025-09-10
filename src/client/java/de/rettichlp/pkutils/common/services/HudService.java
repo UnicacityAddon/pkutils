@@ -10,12 +10,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 import static java.awt.Color.CYAN;
 import static java.awt.Color.GREEN;
 import static java.awt.Color.ORANGE;
 import static java.awt.Color.RED;
 import static java.time.LocalDateTime.now;
+import static java.util.Objects.hash;
+import static java.util.Objects.nonNull;
+import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class HudService extends PKUtilsBase {
@@ -55,10 +60,21 @@ public class HudService extends PKUtilsBase {
     @Data
     public static class Notification {
 
+        private final UUID id = randomUUID();
         private final Text text;
         private final long durationInMillis;
         private final LocalDateTime timestamp = now();
         private Color borderColor = new Color(255, 255, 255, 255);
         private Color backgroundColor = new Color(127, 127, 127, 100);
+
+        @Override
+        public boolean equals(Object o) {
+            return nonNull(o) && o instanceof Notification that && Objects.equals(this.id, that.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash(this.id, this.text, this.durationInMillis, this.timestamp, this.borderColor, this.backgroundColor);
+        }
     }
 }
