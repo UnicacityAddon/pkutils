@@ -41,6 +41,11 @@ public abstract class PlayerListHudMixin {
         }
 
         List<Text> siblings = displayName.getSiblings();
+
+        if (siblings.isEmpty()) {
+            return 6; // OTHER
+        }
+
         TextColor firstSiblingStyleColor = siblings.getFirst().getStyle().getColor();
 
         if (firstSiblingStyleColor == null) {
