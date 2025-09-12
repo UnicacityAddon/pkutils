@@ -13,7 +13,6 @@ import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleWChatCommand;
 import de.rettichlp.pkutils.command.faction.AllianceCommand;
-import de.rettichlp.pkutils.command.faction.WSUCommand;
 import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
 import de.rettichlp.pkutils.command.money.DepositCommand;
@@ -72,8 +71,7 @@ public class Registry {
             TodoCommand.class,
             ToggleDChatCommand.class,
             ToggleFChatCommand.class,
-            ToggleWChatCommand.class,
-            WSUCommand.class
+            ToggleWChatCommand.class
     );
 
     private final Set<Class<?>> listeners = Set.of(
