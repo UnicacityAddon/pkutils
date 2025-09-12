@@ -16,7 +16,7 @@ import static java.util.Arrays.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.minecraft.command.CommandSource.suggestMatching;
 
-@PKUtilsCommand(label = "wsu", aliases = "wp")
+@PKUtilsCommand(label = "alliance")
 public class AllianceCommand extends CommandBase {
 
     @Override
