@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.Optional;
 
+import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.factionService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
@@ -23,6 +24,7 @@ import static java.util.Objects.nonNull;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.BLUE;
+import static net.minecraft.util.Formatting.DARK_BLUE;
 import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.DARK_RED;
 import static net.minecraft.util.Formatting.RED;
@@ -49,8 +51,13 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
 
             // same faction -> blue name
             Faction playerFaction = storage.getFaction(player.getName().getString());
-            if (playerFaction == targetFaction && playerFaction != NULL) {
+            if (playerFaction == targetFaction && targetFaction != NULL) {
                 newTargetDisplayNameColor = BLUE;
+            }
+
+            // alliance faction -> dark blue
+            if (configService.load().getAllianceFaction() == targetFaction && targetFaction != NULL) {
+                newTargetDisplayNameColor = DARK_BLUE;
             }
 
             Optional<BlacklistEntry> optionalTargetBlacklistEntry = storage.getBlacklistEntries().stream()
