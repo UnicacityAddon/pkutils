@@ -52,7 +52,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
     private static final Pattern TAKE_DRIVING_LICENSE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Führerschein abgenommen\\.$");
     private static final Pattern GIVE_GUN_LICENSE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein zurückgegeben\\.$");
     private static final Pattern TAKE_GUN_LICENSE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein abgenommen\\.$");
-    private static final Pattern TAKE_GUNS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) die Waffen abgenommen\\.$");
+    private static final Pattern TAKE_GUNS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Waffen abgenommen\\.$");
     private static final Pattern TAKE_DRUGS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Drogen abgenommen!$");
     private static final Pattern TRACKER_AGENT_PATTERN = compile("^HQ: (Agent|Agentin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Peilsender an (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) befestigt, over\\.$");
 
