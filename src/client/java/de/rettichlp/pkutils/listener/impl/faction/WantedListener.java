@@ -44,16 +44,16 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
     private static final Pattern WANTED_DELETE_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Akten gelöscht, over\\.$");
     private static final Pattern WANTED_KILL_PATTERN = compile("^HQ: (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) wurde von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) getötet\\.$");
     private static final Pattern WANTED_ARREST_PATTERN = compile("^HQ: (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) wurde von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) eingesperrt\\.$");
-    private static final Pattern PARKTICKET_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel an das Fahrzeug \\[[A-Z0-9-]+] vergeben\\.$");
     private static final Pattern WANTED_UNARREST_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) aus dem Gefängnis entlassen\\.$");
     private static final Pattern WANTED_LIST_HEADER_PATTERN = compile("Online Spieler mit WantedPunkten:");
     private static final Pattern WANTED_LIST_ENTRY_PATTERN = compile("- (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) \\| (?<wantedPointAmount>\\d+) \\| (?<reason>.+)(?<afk> \\| AFK|)");
-    private static final Pattern GIVE_DRIVING_LICENSE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Führerschein zurückgegeben\\.$");
-    private static final Pattern TAKE_DRIVING_LICENSE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Führerschein abgenommen\\.$");
-    private static final Pattern GIVE_GUN_LICENSE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein zurückgegeben\\.$");
-    private static final Pattern TAKE_GUN_LICENSE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein abgenommen\\.$");
+    private static final Pattern LICENSE_DRIVING_GIVE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Führerschein zurückgegeben\\.$");
+    private static final Pattern LICENSE_DRIVING_TAKE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Führerschein abgenommen\\.$");
+    private static final Pattern LICENSE_GUN_GIVE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein zurückgegeben\\.$");
+    private static final Pattern LICENSE_GUN_TAKE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein abgenommen\\.$");
     private static final Pattern TAKE_GUNS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Waffen abgenommen\\.$");
     private static final Pattern TAKE_DRUGS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Drogen abgenommen!$");
+    private static final Pattern PARKTICKET_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel an das Fahrzeug \\[[A-Z0-9-]+] vergeben\\.$");
     private static final Pattern TRACKER_AGENT_PATTERN = compile("^HQ: (Agent|Agentin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Peilsender an (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) befestigt, over\\.$");
 
     private long activeCheck = 0;
@@ -263,10 +263,10 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             return false;
         }
 
-        Matcher giveDrivingLicenseMatcher = GIVE_DRIVING_LICENSE_PATTERN.matcher(message);
-        if (giveDrivingLicenseMatcher.find()) {
-            String playerName = giveDrivingLicenseMatcher.group("playerName");
-            String targetName = giveDrivingLicenseMatcher.group("targetName");
+        Matcher licenseDrivingGiveMatcher = LICENSE_DRIVING_GIVE_PATTERN.matcher(message);
+        if (licenseDrivingGiveMatcher.find()) {
+            String playerName = licenseDrivingGiveMatcher.group("playerName");
+            String targetName = licenseDrivingGiveMatcher.group("targetName");
 
             Text modifiedMessage = empty()
                     .append(of("Führerscheinrückgabe").copy().formatted(RED)).append(" ")
@@ -280,10 +280,10 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             return false;
         }
 
-        Matcher takeDrivingLicenseMatcher = TAKE_DRIVING_LICENSE_PATTERN.matcher(message);
-        if (takeDrivingLicenseMatcher.find()) {
-            String playerName = takeDrivingLicenseMatcher.group("playerName");
-            String targetName = takeDrivingLicenseMatcher.group("targetName");
+        Matcher licenseDrivingTakeMatcher = LICENSE_DRIVING_TAKE_PATTERN.matcher(message);
+        if (licenseDrivingTakeMatcher.find()) {
+            String playerName = licenseDrivingTakeMatcher.group("playerName");
+            String targetName = licenseDrivingTakeMatcher.group("targetName");
 
             Text modifiedMessage = empty()
                     .append(of("Führerscheinabnahme").copy().formatted(RED)).append(" ")
@@ -297,10 +297,10 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             return false;
         }
 
-        Matcher giveGunLicenseMatcher = GIVE_GUN_LICENSE_PATTERN.matcher(message);
-        if (giveGunLicenseMatcher.find()) {
-            String playerName = giveGunLicenseMatcher.group("playerName");
-            String targetName = giveGunLicenseMatcher.group("targetName");
+        Matcher licenseGunGiveMatcher = LICENSE_GUN_GIVE_PATTERN.matcher(message);
+        if (licenseGunGiveMatcher.find()) {
+            String playerName = licenseGunGiveMatcher.group("playerName");
+            String targetName = licenseGunGiveMatcher.group("targetName");
 
             Text modifiedMessage = empty()
                     .append(of("Waffenscheinrückgabe").copy().formatted(RED)).append(" ")
@@ -314,10 +314,10 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             return false;
         }
 
-        Matcher takeGunLicenseMatcher = TAKE_GUN_LICENSE_PATTERN.matcher(message);
-        if (takeGunLicenseMatcher.find()) {
-            String playerName = takeGunLicenseMatcher.group("playerName");
-            String targetName = takeGunLicenseMatcher.group("targetName");
+        Matcher licenseGunTakeMatcher = LICENSE_GUN_TAKE_PATTERN.matcher(message);
+        if (licenseGunTakeMatcher.find()) {
+            String playerName = licenseGunTakeMatcher.group("playerName");
+            String targetName = licenseGunTakeMatcher.group("targetName");
 
             Text modifiedMessage = empty()
                     .append(of("Waffenscheinabnahme").copy().formatted(RED)).append(" ")
