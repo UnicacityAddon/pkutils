@@ -54,6 +54,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
     private static final Pattern TAKE_GUNS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Waffen abgenommen\\.$");
     private static final Pattern TAKE_DRUGS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Drogen abgenommen.$");
     private static final Pattern PARKTICKET_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel an das Fahrzeug \\[[A-Z0-9-]+] vergeben\\.$");
+    private static final Pattern SEARCH_TRUNK_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat den Kofferraum vom Fahrzeug (?<plate>.+) durchsucht, over\\.$");
     private static final Pattern TRACKER_AGENT_PATTERN = compile("^HQ: (Agent|Agentin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Peilsender an (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) befestigt, over\\.$");
 
     private long activeCheck = 0;
@@ -207,6 +208,23 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             }
 
             return true;
+        }
+
+        Matcher searchTrunkMatcher = SEARCH_TRUNK_PATTERN.matcher(message);
+        if (searchTrunkMatcher.find()) {
+            String officerName = searchTrunkMatcher.group("playerName");
+            String plate = searchTrunkMatcher.group("plate");
+
+            Text modifiedMessage = empty()
+                    .append(of("Fahrzeugkontrolle").copy().formatted(RED)).append(" ")
+                    .append(of("-").copy().formatted(GRAY)).append(" ")
+                    .append(of(plate).copy().formatted(BLUE)).append(" ")
+                    .append(of("-").copy().formatted(GRAY)).append(" ")
+                    .append(of(officerName).copy().formatted(BLUE));
+
+            player.sendMessage(modifiedMessage, false);
+
+            return false;
         }
 
         Matcher wantedUnarrestMatcher = WANTED_UNARREST_PATTERN.matcher(message);
