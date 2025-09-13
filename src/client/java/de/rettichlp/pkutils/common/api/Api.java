@@ -44,7 +44,7 @@ public class Api {
             .create();
 
     @Getter
-    private final String baseUrl = "https://pkutils.rettichlp.de/v1";
+    private final String baseUrl = "https://pkutils.rettichlp.de/v1"; // http://localhost:6010/pkutils/v1
 
     public void registerPlayer() {
         Request<RegisterPlayerRequest> request = Request.<RegisterPlayerRequest>builder()

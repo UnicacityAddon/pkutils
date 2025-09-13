@@ -54,7 +54,7 @@ public class MinusPointsCommand extends CommandBase {
                                     return faction != NULL ? suggestMatching(faction.getMembers().stream()
                                             .map(FactionMember::playerName), builder) : empty();
                                 })
-                                .then(literal("set")
+                                .then(literal("modify")
                                         .then(argument("amount", integer())
                                                 .executes(context -> {
                                                     String playerName = player.getName().getString();
