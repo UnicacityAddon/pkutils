@@ -59,10 +59,10 @@ public class Registry {
 
     private final Set<Class<?>> commands = Set.of(
             ACallCommand.class,
-            ActivityCommand.class,
             ADropMoneyCommand.class,
-            AllianceCommand.class,
             ASMSCommand.class,
+            ActivityCommand.class,
+            AllianceCommand.class,
             DepositCommand.class,
             MiCommand.class,
             MiaCommand.class,
