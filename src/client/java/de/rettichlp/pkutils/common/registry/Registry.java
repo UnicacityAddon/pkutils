@@ -13,6 +13,7 @@ import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleWChatCommand;
 import de.rettichlp.pkutils.command.faction.AllianceCommand;
+import de.rettichlp.pkutils.command.faction.MinusPointsCommand;
 import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
 import de.rettichlp.pkutils.command.money.DepositCommand;
@@ -65,6 +66,7 @@ public class Registry {
             DepositCommand.class,
             MiCommand.class,
             MiaCommand.class,
+            MinusPointsCommand.class,
             ModCommand.class,
             RichTaxesCommand.class,
             SyncCommand.class,
