@@ -20,7 +20,6 @@ import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static de.rettichlp.pkutils.common.models.Activity.Type.ARREST;
 import static de.rettichlp.pkutils.common.models.Activity.Type.ARREST_KILL;
 import static de.rettichlp.pkutils.common.models.Activity.Type.PARK_TICKET;
-import static de.rettichlp.pkutils.common.models.Faction.POLIZEI;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
@@ -164,11 +163,10 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
 
             player.sendMessage(modifiedMessage, false);
 
-            if (clientPlayerName.equals(playerName)) {
-                player.getWorld().getEntitiesByType(instanceOf(PlayerEntity.class), player.getBoundingBox().expand(60), playerEntity -> true).stream()
-                        .map(playerEntity -> playerEntity.getGameProfile().getName())
-                        .filter(playerEntityName -> storage.getFaction(playerEntityName) == POLIZEI)
-                        .forEach(playerEntityName -> api.trackActivity(ARREST_KILL));
+            // track activity if the killer player is within 60 blocks
+            boolean killerIsWithin60Blocks = !player.getWorld().getEntitiesByType(instanceOf(PlayerEntity.class), player.getBoundingBox().expand(60), playerEntity -> playerEntity.getGameProfile().getName().equals(playerName)).isEmpty();
+            if (killerIsWithin60Blocks) {
+                api.trackActivity(ARREST_KILL);
             }
 
             return false;
