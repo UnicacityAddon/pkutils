@@ -5,11 +5,16 @@ import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.WantedEntry;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.render.entity.state.ItemEntityRenderState;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Items;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
@@ -39,55 +44,70 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
             argsOnly = true
     )
     private Text renderLabelIfPresent(Text original, EntityRenderState state) {
-        if (state instanceof PlayerEntityRenderState playerState && nonNull(playerState.displayName)) {
-            String targetName = playerState.name;
-            Text targetDisplayName = playerState.displayName;
-            Faction targetFaction = storage.getFaction(targetName);
+        if (state instanceof PlayerEntityRenderState playerEntityRenderState && nonNull(playerEntityRenderState.displayName)) {
+            Text targetDisplayName = playerEntityRenderState.displayName;
+            String targetName = playerEntityRenderState.name;
+            return getFormattedTargetDisplayName(targetDisplayName, targetName);
+        } else if (state instanceof ItemEntityRenderState itemDisplayEntityRenderState && nonNull(itemDisplayEntityRenderState.displayName) && itemDisplayEntityRenderState.stack.isOf(Items.SKELETON_SKULL)) {
+            Text targetDisplayName = itemDisplayEntityRenderState.displayName;
+            String targetName = targetDisplayName.getString().substring(1); // ✞RettichLP -> RettichLP
 
-            Text newTargetDisplayNamePrefix = empty();
-            Text newTargetDisplayName = targetDisplayName.copy();
-            Text newTargetDisplayNameSuffix = targetFaction.getNameTagSuffix();
-            Formatting newTargetDisplayNameColor = WHITE;
-
-            // same faction -> blue name
-            Faction playerFaction = storage.getFaction(player.getName().getString());
-            if (playerFaction == targetFaction && targetFaction != NULL) {
-                newTargetDisplayNameColor = BLUE;
+            // only modify names if matches the default pattern - avoid duplicated rendering
+            if (!targetName.matches("^✞[a-zA-Z0-9_]+$")) {
+                return original;
             }
 
-            // alliance faction -> dark blue
-            if (configService.load().getAllianceFaction() == targetFaction && targetFaction != NULL) {
-                newTargetDisplayNameColor = DARK_BLUE;
-            }
-
-            Optional<BlacklistEntry> optionalTargetBlacklistEntry = storage.getBlacklistEntries().stream()
-                    .filter(blacklistEntry -> blacklistEntry.playerName().equals(targetName))
-                    .findAny();
-
-            if (optionalTargetBlacklistEntry.isPresent()) {
-                newTargetDisplayNameColor = RED;
-                newTargetDisplayNamePrefix = !optionalTargetBlacklistEntry.get().outlaw() ? empty() : empty()
-                        .append(of("[").copy().formatted(DARK_GRAY))
-                        .append(of("V").copy().formatted(DARK_RED))
-                        .append(of("]").copy().formatted(DARK_GRAY));
-            }
-
-            Optional<WantedEntry> optionalTargetWantedEntry = storage.getWantedEntries().stream()
-                    .filter(wantedEntry -> wantedEntry.getPlayerName().equals(targetName))
-                    .findAny();
-
-            if (optionalTargetWantedEntry.isPresent()) {
-                newTargetDisplayNameColor = factionService.getWantedPointColor(optionalTargetWantedEntry.get().getWantedPointAmount());
-            }
-
-            return empty()
-                    .append(newTargetDisplayNamePrefix)
-                    .append(" ")
-                    .append(newTargetDisplayName.copy().formatted(newTargetDisplayNameColor))
-                    .append(" ")
-                    .append(newTargetDisplayNameSuffix);
+            return getFormattedTargetDisplayName(targetDisplayName, targetName);
         }
 
         return original;
+    }
+
+    @Unique
+    private MutableText getFormattedTargetDisplayName(@NotNull Text targetDisplayName, String targetName) {
+        Faction targetFaction = storage.getFaction(targetName);
+
+        Text newTargetDisplayNamePrefix = empty();
+        Text newTargetDisplayName = targetDisplayName.copy();
+        Text newTargetDisplayNameSuffix = targetFaction.getNameTagSuffix();
+        Formatting newTargetDisplayNameColor = WHITE;
+
+        // same faction -> blue name
+        Faction playerFaction = storage.getFaction(player.getName().getString());
+        if (playerFaction == targetFaction && targetFaction != NULL) {
+            newTargetDisplayNameColor = BLUE;
+        }
+
+        // alliance faction -> dark blue
+        if (configService.load().getAllianceFaction() == targetFaction && targetFaction != NULL) {
+            newTargetDisplayNameColor = DARK_BLUE;
+        }
+
+        Optional<BlacklistEntry> optionalTargetBlacklistEntry = storage.getBlacklistEntries().stream()
+                .filter(blacklistEntry -> blacklistEntry.playerName().equals(targetName))
+                .findAny();
+
+        if (optionalTargetBlacklistEntry.isPresent()) {
+            newTargetDisplayNameColor = RED;
+            newTargetDisplayNamePrefix = !optionalTargetBlacklistEntry.get().outlaw() ? empty() : empty()
+                    .append(of("[").copy().formatted(DARK_GRAY))
+                    .append(of("V").copy().formatted(DARK_RED))
+                    .append(of("]").copy().formatted(DARK_GRAY));
+        }
+
+        Optional<WantedEntry> optionalTargetWantedEntry = storage.getWantedEntries().stream()
+                .filter(wantedEntry -> wantedEntry.getPlayerName().equals(targetName))
+                .findAny();
+
+        if (optionalTargetWantedEntry.isPresent()) {
+            newTargetDisplayNameColor = factionService.getWantedPointColor(optionalTargetWantedEntry.get().getWantedPointAmount());
+        }
+
+        return empty()
+                .append(newTargetDisplayNamePrefix)
+                .append(" ")
+                .append(newTargetDisplayName.copy().formatted(newTargetDisplayNameColor))
+                .append(" ")
+                .append(newTargetDisplayNameSuffix);
     }
 }
