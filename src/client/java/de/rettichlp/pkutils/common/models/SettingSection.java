@@ -8,7 +8,6 @@ import net.minecraft.item.Items;
 @AllArgsConstructor
 @Getter
 public enum SettingSection {
-    PERSONAL_USE("Eigenbedarf");
     PERSONAL_USE("Eigenbedarf"),
     TEST("Test"),
     TEST2("Test2"),

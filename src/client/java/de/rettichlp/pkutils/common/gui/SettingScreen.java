@@ -9,6 +9,9 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +31,6 @@ public class SettingScreen extends Screen {
     public SettingScreen(Text title) {
         super(title);
     }
-
-    private TextFieldWidget searchBar;
 
     @Override
     protected void init() {
@@ -78,10 +79,6 @@ public class SettingScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        int guiWidth = 400;
-        int guiHeight = 300;
-        int guiX = (this.width - guiWidth) / 2;
-        int guiY = (this.height - guiHeight) / 2;
 
         MinecraftClient client = MinecraftClient.getInstance();
         client.options.getMenuBackgroundBlurriness().setValue(0);
@@ -107,17 +104,12 @@ public class SettingScreen extends Screen {
                 .forEach(section -> {
                     int index = section.ordinal() - 1;
                     int buttonY = guiY + 70 + (index * 30);
+        context.fill(guiX, guiY, guiX + guiWidth, guiY + 25, 0xFF303030);
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, guiY + 9, 0xFFFFFF);
 
-                    context.drawTextWithShadow(
-                            this.textRenderer,
-                            section.getDisplayName(),
-                            guiX + 10,
-                            buttonY + 6,
-                            0xFFFFFF
-                    );
-
-                    context.drawHorizontalLine(guiX + 10, guiX + 115, buttonY + 20, Color.DARK_GRAY.getRGB());
-                });
+        int sidebarWidth = 110;
+        context.fill(guiX, guiY + 25, guiX + sidebarWidth, guiY + guiHeight, 0xFF252525);
+        context.drawVerticalLine(guiX + sidebarWidth, guiY + 25, guiY + guiHeight, Color.DARK_GRAY.getRGB());
 
         int startY = guiY + 60 - scrollOffset;
         int spacing = 30;
@@ -133,7 +125,6 @@ public class SettingScreen extends Screen {
         }
 
         this.searchBar.render(context, mouseX, mouseY, delta);
-
         super.render(context, mouseX, mouseY, delta);
     }
 }
