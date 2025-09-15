@@ -144,8 +144,11 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             player.sendMessage(reinforcementAnswer, false);
 
             // mark all reinforcements of the sender (and not self) within the last 30 seconds as on-the-way
+            String playerName = player.getGameProfile().getName();
             storage.getReinforcements().stream()
-                    .filter(reinforcement -> reinforcement.getSenderPlayerName().equals(target) && !player.getGameProfile().getName().equals(target)) // get reinforcements of sender
+                    .filter(reinforcement -> playerName.equals(senderPlayerName)) // the client is on the way
+                    .filter(reinforcement -> !playerName.equals(target)) // don't accept your own reinforcement
+                    .filter(reinforcement -> reinforcement.getSenderPlayerName().equals(target)) // find all reinforcements of the target
                     .filter(reinforcement -> !reinforcement.getAcceptedPlayerNames().contains(senderPlayerName)) // not already accepted by the player
                     .filter(reinforcement -> reinforcement.getCreatedAt().isAfter(now().minusSeconds(30))) // only recent ones
                     .filter(reinforcement -> switch (reinforcement.getType()) { // reinforcement types that should be accepted
