@@ -16,7 +16,6 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +25,10 @@ import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
+import static de.rettichlp.pkutils.common.models.Faction.FBI;
+import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
 import static java.lang.Integer.parseInt;
+import static java.time.LocalDateTime.now;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
@@ -79,6 +81,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             player.sendMessage(reinforcementText, false);
 
             Reinforcement reinforcement = new Reinforcement(type, senderPlayerName, naviPoint, distance);
+            LOGGER.info("Found new reinforcement: {}", reinforcement);
             storage.trackReinforcement(reinforcement);
 
             return false;
@@ -117,11 +120,15 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
                     })
                     .toList().getFirst();
 
-            Optional<Reinforcement> optionalReinforcement = storage.getReinforcements().stream()
-                    .filter(reinforcement -> reinforcement.getSenderPlayerName().equals(senderName))
-                    .max(comparing(Reinforcement::getCreatedAt));
+            LOGGER.info("Found reinforcement buttons: {} | {}", senderName, blockPos.toShortString());
 
-            optionalReinforcement.ifPresent(reinforcement -> reinforcement.setBlockPos(blockPos));
+            storage.getReinforcements().stream()
+                    .filter(reinforcement -> reinforcement.getSenderPlayerName().equals(senderName))
+                    .max(comparing(Reinforcement::getCreatedAt))
+                    .ifPresent(reinforcement -> {
+                        reinforcement.setBlockPos(blockPos);
+                        LOGGER.info("Updated reinforcement: {}", reinforcement);
+                    });
 
             return true;
         }
@@ -136,10 +143,21 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             Text reinforcementAnswer = REINFORCEMENT_ON_THE_WAY.create(senderRank + " " + senderPlayerName, target, distance);
             player.sendMessage(reinforcementAnswer, false);
 
+            // mark all reinforcements of the sender (and not self) within the last 30 seconds as on-the-way
             storage.getReinforcements().stream()
-                    .filter(reinforcement -> reinforcement.getSenderPlayerName().equals(target)) // get reinforcements of target
-                    .max(comparing(Reinforcement::getCreatedAt)) // get the latest one
-                    .ifPresent(reinforcement -> reinforcement.getAcceptedPlayerNames().add(senderPlayerName));
+                    .filter(reinforcement -> reinforcement.getSenderPlayerName().equals(target) && !player.getGameProfile().getName().equals(target)) // get reinforcements of sender
+                    .filter(reinforcement -> !reinforcement.getAcceptedPlayerNames().contains(senderPlayerName)) // not already accepted by the player
+                    .filter(reinforcement -> reinforcement.getCreatedAt().isAfter(now().minusSeconds(30))) // only recent ones
+                    .filter(reinforcement -> switch (reinforcement.getType()) { // reinforcement types that should be accepted
+                        case "Medic benötigt" ->
+                                storage.getFaction(senderPlayerName) == RETTUNGSDIENST; // only medics accept medic calls
+                        case "Drogenabnahme" -> storage.getFaction(senderPlayerName) == FBI; // only FBI accept drug bust calls
+                        default -> true; // all others accept all calls
+                    })
+                    .forEach(reinforcement -> {
+                        reinforcement.getAcceptedPlayerNames().add(senderPlayerName);
+                        LOGGER.info("Reinforcement accepted: {}", reinforcement);
+                    });
 
             return false;
         }
@@ -162,24 +180,17 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
     public void onMove(BlockPos blockPos) {
         String playerName = player.getGameProfile().getName();
 
-        // get the nearest reinforcement within 60 blocks that is not from yourself and was accepted
-        Optional<Reinforcement> optionalReinforcement = storage.getReinforcements().stream()
+        // for all reinforcements within 60 blocks that were not from yourself and were accepted
+        storage.getReinforcements().stream()
                 .filter(reinforcement -> nonNull(reinforcement.getBlockPos())) // check if the block position was set
                 .filter(reinforcement -> reinforcement.getBlockPos().isWithinDistance(player.getBlockPos(), 60))
-                .filter(reinforcement -> !reinforcement.getSenderPlayerName().equals(playerName))
                 .filter(reinforcement -> reinforcement.getAcceptedPlayerNames().contains(playerName))
-                .max(comparing(Reinforcement::getCreatedAt));
-
-        optionalReinforcement.ifPresent(reinforcement -> {
-            if (reinforcement.isAddedAsActivity()) {
-                LOGGER.info("Reinforcement already added as activity");
-                return;
-            }
-
-            reinforcement.setAddedAsActivity(true);
-            api.trackActivity(Activity.Type.REINFORCEMENT);
-            LOGGER.info("Reinforcement reached, tracked activity");
-        });
+                .filter(reinforcement -> !reinforcement.isAddedAsActivity())
+                .forEach(reinforcement -> {
+                    reinforcement.setAddedAsActivity(true);
+                    api.trackActivity(Activity.Type.REINFORCEMENT);
+                    LOGGER.info("Reinforcement reached, tracked activity");
+                });
     }
 
     @FunctionalInterface
