@@ -17,7 +17,8 @@ public record Activity(String id, Instant timeStamp, Type type) {
         EMERGENCY_SERVICE("Notruf"),
         MAJOR_EVENT("Großereignis"),
         PARK_TICKET("Strafzettel"),
-        REINFORCEMENT("Reinforcement");
+        REINFORCEMENT("Reinforcement"),
+        REVIVE("Wiederbelebung");
 
         private final String displayMessage;
 
