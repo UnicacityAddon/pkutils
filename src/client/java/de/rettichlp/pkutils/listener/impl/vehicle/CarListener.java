@@ -29,18 +29,22 @@ import static net.minecraft.screen.slot.SlotActionType.PICKUP;
 public class CarListener extends PKUtilsBase implements IEnterVehicleListener, IMessageReceiveListener {
 
     private static final Pattern CAR_UNLOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ aufgeschlossen\\.$");
+    private static final Pattern CAR_LOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ abgeschlossen\\.$");
 
     private boolean carLocked = true;
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
-        if (!storage.isCarLock()) {
-            return true;
-        }
-
         Matcher carUnlockMatcher = CAR_UNLOCK_PATTERN.matcher(message);
         if (carUnlockMatcher.find()) {
             this.carLocked = false;
+            return true;
+        }
+
+        Matcher carLockMatcher = CAR_LOCK_PATTERN.matcher(message);
+        if (carLockMatcher.find()) {
+            this.carLocked = true;
+            return true;
         }
 
         return true;
