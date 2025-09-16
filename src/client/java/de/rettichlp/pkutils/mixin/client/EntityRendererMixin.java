@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.Optional;
 
+import static com.mojang.text2speech.Narrator.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.factionService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
@@ -52,6 +53,7 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
             Text targetDisplayName = itemDisplayEntityRenderState.displayName;
             String targetName = targetDisplayName.getString().substring(1); // ✞RettichLP -> RettichLP
 
+            LOGGER.debug("Original: {} -> {}, already modified: {}", targetDisplayName.getString(), targetName, targetName.contains(" "));
             // only modify names if not containing space with the faction info prefix - avoid duplicated rendering
             return targetName.contains(" ") ? original : getFormattedTargetDisplayName(targetDisplayName, targetName);
         }
