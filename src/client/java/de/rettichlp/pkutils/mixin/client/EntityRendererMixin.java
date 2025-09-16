@@ -52,12 +52,8 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
             Text targetDisplayName = itemDisplayEntityRenderState.displayName;
             String targetName = targetDisplayName.getString().substring(1); // ✞RettichLP -> RettichLP
 
-            // only modify names if matches the default pattern - avoid duplicated rendering
-            if (!targetName.matches("^✞[a-zA-Z0-9_]+$")) {
-                return original;
-            }
-
-            return getFormattedTargetDisplayName(targetDisplayName, targetName);
+            // only modify names if not containing space with the faction info prefix - avoid duplicated rendering
+            return targetName.contains(" ") ? original : getFormattedTargetDisplayName(targetDisplayName, targetName);
         }
 
         return original;
