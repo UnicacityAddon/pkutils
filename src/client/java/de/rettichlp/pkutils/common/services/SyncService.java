@@ -29,8 +29,10 @@ public class SyncService extends PKUtilsBase {
 
     private LocalDateTime lastSyncTimestamp = MIN;
     private boolean gameSyncProcessActive = false;
+    private boolean abortGameSyncProcess = false;
 
     public void executeSync() {
+        this.abortGameSyncProcess = false;
         this.gameSyncProcessActive = true;
         hudService.sendNotification("PKUtils wird synchronisiert...", CYAN, Faction.values().length * 1000L + 1000);
 
@@ -41,6 +43,10 @@ public class SyncService extends PKUtilsBase {
             }
 
             delayedAction(() -> {
+                if (this.abortGameSyncProcess) {
+                    return;
+                }
+
                 networkHandler.sendChatCommand("memberinfoall " + faction.getMemberInfoCommandName());
                 hudService.sendNotification("Synchronisiere Fraktion " + faction.getDisplayName() + "...", WHITE, 1000);
             }, 1000 * faction.ordinal());
@@ -48,6 +54,10 @@ public class SyncService extends PKUtilsBase {
 
         // second 13: faction-related init commands
         delayedAction(() -> {
+            if (this.abortGameSyncProcess) {
+                return;
+            }
+
             Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
 
             if (faction.isBadFaction()) {
@@ -61,6 +71,10 @@ public class SyncService extends PKUtilsBase {
 
         // end: init commands dons
         delayedAction(() -> {
+            if (this.abortGameSyncProcess) {
+                return;
+            }
+
             // api login
             api.registerPlayer();
 
@@ -68,6 +82,11 @@ public class SyncService extends PKUtilsBase {
             hudService.sendSuccessNotification("PKUtils synchronisiert");
             this.lastSyncTimestamp = now();
         }, Faction.values().length * 1000L + 1000);
+    }
+
+    public void stopSync() {
+        this.abortGameSyncProcess = true;
+        this.gameSyncProcessActive = false;
     }
 
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
