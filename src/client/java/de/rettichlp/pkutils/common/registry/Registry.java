@@ -18,7 +18,6 @@ import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
 import de.rettichlp.pkutils.command.money.DepositCommand;
 import de.rettichlp.pkutils.command.money.RichTaxesCommand;
-import de.rettichlp.pkutils.command.vehicle.ToggleCarlockCommand;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
@@ -78,7 +77,6 @@ public class Registry {
             RichTaxesCommand.class,
             SyncCommand.class,
             TodoCommand.class,
-            ToggleCarlockCommand.class,
             ToggleDChatCommand.class,
             ToggleFChatCommand.class,
             ToggleWChatCommand.class
