@@ -36,6 +36,26 @@ public class CarListener extends PKUtilsBase implements IEnterVehicleListener, I
     private boolean carLocked = true;
 
     @Override
+    public void onEnterVehicle(Entity vehicle) {
+        if (!storage.isCarLock()) {
+            return;
+        }
+
+        // the entity is a car
+        if (!isCar(vehicle)) {
+            return;
+        }
+
+        // start car
+        networkHandler.sendChatCommand("car start");
+
+        // lock car after 1 second if not already locked
+        if (!this.carLocked) {
+            delayedAction(() -> networkHandler.sendChatCommand("car lock"), 1000);
+        }
+    }
+
+    @Override
     public boolean onMessageReceive(Text text, String message) {
         Matcher carUnlockMatcher = CAR_UNLOCK_PATTERN.matcher(message);
         if (carUnlockMatcher.find()) {
@@ -59,26 +79,6 @@ public class CarListener extends PKUtilsBase implements IEnterVehicleListener, I
         if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen) { // TODO setting entry
             interactionManager.clickSlot(genericContainerScreen.getScreenHandler().syncId, 0, 0, PICKUP, player);
             delayedAction(() -> hudService.sendInfoNotification("Fahrzeug automatisch " + (this.carLocked ? "verriegelt" : "entriegelt")), 100);
-        }
-    }
-
-    @Override
-    public void onEnterVehicle(Entity vehicle) {
-        if (!storage.isCarLock()) {
-            return;
-        }
-
-        // the entity is a car
-        if (!isCar(vehicle)) {
-            return;
-        }
-
-        // start car
-        networkHandler.sendChatCommand("car start");
-
-        // lock car after 1 second if not already locked
-        if (!this.carLocked) {
-            delayedAction(() -> networkHandler.sendChatCommand("car lock"), 1000);
         }
     }
 
