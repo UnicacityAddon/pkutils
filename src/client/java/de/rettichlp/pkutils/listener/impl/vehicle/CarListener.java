@@ -37,9 +37,7 @@ public class CarListener extends PKUtilsBase implements IEnterVehicleListener, I
 
     @Override
     public void onEnterVehicle(Entity vehicle) {
-        if (!storage.isCarLock()) {
-            return;
-        }
+        // TODO setting entry
 
         // the entity is a car
         if (!isCar(vehicle)) {

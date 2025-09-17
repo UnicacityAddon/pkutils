@@ -41,10 +41,6 @@ public class Storage {
     @Setter
     private ToggledChat toggledChat = NONE;
 
-    @Getter
-    @Setter
-    private boolean carLock = true;
-
     public void print() {
         // factionMembers
         this.factionMembers.forEach((faction, factionMembers) -> LOGGER.info("factionMembers[{}:{}]: {}", faction, factionMembers.size(), factionMembers));
@@ -58,8 +54,6 @@ public class Storage {
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
-        // carLock
-        LOGGER.info("carLock: {}", this.carLock);
     }
 
     public void addBlacklistEntry(BlacklistEntry entry) {
