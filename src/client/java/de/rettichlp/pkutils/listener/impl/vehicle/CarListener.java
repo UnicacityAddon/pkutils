@@ -74,9 +74,8 @@ public class CarListener extends PKUtilsBase implements IEnterVehicleListener, I
     public void onScreenOpen(Screen screen, int scaledWidth, int scaledHeight) {
         ClientPlayerInteractionManager interactionManager = MinecraftClient.getInstance().interactionManager;
 
-        if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen) { // TODO setting entry
+        if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen && genericContainerScreen.getTitle().getString().equals("CarControl")) { // TODO setting entry
             interactionManager.clickSlot(genericContainerScreen.getScreenHandler().syncId, 0, 0, PICKUP, player);
-            delayedAction(() -> hudService.sendInfoNotification("Fahrzeug automatisch " + (this.carLocked ? "verriegelt" : "entriegelt")), 100);
         }
     }
 
