@@ -22,6 +22,7 @@ import de.rettichlp.pkutils.command.vehicle.ToggleCarlockCommand;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
+import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
 import de.rettichlp.pkutils.listener.IMoveListener;
@@ -48,6 +49,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -185,6 +187,10 @@ public class Registry {
 
                         return true;
                     });
+                }
+
+                if (listenerInstance instanceof IScreenOpenListener iScreenOpenListener) {
+                    ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> iScreenOpenListener.onScreenOpen(screen, scaledWidth, scaledHeight));
                 }
 
                 if (listenerInstance instanceof ITickListener iTickListener) {

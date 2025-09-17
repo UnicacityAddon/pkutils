@@ -3,8 +3,10 @@ package de.rettichlp.pkutils.listener.impl.vehicle;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
+import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.entity.Entity;
@@ -26,7 +28,7 @@ import static net.minecraft.scoreboard.ScoreboardDisplaySlot.SIDEBAR;
 import static net.minecraft.screen.slot.SlotActionType.PICKUP;
 
 @PKUtilsListener
-public class CarListener extends PKUtilsBase implements IEnterVehicleListener, IMessageReceiveListener {
+public class CarListener extends PKUtilsBase implements IEnterVehicleListener, IMessageReceiveListener, IScreenOpenListener {
 
     private static final Pattern CAR_UNLOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ aufgeschlossen\\.$");
     private static final Pattern CAR_LOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ abgeschlossen\\.$");
@@ -51,28 +53,37 @@ public class CarListener extends PKUtilsBase implements IEnterVehicleListener, I
     }
 
     @Override
+    public void onScreenOpen(Screen screen, int scaledWidth, int scaledHeight) {
+        ClientPlayerInteractionManager interactionManager = MinecraftClient.getInstance().interactionManager;
+
+        if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen) { // TODO setting entry
+            interactionManager.clickSlot(genericContainerScreen.getScreenHandler().syncId, 0, 0, PICKUP, player);
+            delayedAction(() -> hudService.sendInfoNotification("Fahrzeug automatisch " + (this.carLocked ? "verriegelt" : "entriegelt")), 100);
+        }
+    }
+
+    @Override
     public void onEnterVehicle(Entity vehicle) {
         if (!storage.isCarLock()) {
             return;
         }
 
-        // the vehicle is unlocked car
-        if (!(vehicle instanceof MinecartEntity) || !isCarScoreboardVisible() || this.carLocked) {
+        // the entity is a car
+        if (!isCar(vehicle)) {
             return;
         }
 
-        // the player is now inside a car
-        networkHandler.sendChatCommand("car lock");
+        // start car
+        networkHandler.sendChatCommand("car start");
 
-        delayedAction(() -> {
-            MinecraftClient client = MinecraftClient.getInstance();
-            ClientPlayerInteractionManager interactionManager = client.interactionManager;
-            if (client.currentScreen instanceof GenericContainerScreen screen && screen.getTitle().getString().equals("CarControl") && nonNull(interactionManager)) {
-                // the emerald is in the first slot (index 0)
-                interactionManager.clickSlot(screen.getScreenHandler().syncId, 0, 0, PICKUP, player);
-                hudService.sendInfoNotification("Fahrzeug automatisch verriegelt.");
-            }
-        }, 200);
+        // lock car after 1 second if not already locked
+        if (!this.carLocked) {
+            delayedAction(() -> networkHandler.sendChatCommand("car lock"), 1000);
+        }
+    }
+
+    private boolean isCar(Entity vehicle) {
+        return vehicle instanceof MinecartEntity && isCarScoreboardVisible();
     }
 
     private boolean isCarScoreboardVisible() {
