@@ -23,6 +23,7 @@ public class TransportListener extends PKUtilsBase implements IMessageReceiveLis
             "|^\\[Transport] Du hast eine Schwarzpulverkiste abgeliefert\\.$");
     private static final Pattern DRINK_TRANSPORT_DELIVER_PATTERN = compile("^\\[Bar] Du hast eine Flasche abgegeben!$");
     private static final Pattern TABAK_JOB_TRANSPORT_START_PATTERN = compile("^\\[Tabakplantage] Bringe es nun zur Shishabar und gib es mit /droptabak ab\\.$");
+    private static final Pattern PIZZA_JOB_TRANSPORT_START_PATTERN = compile("^\\[Pizzalieferant] Sobald du 10 Pizzen dabei hast, wird dir deine erste Route angezeigt\\.$");
 
     private boolean isTabakJobTransportActive = false;
 
@@ -43,6 +44,12 @@ public class TransportListener extends PKUtilsBase implements IMessageReceiveLis
         Matcher tabakJobTransportStartMatcher = TABAK_JOB_TRANSPORT_START_PATTERN.matcher(message);
         if (tabakJobTransportStartMatcher.find()) {
             this.isTabakJobTransportActive = true;
+            return true;
+        }
+
+        Matcher pizzaJobTransportStartMatcher = PIZZA_JOB_TRANSPORT_START_PATTERN.matcher(message);
+        if (pizzaJobTransportStartMatcher.find()) {
+            delayedAction(() -> networkHandler.sendChatCommand("getpizza"), SECONDS.toMillis(3));
             return true;
         }
 
