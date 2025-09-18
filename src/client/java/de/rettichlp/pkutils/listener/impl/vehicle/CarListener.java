@@ -44,12 +44,12 @@ public class CarListener extends PKUtilsBase implements IEnterVehicleListener, I
             return;
         }
 
-        // start car
-        networkHandler.sendChatCommand("car start");
+        // start the car with a small delay to ensure the player is fully in the vehicle
+        delayedAction(() -> networkHandler.sendChatCommand("car start"), 500);
 
-        // lock car after 1 second if not already locked
+        // lock the car after 1 second and the small delay if not already locked
         if (!this.carLocked) {
-            delayedAction(() -> networkHandler.sendChatCommand("car lock"), 1000);
+            delayedAction(() -> networkHandler.sendChatCommand("car lock"), 1500);
         }
     }
 
