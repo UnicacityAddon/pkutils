@@ -12,6 +12,7 @@ import java.util.TimerTask;
 
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.lang.Boolean.getBoolean;
+import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Objects.nonNull;
 import static net.minecraft.text.Text.of;
@@ -59,5 +60,16 @@ public abstract class PKUtilsBase {
     public String dateTimeToFriendlyString(@NotNull ChronoLocalDateTime<LocalDate> dateTime) {
         DateTimeFormatter formatter = ofPattern("dd.MM.yyyy HH:mm:ss");
         return dateTime.format(formatter);
+    }
+
+    public String millisToFriendlyString(long millis) {
+        long totalSeconds = millis / 1000;
+        long seconds = totalSeconds % 60;
+        long minutes = (totalSeconds / 60) % 60;
+        long hours = totalSeconds / 3600;
+
+        return hours > 0
+                ? format("%02d:%02d:%02d", hours, minutes, seconds)
+                : format("%02d:%02d", minutes, seconds);
     }
 }
