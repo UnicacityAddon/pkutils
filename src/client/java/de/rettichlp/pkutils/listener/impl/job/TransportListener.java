@@ -30,7 +30,6 @@ public class TransportListener extends PKUtilsBase implements IMessageReceiveLis
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
-
         Matcher transportDeliverMatcher = TRANSPORT_DELIVER_PATTERN.matcher(message);
         if (transportDeliverMatcher.find()) {
             delayedAction(() -> networkHandler.sendChatCommand("droptransport"), SECONDS.toMillis(10));
@@ -54,6 +53,7 @@ public class TransportListener extends PKUtilsBase implements IMessageReceiveLis
             this.isPizzaJobTransportActive = true;
             return true;
         }
+
         Matcher pizzaJobTransportGetPizzaMatcher = PIZZA_JOB_TRANSPORT_GET_PIZZA_PATTERN.matcher(message);
         if (pizzaJobTransportGetPizzaMatcher.find()) {
             delayedAction(() -> networkHandler.sendChatCommand("getpizza"), SECONDS.toMillis(3));
