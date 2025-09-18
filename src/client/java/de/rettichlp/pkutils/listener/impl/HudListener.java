@@ -31,7 +31,7 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
         Map<HudService.Notification, Integer> notificationIndexes = activeNotifications.stream()
                 .collect(toMap(notification -> notification, activeNotifications::indexOf));
 
-        notificationIndexes.forEach((notification, notificationIndex) -> renderTextBox(
+        notificationIndexes.forEach((notification, notificationIndex) -> hudService.renderTextBox(
                 drawContext,
                 notification.getText(),
                 notification.getBackgroundColor(),

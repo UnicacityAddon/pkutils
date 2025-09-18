@@ -1,12 +1,9 @@
 package de.rettichlp.pkutils.common.registry;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -62,37 +59,5 @@ public abstract class PKUtilsBase {
     public String dateTimeToFriendlyString(@NotNull ChronoLocalDateTime<LocalDate> dateTime) {
         DateTimeFormatter formatter = ofPattern("dd.MM.yyyy HH:mm:ss");
         return dateTime.format(formatter);
-    }
-
-    public void renderTextBox(@NotNull DrawContext drawContext,
-                              Text text,
-                              @NotNull Color backgroundColor,
-                              @NotNull Color borderColor,
-                              int boxIndex) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        TextRenderer textRenderer = client.textRenderer;
-
-        int textWidth = textRenderer.getWidth(text);
-        int textHeight = textRenderer.fontHeight;
-        int x = client.getWindow().getScaledWidth() - textWidth - TEXT_BOX_MARGIN;
-        int y = TEXT_BOX_FULL_SIZE_Y * boxIndex;
-
-        drawContext.fill(
-                x - TEXT_BOX_PADDING,
-                y - TEXT_BOX_PADDING,
-                x + textWidth + TEXT_BOX_PADDING,
-                y + textHeight + TEXT_BOX_PADDING,
-                backgroundColor.getRGB()
-        );
-
-        drawContext.drawBorder(
-                x - TEXT_BOX_PADDING,
-                y - TEXT_BOX_PADDING,
-                textWidth + TEXT_BOX_PADDING * 2,
-                textHeight + TEXT_BOX_PADDING * 2,
-                borderColor.getRGB()
-        );
-
-        drawContext.drawTextWithShadow(textRenderer, text, x, y, 0xFFFFFF);
     }
 }
