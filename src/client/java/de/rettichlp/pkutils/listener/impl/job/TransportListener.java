@@ -23,8 +23,11 @@ public class TransportListener extends PKUtilsBase implements IMessageReceiveLis
             "|^\\[Transport] Du hast eine Schwarzpulverkiste abgeliefert\\.$");
     private static final Pattern DRINK_TRANSPORT_DELIVER_PATTERN = compile("^\\[Bar] Du hast eine Flasche abgegeben!$");
     private static final Pattern TABAK_JOB_TRANSPORT_START_PATTERN = compile("^\\[Tabakplantage] Bringe es nun zur Shishabar und gib es mit /droptabak ab\\.$");
+    private static final Pattern PIZZA_JOB_TRANSPORT_START_PATTERN = compile("^\\[Pizzalieferant] Hier kannst du die frischen Pizzen mit /getpizza abholen\\.$");
+    private static final Pattern PIZZA_JOB_TRANSPORT_GET_PIZZA_PATTERN = compile("^\\[Pizzalieferant] Sobald du 10 Pizzen dabei hast, wird dir deine erste Route angezeigt\\.$");
 
     private boolean isTabakJobTransportActive = false;
+    private boolean isPizzaJobTransportActive = false;
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
@@ -46,6 +49,18 @@ public class TransportListener extends PKUtilsBase implements IMessageReceiveLis
             return true;
         }
 
+        Matcher pizzaJobTransportStartMatcher = PIZZA_JOB_TRANSPORT_START_PATTERN.matcher(message);
+        if (pizzaJobTransportStartMatcher.find()) {
+            this.isPizzaJobTransportActive = true;
+            return true;
+        }
+
+        Matcher pizzaJobTransportGetPizzaMatcher = PIZZA_JOB_TRANSPORT_GET_PIZZA_PATTERN.matcher(message);
+        if (pizzaJobTransportGetPizzaMatcher.find()) {
+            delayedAction(() -> networkHandler.sendChatCommand("getpizza"), 2500);
+            return true;
+        }
+
         return true;
     }
 
@@ -54,6 +69,11 @@ public class TransportListener extends PKUtilsBase implements IMessageReceiveLis
         if (this.isTabakJobTransportActive && player.getBlockPos().isWithinDistance(new BlockPos(-133, 69, -78), 3)) {
             networkHandler.sendChatCommand("droptabak");
             this.isTabakJobTransportActive = false;
+        }
+
+        if (this.isPizzaJobTransportActive && player.getBlockPos().isWithinDistance(new BlockPos(266, 69, 54), 2)) {
+            networkHandler.sendChatCommand("getpizza");
+            this.isPizzaJobTransportActive = false;
         }
     }
 }
