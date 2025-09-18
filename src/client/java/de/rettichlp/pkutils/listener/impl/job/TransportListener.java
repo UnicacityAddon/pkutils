@@ -1,16 +1,12 @@
 package de.rettichlp.pkutils.listener.impl.job;
 
-import de.rettichlp.pkutils.PKUtilsClient;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
-import de.rettichlp.pkutils.common.services.HudService;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
-import java.awt.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +16,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class TransportListener extends PKUtilsBase implements IMessageReceiveListener, INaviSpotReachedListener{
+public class TransportListener extends PKUtilsBase implements IMessageReceiveListener, INaviSpotReachedListener {
 
     private static final Pattern TRANSPORT_DELIVER_PATTERN = compile("^\\[Transport] Du hast eine (Kiste|Waffenkiste) abgeliefert\\.$" +
             "|^\\[Transport] Du hast ein Weizen Paket abgeliefert\\.$" +
@@ -67,7 +63,6 @@ public class TransportListener extends PKUtilsBase implements IMessageReceiveLis
         return true;
     }
 
-
     @Override
     public void onNaviSpotReached() {
         if (this.isTabakJobTransportActive && player.getBlockPos().isWithinDistance(new BlockPos(-133, 69, -78), 3)) {
@@ -79,6 +74,5 @@ public class TransportListener extends PKUtilsBase implements IMessageReceiveLis
             networkHandler.sendChatCommand("getpizza");
             this.isPizzaJobTransportActive = false;
         }
-
     }
 }
