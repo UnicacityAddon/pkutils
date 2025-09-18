@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.listener.impl.vehicle;
+package de.rettichlp.pkutils.listener.impl;
 
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
@@ -18,10 +18,8 @@ import net.minecraft.text.Text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.hudService;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
-import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.util.Objects.nonNull;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.scoreboard.ScoreboardDisplaySlot.SIDEBAR;
