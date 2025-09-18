@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ import java.util.Set;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
+import static java.time.Duration.ofSeconds;
 
 public class Storage {
 
@@ -36,6 +39,9 @@ public class Storage {
 
     @Getter
     private final Map<String, Integer> retrievedNumbers = new HashMap<>();
+
+    @Getter
+    private final Map<Countdown, LocalDateTime> countdowns = new HashMap<>();
 
     @Getter
     @Setter
@@ -99,6 +105,18 @@ public class Storage {
         this.reinforcements.removeIf(r -> r.getSenderPlayerName().equals(reinforcement.getSenderPlayerName()));
         // add new reinforcement
         this.reinforcements.add(reinforcement);
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum Countdown {
+
+        BANDAGE("Bandage", ofSeconds(240)),
+        PILL("Schmerzpille", ofSeconds(60)),
+        ABSORPTION("Absorption", ofSeconds(120));
+
+        private final String displayName;
+        private final Duration duration;
     }
 
     @Getter
