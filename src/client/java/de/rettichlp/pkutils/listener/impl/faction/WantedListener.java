@@ -53,6 +53,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
     private static final Pattern TAKE_GUNS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Waffen abgenommen\\.$");
     private static final Pattern TAKE_DRUGS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Drogen abgenommen.$");
     private static final Pattern PARKTICKET_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel an das Fahrzeug \\[(?<plate>[A-Z0-9-]+)] vergeben\\.$");
+    private static final Pattern PARKTICKET_REMOVE_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel von dem Fahrzeug \\[(?<plate>[A-Z0-9-]+)] entfernt\\.$");
     private static final Pattern SEARCH_TRUNK_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat den Kofferraum vom Fahrzeug (?<plate>.+) durchsucht, over\\.$");
     private static final Pattern TRACKER_AGENT_PATTERN = compile("^HQ: (Agent|Agentin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Peilsender an (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) befestigt, over\\.$");
 
@@ -214,6 +215,23 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             if (clientPlayerName.equals(officerName)) {
                 api.trackActivity(PARK_TICKET);
             }
+
+            return false;
+        }
+
+        Matcher parkticketRemoveMatcher = PARKTICKET_REMOVE_PATTERN.matcher(message);
+        if (parkticketRemoveMatcher.find()) {
+            String officerName = parkticketRemoveMatcher.group("playerName");
+            String plate = parkticketRemoveMatcher.group("plate");
+
+            Text modifiedMessage = empty()
+                    .append(of("Strafzettel entfernt").copy().formatted(RED)).append(" ")
+                    .append(of("-").copy().formatted(GRAY)).append(" ")
+                    .append(of(plate).copy().formatted(BLUE)).append(" ")
+                    .append(of("-").copy().formatted(GRAY)).append(" ")
+                    .append(of(officerName).copy().formatted(BLUE));
+
+            player.sendMessage(modifiedMessage, false);
 
             return false;
         }
