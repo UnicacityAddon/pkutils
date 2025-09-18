@@ -39,7 +39,7 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
                     LocalDateTime cooldownStartTime = cooldownLocalDateTimeEntry.getValue();
                     Storage.Countdown countdown = cooldownLocalDateTimeEntry.getKey();
                     LocalDateTime countdownExpiredTime = cooldownStartTime.plus(countdown.getDuration());
-                    return now().isAfter(countdownExpiredTime); // the countdown is active
+                    return now().isBefore(countdownExpiredTime); // the countdown is active
                 })
                 .collect(toMap(
                         Map.Entry::getKey,
@@ -68,8 +68,8 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
         hudService.renderTextBox(
                 drawContext,
                 countdownText,
-                new Color(255, 255, 255, 255),
                 new Color(127, 127, 127, 100),
+                new Color(255, 255, 255, 255),
                 0);
     }
 
