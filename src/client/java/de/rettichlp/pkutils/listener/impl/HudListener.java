@@ -36,6 +36,6 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
                 notification.getText(),
                 notification.getBackgroundColor(),
                 notification.getBorderColor(),
-                notificationIndex * TEXT_BOX_FULL_SIZE_Y));
+                notificationIndex + 1)); // +1 because placeholder for countdowns
     }
 }

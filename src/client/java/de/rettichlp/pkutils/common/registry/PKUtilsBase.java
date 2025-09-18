@@ -34,8 +34,8 @@ public abstract class PKUtilsBase {
             .append(of(" "));
 
     protected static final int TEXT_BOX_PADDING = 3;
-    protected static final int TEXT_BOX_MARGIN_TOP = 5;
-    protected static final int TEXT_BOX_FULL_SIZE_Y = 9 /* text height */ + 2 * TEXT_BOX_PADDING + TEXT_BOX_MARGIN_TOP;
+    protected static final int TEXT_BOX_MARGIN = 5;
+    protected static final int TEXT_BOX_FULL_SIZE_Y = 9 /* text height */ + 2 * TEXT_BOX_PADDING + TEXT_BOX_MARGIN;
 
     public void sendModMessage(String message, boolean inActionbar) {
         sendModMessage(of(message).copy().formatted(WHITE), inActionbar);
@@ -74,7 +74,7 @@ public abstract class PKUtilsBase {
 
         int textWidth = textRenderer.getWidth(text);
         int textHeight = textRenderer.fontHeight;
-        int x = client.getWindow().getScaledWidth() - textWidth - TEXT_BOX_MARGIN_TOP;
+        int x = client.getWindow().getScaledWidth() - textWidth - TEXT_BOX_MARGIN;
         int y = TEXT_BOX_FULL_SIZE_Y * boxIndex;
 
         drawContext.fill(
