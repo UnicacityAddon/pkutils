@@ -29,6 +29,7 @@ import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
 import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import de.rettichlp.pkutils.listener.ITickListener;
 import de.rettichlp.pkutils.listener.callback.PlayerEnterVehicleCallback;
+import de.rettichlp.pkutils.listener.impl.AbsorptionListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
 import de.rettichlp.pkutils.listener.impl.HudListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
@@ -103,6 +104,7 @@ public class Registry {
             // vehicle
             CarListener.class,
             // other
+            AbsorptionListener.class,
             CommandSendListener.class,
             DepositCommand.class,
             RichTaxesCommand.class, // TODO find better solution for this
