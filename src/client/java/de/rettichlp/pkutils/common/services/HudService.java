@@ -104,13 +104,13 @@ public class HudService extends PKUtilsBase {
         private Color backgroundColor = new Color(127, 127, 127, 100);
 
         @Override
-        public boolean equals(Object o) {
-            return nonNull(o) && o instanceof Notification that && Objects.equals(this.id, that.id);
+        public int hashCode() {
+            return hash(this.id, this.text, this.durationInMillis, this.timestamp, this.borderColor, this.backgroundColor);
         }
 
         @Override
-        public int hashCode() {
-            return hash(this.id, this.text, this.durationInMillis, this.timestamp, this.borderColor, this.backgroundColor);
+        public boolean equals(Object o) {
+            return nonNull(o) && o instanceof Notification that && Objects.equals(this.id, that.id);
         }
     }
 }
