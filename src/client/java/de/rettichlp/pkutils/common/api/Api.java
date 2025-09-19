@@ -8,6 +8,9 @@ import com.google.gson.JsonSerializer;
 import de.rettichlp.pkutils.common.api.request.ActivityAddRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
+import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
+import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
+import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
 import de.rettichlp.pkutils.common.api.request.RegisterPlayerRequest;
 import de.rettichlp.pkutils.common.models.Activity;
 import lombok.Getter;
@@ -27,6 +30,7 @@ import static com.google.gson.reflect.TypeToken.getParameterized;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.hudService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
+import static java.lang.Integer.MIN_VALUE;
 import static java.util.Objects.isNull;
 
 @SuppressWarnings("unchecked")
@@ -40,7 +44,7 @@ public class Api {
             .create();
 
     @Getter
-    private final String baseUrl = "https://pkutils.rettichlp.de/v1";
+    private final String baseUrl = "https://pkutils.rettichlp.de/v1"; // http://localhost:6010/pkutils/v1
 
     public void registerPlayer() {
         Request<RegisterPlayerRequest> request = Request.<RegisterPlayerRequest>builder()
@@ -133,6 +137,57 @@ public class Api {
             }
 
             return null;
+        });
+    }
+
+    public CompletableFuture<Integer> getMinusPoints() {
+        Request<PoliceMinusPointsGetRequest> request = Request.<PoliceMinusPointsGetRequest>builder()
+                .method("GET")
+                .requestData(new PoliceMinusPointsGetRequest())
+                .build();
+
+        return request.send().thenApply(httpResponse -> (Integer) validateAndParse(httpResponse, Integer.class)).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching activities", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return MIN_VALUE;
+        });
+    }
+
+    public CompletableFuture<Integer> getMinusPointsForPlayer(String playerName) {
+        Request<PoliceMinusPointsGetPlayerRequest> request = Request.<PoliceMinusPointsGetPlayerRequest>builder()
+                .method("GET")
+                .requestData(new PoliceMinusPointsGetPlayerRequest(playerName))
+                .build();
+
+        return request.send().thenApply(httpResponse -> (Integer) validateAndParse(httpResponse, Integer.class)).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching activities for player {}", playerName, throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return MIN_VALUE;
+        });
+    }
+
+    public CompletableFuture<Integer> modifyMinusPoints(String playerName, int amount) {
+        Request<PoliceMinusPointsModifyRequest> request = Request.<PoliceMinusPointsModifyRequest>builder()
+                .method("POST")
+                .requestData(new PoliceMinusPointsModifyRequest(playerName, amount))
+                .build();
+
+        return request.send().thenApply(httpResponse -> (Integer) validateAndParse(httpResponse, Integer.class)).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching activities", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return MIN_VALUE;
         });
     }
 

@@ -2,7 +2,11 @@ package de.rettichlp.pkutils.common.services;
 
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Data;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.time.LocalDateTime;
@@ -57,6 +61,38 @@ public class HudService extends PKUtilsBase {
                 .toList();
     }
 
+    public void renderTextBox(@NotNull DrawContext drawContext,
+                              Text text,
+                              @NotNull Color backgroundColor,
+                              @NotNull Color borderColor,
+                              int boxIndex) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        TextRenderer textRenderer = client.textRenderer;
+
+        int textWidth = textRenderer.getWidth(text);
+        int textHeight = textRenderer.fontHeight;
+        int x = client.getWindow().getScaledWidth() - textWidth - TEXT_BOX_MARGIN;
+        int y = TEXT_BOX_FULL_SIZE_Y * boxIndex + TEXT_BOX_MARGIN;
+
+        drawContext.fill(
+                x - TEXT_BOX_PADDING,
+                y - TEXT_BOX_PADDING,
+                x + textWidth + TEXT_BOX_PADDING,
+                y + textHeight + TEXT_BOX_PADDING,
+                backgroundColor.getRGB()
+        );
+
+        drawContext.drawBorder(
+                x - TEXT_BOX_PADDING,
+                y - TEXT_BOX_PADDING,
+                textWidth + TEXT_BOX_PADDING * 2,
+                textHeight + TEXT_BOX_PADDING * 2,
+                borderColor.getRGB()
+        );
+
+        drawContext.drawTextWithShadow(textRenderer, text, x, y, 0xFFFFFF);
+    }
+
     @Data
     public static class Notification {
 
@@ -68,13 +104,13 @@ public class HudService extends PKUtilsBase {
         private Color backgroundColor = new Color(127, 127, 127, 100);
 
         @Override
-        public boolean equals(Object o) {
-            return nonNull(o) && o instanceof Notification that && Objects.equals(this.id, that.id);
+        public int hashCode() {
+            return hash(this.id, this.text, this.durationInMillis, this.timestamp, this.borderColor, this.backgroundColor);
         }
 
         @Override
-        public int hashCode() {
-            return hash(this.id, this.text, this.durationInMillis, this.timestamp, this.borderColor, this.backgroundColor);
+        public boolean equals(Object o) {
+            return nonNull(o) && o instanceof Notification that && Objects.equals(this.id, that.id);
         }
     }
 }

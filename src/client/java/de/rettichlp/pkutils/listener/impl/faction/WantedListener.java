@@ -20,7 +20,6 @@ import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static de.rettichlp.pkutils.common.models.Activity.Type.ARREST;
 import static de.rettichlp.pkutils.common.models.Activity.Type.ARREST_KILL;
 import static de.rettichlp.pkutils.common.models.Activity.Type.PARK_TICKET;
-import static de.rettichlp.pkutils.common.models.Faction.POLIZEI;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
@@ -53,7 +52,8 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
     private static final Pattern LICENSE_GUN_TAKE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein abgenommen\\.$");
     private static final Pattern TAKE_GUNS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Waffen abgenommen\\.$");
     private static final Pattern TAKE_DRUGS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Drogen abgenommen.$");
-    private static final Pattern PARKTICKET_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel an das Fahrzeug \\[[A-Z0-9-]+] vergeben\\.$");
+    private static final Pattern PARKTICKET_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel an das Fahrzeug \\[(?<plate>[A-Z0-9-]+)] vergeben\\.$");
+    private static final Pattern PARKTICKET_REMOVE_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel von dem Fahrzeug \\[(?<plate>[A-Z0-9-]+)] entfernt\\.$");
     private static final Pattern SEARCH_TRUNK_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat den Kofferraum vom Fahrzeug (?<plate>.+) durchsucht, over\\.$");
     private static final Pattern TRACKER_AGENT_PATTERN = compile("^HQ: (Agent|Agentin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Peilsender an (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) befestigt, over\\.$");
 
@@ -164,11 +164,10 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
 
             player.sendMessage(modifiedMessage, false);
 
-            if (clientPlayerName.equals(playerName)) {
-                player.getWorld().getEntitiesByType(instanceOf(PlayerEntity.class), player.getBoundingBox().expand(60), playerEntity -> true).stream()
-                        .map(playerEntity -> playerEntity.getGameProfile().getName())
-                        .filter(playerEntityName -> storage.getFaction(playerEntityName) == POLIZEI)
-                        .forEach(playerEntityName -> api.trackActivity(ARREST_KILL));
+            // track activity if the killer player is within 60 blocks
+            boolean killerIsWithin60Blocks = !player.getWorld().getEntitiesByType(instanceOf(PlayerEntity.class), player.getBoundingBox().expand(50), playerEntity -> playerEntity.getGameProfile().getName().equals(playerName)).isEmpty();
+            if (killerIsWithin60Blocks) {
+                api.trackActivity(ARREST_KILL);
             }
 
             return false;
@@ -202,12 +201,39 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
         Matcher parkticketMatcher = PARKTICKET_PATTERN.matcher(message);
         if (parkticketMatcher.find()) {
             String officerName = parkticketMatcher.group("playerName");
+            String plate = parkticketMatcher.group("plate");
+
+            Text modifiedMessage = empty()
+                    .append(of("Strafzettel").copy().formatted(RED)).append(" ")
+                    .append(of("-").copy().formatted(GRAY)).append(" ")
+                    .append(of(plate).copy().formatted(BLUE)).append(" ")
+                    .append(of("-").copy().formatted(GRAY)).append(" ")
+                    .append(of(officerName).copy().formatted(BLUE));
+
+            player.sendMessage(modifiedMessage, false);
 
             if (clientPlayerName.equals(officerName)) {
                 api.trackActivity(PARK_TICKET);
             }
 
-            return true;
+            return false;
+        }
+
+        Matcher parkticketRemoveMatcher = PARKTICKET_REMOVE_PATTERN.matcher(message);
+        if (parkticketRemoveMatcher.find()) {
+            String officerName = parkticketRemoveMatcher.group("playerName");
+            String plate = parkticketRemoveMatcher.group("plate");
+
+            Text modifiedMessage = empty()
+                    .append(of("Strafzettel entfernt").copy().formatted(RED)).append(" ")
+                    .append(of("-").copy().formatted(GRAY)).append(" ")
+                    .append(of(plate).copy().formatted(BLUE)).append(" ")
+                    .append(of("-").copy().formatted(GRAY)).append(" ")
+                    .append(of(officerName).copy().formatted(BLUE));
+
+            player.sendMessage(modifiedMessage, false);
+
+            return false;
         }
 
         Matcher searchTrunkMatcher = SEARCH_TRUNK_PATTERN.matcher(message);

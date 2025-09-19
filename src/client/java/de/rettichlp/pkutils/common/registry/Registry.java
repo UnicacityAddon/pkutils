@@ -12,25 +12,33 @@ import de.rettichlp.pkutils.command.activity.ActivityCommand;
 import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleWChatCommand;
-import de.rettichlp.pkutils.command.faction.WSUCommand;
+import de.rettichlp.pkutils.command.faction.AllianceCommand;
+import de.rettichlp.pkutils.command.faction.MinusPointsCommand;
 import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
 import de.rettichlp.pkutils.command.money.DepositCommand;
 import de.rettichlp.pkutils.command.money.RichTaxesCommand;
+import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
+import de.rettichlp.pkutils.listener.IEnterVehicleListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
 import de.rettichlp.pkutils.listener.IMoveListener;
 import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
+import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import de.rettichlp.pkutils.listener.ITickListener;
+import de.rettichlp.pkutils.listener.callback.PlayerEnterVehicleCallback;
+import de.rettichlp.pkutils.listener.impl.AbsorptionListener;
+import de.rettichlp.pkutils.listener.impl.BusinessListener;
+import de.rettichlp.pkutils.listener.impl.CarListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
 import de.rettichlp.pkutils.listener.impl.HudListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
-import de.rettichlp.pkutils.listener.impl.business.BusinessListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
 import de.rettichlp.pkutils.listener.impl.faction.BombListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionListener;
+import de.rettichlp.pkutils.listener.impl.faction.ReviveListener;
 import de.rettichlp.pkutils.listener.impl.faction.ServiceListener;
 import de.rettichlp.pkutils.listener.impl.faction.WantedListener;
 import de.rettichlp.pkutils.listener.impl.job.FisherListener;
@@ -42,6 +50,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,25 +62,27 @@ import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.util.Objects.isNull;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.minecraft.entity.effect.StatusEffects.ABSORPTION;
 
 public class Registry {
 
     private final Set<Class<?>> commands = Set.of(
             ACallCommand.class,
-            ActivityCommand.class,
             ADropMoneyCommand.class,
             ASMSCommand.class,
+            ActivityCommand.class,
+            AllianceCommand.class,
             DepositCommand.class,
             MiCommand.class,
             MiaCommand.class,
+            MinusPointsCommand.class,
             ModCommand.class,
             RichTaxesCommand.class,
             SyncCommand.class,
             TodoCommand.class,
             ToggleDChatCommand.class,
             ToggleFChatCommand.class,
-            ToggleWChatCommand.class,
-            WSUCommand.class
+            ToggleWChatCommand.class
     );
 
     private final Set<Class<?>> listeners = Set.of(
@@ -82,6 +93,7 @@ public class Registry {
             BlacklistListener.class,
             FactionListener.class,
             HudListener.class,
+            ReviveListener.class,
             ServiceListener.class,
             WantedListener.class,
             // job
@@ -89,7 +101,10 @@ public class Registry {
             GarbageManListener.class,
             LumberjackListener.class,
             TransportListener.class,
+            // vehicle
+            CarListener.class,
             // other
+            AbsorptionListener.class,
             CommandSendListener.class,
             DepositCommand.class,
             RichTaxesCommand.class, // TODO find better solution for this
@@ -97,6 +112,7 @@ public class Registry {
     );
 
     private BlockPos lastPlayerPos = null;
+    private boolean lastAbsorptionState = false;
     private boolean initialized = false;
 
     public void registerCommands(@NotNull CommandDispatcher<FabricClientCommandSource> dispatcher) {
@@ -132,8 +148,24 @@ public class Registry {
             try {
                 PKUtilsBase listenerInstance = (PKUtilsBase) listenerClass.getConstructor().newInstance();
 
+                if (listenerInstance instanceof IAbsorptionGetListener iAbsorptionGetListener) {
+                    ClientTickEvents.END_CLIENT_TICK.register((server) -> {
+                        boolean hasAbsorption = player.hasStatusEffect(ABSORPTION);
+
+                        if (!this.lastAbsorptionState && hasAbsorption) {
+                            iAbsorptionGetListener.onAbsorptionGet();
+                        }
+
+                        this.lastAbsorptionState = hasAbsorption;
+                    });
+                }
+
                 if (listenerInstance instanceof ICommandSendListener iCommandSendListener) {
                     ClientSendMessageEvents.ALLOW_COMMAND.register(iCommandSendListener::onCommandSend);
+                }
+
+                if (listenerInstance instanceof IEnterVehicleListener iEnterVehicleListener) {
+                    PlayerEnterVehicleCallback.EVENT.register(iEnterVehicleListener::onEnterVehicle);
                 }
 
                 if (listenerInstance instanceof IHudRenderListener iHudRenderListener) {
@@ -170,6 +202,10 @@ public class Registry {
 
                         return true;
                     });
+                }
+
+                if (listenerInstance instanceof IScreenOpenListener iScreenOpenListener) {
+                    ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> iScreenOpenListener.onScreenOpen(screen, scaledWidth, scaledHeight));
                 }
 
                 if (listenerInstance instanceof ITickListener iTickListener) {
