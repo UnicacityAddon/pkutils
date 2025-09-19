@@ -18,20 +18,22 @@ import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
 import de.rettichlp.pkutils.command.money.DepositCommand;
 import de.rettichlp.pkutils.command.money.RichTaxesCommand;
+import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
-import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
 import de.rettichlp.pkutils.listener.IMoveListener;
 import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
+import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import de.rettichlp.pkutils.listener.ITickListener;
 import de.rettichlp.pkutils.listener.callback.PlayerEnterVehicleCallback;
+import de.rettichlp.pkutils.listener.impl.AbsorptionListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
 import de.rettichlp.pkutils.listener.impl.HudListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
-import de.rettichlp.pkutils.listener.impl.business.BusinessListener;
+import de.rettichlp.pkutils.listener.impl.BusinessListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
 import de.rettichlp.pkutils.listener.impl.faction.BombListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionListener;
@@ -42,7 +44,7 @@ import de.rettichlp.pkutils.listener.impl.job.FisherListener;
 import de.rettichlp.pkutils.listener.impl.job.GarbageManListener;
 import de.rettichlp.pkutils.listener.impl.job.LumberjackListener;
 import de.rettichlp.pkutils.listener.impl.job.TransportListener;
-import de.rettichlp.pkutils.listener.impl.vehicle.CarListener;
+import de.rettichlp.pkutils.listener.impl.CarListener;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -60,6 +62,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.util.Objects.isNull;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.minecraft.entity.effect.StatusEffects.ABSORPTION;
 
 public class Registry {
 
@@ -101,6 +104,7 @@ public class Registry {
             // vehicle
             CarListener.class,
             // other
+            AbsorptionListener.class,
             CommandSendListener.class,
             DepositCommand.class,
             RichTaxesCommand.class, // TODO find better solution for this
@@ -108,6 +112,7 @@ public class Registry {
     );
 
     private BlockPos lastPlayerPos = null;
+    private boolean lastAbsorptionState = false;
     private boolean initialized = false;
 
     public void registerCommands(@NotNull CommandDispatcher<FabricClientCommandSource> dispatcher) {
@@ -142,6 +147,18 @@ public class Registry {
         for (Class<?> listenerClass : this.listeners /*ClassIndex.getAnnotated(PKUtilsListener.class)*/) {
             try {
                 PKUtilsBase listenerInstance = (PKUtilsBase) listenerClass.getConstructor().newInstance();
+
+                if (listenerInstance instanceof IAbsorptionGetListener iAbsorptionGetListener) {
+                    ClientTickEvents.END_CLIENT_TICK.register((server) -> {
+                        boolean hasAbsorption = player.hasStatusEffect(ABSORPTION);
+
+                        if (!this.lastAbsorptionState && hasAbsorption) {
+                            iAbsorptionGetListener.onAbsorptionGet();
+                        }
+
+                        this.lastAbsorptionState = hasAbsorption;
+                    });
+                }
 
                 if (listenerInstance instanceof ICommandSendListener iCommandSendListener) {
                     ClientSendMessageEvents.ALLOW_COMMAND.register(iCommandSendListener::onCommandSend);

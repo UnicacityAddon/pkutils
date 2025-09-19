@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.registry;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,9 +12,9 @@ import java.util.TimerTask;
 
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.lang.Boolean.getBoolean;
+import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Objects.nonNull;
-import static net.minecraft.client.MinecraftClient.getInstance;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.DARK_PURPLE;
@@ -30,6 +31,10 @@ public abstract class PKUtilsBase {
             .append(of("|").copy().formatted(DARK_GRAY))
             .append(of(" "));
 
+    protected static final int TEXT_BOX_PADDING = 3;
+    protected static final int TEXT_BOX_MARGIN = 5;
+    protected static final int TEXT_BOX_FULL_SIZE_Y = 9 /* text height */ + 2 * TEXT_BOX_PADDING + TEXT_BOX_MARGIN;
+
     public void sendModMessage(String message, boolean inActionbar) {
         sendModMessage(of(message).copy().formatted(WHITE), inActionbar);
     }
@@ -43,7 +48,7 @@ public abstract class PKUtilsBase {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                getInstance().execute(runnable);
+                MinecraftClient.getInstance().execute(runnable);
             }
         }, milliseconds);
     }
@@ -55,5 +60,16 @@ public abstract class PKUtilsBase {
     public String dateTimeToFriendlyString(@NotNull ChronoLocalDateTime<LocalDate> dateTime) {
         DateTimeFormatter formatter = ofPattern("dd.MM.yyyy HH:mm:ss");
         return dateTime.format(formatter);
+    }
+
+    public String millisToFriendlyString(long millis) {
+        long totalSeconds = millis / 1000;
+        long seconds = totalSeconds % 60;
+        long minutes = (totalSeconds / 60) % 60;
+        long hours = totalSeconds / 3600;
+
+        return hours > 0
+                ? format("%02d:%02d:%02d", hours, minutes, seconds)
+                : format("%02d:%02d", minutes, seconds);
     }
 }

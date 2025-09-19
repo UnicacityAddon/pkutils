@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.listener.impl.business;
+package de.rettichlp.pkutils.listener.impl;
 
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
