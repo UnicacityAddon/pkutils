@@ -21,6 +21,7 @@ import java.util.Set;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
+import static java.time.Duration.ofMinutes;
 import static java.time.Duration.ofSeconds;
 
 public class Storage {
@@ -111,9 +112,9 @@ public class Storage {
     @AllArgsConstructor
     public enum Countdown {
 
-        BANDAGE("Bandage", ofSeconds(240)),
+        BANDAGE("Bandage", ofMinutes(4)),
         PILL("Schmerzpille", ofSeconds(60)),
-        ABSORPTION("Absorption", ofSeconds(120));
+        ABSORPTION("Absorption", ofMinutes(3));
 
         private final String displayName;
         private final Duration duration;
