@@ -16,7 +16,7 @@ import java.util.StringJoiner;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
-import static de.rettichlp.pkutils.PKUtilsClient.hudService;
+import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static java.time.LocalDateTime.MIN;
@@ -56,7 +56,7 @@ public class ModCommand extends CommandBase {
                         .requires(fabricClientCommandSource -> isSuperUser())
                         .executes(context -> {
                             // random notification type
-                            hudService.sendInfoNotification("Notification at " + dateTimeToFriendlyString(now()));
+                            notificationService.sendInfoNotification("Notification at " + dateTimeToFriendlyString(now()));
                             return 1;
                         }))
                 .executes(context -> {

@@ -16,7 +16,7 @@ import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static com.mojang.brigadier.suggestion.Suggestions.empty;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
-import static de.rettichlp.pkutils.PKUtilsClient.hudService;
+import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
@@ -71,7 +71,7 @@ public class MinusPointsCommand extends CommandBase {
                                                         return 1;
                                                     }
 
-                                                    api.modifyMinusPoints(targetName, amount).thenAccept(integer -> hudService.sendInfoNotification("Minuspunkte für " + targetName + " auf " + integer + " gesetzt."));
+                                                    api.modifyMinusPoints(targetName, amount).thenAccept(integer -> notificationService.sendInfoNotification("Minuspunkte für " + targetName + " auf " + integer + " gesetzt."));
 
                                                     return 1;
                                                 })))

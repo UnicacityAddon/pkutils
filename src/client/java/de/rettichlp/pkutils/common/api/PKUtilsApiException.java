@@ -3,7 +3,7 @@ package de.rettichlp.pkutils.common.api;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import static de.rettichlp.pkutils.PKUtilsClient.hudService;
+import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 
 @Getter
 public class PKUtilsApiException extends RuntimeException {
@@ -16,6 +16,6 @@ public class PKUtilsApiException extends RuntimeException {
     }
 
     public void sendNotification() {
-        hudService.sendErrorNotification("API Fehler: [" + this.errorResponse.httpStatusCode() + "] " + this.errorResponse.info());
+        notificationService.sendErrorNotification("API Fehler: [" + this.errorResponse.httpStatusCode() + "] " + this.errorResponse.info());
     }
 }

@@ -5,7 +5,7 @@ import de.rettichlp.pkutils.common.api.Api;
 import de.rettichlp.pkutils.common.registry.Registry;
 import de.rettichlp.pkutils.common.services.ConfigService;
 import de.rettichlp.pkutils.common.services.FactionService;
-import de.rettichlp.pkutils.common.services.HudService;
+import de.rettichlp.pkutils.common.services.NotificationService;
 import de.rettichlp.pkutils.common.services.RenderService;
 import de.rettichlp.pkutils.common.services.SyncService;
 import net.fabricmc.api.ClientModInitializer;
@@ -24,7 +24,7 @@ public class PKUtilsClient implements ClientModInitializer {
 
     public static ConfigService configService = new ConfigService();
     public static FactionService factionService = new FactionService();
-    public static HudService hudService = new HudService();
+    public static NotificationService notificationService = new NotificationService();
     public static RenderService renderService = new RenderService();
     public static SyncService syncService = new SyncService();
 

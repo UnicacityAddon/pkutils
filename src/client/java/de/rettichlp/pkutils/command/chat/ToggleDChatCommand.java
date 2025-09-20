@@ -7,7 +7,7 @@ import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.jetbrains.annotations.NotNull;
 
-import static de.rettichlp.pkutils.PKUtilsClient.hudService;
+import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.D_CHAT;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
@@ -21,7 +21,7 @@ public class ToggleDChatCommand extends CommandBase {
                 .executes(context -> {
                     Storage.ToggledChat newState = storage.getToggledChat() == D_CHAT ? NONE : D_CHAT;
                     storage.setToggledChat(newState);
-                    hudService.sendInfoNotification(newState.getToggleMessage());
+                    notificationService.sendInfoNotification(newState.getToggleMessage());
                     return 1;
                 });
     }

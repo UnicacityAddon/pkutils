@@ -23,7 +23,7 @@ import static java.util.Objects.nonNull;
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class HudService extends PKUtilsBase {
+public class NotificationService extends PKUtilsBase {
 
     private final Collection<Notification> notifications = new ArrayList<>();
 
@@ -53,7 +53,7 @@ public class HudService extends PKUtilsBase {
     public List<Notification> getActiveNotifications() {
         return this.notifications.stream()
                 .filter(notification -> now().isBefore(notification.getTimestamp().plus(notification.getDurationInMillis(), MILLISECONDS.toChronoUnit())))
-                .sorted(Comparator.comparing(HudService.Notification::getTimestamp))
+                .sorted(Comparator.comparing(NotificationService.Notification::getTimestamp))
                 .toList();
     }
 

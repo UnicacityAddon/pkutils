@@ -28,7 +28,7 @@ import java.util.concurrent.CompletionException;
 
 import static com.google.gson.reflect.TypeToken.getParameterized;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
-import static de.rettichlp.pkutils.PKUtilsClient.hudService;
+import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.lang.Integer.MIN_VALUE;
 import static java.util.Objects.isNull;
@@ -54,7 +54,7 @@ public class Api {
 
         request.send().thenAccept(httpResponse -> {
             validate(httpResponse);
-            hudService.sendSuccessNotification("API Login erfolgreich");
+            notificationService.sendSuccessNotification("API Login erfolgreich");
         }).exceptionally(throwable -> {
             LOGGER.error("Error while registering player", throwable);
 
@@ -128,7 +128,7 @@ public class Api {
 
         request.send().thenAccept(httpResponse -> {
             validate(httpResponse);
-            hudService.sendInfoNotification(activityType.getSuccessMessage());
+            notificationService.sendInfoNotification(activityType.getSuccessMessage());
         }).exceptionally(throwable -> {
             LOGGER.error("Error while tracking activity {}", activityType, throwable);
 
