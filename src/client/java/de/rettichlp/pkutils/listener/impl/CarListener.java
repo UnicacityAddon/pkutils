@@ -44,6 +44,8 @@ public class CarListener extends PKUtilsBase
 
     @Override
     public void onEnterVehicle(Entity vehicle) {
+        storage.setMinecartEntityToHighlight(null);
+
         // TODO setting entry
 
         // the entity is a car
