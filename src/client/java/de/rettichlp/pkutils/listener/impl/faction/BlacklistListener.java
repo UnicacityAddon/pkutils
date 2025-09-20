@@ -3,14 +3,13 @@ package de.rettichlp.pkutils.listener.impl.faction;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
-import de.rettichlp.pkutils.common.storage.schema.BlacklistEntry;
-import de.rettichlp.pkutils.common.storage.schema.BlacklistReason;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.text.Text;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static java.lang.Integer.parseInt;
@@ -51,10 +50,8 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
 
         Matcher blacklistEntryAddMatcher = BLACKLIST_ENTRY_ADD.matcher(message);
         if (blacklistEntryAddMatcher.find()) {
-            String targetName = blacklistEntryAddMatcher.group("targetName");
-            BlacklistReason blacklistReason = new BlacklistReason("Unbekannt", false, 0, 0);
-            BlacklistEntry blacklistEntry = new BlacklistEntry(targetName, blacklistReason);
-            storage.addBlacklistEntry(blacklistEntry);
+            // show all entries to sync
+            delayedAction(() -> networkHandler.sendChatCommand("blacklist"), 1000);
             return true;
         }
 
