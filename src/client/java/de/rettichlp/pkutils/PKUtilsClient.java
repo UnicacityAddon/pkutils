@@ -6,6 +6,7 @@ import de.rettichlp.pkutils.common.registry.Registry;
 import de.rettichlp.pkutils.common.services.ConfigService;
 import de.rettichlp.pkutils.common.services.FactionService;
 import de.rettichlp.pkutils.common.services.HudService;
+import de.rettichlp.pkutils.common.services.RenderService;
 import de.rettichlp.pkutils.common.services.SyncService;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -24,6 +25,7 @@ public class PKUtilsClient implements ClientModInitializer {
     public static ConfigService configService;
     public static FactionService factionService;
     public static HudService hudService;
+    public static RenderService renderService;
     public static SyncService syncService;
 
     private final Registry registry = new Registry();
@@ -35,6 +37,7 @@ public class PKUtilsClient implements ClientModInitializer {
         configService = new ConfigService();
         factionService = new FactionService();
         hudService = new HudService();
+        renderService = new RenderService();
         syncService = new SyncService();
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
