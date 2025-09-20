@@ -22,23 +22,17 @@ public class PKUtilsClient implements ClientModInitializer {
     public static ClientPlayerEntity player;
     public static ClientPlayNetworkHandler networkHandler;
 
-    public static ConfigService configService;
-    public static FactionService factionService;
-    public static HudService hudService;
-    public static RenderService renderService;
-    public static SyncService syncService;
+    public static ConfigService configService = new ConfigService();
+    public static FactionService factionService = new FactionService();
+    public static HudService hudService = new HudService();
+    public static RenderService renderService = new RenderService();
+    public static SyncService syncService = new SyncService();
 
     private final Registry registry = new Registry();
 
     @Override
     public void onInitializeClient() {
         // This entrypoint is suitable for setting up client-specific logic, such as rendering.
-
-        configService = new ConfigService();
-        factionService = new FactionService();
-        hudService = new HudService();
-        renderService = new RenderService();
-        syncService = new SyncService();
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             player = client.player;
