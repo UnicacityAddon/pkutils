@@ -82,12 +82,12 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
         }
 
         Optional<BlacklistEntry> optionalTargetBlacklistEntry = storage.getBlacklistEntries().stream()
-                .filter(blacklistEntry -> blacklistEntry.playerName().equals(targetName))
+                .filter(blacklistEntry -> blacklistEntry.getPlayerName().equals(targetName))
                 .findAny();
 
         if (optionalTargetBlacklistEntry.isPresent()) {
             newTargetDisplayNameColor = RED;
-            newTargetDisplayNamePrefix = !optionalTargetBlacklistEntry.get().getReason().isOutlaw() ? empty() : empty()
+            newTargetDisplayNamePrefix = !optionalTargetBlacklistEntry.get().isOutlaw() ? empty() : empty()
                     .append(of("[").copy().formatted(DARK_GRAY))
                     .append(of("V").copy().formatted(DARK_RED))
                     .append(of("]").copy().formatted(DARK_GRAY));
