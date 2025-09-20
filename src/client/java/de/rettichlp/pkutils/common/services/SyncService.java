@@ -2,10 +2,9 @@ package de.rettichlp.pkutils.common.services;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
-import de.rettichlp.pkutils.common.storage.schema.BlacklistReason;
-import de.rettichlp.pkutils.common.storage.schema.Faction;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,9 +22,6 @@ import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
-import static de.rettichlp.pkutils.common.storage.schema.Faction.FBI;
-import static de.rettichlp.pkutils.common.storage.schema.Faction.NULL;
-import static de.rettichlp.pkutils.common.storage.schema.Faction.POLIZEI;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
