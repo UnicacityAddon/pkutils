@@ -8,6 +8,7 @@ import de.rettichlp.pkutils.common.models.WantedEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.entity.vehicle.MinecartEntity;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -47,6 +48,10 @@ public class Storage {
     @Getter
     @Setter
     private ToggledChat toggledChat = NONE;
+
+    @Getter
+    @Setter
+    private MinecartEntity minecartEntityToHighlight;
 
     public void print() {
         // factionMembers
