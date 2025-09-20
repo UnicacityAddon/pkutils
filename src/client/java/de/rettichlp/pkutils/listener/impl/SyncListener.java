@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.hudService;
+import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static de.rettichlp.pkutils.common.Storage.Countdown.BANDAGE;
@@ -42,7 +42,7 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
     @Override
     public boolean onCommandSend(@NotNull String command) {
         if (syncService.isGameSyncProcessActive() && !command.contains("memberinfoall") && !command.contains("wanteds") && !command.contains("blacklist")) {
-            hudService.sendWarningNotification("Synchronisierung aktiv - Befehle blockiert");
+            notificationService.sendWarningNotification("Synchronisierung aktiv - Befehle blockiert");
             return false;
         }
 
@@ -71,7 +71,7 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
         Matcher serverCommandCooldownMatcher = SERVER_COMMAND_COOLDOWN_PATTERN.matcher(message);
         if (serverCommandCooldownMatcher.find() && syncService.isGameSyncProcessActive()) {
             syncService.stopSync();
-            hudService.sendWarningNotification("Server Lag erkannt - Synchronisierung abgebrochen");
+            notificationService.sendWarningNotification("Server Lag erkannt - Synchronisierung abgebrochen");
             return true;
         }
 

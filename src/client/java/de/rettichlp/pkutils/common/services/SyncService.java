@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
 import static de.rettichlp.pkutils.PKUtilsClient.api;
-import static de.rettichlp.pkutils.PKUtilsClient.hudService;
+import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
@@ -34,7 +34,7 @@ public class SyncService extends PKUtilsBase {
     public void executeSync() {
         this.abortGameSyncProcess = false;
         this.gameSyncProcessActive = true;
-        hudService.sendNotification("PKUtils wird synchronisiert...", CYAN, Faction.values().length * 1000L + 1000);
+        notificationService.sendNotification("PKUtils wird synchronisiert...", CYAN, Faction.values().length * 1000L + 1000);
 
         // seconds 1-13: execute commands for all factions -> blocks command input for 13 * 1000 ms
         for (Faction faction : Faction.values()) {
@@ -48,7 +48,7 @@ public class SyncService extends PKUtilsBase {
                 }
 
                 networkHandler.sendChatCommand("memberinfoall " + faction.getMemberInfoCommandName());
-                hudService.sendNotification("Synchronisiere Fraktion " + faction.getDisplayName() + "...", WHITE, 1000);
+                notificationService.sendNotification("Synchronisiere Fraktion " + faction.getDisplayName() + "...", WHITE, 1000);
             }, 1000 * faction.ordinal());
         }
 
@@ -66,7 +66,7 @@ public class SyncService extends PKUtilsBase {
                 networkHandler.sendChatCommand("wanteds");
             }
 
-            hudService.sendNotification("Synchronisiere fraktionsabhängige Daten...", WHITE, 1000);
+            notificationService.sendNotification("Synchronisiere fraktionsabhängige Daten...", WHITE, 1000);
         }, Faction.values().length * 1000L);
 
         // end: init commands dons
@@ -79,7 +79,7 @@ public class SyncService extends PKUtilsBase {
             api.registerPlayer();
 
             this.gameSyncProcessActive = false;
-            hudService.sendSuccessNotification("PKUtils synchronisiert");
+            notificationService.sendSuccessNotification("PKUtils synchronisiert");
             this.lastSyncTimestamp = now();
         }, Faction.values().length * 1000L + 1000);
     }

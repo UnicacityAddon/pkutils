@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 import static de.rettichlp.pkutils.PKUtilsClient.configService;
-import static de.rettichlp.pkutils.PKUtilsClient.hudService;
+import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.common.models.Faction.fromDisplayName;
 import static java.util.Arrays.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
@@ -29,7 +29,7 @@ public class AllianceCommand extends CommandBase {
                             String input = getString(context, "faction");
                             fromDisplayName(input).ifPresentOrElse(faction -> {
                                 configService.edit(mainConfig -> mainConfig.setAllianceFaction(faction));
-                                hudService.sendInfoNotification("Die Allianz-Fraktion wurde auf " + faction.getDisplayName() + " gesetzt.");
+                                notificationService.sendInfoNotification("Die Allianz-Fraktion wurde auf " + faction.getDisplayName() + " gesetzt.");
                             }, () -> sendModMessage("Die Fraktion" + input + " konnte nicht gefunden werden.", false));
 
                             return 1;
