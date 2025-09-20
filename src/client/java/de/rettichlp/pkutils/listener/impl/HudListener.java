@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static de.rettichlp.pkutils.PKUtilsClient.hudService;
+import static de.rettichlp.pkutils.PKUtilsClient.renderService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
@@ -65,7 +65,7 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
         MutableText countdownText = empty();
         countdownStrings.forEach(mutableText -> countdownText.append(mutableText).append(" "));
 
-        hudService.renderTextBox(
+        renderService.renderTextBox(
                 drawContext,
                 countdownText,
                 new Color(127, 127, 127, 100),
