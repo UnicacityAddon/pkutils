@@ -44,9 +44,8 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
             int kills = parseInt(blacklistEntryMatcher.group("kills"));
             int price = parseInt(blacklistEntryMatcher.group("price"));
 
-            BlacklistReason blacklistReason = new BlacklistReason(reason, outlaw, kills, price);
-            BlacklistEntry blacklistEntry = new BlacklistEntry(playerName, blacklistReason);
             storage.addBlacklistEntry(blacklistEntry);
+            BlacklistEntry blacklistEntry = new BlacklistEntry(playerName, reason, outlaw, kills, price);
             return !syncService.isGameSyncProcessActive();
         }
 
@@ -62,7 +61,7 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
         Matcher blacklistEntryRemoveMatcher = BLACKLIST_ENTRY_REMOVE.matcher(message);
         if (blacklistEntryRemoveMatcher.find()) {
             String targetName = blacklistEntryRemoveMatcher.group("targetName");
-            storage.getBlacklistEntries().removeIf(blacklistEntry -> blacklistEntry.playerName().equals(targetName));
+            storage.getBlacklistEntries().removeIf(blacklistEntry -> blacklistEntry.getPlayerName().equals(targetName));
             return true;
         }
 
