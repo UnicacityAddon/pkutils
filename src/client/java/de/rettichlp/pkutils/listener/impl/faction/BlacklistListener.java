@@ -32,7 +32,7 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
         Matcher blacklistHeaderMatcher = BLACKLIST_HEADER_PATTERN.matcher(message);
         if (blacklistHeaderMatcher.find()) {
             this.activeCheck = currentTimeMillis();
-            storage.resetBlacklistEntries();
+            storage.getBlacklistEntries().clear();
             return !syncService.isGameSyncProcessActive();
         }
 
@@ -44,8 +44,8 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
             int kills = parseInt(blacklistEntryMatcher.group("kills"));
             int price = parseInt(blacklistEntryMatcher.group("price"));
 
-            storage.addBlacklistEntry(blacklistEntry);
             BlacklistEntry blacklistEntry = new BlacklistEntry(playerName, reason, outlaw, kills, price);
+            storage.getBlacklistEntries().add(blacklistEntry);
             return !syncService.isGameSyncProcessActive();
         }
 

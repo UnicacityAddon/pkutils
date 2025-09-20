@@ -72,14 +72,6 @@ public class Storage {
         LOGGER.info("toggledChat: {}", this.toggledChat);
     }
 
-    public void addBlacklistEntry(BlacklistEntry entry) {
-        this.blacklistEntries.add(entry);
-    }
-
-    public void resetBlacklistEntries() {
-        this.blacklistEntries.clear();
-    }
-
     public void addFactionMember(Faction faction, FactionMember factionMember) {
         this.factionMembers.computeIfAbsent(faction, f -> new HashSet<>())
                 .add(factionMember);
