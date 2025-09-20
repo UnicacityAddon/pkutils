@@ -21,6 +21,7 @@ import de.rettichlp.pkutils.command.money.RichTaxesCommand;
 import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
+import de.rettichlp.pkutils.listener.IEntityRenderListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
@@ -50,6 +51,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -166,6 +168,10 @@ public class Registry {
 
                 if (listenerInstance instanceof IEnterVehicleListener iEnterVehicleListener) {
                     PlayerEnterVehicleCallback.EVENT.register(iEnterVehicleListener::onEnterVehicle);
+                }
+
+                if (listenerInstance instanceof IEntityRenderListener iEntityRenderListener) {
+                    WorldRenderEvents.AFTER_ENTITIES.register(iEntityRenderListener::onEntityRender);
                 }
 
                 if (listenerInstance instanceof IHudRenderListener iHudRenderListener) {

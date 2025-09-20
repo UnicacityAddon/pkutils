@@ -3,12 +3,16 @@ package de.rettichlp.pkutils.listener.impl;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
+import de.rettichlp.pkutils.listener.IEntityRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IScreenOpenListener;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.scoreboard.Scoreboard;
@@ -20,13 +24,18 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
+import static de.rettichlp.pkutils.PKUtilsClient.renderService;
+import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.scoreboard.ScoreboardDisplaySlot.SIDEBAR;
 import static net.minecraft.screen.slot.SlotActionType.PICKUP;
+import static net.minecraft.util.Formatting.AQUA;
 
 @PKUtilsListener
-public class CarListener extends PKUtilsBase implements IEnterVehicleListener, IMessageReceiveListener, IScreenOpenListener {
+public class CarListener extends PKUtilsBase
+        implements IEnterVehicleListener, IEntityRenderListener, IMessageReceiveListener, IScreenOpenListener {
 
     private static final Pattern CAR_UNLOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ aufgeschlossen\\.$");
     private static final Pattern CAR_LOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ abgeschlossen\\.$");
@@ -48,6 +57,18 @@ public class CarListener extends PKUtilsBase implements IEnterVehicleListener, I
         // lock the car after 1 second and the small delay if not already locked
         if (!this.carLocked) {
             delayedAction(() -> networkHandler.sendChatCommand("car lock"), 1500);
+        }
+    }
+
+    @Override
+    public void onEntityRender(WorldRenderContext context) {
+        MatrixStack matrices = context.matrixStack();
+        VertexConsumerProvider vertexConsumers = context.consumers();
+
+        if (nonNull(matrices) && nonNull(vertexConsumers)) {
+            ofNullable(storage.getMinecartEntityToHighlight()).ifPresent(minecartEntity -> {
+                renderService.renderTextAboveEntity(matrices, vertexConsumers, minecartEntity, Text.of("🚗").copy().formatted(AQUA), 0.05F);
+            });
         }
     }
 
