@@ -1,11 +1,7 @@
 package de.rettichlp.pkutils.common;
 
-import de.rettichlp.pkutils.common.storage.schema.BlacklistEntry;
-import de.rettichlp.pkutils.common.storage.schema.BlacklistReason;
-import de.rettichlp.pkutils.common.storage.schema.Faction;
-import de.rettichlp.pkutils.common.storage.schema.FactionMember;
-import de.rettichlp.pkutils.common.storage.schema.WantedEntry;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
+import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.models.Reinforcement;
@@ -62,9 +58,11 @@ public class Storage {
     private MinecartEntity minecartEntityToHighlight;
 
     public void print() {
+        // factionMembers
         this.factionMembers.forEach((faction, factionMembers) -> LOGGER.info("factionMembers[{}:{}]: {}", faction, factionMembers.size(), factionMembers));
-        LOGGER.info("blacklistEntries[{}]: {}", this.blacklistEntries.size(), this.blacklistEntries);
+        // blacklistEntries
         this.blacklistReasons.forEach((faction, blacklistReasons) -> LOGGER.info("blacklistReasons[{}:{}]: {}", faction, blacklistReasons.size(), blacklistReasons));
+        // wantedEntries
         LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
         // reinforcements
         LOGGER.info("reinforcements[{}]: {}", this.reinforcements.size(), this.reinforcements);
