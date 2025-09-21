@@ -21,7 +21,7 @@ public class LumberjackListener extends PKUtilsBase implements ICommandSendListe
     @Override
     public boolean onCommandSend(@NotNull String command) {
         if (command.equals("sägewerk")) {
-            delayedAction(() -> networkHandler.sendChatCommand("findtree"), 1000);
+            delayedAction(() -> sendCommand("findtree"), 1000);
         }
 
         return true;
@@ -31,7 +31,7 @@ public class LumberjackListener extends PKUtilsBase implements ICommandSendListe
     public boolean onMessageReceive(Text text, String message) {
         Matcher lumberjackStartMatcher = LUMBERJACK_START_PATTERN.matcher(message);
         if (lumberjackStartMatcher.find()) {
-            delayedAction(() -> networkHandler.sendChatCommand("findtree"), 1000);
+            delayedAction(() -> sendCommand("findtree"), 1000);
         }
 
         return true;

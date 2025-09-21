@@ -24,10 +24,10 @@ public class ADropMoneyCommand extends CommandBase {
                         @Override
                         public void run() {
                             switch (ADropMoneyCommand.this.step++) {
-                                case 1 -> networkHandler.sendChatCommand("bank abbuchen 16000");
-                                case 2 -> networkHandler.sendChatCommand("dropmoney");
+                                case 1 -> sendCommand("bank abbuchen 16000");
+                                case 2 -> sendCommand("dropmoney");
                                 case 3 -> {
-                                    networkHandler.sendChatCommand("bank einzahlen 16000");
+                                    sendCommand("bank einzahlen 16000");
                                     ADropMoneyCommand.this.step = 0;
                                     this.cancel();
                                 }

@@ -28,7 +28,7 @@ public class CommandSendListener extends PKUtilsBase implements ICommandSendList
                 stringJoiner.add(parts[1]);
             }
 
-            networkHandler.sendChatCommand(stringJoiner.toString());
+            sendCommand(stringJoiner.toString());
             return false;
         }
 

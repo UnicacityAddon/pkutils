@@ -32,10 +32,10 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
         return node
                 .executes(context -> {
                     // execute command to check money on the bank of player
-                    networkHandler.sendChatCommand("bank info");
+                    sendCommand("bank info");
 
                     // execute command to check money in atm
-                    delayedAction(() -> networkHandler.sendChatCommand("atminfo"), 1000);
+                    delayedAction(() -> sendCommand("atminfo"), 1000);
 
                     // handle money withdraw
                     delayedAction(() -> {
@@ -54,9 +54,9 @@ public class RichTaxesCommand extends CommandBase implements IMessageReceiveList
                         int moneyThatNeedsToBeWithdrawn = moneyBankAmount - RICH_TAXES_THRESHOLD;
 
                         if (moneyAtmAmount >= moneyThatNeedsToBeWithdrawn) {
-                            networkHandler.sendChatCommand("bank abbuchen " + moneyThatNeedsToBeWithdrawn);
+                            sendCommand("bank abbuchen " + moneyThatNeedsToBeWithdrawn);
                         } else {
-                            networkHandler.sendChatCommand("bank abbuchen " + moneyAtmAmount);
+                            sendCommand("bank abbuchen " + moneyAtmAmount);
                             sendModMessage("Du musst noch " + (moneyThatNeedsToBeWithdrawn - moneyAtmAmount) + "$ abbuchen.", false);
                         }
                     }, 2000);

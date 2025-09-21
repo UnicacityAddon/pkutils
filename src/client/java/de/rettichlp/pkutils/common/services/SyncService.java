@@ -60,7 +60,7 @@ public class SyncService extends PKUtilsBase {
                     return;
                 }
 
-                networkHandler.sendChatCommand("memberinfoall " + faction.getMemberInfoCommandName());
+                sendCommand("memberinfoall " + faction.getMemberInfoCommandName());
                 notificationService.sendNotification("Synchronisiere Fraktion " + faction.getDisplayName() + "...", WHITE, 1000);
             }, 1000 * faction.ordinal());
         }
@@ -74,9 +74,9 @@ public class SyncService extends PKUtilsBase {
             Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
 
             if (faction.isBadFaction()) {
-                networkHandler.sendChatCommand("blacklist");
+                sendCommand("blacklist");
             } else if (faction == FBI || faction == POLIZEI) {
-                networkHandler.sendChatCommand("wanteds");
+                sendCommand("wanteds");
             }
 
             notificationService.sendNotification("Synchronisiere fraktionsabhängige Daten...", WHITE, 1000);
@@ -103,7 +103,7 @@ public class SyncService extends PKUtilsBase {
     }
 
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
-        networkHandler.sendChatCommand("nummer " + playerName);
+        sendCommand("nummer " + playerName);
 
         delayedAction(() -> {
             ofNullable(storage.getRetrievedNumbers().get(playerName)).ifPresentOrElse(runWithNumber, () -> {
