@@ -2,6 +2,11 @@ package de.rettichlp.pkutils.command;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.context.ParsedCommandNode;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import com.mojang.brigadier.tree.CommandNode;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.Faction;
@@ -14,15 +19,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
-import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
-import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.IntStream.range;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.minecraft.command.CommandSource.suggestMatching;
 
@@ -31,74 +38,120 @@ public class ASetBlacklistCommand extends CommandBase {
 
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
-        Faction faction = storage.getFaction(player.getName().getString());
-        List<BlacklistReason> blacklistReasons = storage.getBlacklistReasons().getOrDefault(faction, new ArrayList<>());
-        List<String> blacklistReasonStrings = blacklistReasons.stream()
-                .map(BlacklistReason::getReason)
-                .map(reason -> reason.replace(" ", "_"))
-                .toList();
-
         return node
                 .then(argument("reason", word())
-                        .suggests((context, builder) -> suggestMatching(blacklistReasonStrings, builder))
-                        .then(argument("players", greedyString())
-                                .suggests((context, builder) -> {
-                                    List<String> list = networkHandler.getPlayerList().stream()
-                                            .map(PlayerListEntry::getProfile)
-                                            .map(GameProfile::getName)
-                                            .toList();
-                                    return suggestMatching(list, builder);
-                                })
-                                .executes(context -> {
-                                    String reasonString = getString(context, "reason").replace("_", " ");
-                                    String playersString = getString(context, "players");
-                                    String[] playerArray = playersString.split(" ");
+                        .suggests((context, builder) -> {
+                            Faction faction = Faction.LEMILIEU;// storage.getFaction(player.getName().getString()); TODO
+                            List<String> blacklistReasonStrings = storage.getBlacklistReasons().getOrDefault(faction, new ArrayList<>()).stream()
+                                    .map(BlacklistReason::getReason)
+                                    .map(reason -> reason.replace(" ", "_"))
+                                    .toList();
+                            return suggestMatching(blacklistReasonStrings, builder);
+                        })
+                        .then(argument("player1", word())
+                                .suggests((context, builder) -> suggestPlayerNames(builder))
+                                .then(argument("player2", word())
+                                        .suggests((context, builder) -> suggestPlayerNames(builder))
+                                        .then(argument("player3", word())
+                                                .suggests((context, builder) -> suggestPlayerNames(builder))
+                                                .then(argument("player4", word())
+                                                        .suggests((context, builder) -> suggestPlayerNames(builder))
+                                                        .then(argument("player5", word())
+                                                                .suggests((context, builder) -> suggestPlayerNames(builder))
+                                                                .then(argument("player6", word())
+                                                                        .suggests((context, builder) -> suggestPlayerNames(builder))
+                                                                        .then(argument("player7", word())
+                                                                                .suggests((context, builder) -> suggestPlayerNames(builder))
+                                                                                .then(argument("player8", word())
+                                                                                        .suggests((context, builder) -> suggestPlayerNames(builder))
+                                                                                        .then(argument("player9", word())
+                                                                                                .suggests((context, builder) -> suggestPlayerNames(builder))
+                                                                                                .then(argument("player10", word())
+                                                                                                        .suggests((context, builder) -> suggestPlayerNames(builder))
+                                                                                                        .executes(this::execute))
+                                                                                                .executes(this::execute))
+                                                                                        .executes(this::execute))
+                                                                                .executes(this::execute))
+                                                                        .executes(this::execute))
+                                                                .executes(this::execute))
+                                                        .executes(this::execute))
+                                                .executes(this::execute))
+                                        .executes(this::execute))
+                                .executes(this::execute)));
+    }
 
-                                    if (playerArray.length == 0) {
-                                        sendModMessage("Keine Spieler angegeben.", false);
-                                        return 1;
-                                    }
+    private static CompletableFuture<Suggestions> suggestPlayerNames(SuggestionsBuilder builder) {
+        List<String> list = networkHandler.getPlayerList().stream()
+                .map(PlayerListEntry::getProfile)
+                .map(GameProfile::getName)
+                .toList();
+        return suggestMatching(list, builder);
+    }
 
-                                    Optional<BlacklistReason> optionalBlacklistReason = blacklistReasons.stream()
-                                            .filter(blacklistReason -> blacklistReason.getReason().equalsIgnoreCase(reasonString))
-                                            .findFirst();
+    private int execute(@NotNull CommandContext<FabricClientCommandSource> context) {
+        List<String> argumentNames = context.getNodes().stream()
+                .map(ParsedCommandNode::getNode)
+                .map(CommandNode::getName)
+                .toList();
 
-                                    if (optionalBlacklistReason.isEmpty()) {
-                                        sendModMessage("Der Grund \"" + reasonString + "\" ist PKUtils unbekannt.", false);
-                                        return 1;
-                                    }
+        String reasonString = getString(context, "reason").replace("_", " ");
 
-                                    BlacklistReason blacklistReason = optionalBlacklistReason.get();
+        Set<String> playerNames = range(1, 11)
+                .mapToObj(operand -> "player" + operand)
+                .filter(argumentNames::contains)
+                .map(argumentName -> getString(context, argumentName))
+                .collect(toSet());
 
-                                    List<String> blacklistCommands = new ArrayList<>();
+        if (playerNames.isEmpty()) {
+            sendModMessage("Keine Spieler angegeben.", false);
+            return 1;
+        }
 
-                                    for (String blacklistPlayername : playerArray) {
-                                        // get current blacklist entry for player
-                                        Optional<BlacklistEntry> optionalBlacklistEntry = storage.getBlacklistEntries().stream()
-                                                .filter(blacklistEntry -> blacklistEntry.getPlayerName().equals(blacklistPlayername))
-                                                .findFirst();
+        Faction faction = Faction.LEMILIEU;// storage.getFaction(player.getName().getString()); TODO
+        Optional<BlacklistReason> optionalBlacklistReason = storage.getBlacklistReasons().getOrDefault(faction, new ArrayList<>()).stream()
+                .filter(blacklistReason -> blacklistReason.getReason().equalsIgnoreCase(reasonString))
+                .findFirst();
 
-                                        // check if the player is already blacklisted for the same reason
-                                        if (optionalBlacklistEntry.isPresent()) {
-                                            BlacklistEntry blacklistEntry = optionalBlacklistEntry.get();
-                                            if (blacklistEntry.getReason().contains(reasonString)) {
-                                                sendModMessage(blacklistPlayername + " ist bereits für den Grund \"" + reasonString + "\" auf der Blacklist.", false);
-                                                continue;
-                                            }
-                                        }
+        if (optionalBlacklistReason.isEmpty()) {
+            sendModMessage("Der Grund \"" + reasonString + "\" ist PKUtils unbekannt.", false);
+            return 1;
+        }
 
-                                        // create and schedule command
-                                        blacklistCommands.add("blacklist add " + blacklistPlayername + " " + blacklistReason.getPrice() + " " + blacklistReason.getKills() + " " + blacklistReason.getReason());
-                                    }
+        BlacklistReason blacklistReason = optionalBlacklistReason.get();
 
-                                    new Timer().scheduleAtFixedRate(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            networkHandler.sendChatCommand(blacklistCommands.removeFirst());
-                                        }
-                                    }, 0, 1000);
+        List<String> blacklistCommands = new ArrayList<>();
 
-                                    return 1;
-                                })));
+        for (String playerName : playerNames) {
+            // get current blacklist entry for player
+            Optional<BlacklistEntry> optionalBlacklistEntry = storage.getBlacklistEntries().stream()
+                    .filter(blacklistEntry -> blacklistEntry.getPlayerName().equals(playerName))
+                    .findFirst();
+
+            // check if the player is already blacklisted for the same reason
+            if (optionalBlacklistEntry.isPresent()) {
+                BlacklistEntry blacklistEntry = optionalBlacklistEntry.get();
+                if (blacklistEntry.getReason().contains(reasonString)) {
+                    sendModMessage(playerName + " ist bereits für den Grund \"" + reasonString + "\" auf der Blacklist.", false);
+                    continue;
+                }
+            }
+
+            // create and schedule command
+            blacklistCommands.add("blacklist add " + playerName + " " + blacklistReason.getPrice() + " " + blacklistReason.getKills() + " " + blacklistReason.getReason());
+        }
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (blacklistCommands.isEmpty()) {
+                    this.cancel();
+                    return;
+                }
+
+                sendCommand(blacklistCommands.removeFirst());
+            }
+        }, 0, 1000);
+
+        return 1;
     }
 }
