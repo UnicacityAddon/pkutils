@@ -2,7 +2,7 @@ package de.rettichlp.pkutils.command;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.common.models.SupplyEntry;
+import de.rettichlp.pkutils.common.models.OwnUseEntry;
 import de.rettichlp.pkutils.common.models.config.MainConfig;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
@@ -46,17 +46,17 @@ public class EigenbedarfCommand extends CommandBase {
                                                      * Edit existing entry
                                                      */
                                                     MainConfig config = configService.load();
-                                                    List<SupplyEntry> supplies = config.getSupplies();
-                                                    if (supplies.stream().anyMatch(supplyEntry -> supplyEntry.getDrug().equalsIgnoreCase(drug))) {
+                                                    List<OwnUseEntry> supplies = config.getSupplies();
+                                                    if (supplies.stream().anyMatch(ownUseEntry -> ownUseEntry.drug().equalsIgnoreCase(drug))) {
                                                         supplies.stream()
-                                                                .filter(supplyEntry -> supplyEntry.getDrug().equalsIgnoreCase(drug))
+                                                                .filter(ownUseEntry -> ownUseEntry.drug().equalsIgnoreCase(drug))
                                                                 .findFirst()
-                                                                .ifPresent(supplyEntry -> {
-                                                                    configService.edit(mainConfig -> mainConfig.getSupplies().remove(supplyEntry));
+                                                                .ifPresent(ownUseEntry -> {
+                                                                    configService.edit(mainConfig -> mainConfig.getSupplies().remove(ownUseEntry));
                                                                 });
 
-                                                        SupplyEntry supplyEntry = new SupplyEntry(drug, purity, amount);
-                                                        configService.edit(mainConfig -> mainConfig.getSupplies().add(supplyEntry));
+                                                        OwnUseEntry ownUseEntry = new OwnUseEntry(drug, purity, amount);
+                                                        configService.edit(mainConfig -> mainConfig.getSupplies().add(ownUseEntry));
                                                         sendModMessage("Eigenbedarf aktualisiert -> " + drug + " | " + purity + "er | " + amount + "x", false);
                                                         return 1;
                                                     }
@@ -64,8 +64,8 @@ public class EigenbedarfCommand extends CommandBase {
                                                     /*
                                                      * Add new entry
                                                      */
-                                                    SupplyEntry supplyEntry = new SupplyEntry(drug, purity, amount);
-                                                    configService.edit(mainConfig -> mainConfig.getSupplies().add(supplyEntry));
+                                                    OwnUseEntry ownUseEntry = new OwnUseEntry(drug, purity, amount);
+                                                    configService.edit(mainConfig -> mainConfig.getSupplies().add(ownUseEntry));
                                                     sendModMessage("Eigenbedarf gesetzt -> " + drug + " | " + purity + "er | " + amount + "x", false);
                                                     return 1;
 
@@ -89,15 +89,15 @@ public class EigenbedarfCommand extends CommandBase {
                                 return 1;
                             }
 
-                            List<SupplyEntry> supplies = mainConfig.getSupplies();
+                            List<OwnUseEntry> supplies = mainConfig.getSupplies();
                             AtomicInteger counter = new AtomicInteger(0);
-                            supplies.forEach(supplyEntry -> {
+                            supplies.forEach(ownUseEntry -> {
                                 long delay = SECONDS.toMillis(counter.incrementAndGet());
                                 delayedAction(() -> networkHandler.sendChatCommand(
                                         "selldrug  " + targetPlayer + " "
-                                                + supplyEntry.getDrug() + " "
-                                                + supplyEntry.getAmount() + " "
-                                                + supplyEntry.getPurity() + " "
+                                                + ownUseEntry.drug() + " "
+                                                + ownUseEntry.amount() + " "
+                                                + ownUseEntry.purity() + " "
                                                 + "1"
                                 ), delay);
                             });
@@ -112,15 +112,15 @@ public class EigenbedarfCommand extends CommandBase {
                         return 1;
                     }
 
-                    List<SupplyEntry> supplies = mainConfig.getSupplies();
+                    List<OwnUseEntry> supplies = mainConfig.getSupplies();
                     AtomicInteger counter = new AtomicInteger(0);
-                    supplies.forEach(supplyEntry -> {
+                    supplies.forEach(ownUseEntry -> {
                         long delay = SECONDS.toMillis(counter.incrementAndGet());
                         delayedAction(() -> networkHandler.sendChatCommand(
                                 "dbank get "
-                                        + supplyEntry.getDrug() + " "
-                                        + supplyEntry.getPurity() + " "
-                                        + supplyEntry.getAmount()
+                                        + ownUseEntry.drug() + " "
+                                        + ownUseEntry.purity() + " "
+                                        + ownUseEntry.amount()
                         ), delay);
                     });
 
