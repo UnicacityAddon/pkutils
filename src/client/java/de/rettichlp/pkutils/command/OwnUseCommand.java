@@ -24,7 +24,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 import static net.minecraft.command.CommandSource.suggestMatching;
 
 @PKUtilsCommand(label = "eigenbedarf")
-public class EigenbedarfCommand extends CommandBase {
+public class OwnUseCommand extends CommandBase {
 
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
