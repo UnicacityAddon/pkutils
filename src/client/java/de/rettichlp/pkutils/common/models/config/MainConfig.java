@@ -13,6 +13,6 @@ import static de.rettichlp.pkutils.common.models.Faction.NULL;
 public class MainConfig {
 
     private List<TodoEntry> todos = new ArrayList<>();
-    private List<OwnUseEntry> supplies = new ArrayList<>();
+    private List<OwnUseEntry> ownUseEntries = new ArrayList<>();
     private Faction allianceFaction = NULL;
 }
