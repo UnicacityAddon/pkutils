@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -40,6 +41,20 @@ public abstract class PKUtilsBase {
     public void sendCommand(String command) {
         LOGGER.info("PKUtils executing command: {}", command);
         networkHandler.sendChatCommand(command);
+    }
+
+    public void sendCommands(List<String> commands) {
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (commands.isEmpty()) {
+                    this.cancel();
+                    return;
+                }
+
+                sendCommand(commands.removeFirst());
+            }
+        }, 0, 1000);
     }
 
     public void sendModMessage(String message, boolean inActionbar) {
