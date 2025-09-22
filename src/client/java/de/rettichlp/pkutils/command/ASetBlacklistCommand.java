@@ -28,6 +28,7 @@ import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
+import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.IntStream.range;
@@ -42,7 +43,7 @@ public class ASetBlacklistCommand extends CommandBase {
         return node
                 .then(argument("reason", string())
                         .suggests((context, builder) -> {
-                            Faction faction = Faction.LEMILIEU;// storage.getFaction(player.getName().getString()); TODO
+                            Faction faction = storage.getFaction(player.getName().getString());
                             List<String> blacklistReasonStrings = storage.getBlacklistReasons().getOrDefault(faction, new ArrayList<>()).stream()
                                     .map(BlacklistReason::getReason)
                                     .map(reasonString -> reasonString.replace(" ", "_"))
@@ -109,7 +110,7 @@ public class ASetBlacklistCommand extends CommandBase {
             return 1;
         }
 
-        Faction faction = Faction.LEMILIEU;// storage.getFaction(player.getName().getString()); TODO
+        Faction faction = storage.getFaction(player.getName().getString());
         Optional<BlacklistReason> optionalBlacklistReason = storage.getBlacklistReasons().getOrDefault(faction, new ArrayList<>()).stream()
                 .filter(blacklistReason -> blacklistReason.getReason().equalsIgnoreCase(reasonString))
                 .findFirst();
