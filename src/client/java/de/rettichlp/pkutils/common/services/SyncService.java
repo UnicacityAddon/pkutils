@@ -1,18 +1,28 @@
 package de.rettichlp.pkutils.common.services;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
+import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static de.rettichlp.pkutils.common.models.Faction.POLIZEI;
@@ -36,6 +46,9 @@ public class SyncService extends PKUtilsBase {
         this.gameSyncProcessActive = true;
         notificationService.sendNotification("PKUtils wird synchronisiert...", CYAN, Faction.values().length * 1000L + 1000);
 
+        // without scheduled timings
+        parseBlacklistEntries();
+
         // seconds 1-13: execute commands for all factions -> blocks command input for 13 * 1000 ms
         for (Faction faction : Faction.values()) {
             if (faction == NULL) {
@@ -47,7 +60,7 @@ public class SyncService extends PKUtilsBase {
                     return;
                 }
 
-                networkHandler.sendChatCommand("memberinfoall " + faction.getMemberInfoCommandName());
+                sendCommand("memberinfoall " + faction.getMemberInfoCommandName());
                 notificationService.sendNotification("Synchronisiere Fraktion " + faction.getDisplayName() + "...", WHITE, 1000);
             }, 1000 * faction.ordinal());
         }
@@ -61,9 +74,9 @@ public class SyncService extends PKUtilsBase {
             Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
 
             if (faction.isBadFaction()) {
-                networkHandler.sendChatCommand("blacklist");
+                sendCommand("blacklist");
             } else if (faction == FBI || faction == POLIZEI) {
-                networkHandler.sendChatCommand("wanteds");
+                sendCommand("wanteds");
             }
 
             notificationService.sendNotification("Synchronisiere fraktionsabhängige Daten...", WHITE, 1000);
@@ -90,12 +103,26 @@ public class SyncService extends PKUtilsBase {
     }
 
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
-        networkHandler.sendChatCommand("nummer " + playerName);
+        sendCommand("nummer " + playerName);
 
         delayedAction(() -> {
             ofNullable(storage.getRetrievedNumbers().get(playerName)).ifPresentOrElse(runWithNumber, () -> {
                 sendModMessage("Die Nummer von " + playerName + " konnte nicht abgerufen werden.", false);
             });
         }, 1000);
+    }
+
+    private void parseBlacklistEntries() {
+        new Thread(() -> {
+            storage.getBlacklistReasons().clear();
+
+            try (InputStreamReader reader = new InputStreamReader(URI.create("https://gist.githubusercontent.com/rettichlp/54e97f4dbb3988bf22554c01d62af666/raw/pkutils-blacklistreasons.json").toURL().openStream(), UTF_8)) {
+                Type type = new TypeToken<Map<String, List<BlacklistReason>>>(){}.getType();
+                Map<String, List<BlacklistReason>> factionBlacklistReasons = new Gson().fromJson(reader, type);
+                factionBlacklistReasons.forEach((factionString, blacklistReasons) -> storage.getBlacklistReasons().put(Faction.valueOf(factionString), blacklistReasons));
+            } catch (Exception e) {
+                LOGGER.error("Failed to fetch blacklist reasons", e);
+            }
+        }).start();
     }
 }

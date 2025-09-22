@@ -172,7 +172,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
     public boolean onMessageSend(String message) {
         Storage.ToggledChat toggledChat = storage.getToggledChat();
         if (toggledChat != NONE) {
-            networkHandler.sendChatCommand(toggledChat.getCommand() + " " + message);
+            sendCommand(toggledChat.getCommand() + " " + message);
             return false;
         }
 

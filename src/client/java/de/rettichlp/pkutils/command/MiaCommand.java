@@ -29,7 +29,7 @@ public class MiaCommand extends CommandBase {
                         .executes(context -> {
                             String input = getString(context, "faction");
                             fromDisplayName(input).ifPresentOrElse(faction -> {
-                                networkHandler.sendChatCommand("memberinfoall " + faction.getMemberInfoCommandName());
+                                sendCommand("memberinfoall " + faction.getMemberInfoCommandName());
                             }, () -> {
                                 sendModMessage("Die Fraktion" + input + " konnte nicht gefunden werden.", false);
                             });
@@ -40,7 +40,7 @@ public class MiaCommand extends CommandBase {
                 .executes(context -> {
                     String playerName = player.getName().getString();
                     Faction faction = storage.getFaction(playerName);
-                    networkHandler.sendChatCommand("memberinfoall " + faction.getMemberInfoCommandName());
+                    sendCommand("memberinfoall " + faction.getMemberInfoCommandName());
                     return 1;
                 });
     }

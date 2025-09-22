@@ -81,7 +81,7 @@ public class GarbageManListener extends PKUtilsBase implements IMessageReceiveLi
         }
 
         this.lastCommandExecution = now;
-        networkHandler.sendChatCommand("dropwaste");
+        sendCommand("dropwaste");
 
         delayedAction(() -> sendModMessage("5", true), 200);
         delayedAction(() -> sendModMessage("4", true), 1200);

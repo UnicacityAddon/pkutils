@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
+import static com.mojang.text2speech.Narrator.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static net.minecraft.item.Items.GLASS_BOTTLE;
@@ -30,6 +31,7 @@ public abstract class ClientPlayerEntityMixin {
             cir.setReturnValue(null);
 
             // execute command
+            LOGGER.info("PKUtils executing command: sell pfand");
             networkHandler.sendChatCommand("sell pfand");
         }
     }

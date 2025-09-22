@@ -9,6 +9,7 @@ import net.minecraft.text.Text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static java.lang.Integer.parseInt;
@@ -30,7 +31,7 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
         Matcher blacklistHeaderMatcher = BLACKLIST_HEADER_PATTERN.matcher(message);
         if (blacklistHeaderMatcher.find()) {
             this.activeCheck = currentTimeMillis();
-            storage.resetBlacklistEntries();
+            storage.getBlacklistEntries().clear();
             return !syncService.isGameSyncProcessActive();
         }
 
@@ -43,22 +44,21 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
             int price = parseInt(blacklistEntryMatcher.group("price"));
 
             BlacklistEntry blacklistEntry = new BlacklistEntry(playerName, reason, outlaw, kills, price);
-            storage.addBlacklistEntry(blacklistEntry);
+            storage.getBlacklistEntries().add(blacklistEntry);
             return !syncService.isGameSyncProcessActive();
         }
 
         Matcher blacklistEntryAddMatcher = BLACKLIST_ENTRY_ADD.matcher(message);
         if (blacklistEntryAddMatcher.find()) {
-            String targetName = blacklistEntryAddMatcher.group("targetName");
-            BlacklistEntry blacklistEntry = new BlacklistEntry(targetName, "Unbekannt", false, 0, 0);
-            storage.addBlacklistEntry(blacklistEntry);
+            // show all entries to sync
+            delayedAction(() -> sendCommand("blacklist"), 1000);
             return true;
         }
 
         Matcher blacklistEntryRemoveMatcher = BLACKLIST_ENTRY_REMOVE.matcher(message);
         if (blacklistEntryRemoveMatcher.find()) {
             String targetName = blacklistEntryRemoveMatcher.group("targetName");
-            storage.getBlacklistEntries().removeIf(blacklistEntry -> blacklistEntry.playerName().equals(targetName));
+            storage.getBlacklistEntries().removeIf(blacklistEntry -> blacklistEntry.getPlayerName().equals(targetName));
             return true;
         }
 

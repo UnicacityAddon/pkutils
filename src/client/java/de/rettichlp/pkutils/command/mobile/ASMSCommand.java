@@ -51,6 +51,6 @@ public class ASMSCommand extends CommandBase {
     }
 
     private void sms(int number, String message) {
-        networkHandler.sendChatCommand("sms " + number + " " + message);
+        sendCommand("sms " + number + " " + message);
     }
 }

@@ -18,6 +18,7 @@ import static de.rettichlp.pkutils.PKUtils.MOD_ID;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
+import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
 import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
@@ -91,6 +92,8 @@ public class ModCommand extends CommandBase {
                                     : dateTimeToFriendlyString(lastSyncTimestamp)).copy().formatted(WHITE)), false);
 
                     player.sendMessage(empty(), false);
+
+                    storage.print();
 
                     return 1;
                 });

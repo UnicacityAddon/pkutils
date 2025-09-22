@@ -1,6 +1,7 @@
 package de.rettichlp.pkutils.common;
 
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
+import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.models.Reinforcement;
@@ -34,6 +35,9 @@ public class Storage {
     private final List<BlacklistEntry> blacklistEntries = new ArrayList<>();
 
     @Getter
+    private final Map<Faction, List<BlacklistReason>> blacklistReasons = new HashMap<>();
+
+    @Getter
     private final List<WantedEntry> wantedEntries = new ArrayList<>();
 
     @Getter
@@ -57,7 +61,7 @@ public class Storage {
         // factionMembers
         this.factionMembers.forEach((faction, factionMembers) -> LOGGER.info("factionMembers[{}:{}]: {}", faction, factionMembers.size(), factionMembers));
         // blacklistEntries
-        LOGGER.info("blacklistEntries[{}]: {}", this.blacklistEntries.size(), this.blacklistEntries);
+        this.blacklistReasons.forEach((faction, blacklistReasons) -> LOGGER.info("blacklistReasons[{}:{}]: {}", faction, blacklistReasons.size(), blacklistReasons));
         // wantedEntries
         LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
         // reinforcements
@@ -66,14 +70,6 @@ public class Storage {
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
-    }
-
-    public void addBlacklistEntry(BlacklistEntry entry) {
-        this.blacklistEntries.add(entry);
-    }
-
-    public void resetBlacklistEntries() {
-        this.blacklistEntries.clear();
     }
 
     public void addFactionMember(Faction faction, FactionMember factionMember) {

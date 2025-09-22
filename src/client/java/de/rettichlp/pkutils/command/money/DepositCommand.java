@@ -28,13 +28,13 @@ public class DepositCommand extends CommandBase implements IMessageReceiveListen
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
                 .executes(context -> {
-                    networkHandler.sendChatCommand("stats");
+                    sendCommand("stats");
 
                     delayedAction(() -> {
                         if (amount <= 0) {
                             sendModMessage("Du hast kein Geld zum Einzahlen.", false);
                         } else {
-                            networkHandler.sendChatCommand("bank einzahlen " + amount);
+                            sendCommand("bank einzahlen " + amount);
                         }
                     }, 1000);
 
