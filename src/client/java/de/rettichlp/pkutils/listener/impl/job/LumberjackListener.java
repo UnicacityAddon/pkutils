@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
