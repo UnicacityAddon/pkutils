@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,7 +44,10 @@ public abstract class PKUtilsBase {
         networkHandler.sendChatCommand(command);
     }
 
-    public void sendCommands(List<String> commands) {
+    public void sendCommands(List<String> commandStrings) {
+        // to modifiable list
+        List<String> commands = new ArrayList<>(commandStrings);
+
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
