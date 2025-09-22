@@ -23,6 +23,7 @@ import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -46,10 +47,11 @@ public class Api {
     @Getter
     private final String baseUrl = "https://pkutils.rettichlp.de/v1"; // http://localhost:6010/pkutils/v1
 
-    public void registerPlayer() {
+    public void registerPlayer(String version) {
         Request<RegisterPlayerRequest> request = Request.<RegisterPlayerRequest>builder()
                 .method("POST")
                 .requestData(new RegisterPlayerRequest(storage.getFactionMembers()))
+                .headers(Map.of("X-PKU-Version", version))
                 .build();
 
         request.send().thenAccept(httpResponse -> {
