@@ -25,6 +25,7 @@ import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
@@ -39,12 +40,13 @@ public class ASetBlacklistCommand extends CommandBase {
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
-                .then(argument("reason", word())
+                .then(argument("reason", string())
                         .suggests((context, builder) -> {
                             Faction faction = Faction.LEMILIEU;// storage.getFaction(player.getName().getString()); TODO
                             List<String> blacklistReasonStrings = storage.getBlacklistReasons().getOrDefault(faction, new ArrayList<>()).stream()
                                     .map(BlacklistReason::getReason)
-                                    .map(reason -> reason.replace(" ", "_"))
+                                    .map(reasonString -> reasonString.replace(" ", "_"))
+                                    .map(reasonString -> "\"" + reasonString + "\"")
                                     .toList();
                             return suggestMatching(blacklistReasonStrings, builder);
                         })
@@ -94,7 +96,7 @@ public class ASetBlacklistCommand extends CommandBase {
                 .map(CommandNode::getName)
                 .toList();
 
-        String reasonString = getString(context, "reason").replace("_", " ");
+        String reasonString = getString(context, "reason").replace("_", " ").replace("\"", "");
 
         Set<String> playerNames = range(1, 11)
                 .mapToObj(operand -> "player" + operand)
