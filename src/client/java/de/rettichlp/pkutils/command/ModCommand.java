@@ -7,6 +7,7 @@ import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.Person;
+import net.minecraft.text.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.minecraft.text.ClickEvent.Action.OPEN_URL;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
@@ -77,12 +79,16 @@ public class ModCommand extends CommandBase {
                     sendModMessage(empty()
                             .append(of("Discord").copy().formatted(GRAY))
                             .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                            .append(of("https://discord.gg/mZGAAwhPHu").copy().formatted(WHITE)), false);
+                            .append(of("https://discord.gg/mZGAAwhPHu").copy().styled(style -> style
+                                    .withColor(WHITE)
+                                    .withClickEvent(new ClickEvent(OPEN_URL, "https://discord.gg/mZGAAwhPHu")))), false);
 
                     sendModMessage(empty()
                             .append(of("GitHub").copy().formatted(GRAY))
                             .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                            .append(of("https://github.com/rettichlp/pkutils").copy().formatted(WHITE)), false);
+                            .append(of("https://github.com/UnicacityAddon/pkutils").copy().styled(style -> style
+                                    .withColor(WHITE)
+                                    .withClickEvent(new ClickEvent(OPEN_URL, "https://github.com/UnicacityAddon/pkutils")))), false);
 
                     sendModMessage(empty()
                             .append(of("Letzte Synchronisierung").copy().formatted(GRAY))
