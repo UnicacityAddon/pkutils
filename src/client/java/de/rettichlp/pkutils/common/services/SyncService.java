@@ -89,7 +89,7 @@ public class SyncService extends PKUtilsBase {
             }
 
             // api login
-            api.registerPlayer(getVersion());
+            api.registerUser(getVersion());
 
             this.gameSyncProcessActive = false;
             notificationService.sendSuccessNotification("PKUtils synchronisiert");

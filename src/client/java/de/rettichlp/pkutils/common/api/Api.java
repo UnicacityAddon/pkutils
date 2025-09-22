@@ -47,7 +47,7 @@ public class Api {
     @Getter
     private final String baseUrl = "https://pkutils.rettichlp.de/v1"; // http://localhost:6010/pkutils/v1
 
-    public void registerPlayer(String version) {
+    public void registerUser(String version) {
         Request<UserRegisterRequest> request = Request.<UserRegisterRequest>builder()
                 .method("POST")
                 .requestData(new UserRegisterRequest(storage.getFactionMembers()))
@@ -58,7 +58,7 @@ public class Api {
             validate(httpResponse);
             notificationService.sendSuccessNotification("API Login erfolgreich");
         }).exceptionally(throwable -> {
-            LOGGER.error("Error while registering player", throwable);
+            LOGGER.error("Error while registering user", throwable);
 
             if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
                 pkUtilsApiException.sendNotification();
