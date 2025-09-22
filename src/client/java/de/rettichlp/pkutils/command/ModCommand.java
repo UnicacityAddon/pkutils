@@ -105,12 +105,6 @@ public class ModCommand extends CommandBase {
                 });
     }
 
-    private String getVersion() {
-        return FabricLoader.getInstance().getModContainer(MOD_ID)
-                .map(modContainer -> modContainer.getMetadata().getVersion().getFriendlyString())
-                .orElseThrow(() -> new NullPointerException("Cannot find version"));
-    }
-
     private String getAuthors() {
         Collection<Person> authors = FabricLoader.getInstance().getModContainer(MOD_ID)
                 .map(modContainer -> modContainer.getMetadata().getAuthors())
