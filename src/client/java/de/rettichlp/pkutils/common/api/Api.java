@@ -11,7 +11,7 @@ import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
-import de.rettichlp.pkutils.common.api.request.RegisterPlayerRequest;
+import de.rettichlp.pkutils.common.api.request.UserRegisterRequest;
 import de.rettichlp.pkutils.common.models.Activity;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
@@ -48,9 +48,9 @@ public class Api {
     private final String baseUrl = "https://pkutils.rettichlp.de/v1"; // http://localhost:6010/pkutils/v1
 
     public void registerPlayer(String version) {
-        Request<RegisterPlayerRequest> request = Request.<RegisterPlayerRequest>builder()
+        Request<UserRegisterRequest> request = Request.<UserRegisterRequest>builder()
                 .method("POST")
-                .requestData(new RegisterPlayerRequest(storage.getFactionMembers()))
+                .requestData(new UserRegisterRequest(storage.getFactionMembers()))
                 .headers(Map.of("X-PKU-Version", version))
                 .build();
 
