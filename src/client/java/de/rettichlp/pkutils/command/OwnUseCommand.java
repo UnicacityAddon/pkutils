@@ -2,6 +2,7 @@ package de.rettichlp.pkutils.command;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import de.rettichlp.pkutils.common.models.InventoryItem;
 import de.rettichlp.pkutils.common.models.OwnUseEntry;
 import de.rettichlp.pkutils.common.models.config.MainConfig;
 import de.rettichlp.pkutils.common.registry.CommandBase;
@@ -10,15 +11,20 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.PlayerListEntry;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Optional;
 
 import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
-import static com.mojang.brigadier.arguments.StringArgumentType.*;
-import static de.rettichlp.pkutils.PKUtilsClient.*;
+import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static com.mojang.brigadier.arguments.StringArgumentType.string;
+import static com.mojang.brigadier.arguments.StringArgumentType.word;
+import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
+import static de.rettichlp.pkutils.common.models.InventoryItem.fromDisplayName;
 import static java.lang.Integer.MAX_VALUE;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.command.CommandSource.suggestMatching;
@@ -30,102 +36,86 @@ public class OwnUseCommand extends CommandBase {
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
                 .then(literal("set")
-                        .then(argument("koks/gras", word())
-                                .then(argument("reinheit", integer(0, 3))
-                                        .then(argument("anzahl", integer(1, MAX_VALUE))
+                        .then(argument("type", string())
+                                .suggests((context, builder) -> {
+                                    List<String> inventoryItemStrings = Arrays.stream(InventoryItem.values())
+                                            .filter(InventoryItem::isDrugBankItem)
+                                            .map(InventoryItem::getDisplayName)
+                                            .map(inventoryItemString -> "\"" + inventoryItemString + "\"")
+                                            .toList();
+                                    return suggestMatching(inventoryItemStrings, builder);
+                                })
+                                .then(argument("purity", integer(0, 3))
+                                        .then(argument("amount", integer(1, MAX_VALUE))
                                                 .executes(context -> {
-                                                    String drug = getString(context, "koks/gras");
-                                                    int purity = getInteger(context, "reinheit");
-                                                    int amount = getInteger(context, "anzahl");
-                                                    if (!(drug.equalsIgnoreCase("koks") || drug.equalsIgnoreCase("gras"))) {
-                                                        sendModMessage("Gebe eine gültige Droge an", false);
+                                                    String inventoryItemString = getString(context, "type").replace("\"", "");
+                                                    Optional<InventoryItem> optionalInventoryItem = fromDisplayName(inventoryItemString);
+                                                    int purity = getInteger(context, "purity");
+                                                    int amount = getInteger(context, "amount");
+
+                                                    if (optionalInventoryItem.isEmpty()) {
+                                                        sendModMessage(inventoryItemString + " ist keine valide Eingabe.", true);
                                                         return 1;
                                                     }
 
-                                                    /*
-                                                     * Edit existing entry
-                                                     */
-                                                    MainConfig config = configService.load();
-                                                    List<OwnUseEntry> supplies = config.getSupplies();
-                                                    if (supplies.stream().anyMatch(ownUseEntry -> ownUseEntry.drug().equalsIgnoreCase(drug))) {
-                                                        supplies.stream()
-                                                                .filter(ownUseEntry -> ownUseEntry.drug().equalsIgnoreCase(drug))
-                                                                .findFirst()
-                                                                .ifPresent(ownUseEntry -> {
-                                                                    configService.edit(mainConfig -> mainConfig.getSupplies().remove(ownUseEntry));
-                                                                });
+                                                    InventoryItem inventoryItem = optionalInventoryItem.get();
 
-                                                        OwnUseEntry ownUseEntry = new OwnUseEntry(drug, purity, amount);
-                                                        configService.edit(mainConfig -> mainConfig.getSupplies().add(ownUseEntry));
-                                                        sendModMessage("Eigenbedarf aktualisiert -> " + drug + " | " + purity + "er | " + amount + "x", false);
-                                                        return 1;
-                                                    }
+                                                    configService.edit(mainConfig -> {
+                                                        // remove old entry if exists
+                                                        mainConfig.getOwnUseEntries().removeIf(ownUseEntry -> ownUseEntry.inventoryItem() == inventoryItem);
 
-                                                    /*
-                                                     * Add new entry
-                                                     */
-                                                    OwnUseEntry ownUseEntry = new OwnUseEntry(drug, purity, amount);
-                                                    configService.edit(mainConfig -> mainConfig.getSupplies().add(ownUseEntry));
-                                                    sendModMessage("Eigenbedarf gesetzt -> " + drug + " | " + purity + "er | " + amount + "x", false);
+                                                        // add new entry
+                                                        OwnUseEntry ownUseEntry = new OwnUseEntry(inventoryItem, purity, amount);
+                                                        mainConfig.getOwnUseEntries().add(ownUseEntry);
+
+                                                        sendModMessage("Eigenbedarf für " + inventoryItem.getDisplayName() + " auf " + amount + " (Reinheit: " + purity + ") gesetzt.", false);
+                                                    });
+
                                                     return 1;
-
                                                 })))))
-
                 .then(literal("give")
-                    .then(argument("player", word())
-                        .suggests((context, builder) -> {
-                            List<String> list = networkHandler.getPlayerList().stream()
-                                    .map(PlayerListEntry::getProfile)
-                                    .map(GameProfile::getName)
-                                    .toList();
-                            return suggestMatching(list, builder);
-                        })
-                        .executes(context -> {
-                            String targetPlayer = getString(context, "player");
-
-                            MainConfig mainConfig = configService.load();
-                            if (mainConfig.getSupplies().isEmpty()) {
-                                sendModMessage("Du hast keinen Eigenbedarf gesetzt. Setze diesen mit /eigenbedarf set <koks/gras> <reinheit> <anzahl>", false);
-                                return 1;
-                            }
-
-                            List<OwnUseEntry> supplies = mainConfig.getSupplies();
-                            AtomicInteger counter = new AtomicInteger(0);
-                            supplies.forEach(ownUseEntry -> {
-                                long delay = SECONDS.toMillis(counter.incrementAndGet());
-                                delayedAction(() -> networkHandler.sendChatCommand(
-                                        "selldrug  " + targetPlayer + " "
-                                                + ownUseEntry.drug() + " "
-                                                + ownUseEntry.amount() + " "
-                                                + ownUseEntry.purity() + " "
-                                                + "1"
-                                ), delay);
-                            });
-
-                            return 1;
-                        })))
-
+                        .then(argument("player", word())
+                                .suggests((context, builder) -> {
+                                    List<String> list = networkHandler.getPlayerList().stream()
+                                            .map(PlayerListEntry::getProfile)
+                                            .map(GameProfile::getName)
+                                            .toList();
+                                    return suggestMatching(list, builder);
+                                })
+                                .executes(context -> {
+                                    String targetPlayer = getString(context, "player");
+                                    sendCommands(createCommands("selldrug " + targetPlayer + " %name% %amount% %purity% 0"));
+                                    return 1;
+                                })))
                 .executes(context -> {
-                    MainConfig mainConfig = configService.load();
-                    if (mainConfig.getSupplies().isEmpty()) {
-                        sendModMessage("Du hast keinen Eigenbedarf gesetzt. Setze diesen mit /eigenbedarf set <koks/gras> <reinheit> <anzahl>", false);
-                        return 1;
-                    }
-
-                    List<OwnUseEntry> supplies = mainConfig.getSupplies();
-                    AtomicInteger counter = new AtomicInteger(0);
-                    supplies.forEach(ownUseEntry -> {
-                        long delay = SECONDS.toMillis(counter.incrementAndGet());
-                        delayedAction(() -> networkHandler.sendChatCommand(
-                                "dbank get "
-                                        + ownUseEntry.drug() + " "
-                                        + ownUseEntry.purity() + " "
-                                        + ownUseEntry.amount()
-                        ), delay);
-                    });
-
+                    sendCommands(createCommands("dbank get %name% %purity% %amount%"));
                     return 1;
                 });
+    }
 
+    private @NotNull List<String> createCommands(String commandTemplate) {
+        MainConfig mainConfig = configService.load();
+        List<OwnUseEntry> ownUseEntries = mainConfig.getOwnUseEntries();
+
+        List<String> commandStrings = new ArrayList<>();
+
+        for (OwnUseEntry ownUseEntry : ownUseEntries) {
+            if (ownUseEntry.amount() <= 0) {
+                continue;
+            }
+
+            String commandString = commandTemplate
+                    .replace("%name%", ownUseEntry.inventoryItem().getDisplayName())
+                    .replace("%amount%", String.valueOf(ownUseEntry.amount()))
+                    .replace("%purity%", String.valueOf(ownUseEntry.purity()));
+
+            commandStrings.add(commandString);
+        }
+
+        if (commandStrings.isEmpty()) {
+            sendModMessage("Du hast keinen Eigenbedarf gesetzt.", false);
+        }
+
+        return commandStrings;
     }
 }
