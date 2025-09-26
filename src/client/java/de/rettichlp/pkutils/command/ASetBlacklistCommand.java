@@ -83,14 +83,6 @@ public class ASetBlacklistCommand extends CommandBase {
                                 .executes(this::execute)));
     }
 
-    private static CompletableFuture<Suggestions> suggestPlayerNames(SuggestionsBuilder builder) {
-        List<String> list = networkHandler.getPlayerList().stream()
-                .map(PlayerListEntry::getProfile)
-                .map(GameProfile::getName)
-                .toList();
-        return suggestMatching(list, builder);
-    }
-
     private int execute(@NotNull CommandContext<FabricClientCommandSource> context) {
         List<String> argumentNames = context.getNodes().stream()
                 .map(ParsedCommandNode::getNode)
@@ -156,5 +148,13 @@ public class ASetBlacklistCommand extends CommandBase {
         }, 0, 1000);
 
         return 1;
+    }
+
+    private static CompletableFuture<Suggestions> suggestPlayerNames(SuggestionsBuilder builder) {
+        List<String> list = networkHandler.getPlayerList().stream()
+                .map(PlayerListEntry::getProfile)
+                .map(GameProfile::getName)
+                .toList();
+        return suggestMatching(list, builder);
     }
 }

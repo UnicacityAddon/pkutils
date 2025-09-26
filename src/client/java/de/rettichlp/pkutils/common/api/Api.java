@@ -8,12 +8,16 @@ import com.google.gson.JsonSerializer;
 import de.rettichlp.pkutils.common.api.request.ActivityAddRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
+import de.rettichlp.pkutils.common.api.request.EquipAddRequest;
+import de.rettichlp.pkutils.common.api.request.EquipGetPlayerRequest;
+import de.rettichlp.pkutils.common.api.request.EquipGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
 import de.rettichlp.pkutils.common.api.request.UserInfoRequest;
 import de.rettichlp.pkutils.common.api.request.UserRegisterRequest;
-import de.rettichlp.pkutils.common.models.Activity;
+import de.rettichlp.pkutils.common.models.ActivityEntry;
+import de.rettichlp.pkutils.common.models.EquipEntry;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -90,17 +94,17 @@ public class Api {
         });
     }
 
-    public CompletableFuture<List<Activity>> getActivities(Instant from, Instant to) {
+    public CompletableFuture<List<ActivityEntry>> getActivityEntries(Instant from, Instant to) {
         Request<ActivityGetRequest> request = Request.<ActivityGetRequest>builder()
                 .method("GET")
                 .requestData(new ActivityGetRequest(from, to))
                 .build();
 
         return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(List.class, Activity.class).getType();
-            return (List<Activity>) validateAndParse(httpResponse, type);
+            Type type = getParameterized(List.class, ActivityEntry.class).getType();
+            return (List<ActivityEntry>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching activities", throwable);
+            LOGGER.error("Error while fetching activity entries", throwable);
 
             if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
                 pkUtilsApiException.sendNotification();
@@ -110,17 +114,17 @@ public class Api {
         });
     }
 
-    public CompletableFuture<List<Activity>> getActivitiesForPlayer(String playerName, Instant from, Instant to) {
+    public CompletableFuture<List<ActivityEntry>> getActivityEntriesForPlayer(String playerName, Instant from, Instant to) {
         Request<ActivityGetPlayerRequest> request = Request.<ActivityGetPlayerRequest>builder()
                 .method("GET")
                 .requestData(new ActivityGetPlayerRequest(playerName, from, to))
                 .build();
 
         return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(List.class, Activity.class).getType();
-            return (List<Activity>) validateAndParse(httpResponse, type);
+            Type type = getParameterized(List.class, ActivityEntry.class).getType();
+            return (List<ActivityEntry>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching activities for player {}", playerName, throwable);
+            LOGGER.error("Error while fetching activity entries for player {}", playerName, throwable);
 
             if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
                 pkUtilsApiException.sendNotification();
@@ -130,7 +134,7 @@ public class Api {
         });
     }
 
-    public void trackActivity(Activity.Type activityType) {
+    public void trackActivity(ActivityEntry.Type activityType) {
         MinecraftClient client = MinecraftClient.getInstance();
 
         ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
@@ -155,6 +159,66 @@ public class Api {
             notificationService.sendInfoNotification(activityType.getSuccessMessage());
         }).exceptionally(throwable -> {
             LOGGER.error("Error while tracking activity {}", activityType, throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return null;
+        });
+    }
+
+    public CompletableFuture<List<EquipEntry>> getEquipEntries(Instant from, Instant to) {
+        Request<EquipGetRequest> request = Request.<EquipGetRequest>builder()
+                .method("GET")
+                .requestData(new EquipGetRequest(from, to))
+                .build();
+
+        return request.send().thenApply(httpResponse -> {
+            Type type = getParameterized(List.class, EquipEntry.class).getType();
+            return (List<EquipEntry>) validateAndParse(httpResponse, type);
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching equip entries", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return new ArrayList<>();
+        });
+    }
+
+    public CompletableFuture<List<EquipEntry>> getEquipEntriesForPlayer(String playerName, Instant from, Instant to) {
+        Request<EquipGetPlayerRequest> request = Request.<EquipGetPlayerRequest>builder()
+                .method("GET")
+                .requestData(new EquipGetPlayerRequest(playerName, from, to))
+                .build();
+
+        return request.send().thenApply(httpResponse -> {
+            Type type = getParameterized(List.class, EquipEntry.class).getType();
+            return (List<EquipEntry>) validateAndParse(httpResponse, type);
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching equip entries for player {}", playerName, throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return new ArrayList<>();
+        });
+    }
+
+    public void trackEquip(EquipEntry.Type equipType) {
+        Request<EquipAddRequest> request = Request.<EquipAddRequest>builder()
+                .method("POST")
+                .requestData(new EquipAddRequest(equipType))
+                .build();
+
+        request.send().thenAccept(httpResponse -> {
+            validate(httpResponse);
+            notificationService.sendInfoNotification(equipType.getSuccessMessage());
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while tracking equip {}", equipType, throwable);
 
             if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
                 pkUtilsApiException.sendNotification();

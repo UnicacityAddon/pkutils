@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtilsClient.api;
-import static de.rettichlp.pkutils.common.models.Activity.Type.REVIVE;
+import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.REVIVE;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
