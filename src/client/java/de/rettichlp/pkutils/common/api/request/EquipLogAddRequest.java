@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.common.api.request;
 
 import de.rettichlp.pkutils.common.api.IRequest;
-import de.rettichlp.pkutils.common.models.EquipLog;
+import de.rettichlp.pkutils.common.models.EquipEntry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +10,7 @@ import java.net.URI;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static java.net.URI.create;
 
-public record EquipLogAddRequest(EquipLog.Type equipLogType) implements IRequest {
+public record EquipLogAddRequest(EquipEntry.Type equipLogType) implements IRequest {
 
     @Contract(" -> new")
     @Override

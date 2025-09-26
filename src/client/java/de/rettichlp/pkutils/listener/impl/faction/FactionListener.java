@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.Storage;
-import de.rettichlp.pkutils.common.models.Activity;
+import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.models.Reinforcement;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
@@ -191,7 +191,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
                 .filter(reinforcement -> !reinforcement.isAddedAsActivity())
                 .forEach(reinforcement -> {
                     reinforcement.setAddedAsActivity(true);
-                    api.trackActivity(Activity.Type.REINFORCEMENT);
+                    api.trackActivity(ActivityEntry.Type.REINFORCEMENT);
                     LOGGER.info("Reinforcement reached, tracked activity");
                 });
     }

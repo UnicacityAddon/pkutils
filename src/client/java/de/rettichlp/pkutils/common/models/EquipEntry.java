@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 
-public record EquipLog(String id, Instant timeStamp, Type type) {
+public record EquipEntry(String id, Instant timeStamp, Type type) {
 
     @Getter
     @AllArgsConstructor

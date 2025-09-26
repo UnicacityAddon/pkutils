@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.common.models.Activity;
+import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.registry.CommandBase;
@@ -116,12 +116,12 @@ public class ActivityCommand extends CommandBase {
 
     private void fetchAndShowActivitiesFor(int relativeWeekIndex) {
         Range range = getRange(relativeWeekIndex);
-        CompletableFuture<List<Activity>> activitiesFuture = api.getActivities(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
+        CompletableFuture<List<ActivityEntry>> activitiesFuture = api.getActivities(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
 
         activitiesFuture.thenAccept(activities -> {
             // summarize by type
-            Map<Activity.Type, Long> activityAmountPerType = activities.stream()
-                    .collect(groupingBy(Activity::type, counting()));
+            Map<ActivityEntry.Type, Long> activityAmountPerType = activities.stream()
+                    .collect(groupingBy(ActivityEntry::type, counting()));
 
             player.sendMessage(Text.empty(), false);
             sendModMessage("Aktivitäten:", false);
@@ -135,12 +135,12 @@ public class ActivityCommand extends CommandBase {
 
     private void fetchAndShowActivitiesFor(String playerName, int relativeWeekIndex) {
         Range range = getRange(relativeWeekIndex);
-        CompletableFuture<List<Activity>> activitiesFuture = api.getActivitiesForPlayer(playerName, range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
+        CompletableFuture<List<ActivityEntry>> activitiesFuture = api.getActivitiesForPlayer(playerName, range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
 
         activitiesFuture.thenAccept(activities -> {
             // summarize by type
-            Map<Activity.Type, Long> activityAmountPerType = activities.stream()
-                    .collect(groupingBy(Activity::type, counting()));
+            Map<ActivityEntry.Type, Long> activityAmountPerType = activities.stream()
+                    .collect(groupingBy(ActivityEntry::type, counting()));
 
             player.sendMessage(Text.empty(), false);
             sendModMessage("Aktivitäten von " + playerName + ":", false);

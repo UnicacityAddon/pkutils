@@ -15,8 +15,8 @@ import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
 import de.rettichlp.pkutils.common.api.request.RegisterPlayerRequest;
-import de.rettichlp.pkutils.common.models.Activity;
-import de.rettichlp.pkutils.common.models.EquipLog;
+import de.rettichlp.pkutils.common.models.ActivityEntry;
+import de.rettichlp.pkutils.common.models.EquipEntry;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -70,15 +70,15 @@ public class Api {
         });
     }
 
-    public CompletableFuture<List<Activity>> getActivities(Instant from, Instant to) {
+    public CompletableFuture<List<ActivityEntry>> getActivities(Instant from, Instant to) {
         Request<ActivityGetRequest> request = Request.<ActivityGetRequest>builder()
                 .method("GET")
                 .requestData(new ActivityGetRequest(from, to))
                 .build();
 
         return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(List.class, Activity.class).getType();
-            return (List<Activity>) validateAndParse(httpResponse, type);
+            Type type = getParameterized(List.class, ActivityEntry.class).getType();
+            return (List<ActivityEntry>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
             LOGGER.error("Error while fetching activities", throwable);
 
@@ -90,15 +90,15 @@ public class Api {
         });
     }
 
-    public CompletableFuture<List<Activity>> getActivitiesForPlayer(String playerName, Instant from, Instant to) {
+    public CompletableFuture<List<ActivityEntry>> getActivitiesForPlayer(String playerName, Instant from, Instant to) {
         Request<ActivityGetPlayerRequest> request = Request.<ActivityGetPlayerRequest>builder()
                 .method("GET")
                 .requestData(new ActivityGetPlayerRequest(playerName, from, to))
                 .build();
 
         return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(List.class, Activity.class).getType();
-            return (List<Activity>) validateAndParse(httpResponse, type);
+            Type type = getParameterized(List.class, ActivityEntry.class).getType();
+            return (List<ActivityEntry>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
             LOGGER.error("Error while fetching activities for player {}", playerName, throwable);
 
@@ -110,7 +110,7 @@ public class Api {
         });
     }
 
-    public void trackActivity(Activity.Type activityType) {
+    public void trackActivity(ActivityEntry.Type activityType) {
         MinecraftClient client = MinecraftClient.getInstance();
 
         ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
@@ -144,15 +144,15 @@ public class Api {
         });
     }
 
-    public CompletableFuture<List<EquipLog>> getEquipLog(Instant from, Instant to) {
+    public CompletableFuture<List<EquipEntry>> getEquipEntries(Instant from, Instant to) {
         Request<EquipLogGetRequest> request = Request.<EquipLogGetRequest>builder()
                 .method("GET")
                 .requestData(new EquipLogGetRequest(from, to))
                 .build();
 
         return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(List.class, EquipLog.class).getType();
-            return (List<EquipLog>) validateAndParse(httpResponse, type);
+            Type type = getParameterized(List.class, EquipEntry.class).getType();
+            return (List<EquipEntry>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
             LOGGER.error("Error while fetching equiplog", throwable);
 
@@ -164,15 +164,15 @@ public class Api {
         });
     }
 
-    public CompletableFuture<List<EquipLog>> getEquipLogForPlayer(String playerName, Instant from, Instant to) {
+    public CompletableFuture<List<EquipEntry>> getEquipLogForPlayer(String playerName, Instant from, Instant to) {
         Request<EquipLogGetPlayerRequest> request = Request.<EquipLogGetPlayerRequest>builder()
                 .method("GET")
                 .requestData(new EquipLogGetPlayerRequest(playerName, from, to))
                 .build();
 
         return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(List.class, EquipLog.class).getType();
-            return (List<EquipLog>) validateAndParse(httpResponse, type);
+            Type type = getParameterized(List.class, EquipEntry.class).getType();
+            return (List<EquipEntry>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
             LOGGER.error("Error while fetching equiplog for player {}", playerName, throwable);
 
@@ -184,7 +184,7 @@ public class Api {
         });
     }
 
-    public void trackEquip(EquipLog.Type equipLogType) {
+    public void trackEquip(EquipEntry.Type equipLogType) {
         Request<EquipLogAddRequest> request = Request.<EquipLogAddRequest>builder()
                 .method("POST")
                 .requestData(new EquipLogAddRequest(equipLogType))

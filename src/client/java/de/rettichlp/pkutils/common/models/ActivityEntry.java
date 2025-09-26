@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 
-public record Activity(String id, Instant timeStamp, Type type) {
+public record ActivityEntry(String id, Instant timeStamp, Type type) {
 
     @Getter
     @AllArgsConstructor

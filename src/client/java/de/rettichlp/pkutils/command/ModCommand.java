@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.common.models.Activity;
+import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -41,12 +41,12 @@ public class ModCommand extends CommandBase {
                         .requires(fabricClientCommandSource -> isSuperUser())
                         .then(argument("activityType", word())
                                 .suggests((context, builder) -> {
-                                    stream(Activity.Type.values()).forEach(activityType -> builder.suggest(activityType.name()));
+                                    stream(ActivityEntry.Type.values()).forEach(activityType -> builder.suggest(activityType.name()));
                                     return builder.buildFuture();
                                 })
                                 .executes(context -> {
                                     String activityTypeString = context.getArgument("activityType", String.class);
-                                    stream(Activity.Type.values())
+                                    stream(ActivityEntry.Type.values())
                                             .filter(activityType -> activityType.name().equals(activityTypeString.toUpperCase()))
                                             .findFirst()
                                             .ifPresent(api::trackActivity);
