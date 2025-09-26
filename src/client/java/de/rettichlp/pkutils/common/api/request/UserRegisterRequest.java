@@ -11,7 +11,7 @@ import java.util.Set;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static java.net.URI.create;
 
-public record RegisterPlayerRequest(Map<Faction, Set<FactionMember>> factionMembers) implements IRequest {
+public record UserRegisterRequest(Map<Faction, Set<FactionMember>> factionMembers) implements IRequest {
 
     @Override
     public URI getUrl() {

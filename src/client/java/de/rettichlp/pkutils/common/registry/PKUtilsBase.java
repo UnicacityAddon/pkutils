@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.registry;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
+import static de.rettichlp.pkutils.PKUtils.MOD_ID;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.lang.Boolean.getBoolean;
@@ -77,6 +79,12 @@ public abstract class PKUtilsBase {
                 MinecraftClient.getInstance().execute(runnable);
             }
         }, milliseconds);
+    }
+
+    public String getVersion() {
+        return FabricLoader.getInstance().getModContainer(MOD_ID)
+                .map(modContainer -> modContainer.getMetadata().getVersion().getFriendlyString())
+                .orElseThrow(() -> new NullPointerException("Cannot find version"));
     }
 
     public boolean isSuperUser() {

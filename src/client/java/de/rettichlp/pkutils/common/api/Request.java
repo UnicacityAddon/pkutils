@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -22,6 +24,8 @@ public class Request<T extends IRequest> {
 
     private final String method;
     private final T requestData;
+    @Builder.Default
+    private final Map<String, String> headers = new HashMap<>();
 
     public CompletableFuture<HttpResponse<String>> send() {
         return supplyAsync(() -> {
@@ -37,10 +41,14 @@ public class Request<T extends IRequest> {
     }
 
     private HttpRequest getHttpRequest() {
-        return HttpRequest.newBuilder()
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(this.requestData.getUrl())
                 .header("Content-Type", "application/json")
-                .header("X-Minecraft-Session-Token", SESSION_TOKEN)
+                .header("X-Minecraft-Session-Token", SESSION_TOKEN);
+
+        this.headers.forEach(builder::header);
+
+        return builder
                 .method(this.method, HttpRequest.BodyPublishers.ofString(getJsonBody()))
                 .build();
     }

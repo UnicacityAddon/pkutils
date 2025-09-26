@@ -1,7 +1,7 @@
-package de.rettichlp.pkutils.command.activity;
+package de.rettichlp.pkutils.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.common.models.Activity;
+import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.registry.CommandBase;
@@ -48,7 +48,7 @@ public class ActivityCommand extends CommandBase {
                         .suggests((context, builder) -> suggestMatching(List.of("0", "-1", "-2", "-3", "-4", "-5"), builder))
                         .executes(context -> {
                             int weeksAgo = context.getArgument("weeksAgo", Integer.class);
-                            fetchAndShowActivitiesFor(weeksAgo);
+                            fetchAndShowEntriesFor(weeksAgo);
                             return 1;
                         }))
                 .then(literal("player")
@@ -82,12 +82,12 @@ public class ActivityCommand extends CommandBase {
                                             int weeksAgo = context.getArgument("weeksAgo", Integer.class);
 
                                             // check faction
-                                            if (faction != targetFaction) {
+                                            if (faction != targetFaction && !isSuperUser()) {
                                                 sendModMessage("Der Spieler ist nicht in deiner Fraktion.", false);
                                                 return 1;
                                             }
 
-                                            fetchAndShowActivitiesFor(targetName, weeksAgo);
+                                            fetchAndShowEntriesFor(targetName, weeksAgo);
 
                                             return 1;
                                         }))
@@ -99,53 +99,53 @@ public class ActivityCommand extends CommandBase {
                                     Faction targetFaction = storage.getFaction(targetName);
 
                                     // check faction
-                                    if (faction != targetFaction) {
+                                    if (faction != targetFaction && !isSuperUser()) {
                                         sendModMessage("Der Spieler ist nicht in deiner Fraktion.", false);
                                         return 1;
                                     }
 
-                                    fetchAndShowActivitiesFor(targetName, 0);
+                                    fetchAndShowEntriesFor(targetName, 0);
 
                                     return 1;
                                 })))
                 .executes(context -> {
-                    fetchAndShowActivitiesFor(0);
+                    fetchAndShowEntriesFor(0);
                     return 1;
                 });
     }
 
-    private void fetchAndShowActivitiesFor(int relativeWeekIndex) {
+    private void fetchAndShowEntriesFor(int relativeWeekIndex) {
         Range range = getRange(relativeWeekIndex);
-        CompletableFuture<List<Activity>> activitiesFuture = api.getActivities(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
+        CompletableFuture<List<ActivityEntry>> entriesFuture = api.getActivityEntries(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
 
-        activitiesFuture.thenAccept(activities -> {
+        entriesFuture.thenAccept(entries -> {
             // summarize by type
-            Map<Activity.Type, Long> activityAmountPerType = activities.stream()
-                    .collect(groupingBy(Activity::type, counting()));
+            Map<ActivityEntry.Type, Long> amountPerType = entries.stream()
+                    .collect(groupingBy(ActivityEntry::type, counting()));
 
             player.sendMessage(Text.empty(), false);
-            sendModMessage("Aktivitäten:", false);
-            activityAmountPerType.forEach((type, amount) -> sendModMessage(Text.empty()
-                    .append(of(type.getDisplayMessage()).copy().formatted(GRAY))
+            sendModMessage("Aktivität:", false);
+            amountPerType.forEach((type, amount) -> sendModMessage(Text.empty()
+                    .append(of(type.getDisplayName()).copy().formatted(GRAY))
                     .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                     .append(of(amount + "x").copy().formatted(WHITE)), false));
             player.sendMessage(Text.empty(), false);
         });
     }
 
-    private void fetchAndShowActivitiesFor(String playerName, int relativeWeekIndex) {
+    private void fetchAndShowEntriesFor(String playerName, int relativeWeekIndex) {
         Range range = getRange(relativeWeekIndex);
-        CompletableFuture<List<Activity>> activitiesFuture = api.getActivitiesForPlayer(playerName, range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
+        CompletableFuture<List<ActivityEntry>> entryFuture = api.getActivityEntriesForPlayer(playerName, range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
 
-        activitiesFuture.thenAccept(activities -> {
+        entryFuture.thenAccept(entries -> {
             // summarize by type
-            Map<Activity.Type, Long> activityAmountPerType = activities.stream()
-                    .collect(groupingBy(Activity::type, counting()));
+            Map<ActivityEntry.Type, Long> activityAmountPerType = entries.stream()
+                    .collect(groupingBy(ActivityEntry::type, counting()));
 
             player.sendMessage(Text.empty(), false);
-            sendModMessage("Aktivitäten von " + playerName + ":", false);
+            sendModMessage("Aktivität von " + playerName + ":", false);
             activityAmountPerType.forEach((type, amount) -> sendModMessage(Text.empty()
-                    .append(of(type.getDisplayMessage()).copy().formatted(GRAY))
+                    .append(of(type.getDisplayName()).copy().formatted(GRAY))
                     .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                     .append(of(amount + "x").copy().formatted(WHITE)), false));
             player.sendMessage(Text.empty(), false);

@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.Storage;
-import de.rettichlp.pkutils.common.models.Activity;
+import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.models.Reinforcement;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
@@ -24,6 +24,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
+import static de.rettichlp.pkutils.common.models.EquipEntry.Type.fromDisplayName;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
 import static java.lang.Integer.parseInt;
@@ -47,6 +48,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
     private static final Pattern REINFORCEMENT_PATTERN = compile("^(?:(?<type>.+)! )?(?<senderRank>.+) (?<senderPlayerName>.+) benötigt Unterstützung in der Nähe von (?<naviPoint>.+) \\((?<distance>\\d+)m\\)!$");
     private static final Pattern REINFORCEMENT_BUTTON_PATTERN = compile("^ §7» §cRoute anzeigen §7\\| §cUnterwegs$");
     private static final Pattern REINFORCMENT_ON_THE_WAY_PATTERN = compile("^(?<senderRank>.+) (?<senderPlayerName>.+) kommt zum Verstärkungsruf von (?<target>.+)! \\((?<distance>\\d+) Meter entfernt\\)$");
+    private static final Pattern EQUIP_PATTERN = compile("^\\[Equip] Du hast dich mit (?<type>.+) equipt!$");
 
     private static final ReinforcementConsumer<String, String, String, String> REINFORCEMENT = (type, sender, naviPoint, distance) -> empty()
             .append(of(type).copy().formatted(RED, BOLD)).append(" ")
@@ -164,6 +166,13 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             return false;
         }
 
+        Matcher equipMatcher = EQUIP_PATTERN.matcher(message);
+        if (equipMatcher.find()) {
+            String type = equipMatcher.group("type");
+            fromDisplayName(type).ifPresent(api::trackEquip);
+            return false;
+        }
+
         return true;
     }
 
@@ -190,7 +199,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
                 .filter(reinforcement -> !reinforcement.isAddedAsActivity())
                 .forEach(reinforcement -> {
                     reinforcement.setAddedAsActivity(true);
-                    api.trackActivity(Activity.Type.REINFORCEMENT);
+                    api.trackActivity(ActivityEntry.Type.REINFORCEMENT);
                     LOGGER.info("Reinforcement reached, tracked activity");
                 });
     }
