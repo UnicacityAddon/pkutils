@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.command.activity;
+package de.rettichlp.pkutils.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.models.Activity;
