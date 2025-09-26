@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.command;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.models.Activity;
 import de.rettichlp.pkutils.common.registry.CommandBase;
@@ -7,26 +8,30 @@ import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.Person;
+import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.StringJoiner;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
-import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
+import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
+import static java.lang.String.valueOf;
 import static java.time.LocalDateTime.MIN;
-import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.minecraft.command.CommandSource.suggestMatching;
 import static net.minecraft.text.ClickEvent.Action.OPEN_URL;
+import static net.minecraft.text.ClickEvent.Action.SUGGEST_COMMAND;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
@@ -55,13 +60,42 @@ public class ModCommand extends CommandBase {
 
                                     return 1;
                                 })))
-                .then(literal("sendNotification")
+                .then(literal("userinfo")
                         .requires(fabricClientCommandSource -> isSuperUser())
-                        .executes(context -> {
-                            // random notification type
-                            notificationService.sendInfoNotification("Notification at " + dateTimeToFriendlyString(now()));
-                            return 1;
-                        }))
+                        .then(argument("player", word())
+                                .suggests((context, builder) -> {
+                                    List<String> list = networkHandler.getPlayerList().stream()
+                                            .map(PlayerListEntry::getProfile)
+                                            .map(GameProfile::getName)
+                                            .toList();
+                                    return suggestMatching(list, builder);
+                                })
+                                .executes(context -> {
+                                    String playerName = context.getArgument("player", String.class);
+                                    api.getUserInfo(playerName).thenAccept(objectMap -> {
+                                        String version = valueOf(objectMap.getOrDefault("version", "n/A"));
+
+                                        player.sendMessage(empty(), false);
+
+                                        sendModMessage("PKUtils User Information - " + playerName, false);
+
+                                        sendModMessage(empty()
+                                                .append(of("Version").copy().formatted(GRAY))
+                                                .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                                                .append(of(version).copy().formatted(WHITE)), false);
+
+                                        sendModMessage(empty()
+                                                .append(of("Aktivitäten").copy().formatted(GRAY))
+                                                .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                                                .append(of("Klick ↗").copy().styled(style -> style
+                                                        .withColor(WHITE)
+                                                        .withClickEvent(new ClickEvent(SUGGEST_COMMAND, "/activity player " + playerName)))), false);
+
+                                        player.sendMessage(empty(), false);
+                                    });
+
+                                    return 1;
+                                })))
                 .executes(context -> {
                     String version = getVersion();
                     String authors = getAuthors();
@@ -103,12 +137,6 @@ public class ModCommand extends CommandBase {
 
                     return 1;
                 });
-    }
-
-    private String getVersion() {
-        return FabricLoader.getInstance().getModContainer(MOD_ID)
-                .map(modContainer -> modContainer.getMetadata().getVersion().getFriendlyString())
-                .orElseThrow(() -> new NullPointerException("Cannot find version"));
     }
 
     private String getAuthors() {

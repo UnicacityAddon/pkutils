@@ -11,7 +11,8 @@ import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
-import de.rettichlp.pkutils.common.api.request.RegisterPlayerRequest;
+import de.rettichlp.pkutils.common.api.request.UserInfoRequest;
+import de.rettichlp.pkutils.common.api.request.UserRegisterRequest;
 import de.rettichlp.pkutils.common.models.Activity;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
@@ -22,7 +23,9 @@ import java.lang.reflect.Type;
 import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -46,23 +49,44 @@ public class Api {
     @Getter
     private final String baseUrl = "https://pkutils.rettichlp.de/v1"; // http://localhost:6010/pkutils/v1
 
-    public void registerPlayer() {
-        Request<RegisterPlayerRequest> request = Request.<RegisterPlayerRequest>builder()
+    public void registerUser(String version) {
+        Request<UserRegisterRequest> request = Request.<UserRegisterRequest>builder()
                 .method("POST")
-                .requestData(new RegisterPlayerRequest(storage.getFactionMembers()))
+                .requestData(new UserRegisterRequest(storage.getFactionMembers()))
+                .headers(Map.of("X-PKU-Version", version))
                 .build();
 
         request.send().thenAccept(httpResponse -> {
             validate(httpResponse);
             notificationService.sendSuccessNotification("API Login erfolgreich");
         }).exceptionally(throwable -> {
-            LOGGER.error("Error while registering player", throwable);
+            LOGGER.error("Error while registering user", throwable);
 
             if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
                 pkUtilsApiException.sendNotification();
             }
 
             return null;
+        });
+    }
+
+    public CompletableFuture<Map<String, Object>> getUserInfo(String playerName) {
+        Request<UserInfoRequest> request = Request.<UserInfoRequest>builder()
+                .method("GET")
+                .requestData(new UserInfoRequest(playerName))
+                .build();
+
+        return request.send().thenApply(httpResponse -> {
+            Type type = getParameterized(Map.class, String.class, Object.class).getType();
+            return (Map<String, Object>) validateAndParse(httpResponse, type);
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching user info", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return new HashMap<>();
         });
     }
 

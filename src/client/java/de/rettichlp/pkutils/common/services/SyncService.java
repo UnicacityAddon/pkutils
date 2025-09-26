@@ -19,7 +19,6 @@ import java.util.function.Consumer;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
-import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -89,7 +88,7 @@ public class SyncService extends PKUtilsBase {
             }
 
             // api login
-            api.registerPlayer();
+            api.registerUser(getVersion());
 
             this.gameSyncProcessActive = false;
             notificationService.sendSuccessNotification("PKUtils synchronisiert");
