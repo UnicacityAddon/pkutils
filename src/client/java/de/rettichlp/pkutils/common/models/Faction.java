@@ -76,7 +76,7 @@ public enum Faction {
     }
 
     public static @NotNull Optional<Faction> fromDisplayName(String displayName) {
-        return stream(Faction.values())
+        return stream(values())
                 .filter(faction -> displayName.contains(faction.getDisplayName()))
                 .findFirst();
     }

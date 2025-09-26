@@ -5,6 +5,9 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
+import java.util.Optional;
+
+import static java.util.Arrays.stream;
 
 public record EquipEntry(String id, Instant timeStamp, Type type) {
 
@@ -25,6 +28,12 @@ public record EquipEntry(String id, Instant timeStamp, Type type) {
 
         public @NotNull String getSuccessMessage() {
             return "Equip '" + this.displayName + "' wurde getrackt!";
+        }
+
+        public static @NotNull Optional<Type> fromDisplayName(String displayName) {
+            return stream(values())
+                    .filter(type -> displayName.equals(type.getDisplayName()))
+                    .findFirst();
         }
     }
 }
