@@ -9,6 +9,7 @@ import de.rettichlp.pkutils.command.EquipCommand;
 import de.rettichlp.pkutils.command.MiCommand;
 import de.rettichlp.pkutils.command.MiaCommand;
 import de.rettichlp.pkutils.command.ModCommand;
+import de.rettichlp.pkutils.command.OwnUseCommand;
 import de.rettichlp.pkutils.command.SyncCommand;
 import de.rettichlp.pkutils.command.TodoCommand;
 import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
@@ -83,6 +84,7 @@ public class Registry {
             MiaCommand.class,
             MinusPointsCommand.class,
             ModCommand.class,
+            OwnUseCommand.class,
             RichTaxesCommand.class,
             SyncCommand.class,
             TodoCommand.class,

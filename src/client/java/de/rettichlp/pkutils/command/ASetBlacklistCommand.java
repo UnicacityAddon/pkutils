@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
@@ -135,17 +133,7 @@ public class ASetBlacklistCommand extends CommandBase {
             blacklistCommands.add("blacklist add " + playerName + " " + blacklistReason.getPrice() + " " + blacklistReason.getKills() + " " + blacklistReason.getReason());
         }
 
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if (blacklistCommands.isEmpty()) {
-                    this.cancel();
-                    return;
-                }
-
-                sendCommand(blacklistCommands.removeFirst());
-            }
-        }, 0, 1000);
+        sendCommands(blacklistCommands);
 
         return 1;
     }
