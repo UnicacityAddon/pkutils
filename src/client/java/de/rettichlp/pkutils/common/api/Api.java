@@ -8,9 +8,9 @@ import com.google.gson.JsonSerializer;
 import de.rettichlp.pkutils.common.api.request.ActivityAddRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
-import de.rettichlp.pkutils.common.api.request.EquipLogAddRequest;
-import de.rettichlp.pkutils.common.api.request.EquipLogGetPlayerRequest;
-import de.rettichlp.pkutils.common.api.request.EquipLogGetRequest;
+import de.rettichlp.pkutils.common.api.request.EquipAddRequest;
+import de.rettichlp.pkutils.common.api.request.EquipGetPlayerRequest;
+import de.rettichlp.pkutils.common.api.request.EquipGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
@@ -145,9 +145,9 @@ public class Api {
     }
 
     public CompletableFuture<List<EquipEntry>> getEquipEntries(Instant from, Instant to) {
-        Request<EquipLogGetRequest> request = Request.<EquipLogGetRequest>builder()
+        Request<EquipGetRequest> request = Request.<EquipGetRequest>builder()
                 .method("GET")
-                .requestData(new EquipLogGetRequest(from, to))
+                .requestData(new EquipGetRequest(from, to))
                 .build();
 
         return request.send().thenApply(httpResponse -> {
@@ -165,9 +165,9 @@ public class Api {
     }
 
     public CompletableFuture<List<EquipEntry>> getEquipEntriesForPlayer(String playerName, Instant from, Instant to) {
-        Request<EquipLogGetPlayerRequest> request = Request.<EquipLogGetPlayerRequest>builder()
+        Request<EquipGetPlayerRequest> request = Request.<EquipGetPlayerRequest>builder()
                 .method("GET")
-                .requestData(new EquipLogGetPlayerRequest(playerName, from, to))
+                .requestData(new EquipGetPlayerRequest(playerName, from, to))
                 .build();
 
         return request.send().thenApply(httpResponse -> {
@@ -185,9 +185,9 @@ public class Api {
     }
 
     public void trackEquip(EquipEntry.Type equipLogType) {
-        Request<EquipLogAddRequest> request = Request.<EquipLogAddRequest>builder()
+        Request<EquipAddRequest> request = Request.<EquipAddRequest>builder()
                 .method("POST")
-                .requestData(new EquipLogAddRequest(equipLogType))
+                .requestData(new EquipAddRequest(equipType))
                 .build();
 
         request.send().thenAccept(httpResponse -> {

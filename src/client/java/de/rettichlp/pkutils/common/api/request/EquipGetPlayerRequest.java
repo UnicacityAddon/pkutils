@@ -10,11 +10,11 @@ import java.time.Instant;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static java.net.URI.create;
 
-public record EquipLogGetRequest(Instant from, Instant to) implements IRequest {
+public record EquipGetPlayerRequest(String minecraftName, Instant from, Instant to) implements IRequest {
 
     @Contract(" -> new")
     @Override
     public @NotNull URI getUrl() {
-        return create(api.getBaseUrl() + "/equiplog?from=" + this.from.toString() + "&to=" + this.to.toString());
+        return create(api.getBaseUrl() + "/equiplog/" + this.minecraftName + "?from=" + this.from.toString() + "&to=" + this.to.toString());
     }
 }
