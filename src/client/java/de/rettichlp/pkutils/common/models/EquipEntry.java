@@ -21,10 +21,10 @@ public record EquipEntry(String id, Instant timeStamp, Type type) {
         SCATTER_3("Scatter-3"),
         TASER("Taser");
 
-        private final String displayMessage;
+        private final String displayName;
 
         public @NotNull String getSuccessMessage() {
-            return "Equip '" + this.displayMessage + "' wurde getrackt!";
+            return "Equip '" + this.displayName + "' wurde getrackt!";
         }
     }
 }

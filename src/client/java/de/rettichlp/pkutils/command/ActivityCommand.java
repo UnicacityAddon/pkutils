@@ -126,7 +126,7 @@ public class ActivityCommand extends CommandBase {
             player.sendMessage(Text.empty(), false);
             sendModMessage("Aktivität:", false);
             amountPerType.forEach((type, amount) -> sendModMessage(Text.empty()
-                    .append(of(type.getDisplayMessage()).copy().formatted(GRAY))
+                    .append(of(type.getDisplayName()).copy().formatted(GRAY))
                     .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                     .append(of(amount + "x").copy().formatted(WHITE)), false));
             player.sendMessage(Text.empty(), false);
@@ -145,7 +145,7 @@ public class ActivityCommand extends CommandBase {
             player.sendMessage(Text.empty(), false);
             sendModMessage("Aktivität von " + playerName + ":", false);
             activityAmountPerType.forEach((type, amount) -> sendModMessage(Text.empty()
-                    .append(of(type.getDisplayMessage()).copy().formatted(GRAY))
+                    .append(of(type.getDisplayName()).copy().formatted(GRAY))
                     .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                     .append(of(amount + "x").copy().formatted(WHITE)), false));
             player.sendMessage(Text.empty(), false);
