@@ -8,11 +8,15 @@ import com.google.gson.JsonSerializer;
 import de.rettichlp.pkutils.common.api.request.ActivityAddRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
+import de.rettichlp.pkutils.common.api.request.EquipLogAddRequest;
+import de.rettichlp.pkutils.common.api.request.EquipLogGetPlayerRequest;
+import de.rettichlp.pkutils.common.api.request.EquipLogGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
 import de.rettichlp.pkutils.common.api.request.RegisterPlayerRequest;
 import de.rettichlp.pkutils.common.models.Activity;
+import de.rettichlp.pkutils.common.models.EquipLog;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -131,6 +135,66 @@ public class Api {
             notificationService.sendInfoNotification(activityType.getSuccessMessage());
         }).exceptionally(throwable -> {
             LOGGER.error("Error while tracking activity {}", activityType, throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return null;
+        });
+    }
+
+    public CompletableFuture<List<EquipLog>> getEquipLog(Instant from, Instant to) {
+        Request<EquipLogGetRequest> request = Request.<EquipLogGetRequest>builder()
+                .method("GET")
+                .requestData(new EquipLogGetRequest(from, to))
+                .build();
+
+        return request.send().thenApply(httpResponse -> {
+            Type type = getParameterized(List.class, EquipLog.class).getType();
+            return (List<EquipLog>) validateAndParse(httpResponse, type);
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching equiplog", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return new ArrayList<>();
+        });
+    }
+
+    public CompletableFuture<List<EquipLog>> getEquipLogForPlayer(String playerName, Instant from, Instant to) {
+        Request<EquipLogGetPlayerRequest> request = Request.<EquipLogGetPlayerRequest>builder()
+                .method("GET")
+                .requestData(new EquipLogGetPlayerRequest(playerName, from, to))
+                .build();
+
+        return request.send().thenApply(httpResponse -> {
+            Type type = getParameterized(List.class, EquipLog.class).getType();
+            return (List<EquipLog>) validateAndParse(httpResponse, type);
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching equiplog for player {}", playerName, throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return new ArrayList<>();
+        });
+    }
+
+    public void trackEquip(EquipLog.Type equipLogType) {
+        Request<EquipLogAddRequest> request = Request.<EquipLogAddRequest>builder()
+                .method("POST")
+                .requestData(new EquipLogAddRequest(equipLogType))
+                .build();
+
+        request.send().thenAccept(httpResponse -> {
+            validate(httpResponse);
+            notificationService.sendInfoNotification(equipLogType.getSuccessMessage());
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while tracking activity {}", equipLogType, throwable);
 
             if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
                 pkUtilsApiException.sendNotification();
