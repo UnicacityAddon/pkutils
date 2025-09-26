@@ -25,6 +25,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
+import static de.rettichlp.pkutils.common.models.EquipEntry.Type.fromDisplayName;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
 import static java.lang.Integer.parseInt;
@@ -48,6 +49,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
     private static final Pattern REINFORCEMENT_PATTERN = compile("^(?:(?<type>.+)! )?(?<senderRank>.+) (?<senderPlayerName>.+) benötigt Unterstützung in der Nähe von (?<naviPoint>.+) \\((?<distance>\\d+)m\\)!$");
     private static final Pattern REINFORCEMENT_BUTTON_PATTERN = compile("^ §7» §cRoute anzeigen §7\\| §cUnterwegs$");
     private static final Pattern REINFORCMENT_ON_THE_WAY_PATTERN = compile("^(?<senderRank>.+) (?<senderPlayerName>.+) kommt zum Verstärkungsruf von (?<target>.+)! \\((?<distance>\\d+) Meter entfernt\\)$");
+    private static final Pattern EQUIP_PATTERN = compile("^\\[Equip] Du hast dich mit (?<type>.+) equipt!$");
 
     private static final ReinforcementConsumer<String, String, String, String> REINFORCEMENT = (type, sender, naviPoint, distance) -> empty()
             .append(of(type).copy().formatted(RED, BOLD)).append(" ")
@@ -162,6 +164,13 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
                         LOGGER.info("Reinforcement accepted: {}", reinforcement);
                     });
 
+            return false;
+        }
+
+        Matcher equipMatcher = EQUIP_PATTERN.matcher(message);
+        if (equipMatcher.find()) {
+            String type = equipMatcher.group("type");
+            fromDisplayName(type).ifPresent(api::trackEquip);
             return false;
         }
 
