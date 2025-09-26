@@ -9,8 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
-
 @PKUtilsCommand(label = "adropmoney")
 public class ADropMoneyCommand extends CommandBase {
 

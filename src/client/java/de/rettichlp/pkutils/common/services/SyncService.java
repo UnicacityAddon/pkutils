@@ -19,15 +19,14 @@ import java.util.function.Consumer;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
-import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static de.rettichlp.pkutils.common.models.Faction.POLIZEI;
 import static java.awt.Color.CYAN;
 import static java.awt.Color.WHITE;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
@@ -117,7 +116,7 @@ public class SyncService extends PKUtilsBase {
             storage.getBlacklistReasons().clear();
 
             try (InputStreamReader reader = new InputStreamReader(URI.create("https://gist.githubusercontent.com/rettichlp/54e97f4dbb3988bf22554c01d62af666/raw/pkutils-blacklistreasons.json").toURL().openStream(), UTF_8)) {
-                Type type = new TypeToken<Map<String, List<BlacklistReason>>>(){}.getType();
+                Type type = new TypeToken<Map<String, List<BlacklistReason>>>() {}.getType();
                 Map<String, List<BlacklistReason>> factionBlacklistReasons = new Gson().fromJson(reader, type);
                 factionBlacklistReasons.forEach((factionString, blacklistReasons) -> storage.getBlacklistReasons().put(Faction.valueOf(factionString), blacklistReasons));
             } catch (Exception e) {

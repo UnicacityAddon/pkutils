@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.StringJoiner;
 
-import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static java.lang.Character.isUpperCase;
 
 @PKUtilsListener
