@@ -10,7 +10,7 @@ import java.net.URI;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static java.net.URI.create;
 
-public record EquipAddRequest(EquipEntry.Type equipLogType) implements IRequest {
+public record EquipAddRequest(EquipEntry.Type equipType) implements IRequest {
 
     @Contract(" -> new")
     @Override
