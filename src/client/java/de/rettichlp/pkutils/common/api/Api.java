@@ -184,7 +184,7 @@ public class Api {
         });
     }
 
-    public void trackEquip(EquipEntry.Type equipLogType) {
+    public void trackEquip(EquipEntry.Type equipType) {
         Request<EquipAddRequest> request = Request.<EquipAddRequest>builder()
                 .method("POST")
                 .requestData(new EquipAddRequest(equipType))
@@ -192,9 +192,9 @@ public class Api {
 
         request.send().thenAccept(httpResponse -> {
             validate(httpResponse);
-            notificationService.sendInfoNotification(equipLogType.getSuccessMessage());
+            notificationService.sendInfoNotification(equipType.getSuccessMessage());
         }).exceptionally(throwable -> {
-            LOGGER.error("Error while tracking activity {}", equipLogType, throwable);
+            LOGGER.error("Error while tracking equip {}", equipType, throwable);
 
             if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
                 pkUtilsApiException.sendNotification();
