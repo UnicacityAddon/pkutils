@@ -70,7 +70,7 @@ public class Api {
         });
     }
 
-    public CompletableFuture<List<ActivityEntry>> getActivities(Instant from, Instant to) {
+    public CompletableFuture<List<ActivityEntry>> getActivityEntries(Instant from, Instant to) {
         Request<ActivityGetRequest> request = Request.<ActivityGetRequest>builder()
                 .method("GET")
                 .requestData(new ActivityGetRequest(from, to))
@@ -90,7 +90,7 @@ public class Api {
         });
     }
 
-    public CompletableFuture<List<ActivityEntry>> getActivitiesForPlayer(String playerName, Instant from, Instant to) {
+    public CompletableFuture<List<ActivityEntry>> getActivityEntriesForPlayer(String playerName, Instant from, Instant to) {
         Request<ActivityGetPlayerRequest> request = Request.<ActivityGetPlayerRequest>builder()
                 .method("GET")
                 .requestData(new ActivityGetPlayerRequest(playerName, from, to))
@@ -164,7 +164,7 @@ public class Api {
         });
     }
 
-    public CompletableFuture<List<EquipEntry>> getEquipLogForPlayer(String playerName, Instant from, Instant to) {
+    public CompletableFuture<List<EquipEntry>> getEquipEntriesForPlayer(String playerName, Instant from, Instant to) {
         Request<EquipLogGetPlayerRequest> request = Request.<EquipLogGetPlayerRequest>builder()
                 .method("GET")
                 .requestData(new EquipLogGetPlayerRequest(playerName, from, to))
