@@ -15,6 +15,6 @@ public record EquipGetPlayerRequest(String minecraftName, Instant from, Instant 
     @Contract(" -> new")
     @Override
     public @NotNull URI getUrl() {
-        return create(api.getBaseUrl() + "/equiplog/" + this.minecraftName + "?from=" + this.from.toString() + "&to=" + this.to.toString());
+        return create(api.getBaseUrl() + "/equip/" + this.minecraftName + "?from=" + this.from.toString() + "&to=" + this.to.toString());
     }
 }

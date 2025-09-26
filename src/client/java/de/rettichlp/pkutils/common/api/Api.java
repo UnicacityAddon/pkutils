@@ -80,7 +80,7 @@ public class Api {
             Type type = getParameterized(List.class, ActivityEntry.class).getType();
             return (List<ActivityEntry>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching activities", throwable);
+            LOGGER.error("Error while fetching activity entries", throwable);
 
             if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
                 pkUtilsApiException.sendNotification();
@@ -100,7 +100,7 @@ public class Api {
             Type type = getParameterized(List.class, ActivityEntry.class).getType();
             return (List<ActivityEntry>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching activities for player {}", playerName, throwable);
+            LOGGER.error("Error while fetching activity entries for player {}", playerName, throwable);
 
             if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
                 pkUtilsApiException.sendNotification();
@@ -154,7 +154,7 @@ public class Api {
             Type type = getParameterized(List.class, EquipEntry.class).getType();
             return (List<EquipEntry>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching equiplog", throwable);
+            LOGGER.error("Error while fetching equip entries", throwable);
 
             if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
                 pkUtilsApiException.sendNotification();
@@ -174,7 +174,7 @@ public class Api {
             Type type = getParameterized(List.class, EquipEntry.class).getType();
             return (List<EquipEntry>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching equiplog for player {}", playerName, throwable);
+            LOGGER.error("Error while fetching equip entries for player {}", playerName, throwable);
 
             if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
                 pkUtilsApiException.sendNotification();

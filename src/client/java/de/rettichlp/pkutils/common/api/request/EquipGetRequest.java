@@ -15,6 +15,6 @@ public record EquipGetRequest(Instant from, Instant to) implements IRequest {
     @Contract(" -> new")
     @Override
     public @NotNull URI getUrl() {
-        return create(api.getBaseUrl() + "/equiplog?from=" + this.from.toString() + "&to=" + this.to.toString());
+        return create(api.getBaseUrl() + "/equip?from=" + this.from.toString() + "&to=" + this.to.toString());
     }
 }

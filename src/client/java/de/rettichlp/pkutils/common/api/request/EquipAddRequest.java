@@ -15,6 +15,6 @@ public record EquipAddRequest(EquipEntry.Type equipLogType) implements IRequest 
     @Contract(" -> new")
     @Override
     public @NotNull URI getUrl() {
-        return create(api.getBaseUrl() + "/equiplog/add");
+        return create(api.getBaseUrl() + "/equip/add");
     }
 }
