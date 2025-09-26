@@ -38,7 +38,7 @@ import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.WHITE;
 
-@PKUtilsCommand(label = "euqip")
+@PKUtilsCommand(label = "equipped")
 public class EquipCommand extends CommandBase {
 
     @Override
