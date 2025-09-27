@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.common.gui;
 
+import de.rettichlp.pkutils.common.models.InventoryItem;
 import de.rettichlp.pkutils.common.models.SettingSection;
-import de.rettichlp.pkutils.common.models.DrugType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -31,7 +31,7 @@ public class SettingScreen extends Screen {
     private List<SettingSection> filteredSections;
     private SettingSection activeSection = null;
 
-    private final Map<DrugType, TextFieldWidget> drugInputs = new HashMap<>();
+    private final Map<InventoryItem, TextFieldWidget> drugInputs = new HashMap<>();
 
     public SettingScreen(Text title) {
         super(title);
@@ -86,7 +86,7 @@ public class SettingScreen extends Screen {
         int spacing = 25;
 
         int y = startY;
-        for (DrugType drug : DrugType.values()) {
+        for (InventoryItem drug : InventoryItem.values()) {
             TextFieldWidget field = new TextFieldWidget(
                     this.textRenderer,
                     startX,
@@ -180,7 +180,7 @@ public class SettingScreen extends Screen {
             int startX = guiX + 130;
             int y = guiY + 60;
 
-            for (DrugType drug : DrugType.values()) {
+            for (InventoryItem drug : InventoryItem.values()) {
                 int iconX = startX + 10;
                 int textX = iconX + 20;
 
