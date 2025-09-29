@@ -46,7 +46,7 @@ public class ConfigService extends PKUtilsBase {
         try {
             Reader reader = newBufferedReader(CONFIG_PATH);
             return api.getGson().fromJson(reader, MainConfig.class);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("Failed to load config from {}", CONFIG_PATH, e);
         }
 
