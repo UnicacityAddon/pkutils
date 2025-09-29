@@ -1,0 +1,11 @@
+{
+    "pkutils.options.nametag.general": "General",
+    "pkutils.options.nametag.faction_information": "Faction information",
+    "pkutils.options.nametag.highlight.faction": "Faction highlighting",
+    "pkutils.options.nametag.highlight.alliance": "Alliance highlighting",
+    "pkutils.options.nametag.additional": "Additional",
+    "pkutils.options.nametag.additional.blacklist": "Blacklist",
+    "pkutils.options.nametag.additional.contract": "Contract",
+    "pkutils.options.nametag.additional.houseban": "Houseban",
+    "pkutils.options.nametag.additional.wanted": "Wanted"
+}
