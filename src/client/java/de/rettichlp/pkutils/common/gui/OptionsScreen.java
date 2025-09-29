@@ -65,10 +65,22 @@ public abstract class OptionsScreen extends Screen {
 
     public void addButton(@NotNull DirectionalLayoutWidget widget, String key, boolean defaultValue, int width) {
         MutableText translatable = Text.translatable(key);
+
+        // get default value from config if exists
+        Object configObject = configService.load().getOptions().get(key);
+
+        boolean configValue;
+        if (!(configObject instanceof Boolean)) {
+            LOGGER.warn("Config option '{}' is not of type Boolean! Falling back to default value '{}'", key, defaultValue);
+            configValue = defaultValue;
+        } else {
+            configValue = (Boolean) configObject;
+        }
+
         ToggleButtonWidget toggleButton = new ToggleButtonWidget(translatable, value -> configService.edit(mainConfig -> {
             LOGGER.debug("Set option '{}' to '{}'", key, value);
             mainConfig.getOptions().put(key, value);
-        }), defaultValue);
+        }), configValue);
 
         toggleButton.setWidth(width);
 
