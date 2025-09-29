@@ -18,10 +18,11 @@ import static java.util.regex.Pattern.compile;
 @PKUtilsListener
 public class ContractListener extends PKUtilsBase implements IMessageReceiveListener {
 
-    private static final Pattern CONTRACT_HEADER_PATTERN = compile("^\\[Contracts] Kopfgelder:"); //TODO
-    private static final Pattern CONTRACT_ENTRY_PATTERN = compile("^(?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) (?<price>.+) (?<afk> \\| (AFK)|)");//TODO
-    private static final Pattern CONTRACT_ENTRY_ADD = compile("^\\[Contract] Es wurde ein Kopfgeld auf (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (?<price>.[0-9]+) ausgesetzt.$");//TODO
-    private static final Pattern CONTRACT_ENTRY_REMOVE = compile("^\\[Contract] (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) getötet.$");//TODO
+    private static final Pattern CONTRACT_HEADER_PATTERN = compile("^\\[Contracts] Kopfgelder:");
+    private static final Pattern CONTRACT_ENTRY_PATTERN = compile("^(?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) \\[(?<price>\\d+)\\$](?:\\(AFK\\))?$");
+    private static final Pattern CONTRACT_ADD_PATTERN = compile("^\\[Contract] Es wurde ein Kopfgeld auf (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) \\((?<price>\\d+)\\$\\) ausgesetzt\\.$");
+    private static final Pattern CONTRACT_REMOVE_PATTERN = compile("^\\[Contract] Das Kopfgeld auf (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) wurde entfernt\\.$");
+    private static final Pattern CONTRACT_KILL_PATTERN = compile("^\\[Contract] (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) getötet\\. \\((?<price>\\d+)\\$\\)$");
 
     private long activeCheck = 0;
 
@@ -44,16 +45,23 @@ public class ContractListener extends PKUtilsBase implements IMessageReceiveList
             return !syncService.isGameSyncProcessActive();
         }
 
-        Matcher contractEntryAddMatcher = CONTRACT_ENTRY_ADD.matcher(message);
-        if (contractEntryAddMatcher.find()) {
+        Matcher contractAddMatcher = CONTRACT_ADD_PATTERN.matcher(message);
+        if (contractAddMatcher.find()) {
             // show all entries to sync
             delayedAction(() -> sendCommand("contract"), 1000);
             return true;
         }
 
-        Matcher contractEntryRemoveMatcher = CONTRACT_ENTRY_REMOVE.matcher(message);
-        if (contractEntryRemoveMatcher.find()) {
-            String targetName = contractEntryRemoveMatcher.group("targetName");
+        Matcher contractRemoveMatcher = CONTRACT_REMOVE_PATTERN.matcher(message);
+        if (contractRemoveMatcher.find()) {
+            String targetName = contractRemoveMatcher.group("targetName");
+            storage.getContractEntries().removeIf(contractEntry -> contractEntry.getPlayerName().equals(targetName));
+            return true;
+        }
+
+        Matcher contractKillMatcher = CONTRACT_KILL_PATTERN.matcher(message);
+        if (contractKillMatcher.find()) {
+            String targetName = contractKillMatcher.group("targetName");
             storage.getContractEntries().removeIf(contractEntry -> contractEntry.getPlayerName().equals(targetName));
             return true;
         }
