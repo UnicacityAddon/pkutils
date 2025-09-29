@@ -36,10 +36,13 @@ public class Storage {
     private final List<BlacklistEntry> blacklistEntries = new ArrayList<>();
 
     @Getter
+    private final Map<Faction, List<BlacklistReason>> blacklistReasons = new HashMap<>();
+
+    @Getter
     private final List<ContractEntry> contractEntries = new ArrayList<>();
 
     @Getter
-    private final Map<Faction, List<BlacklistReason>> blacklistReasons = new HashMap<>();
+    private final Map<Countdown, LocalDateTime> countdowns = new HashMap<>();
 
     @Getter
     private final List<WantedEntry> wantedEntries = new ArrayList<>();
@@ -49,9 +52,6 @@ public class Storage {
 
     @Getter
     private final Map<String, Integer> retrievedNumbers = new HashMap<>();
-
-    @Getter
-    private final Map<Countdown, LocalDateTime> countdowns = new HashMap<>();
 
     @Getter
     @Setter
@@ -65,7 +65,13 @@ public class Storage {
         // factionMembers
         this.factionMembers.forEach((faction, factionMembers) -> LOGGER.info("factionMembers[{}:{}]: {}", faction, factionMembers.size(), factionMembers));
         // blacklistEntries
+        LOGGER.info("blacklistEntries[{}]: {}", this.blacklistEntries.size(), this.blacklistEntries);
+        // blacklistReasons
         this.blacklistReasons.forEach((faction, blacklistReasons) -> LOGGER.info("blacklistReasons[{}:{}]: {}", faction, blacklistReasons.size(), blacklistReasons));
+        // contractEntries
+        LOGGER.info("contractEntries[{}]: {}", this.contractEntries.size(), this.contractEntries);
+        // countdowns
+        this.countdowns.forEach((countdown, localDateTime) -> LOGGER.info("countdowns[{}:{}]: {}", countdown, countdown.getDuration(), localDateTime));
         // wantedEntries
         LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
         // reinforcements
@@ -74,8 +80,8 @@ public class Storage {
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
-        // contractEntries
-        LOGGER.info("contractEntries[{}]: {}", this.contractEntries.size(), this.contractEntries);
+        // minecartEntityToHighlight
+        LOGGER.info("minecartEntityToHighlight: {}", this.minecartEntityToHighlight);
     }
 
     public void addFactionMember(Faction faction, FactionMember factionMember) {
@@ -96,27 +102,11 @@ public class Storage {
                 .orElse(NULL);
     }
 
-    public void resetFactionMembers(Faction faction) {
-        this.factionMembers.put(faction, new HashSet<>());
-    }
-
-    public void addWantedEntry(WantedEntry entry) {
-        this.wantedEntries.add(entry);
-    }
-
-    public void resetWantedEntries() {
-        this.wantedEntries.clear();
-    }
-
     public void trackReinforcement(Reinforcement reinforcement) {
         // remove all previous reinforcements of the same sender
         this.reinforcements.removeIf(r -> r.getSenderPlayerName().equals(reinforcement.getSenderPlayerName()));
         // add new reinforcement
         this.reinforcements.add(reinforcement);
-    }
-
-    public void addContractEntry(ContractEntry entry) {
-        this.contractEntries.add(entry);
     }
 
     @Getter

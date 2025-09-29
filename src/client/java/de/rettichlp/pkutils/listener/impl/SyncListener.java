@@ -9,6 +9,7 @@ import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -84,7 +85,7 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
             this.factionMemberRetrievalFaction = fromDisplayName(factionName)
                     .orElseThrow(() -> new IllegalStateException("Could not find faction with name: " + factionName));
 
-            storage.resetFactionMembers(this.factionMemberRetrievalFaction);
+            storage.getFactionMembers().put(this.factionMemberRetrievalFaction, new HashSet<>());
             return !syncService.isGameSyncProcessActive();
         }
 
