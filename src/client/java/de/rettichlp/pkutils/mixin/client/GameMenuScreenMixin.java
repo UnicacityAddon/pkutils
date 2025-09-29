@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.mixin.client;
 
-import de.rettichlp.pkutils.common.gui.SettingScreen;
+import de.rettichlp.pkutils.common.gui.MainOptionsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -23,7 +23,7 @@ public abstract class GameMenuScreenMixin extends Screen {
         int customY = (this.height / 4) - 20;
 
         this.addDrawableChild(ButtonWidget.builder(Text.literal("PKUtils Settings"), button ->
-                this.client.setScreen(new SettingScreen(Text.literal("PKUtils Settings")))
+                this.client.setScreen(new MainOptionsScreen())
         ).dimensions(centerX - 102, customY, 204, 20).build());
     }
 }
