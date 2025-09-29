@@ -75,7 +75,7 @@ public abstract class PlayerListHudMixin {
             return 6; // WANTED
         } else if (storage.getBlacklistEntries().stream().anyMatch(blacklistEntry -> blacklistEntry.getPlayerName().equals(playerName))) {
             return 7; // BLACKLIST
-        } else if (false) { // TODO
+        } else if (storage.getContractEntries().stream().anyMatch(contractEntry -> contractEntry.getPlayerName().equals(playerName))) {
             return 8; // CONTRACT
         } else {
             return 9; // OTHER

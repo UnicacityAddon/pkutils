@@ -1,11 +1,6 @@
 package de.rettichlp.pkutils.common;
 
-import de.rettichlp.pkutils.common.models.BlacklistEntry;
-import de.rettichlp.pkutils.common.models.BlacklistReason;
-import de.rettichlp.pkutils.common.models.Faction;
-import de.rettichlp.pkutils.common.models.FactionMember;
-import de.rettichlp.pkutils.common.models.Reinforcement;
-import de.rettichlp.pkutils.common.models.WantedEntry;
+import de.rettichlp.pkutils.common.models.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +28,9 @@ public class Storage {
 
     @Getter
     private final List<BlacklistEntry> blacklistEntries = new ArrayList<>();
+
+    @Getter
+    private final List<ContractEntry> contractEntries = new ArrayList<>();
 
     @Getter
     private final Map<Faction, List<BlacklistReason>> blacklistReasons = new HashMap<>();
@@ -70,6 +68,8 @@ public class Storage {
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
+        // contractEntries
+        LOGGER.info("contractEntries[{}]: {}", this.contractEntries.size(), this.contractEntries);
     }
 
     public void addFactionMember(Faction faction, FactionMember factionMember) {
@@ -107,6 +107,10 @@ public class Storage {
         this.reinforcements.removeIf(r -> r.getSenderPlayerName().equals(reinforcement.getSenderPlayerName()));
         // add new reinforcement
         this.reinforcements.add(reinforcement);
+    }
+
+    public void addContractEntry(ContractEntry entry) {
+        this.contractEntries.add(entry);
     }
 
     @Getter
