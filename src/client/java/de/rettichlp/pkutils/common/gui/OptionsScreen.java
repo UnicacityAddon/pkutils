@@ -11,14 +11,17 @@ import net.minecraft.client.gui.widget.ThreePartsLayoutWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.Item;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static java.util.Objects.nonNull;
+import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
+import static net.minecraft.screen.ScreenTexts.BACK;
 import static net.minecraft.screen.ScreenTexts.DONE;
+import static net.minecraft.text.Text.empty;
+import static net.minecraft.text.Text.translatable;
 
 public abstract class OptionsScreen extends Screen {
 
@@ -28,11 +31,13 @@ public abstract class OptionsScreen extends Screen {
     protected DirectionalLayoutWidget body;
 
     public OptionsScreen(Screen parent) {
-        super(Text.translatable("options.title"));
+        super(empty()
+                .append("PKUtils").append(" ")
+                .append(translatable("options.title")));
         this.parent = parent;
     }
 
-    public abstract DirectionalLayoutWidget initBody();
+    public abstract void initBody();
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
@@ -44,14 +49,18 @@ public abstract class OptionsScreen extends Screen {
     @Override
     protected void init() {
         this.layout.addHeader(this.title, this.textRenderer);
-        this.layout.addBody(initBody());
-        this.layout.addFooter(ButtonWidget.builder(DONE, button -> this.close()).width(200).build());
+        initBody();
+        initFooter();
         this.layout.forEachChild(this::addDrawableChild);
         refreshWidgetPositions();
     }
 
     @Override
     public void close() {
+        this.client.setScreen(null);
+    }
+
+    public void back() {
         this.client.setScreen(this.parent);
     }
 
@@ -64,7 +73,7 @@ public abstract class OptionsScreen extends Screen {
     }
 
     public void addButton(@NotNull DirectionalLayoutWidget widget, String key, boolean defaultValue, int width) {
-        MutableText translatable = Text.translatable(key);
+        MutableText translatable = translatable(key);
 
         // get default value from config if exists
         Object configObject = configService.load().getOptions().get(key);
@@ -106,5 +115,11 @@ public abstract class OptionsScreen extends Screen {
     private void drawMenuListBackground(@NotNull DrawContext context) {
         Identifier identifier = Identifier.ofVanilla("textures/gui/inworld_menu_list_background.png");
         context.drawTexture(RenderLayer::getGuiTextured, identifier, this.layout.getX(), this.layout.getHeaderHeight(), 0.0F, 0.0F, this.layout.getWidth(), this.layout.getContentHeight(), 32, 32);
+    }
+
+    private void initFooter() {
+        DirectionalLayoutWidget directionalLayoutWidget = this.layout.addFooter(horizontal().spacing(8));
+        directionalLayoutWidget.add(ButtonWidget.builder(BACK, button -> back()).width(200).build());
+        directionalLayoutWidget.add(ButtonWidget.builder(DONE, button -> close()).width(200).build());
     }
 }
