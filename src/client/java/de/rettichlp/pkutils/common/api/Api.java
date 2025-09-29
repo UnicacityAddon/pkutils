@@ -116,7 +116,7 @@ public class Api {
         }
 
         String addressString = networkHandler.getConnection().getAddress().toString(); // punicakitty.de/50.114.4.0:25565
-        if (!addressString.contains("50.114.4.0")) {
+        if (!addressString.matches("tcp\\.punicakitty\\.de\\./50\\.114\\.4\\.\\d+:25565")) {
             LOGGER.warn("Tried to track activity, but not on supported server");
             return;
         }
