@@ -2,6 +2,7 @@ package de.rettichlp.pkutils.common;
 
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
+import de.rettichlp.pkutils.common.models.ContractEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.models.Reinforcement;
@@ -38,6 +39,12 @@ public class Storage {
     private final Map<Faction, List<BlacklistReason>> blacklistReasons = new HashMap<>();
 
     @Getter
+    private final List<ContractEntry> contractEntries = new ArrayList<>();
+
+    @Getter
+    private final Map<Countdown, LocalDateTime> countdowns = new HashMap<>();
+
+    @Getter
     private final List<WantedEntry> wantedEntries = new ArrayList<>();
 
     @Getter
@@ -45,9 +52,6 @@ public class Storage {
 
     @Getter
     private final Map<String, Integer> retrievedNumbers = new HashMap<>();
-
-    @Getter
-    private final Map<Countdown, LocalDateTime> countdowns = new HashMap<>();
 
     @Getter
     @Setter
@@ -61,7 +65,13 @@ public class Storage {
         // factionMembers
         this.factionMembers.forEach((faction, factionMembers) -> LOGGER.info("factionMembers[{}:{}]: {}", faction, factionMembers.size(), factionMembers));
         // blacklistEntries
+        LOGGER.info("blacklistEntries[{}]: {}", this.blacklistEntries.size(), this.blacklistEntries);
+        // blacklistReasons
         this.blacklistReasons.forEach((faction, blacklistReasons) -> LOGGER.info("blacklistReasons[{}:{}]: {}", faction, blacklistReasons.size(), blacklistReasons));
+        // contractEntries
+        LOGGER.info("contractEntries[{}]: {}", this.contractEntries.size(), this.contractEntries);
+        // countdowns
+        this.countdowns.forEach((countdown, localDateTime) -> LOGGER.info("countdowns[{}:{}]: {}", countdown, countdown.getDuration(), localDateTime));
         // wantedEntries
         LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
         // reinforcements
@@ -70,6 +80,8 @@ public class Storage {
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
+        // minecartEntityToHighlight
+        LOGGER.info("minecartEntityToHighlight: {}", this.minecartEntityToHighlight);
     }
 
     public void addFactionMember(Faction faction, FactionMember factionMember) {
@@ -88,18 +100,6 @@ public class Storage {
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(NULL);
-    }
-
-    public void resetFactionMembers(Faction faction) {
-        this.factionMembers.put(faction, new HashSet<>());
-    }
-
-    public void addWantedEntry(WantedEntry entry) {
-        this.wantedEntries.add(entry);
-    }
-
-    public void resetWantedEntries() {
-        this.wantedEntries.clear();
     }
 
     public void trackReinforcement(Reinforcement reinforcement) {

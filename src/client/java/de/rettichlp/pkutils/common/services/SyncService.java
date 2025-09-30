@@ -22,6 +22,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
+import static de.rettichlp.pkutils.common.models.Faction.HITMAN;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static de.rettichlp.pkutils.common.models.Faction.POLIZEI;
 import static java.awt.Color.CYAN;
@@ -76,6 +77,8 @@ public class SyncService extends PKUtilsBase {
                 sendCommand("blacklist");
             } else if (faction == FBI || faction == POLIZEI) {
                 sendCommand("wanteds");
+            } else if (faction == HITMAN) {
+                sendCommand("contract");
             }
 
             notificationService.sendNotification("Synchronisiere fraktionsabhängige Daten...", WHITE, 1000);

@@ -1,6 +1,7 @@
 package de.rettichlp.pkutils.mixin.client;
 
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
+import de.rettichlp.pkutils.common.models.ContractEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.WantedEntry;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -99,6 +100,14 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
 
         if (optionalTargetWantedEntry.isPresent()) {
             newTargetDisplayNameColor = factionService.getWantedPointColor(optionalTargetWantedEntry.get().getWantedPointAmount());
+        }
+
+        Optional<ContractEntry> optionalTargetContractEntry = storage.getContractEntries().stream()
+                .filter(contractEntry -> contractEntry.getPlayerName().equals(targetName))
+                .findAny();
+
+        if (optionalTargetContractEntry.isPresent()) {
+            newTargetDisplayNameColor = RED;
         }
 
         return empty()

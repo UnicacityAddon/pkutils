@@ -73,7 +73,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
                     .findFirst()
                     .ifPresentOrElse(wantedEntry -> wantedEntry.setWantedPointAmount(wantedPoints), () -> {
                         WantedEntry wantedEntry = new WantedEntry(playerName, wantedPoints, "");
-                        storage.addWantedEntry(wantedEntry);
+                        storage.getWantedEntries().add(wantedEntry);
                     });
 
             Text modifiedMessage = empty()
@@ -273,7 +273,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
         Matcher wantedListHeaderMatcher = WANTED_LIST_HEADER_PATTERN.matcher(message);
         if (wantedListHeaderMatcher.find()) {
             this.activeCheck = currentTimeMillis();
-            storage.resetWantedEntries();
+            storage.getWantedEntries().clear();
             return !syncService.isGameSyncProcessActive();
         }
 
@@ -285,7 +285,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             boolean isAfk = wantedListEntryMatcher.group("afk").contains("AFK");
 
             WantedEntry wantedEntry = new WantedEntry(playerName, wantedPointAmount, reason);
-            storage.addWantedEntry(wantedEntry);
+            storage.getWantedEntries().add(wantedEntry);
 
             Formatting color = factionService.getWantedPointColor(wantedPointAmount);
 
