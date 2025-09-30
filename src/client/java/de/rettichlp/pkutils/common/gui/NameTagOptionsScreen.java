@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.gui;
 
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.Positioner;
 import net.minecraft.client.gui.widget.TextWidget;
@@ -12,8 +13,8 @@ import static net.minecraft.text.Text.translatable;
 
 public class NameTagOptionsScreen extends OptionsScreen {
 
-    public NameTagOptionsScreen() {
-        super(new MainOptionsScreen());
+    public NameTagOptionsScreen(Screen parent) {
+        super(parent, "pkutils.options.nametag.title");
     }
 
     @Override
