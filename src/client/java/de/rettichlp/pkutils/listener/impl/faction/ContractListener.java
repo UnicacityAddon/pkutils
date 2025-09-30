@@ -18,7 +18,7 @@ import static java.util.regex.Pattern.compile;
 @PKUtilsListener
 public class ContractListener extends PKUtilsBase implements IMessageReceiveListener {
 
-    private static final Pattern CONTRACT_HEADER_PATTERN = compile("^\\[Contracts] Kopfgelder:");
+    private static final Pattern CONTRACT_HEADER_PATTERN = compile("^\\[Contracts] Kopfgelder:$");
     private static final Pattern CONTRACT_ENTRY_PATTERN = compile("^(?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) \\[(?<price>\\d+)\\$](?:\\(AFK\\))?$");
     private static final Pattern CONTRACT_ADD_PATTERN = compile("^\\[Contract] Es wurde ein Kopfgeld auf (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) \\((?<price>\\d+)\\$\\) ausgesetzt\\.$");
     private static final Pattern CONTRACT_REMOVE_PATTERN = compile("^\\[Contract] Das Kopfgeld auf (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) wurde entfernt\\.$");
