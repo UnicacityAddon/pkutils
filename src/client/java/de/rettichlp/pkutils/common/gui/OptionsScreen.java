@@ -91,6 +91,15 @@ public abstract class OptionsScreen extends Screen {
         this.layout.refreshPositions();
     }
 
+    public void addButton(@NotNull DirectionalLayoutWidget widget, String key, ButtonWidget.PressAction onPress, int width) {
+        ButtonWidget buttonWidget = ButtonWidget.builder(translatable(key), onPress)
+                .build();
+
+        buttonWidget.setWidth(width);
+
+        widget.add(buttonWidget);
+    }
+
     public void addButton(@NotNull DirectionalLayoutWidget widget, String key, boolean defaultValue, int width) {
         MutableText translatable = translatable(key);
 
@@ -137,7 +146,7 @@ public abstract class OptionsScreen extends Screen {
     }
 
     private void initHeader() {
-        DirectionalLayoutWidget directionalLayoutWidget = this.layout.addHeader(vertical().spacing(8));
+        DirectionalLayoutWidget directionalLayoutWidget = this.layout.addHeader(vertical().spacing(4));
         directionalLayoutWidget.getMainPositioner().alignHorizontalCenter();
         directionalLayoutWidget.add(new TextWidget(this.title, this.textRenderer));
         directionalLayoutWidget.add(new TextWidget(this.subTitle, this.textRenderer));
