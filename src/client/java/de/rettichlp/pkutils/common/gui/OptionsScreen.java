@@ -49,8 +49,8 @@ public abstract class OptionsScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         drawMenuListBackground(context);
-        drawHeaderAndFooterSeparators(context);
         super.render(context, mouseX, mouseY, delta);
+        drawHeaderAndFooterSeparators(context);
     }
 
     @Override
