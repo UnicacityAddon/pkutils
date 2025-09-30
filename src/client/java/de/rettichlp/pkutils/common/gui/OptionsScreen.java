@@ -35,7 +35,6 @@ public abstract class OptionsScreen extends Screen {
 
     public final ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this);
 
-    protected DirectionalLayoutWidget body;
     private static final URI DISCORD_INVITE = URI.create("https://discord.gg/mZGAAwhPHu");
     private static final int DISCORD_COLOR = 0x5865F2;
     private static final URI MODRINTH = URI.create("https://modrinth.com/mod/pkutils");
@@ -87,12 +86,9 @@ public abstract class OptionsScreen extends Screen {
         this.client.setScreen(this.parent);
     }
 
+    @Override
     protected void refreshWidgetPositions() {
         this.layout.refreshPositions();
-
-        if (nonNull(this.body)) {
-            this.body.refreshPositions();
-        }
     }
 
     public void addButton(@NotNull DirectionalLayoutWidget widget, String key, boolean defaultValue, int width) {
