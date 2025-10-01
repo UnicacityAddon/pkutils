@@ -143,9 +143,10 @@ public class Api {
             return;
         }
 
-        String addressString = networkHandler.getConnection().getAddress().toString(); // punicakitty.de/50.114.4.0:25565
-        if (!addressString.matches("tcp\\.punicakitty\\.de\\./50\\.114\\.4\\.\\d+:25565")) {
-            LOGGER.warn("Tried to track activity, but not on supported server");
+        String addressString = networkHandler.getConnection().getAddress().toString(); // tcp.punicakitty.de./50.114.4.xxx:25565
+        // for LabyMod players, there is no dot at the end of the domain
+        if (!addressString.matches("tcp\\.punicakitty\\.de\\.?/50\\.114\\.4\\.\\d+:25565")) {
+            LOGGER.warn("Tried to track activity, but not on supported server ({})", addressString);
             return;
         }
 
