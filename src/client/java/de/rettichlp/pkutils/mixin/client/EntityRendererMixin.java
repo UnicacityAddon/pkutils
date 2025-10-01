@@ -4,6 +4,7 @@ import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.ContractEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.WantedEntry;
+import de.rettichlp.pkutils.common.models.config.NameTagOptions;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.ItemEntityRenderState;
@@ -64,21 +65,22 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
 
     @Unique
     private MutableText getFormattedTargetDisplayName(@NotNull Text targetDisplayName, String targetName) {
+        NameTagOptions nameTagOptions = configService.load().getOptions().nameTag();
         Faction targetFaction = storage.getFaction(targetName);
 
         Text newTargetDisplayNamePrefix = empty();
         Text newTargetDisplayName = targetDisplayName.copy();
-        Text newTargetDisplayNameSuffix = targetFaction.getNameTagSuffix();
+        Text newTargetDisplayNameSuffix = nameTagOptions.factionInformation() ? targetFaction.getNameTagSuffix() : empty();
         Formatting newTargetDisplayNameColor = WHITE;
 
         // same faction -> blue name
         Faction playerFaction = storage.getFaction(player.getName().getString());
-        if (playerFaction == targetFaction && targetFaction != NULL) {
+        if (nameTagOptions.highlightFaction() && playerFaction == targetFaction && targetFaction != NULL) {
             newTargetDisplayNameColor = BLUE;
         }
 
         // alliance faction -> dark blue
-        if (configService.load().getAllianceFaction() == targetFaction && targetFaction != NULL) {
+        if (nameTagOptions.highlightAlliance() && configService.load().getAllianceFaction() == targetFaction && targetFaction != NULL) {
             newTargetDisplayNameColor = DARK_BLUE;
         }
 
@@ -86,7 +88,7 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
                 .filter(blacklistEntry -> blacklistEntry.getPlayerName().equals(targetName))
                 .findAny();
 
-        if (optionalTargetBlacklistEntry.isPresent()) {
+        if (optionalTargetBlacklistEntry.isPresent() && nameTagOptions.additionalBlacklist()) {
             newTargetDisplayNameColor = RED;
             newTargetDisplayNamePrefix = !optionalTargetBlacklistEntry.get().isOutlaw() ? empty() : empty()
                     .append(of("[").copy().formatted(DARK_GRAY))
@@ -98,7 +100,7 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
                 .filter(wantedEntry -> wantedEntry.getPlayerName().equals(targetName))
                 .findAny();
 
-        if (optionalTargetWantedEntry.isPresent()) {
+        if (optionalTargetWantedEntry.isPresent() && nameTagOptions.additionalWanted()) {
             newTargetDisplayNameColor = factionService.getWantedPointColor(optionalTargetWantedEntry.get().getWantedPointAmount());
         }
 
@@ -106,7 +108,7 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
                 .filter(contractEntry -> contractEntry.getPlayerName().equals(targetName))
                 .findAny();
 
-        if (optionalTargetContractEntry.isPresent()) {
+        if (optionalTargetContractEntry.isPresent() && nameTagOptions.additionalContract()) {
             newTargetDisplayNameColor = RED;
         }
 
