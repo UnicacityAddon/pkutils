@@ -7,6 +7,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.gui.widget.TextWidget;
@@ -101,6 +102,25 @@ public abstract class OptionsScreen extends Screen {
         buttonWidget.setWidth(width);
 
         widget.add(buttonWidget);
+    }
+
+    public <E> void addCyclingButton(@NotNull DirectionalLayoutWidget widget,
+                                     String key,
+                                     E[] values,
+                                     Function<E, Text> displayNameFunction,
+                                     BiConsumer<Options, E> onValueChange,
+                                     @NotNull Function<Options, E> currentValue,
+                                     int width) {
+        MutableText translatable = translatable(key);
+
+        CyclingButtonWidget<E> cyclingButton = CyclingButtonWidget.builder(displayNameFunction)
+                .values(values)
+                .initially(currentValue.apply(configService.load().getOptions()))
+                .build(translatable, (button, value) -> configService.edit(mainConfig -> onValueChange.accept(mainConfig.getOptions(), value)));
+
+        cyclingButton.setWidth(width);
+
+        widget.add(cyclingButton);
     }
 
     public void addToggleButton(@NotNull DirectionalLayoutWidget widget,
