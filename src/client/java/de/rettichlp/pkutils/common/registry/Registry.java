@@ -75,8 +75,8 @@ public class Registry {
     private final Set<Class<?>> commands = Set.of(
             ACallCommand.class,
             ADropMoneyCommand.class,
-            ASetBlacklistCommand.class,
             ASMSCommand.class,
+            ASetBlacklistCommand.class,
             ActivityCommand.class,
             AllianceCommand.class,
             DepositCommand.class,
@@ -95,30 +95,25 @@ public class Registry {
     );
 
     private final Set<Class<?>> listeners = Set.of(
-            // business
-            BusinessListener.class,
-            // faction
+            AbsorptionListener.class,
             BlacklistListener.class,
             BombListener.class,
+            BusinessListener.class,
+            CarListener.class,
+            CommandSendListener.class,
             ContractListener.class,
+            DepositCommand.class,
             FactionListener.class,
-            HudListener.class,
-            ReviveListener.class,
-            ServiceListener.class,
-            WantedListener.class,
-            // job
             FisherListener.class,
             GarbageManListener.class,
+            HudListener.class,
             LumberjackListener.class,
-            TransportListener.class,
-            // vehicle
-            CarListener.class,
-            // other
-            AbsorptionListener.class,
-            CommandSendListener.class,
-            DepositCommand.class,
+            ReviveListener.class,
             RichTaxesCommand.class, // TODO find better solution for this
-            SyncListener.class
+            ServiceListener.class,
+            SyncListener.class,
+            TransportListener.class,
+            WantedListener.class
     );
 
     private BlockPos lastPlayerPos = null;
