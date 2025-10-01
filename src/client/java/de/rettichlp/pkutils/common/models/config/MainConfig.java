@@ -5,9 +5,7 @@ import de.rettichlp.pkutils.common.models.OwnUseEntry;
 import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 
@@ -17,5 +15,5 @@ public class MainConfig {
     private List<TodoEntry> todos = new ArrayList<>();
     private List<OwnUseEntry> ownUseEntries = new ArrayList<>();
     private Faction allianceFaction = NULL;
-    private Map<String, Object> options = new HashMap<>();
+    private Options options = new Options();
 }
