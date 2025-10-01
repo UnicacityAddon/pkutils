@@ -45,13 +45,17 @@ public class Storage {
     private final Map<Countdown, LocalDateTime> countdowns = new HashMap<>();
 
     @Getter
-    private final List<WantedEntry> wantedEntries = new ArrayList<>();
-
-    @Getter
     private final List<Reinforcement> reinforcements = new ArrayList<>();
 
     @Getter
     private final Map<String, Integer> retrievedNumbers = new HashMap<>();
+
+    @Getter
+    private final List<WantedEntry> wantedEntries = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private MinecartEntity minecartEntityToHighlight;
 
     @Getter
     @Setter
@@ -65,10 +69,6 @@ public class Storage {
     @Setter
     private ToggledChat toggledChat = NONE;
 
-    @Getter
-    @Setter
-    private MinecartEntity minecartEntityToHighlight;
-
     public void print() {
         // factionMembers
         this.factionMembers.forEach((faction, factionMembers) -> LOGGER.info("factionMembers[{}:{}]: {}", faction, factionMembers.size(), factionMembers));
@@ -80,12 +80,12 @@ public class Storage {
         LOGGER.info("contractEntries[{}]: {}", this.contractEntries.size(), this.contractEntries);
         // countdowns
         this.countdowns.forEach((countdown, localDateTime) -> LOGGER.info("countdowns[{}:{}]: {}", countdown, countdown.getDuration(), localDateTime));
-        // wantedEntries
-        LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
         // reinforcements
         LOGGER.info("reinforcements[{}]: {}", this.reinforcements.size(), this.reinforcements);
         // retrievedNumbers
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
+        // wantedEntries
+        LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
         // minecartEntityToHighlight
