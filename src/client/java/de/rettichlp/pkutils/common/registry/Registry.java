@@ -3,13 +3,14 @@ package de.rettichlp.pkutils.common.registry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.command.ADropMoneyCommand;
-import de.rettichlp.pkutils.command.ASetBlacklistCommand;
-import de.rettichlp.pkutils.command.ActivityCommand;
-import de.rettichlp.pkutils.command.EquipCommand;
+import de.rettichlp.pkutils.command.faction.ASetBlacklistCommand;
+import de.rettichlp.pkutils.command.faction.ActivityCommand;
+import de.rettichlp.pkutils.command.faction.BlackMarketCommand;
+import de.rettichlp.pkutils.command.faction.EquippedCommand;
 import de.rettichlp.pkutils.command.MiCommand;
 import de.rettichlp.pkutils.command.MiaCommand;
 import de.rettichlp.pkutils.command.ModCommand;
-import de.rettichlp.pkutils.command.OwnUseCommand;
+import de.rettichlp.pkutils.command.faction.OwnUseCommand;
 import de.rettichlp.pkutils.command.SyncCommand;
 import de.rettichlp.pkutils.command.TodoCommand;
 import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
@@ -38,6 +39,7 @@ import de.rettichlp.pkutils.listener.impl.BusinessListener;
 import de.rettichlp.pkutils.listener.impl.CarListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
 import de.rettichlp.pkutils.listener.impl.HudListener;
+import de.rettichlp.pkutils.listener.impl.MoneyListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
 import de.rettichlp.pkutils.listener.impl.faction.BombListener;
@@ -75,12 +77,13 @@ public class Registry {
     private final Set<Class<?>> commands = Set.of(
             ACallCommand.class,
             ADropMoneyCommand.class,
-            ASetBlacklistCommand.class,
             ASMSCommand.class,
+            ASetBlacklistCommand.class,
             ActivityCommand.class,
             AllianceCommand.class,
+            BlackMarketCommand.class,
             DepositCommand.class,
-            EquipCommand.class,
+            EquippedCommand.class,
             MiCommand.class,
             MiaCommand.class,
             MinusPointsCommand.class,
@@ -95,30 +98,25 @@ public class Registry {
     );
 
     private final Set<Class<?>> listeners = Set.of(
-            // business
-            BusinessListener.class,
-            // faction
+            AbsorptionListener.class,
             BlacklistListener.class,
             BombListener.class,
+            BusinessListener.class,
+            CarListener.class,
+            CommandSendListener.class,
             ContractListener.class,
+            DepositCommand.class,
             FactionListener.class,
-            HudListener.class,
-            ReviveListener.class,
-            ServiceListener.class,
-            WantedListener.class,
-            // job
             FisherListener.class,
             GarbageManListener.class,
+            HudListener.class,
             LumberjackListener.class,
+            MoneyListener.class,
+            ReviveListener.class,
+            ServiceListener.class,
+            SyncListener.class,
             TransportListener.class,
-            // vehicle
-            CarListener.class,
-            // other
-            AbsorptionListener.class,
-            CommandSendListener.class,
-            DepositCommand.class,
-            RichTaxesCommand.class, // TODO find better solution for this
-            SyncListener.class
+            WantedListener.class
     );
 
     private BlockPos lastPlayerPos = null;

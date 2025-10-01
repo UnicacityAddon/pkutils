@@ -1,7 +1,7 @@
-package de.rettichlp.pkutils.command;
+package de.rettichlp.pkutils.command.faction;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.common.models.ActivityEntry;
+import de.rettichlp.pkutils.common.models.EquipEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.registry.CommandBase;
@@ -38,8 +38,8 @@ import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.WHITE;
 
-@PKUtilsCommand(label = "activity")
-public class ActivityCommand extends CommandBase {
+@PKUtilsCommand(label = "equipped")
+public class EquippedCommand extends CommandBase {
 
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
@@ -116,15 +116,15 @@ public class ActivityCommand extends CommandBase {
 
     private void fetchAndShowEntriesFor(int relativeWeekIndex) {
         Range range = getRange(relativeWeekIndex);
-        CompletableFuture<List<ActivityEntry>> entriesFuture = api.getActivityEntries(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
+        CompletableFuture<List<EquipEntry>> entriesFuture = api.getEquipEntries(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
 
         entriesFuture.thenAccept(entries -> {
             // summarize by type
-            Map<ActivityEntry.Type, Long> amountPerType = entries.stream()
-                    .collect(groupingBy(ActivityEntry::type, counting()));
+            Map<EquipEntry.Type, Long> amountPerType = entries.stream()
+                    .collect(groupingBy(EquipEntry::type, counting()));
 
             player.sendMessage(Text.empty(), false);
-            sendModMessage("Aktivität:", false);
+            sendModMessage("Equip:", false);
             amountPerType.forEach((type, amount) -> sendModMessage(Text.empty()
                     .append(of(type.getDisplayName()).copy().formatted(GRAY))
                     .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
@@ -135,15 +135,15 @@ public class ActivityCommand extends CommandBase {
 
     private void fetchAndShowEntriesFor(String playerName, int relativeWeekIndex) {
         Range range = getRange(relativeWeekIndex);
-        CompletableFuture<List<ActivityEntry>> entryFuture = api.getActivityEntriesForPlayer(playerName, range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
+        CompletableFuture<List<EquipEntry>> entryFuture = api.getEquipEntriesForPlayer(playerName, range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
 
         entryFuture.thenAccept(entries -> {
             // summarize by type
-            Map<ActivityEntry.Type, Long> activityAmountPerType = entries.stream()
-                    .collect(groupingBy(ActivityEntry::type, counting()));
+            Map<EquipEntry.Type, Long> activityAmountPerType = entries.stream()
+                    .collect(groupingBy(EquipEntry::type, counting()));
 
             player.sendMessage(Text.empty(), false);
-            sendModMessage("Aktivität von " + playerName + ":", false);
+            sendModMessage("Equip von " + playerName + ":", false);
             activityAmountPerType.forEach((type, amount) -> sendModMessage(Text.empty()
                     .append(of(type.getDisplayName()).copy().formatted(GRAY))
                     .append(of(":").copy().formatted(DARK_GRAY)).append(" ")

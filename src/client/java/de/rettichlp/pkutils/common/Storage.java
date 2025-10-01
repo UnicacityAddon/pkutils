@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common;
 
+import de.rettichlp.pkutils.common.models.BlackMarket;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.ContractEntry;
@@ -26,6 +27,7 @@ import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.time.Duration.ofMinutes;
 import static java.time.Duration.ofSeconds;
+import static java.util.Arrays.stream;
 
 public class Storage {
 
@@ -45,21 +47,38 @@ public class Storage {
     private final Map<Countdown, LocalDateTime> countdowns = new HashMap<>();
 
     @Getter
-    private final List<WantedEntry> wantedEntries = new ArrayList<>();
-
-    @Getter
     private final List<Reinforcement> reinforcements = new ArrayList<>();
 
     @Getter
     private final Map<String, Integer> retrievedNumbers = new HashMap<>();
 
     @Getter
-    @Setter
-    private ToggledChat toggledChat = NONE;
+    private final List<BlackMarket> blackMarkets = new ArrayList<>();
+
+    @Getter
+    private final List<WantedEntry> wantedEntries = new ArrayList<>();
 
     @Getter
     @Setter
     private MinecartEntity minecartEntityToHighlight;
+
+    @Getter
+    @Setter
+    private int moneyBankAmount = 0;
+
+    @Getter
+    @Setter
+    private int moneyAtmAmount = 0;
+
+    @Getter
+    @Setter
+    private ToggledChat toggledChat = NONE;
+
+    {
+        this.blackMarkets.addAll(stream(BlackMarket.Type.values())
+                .map(type -> new BlackMarket(type, null, false))
+                .toList());
+    }
 
     public void print() {
         // factionMembers
@@ -72,12 +91,14 @@ public class Storage {
         LOGGER.info("contractEntries[{}]: {}", this.contractEntries.size(), this.contractEntries);
         // countdowns
         this.countdowns.forEach((countdown, localDateTime) -> LOGGER.info("countdowns[{}:{}]: {}", countdown, countdown.getDuration(), localDateTime));
-        // wantedEntries
-        LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
         // reinforcements
         LOGGER.info("reinforcements[{}]: {}", this.reinforcements.size(), this.reinforcements);
         // retrievedNumbers
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
+        // visitedBlackMarkets
+        LOGGER.info("blackMarkets[{}]: {}", this.blackMarkets.size(), this.blackMarkets);
+        // wantedEntries
+        LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
         // minecartEntityToHighlight
