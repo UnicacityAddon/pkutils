@@ -2,6 +2,7 @@ package de.rettichlp.pkutils.common.gui;
 
 import de.rettichlp.pkutils.common.gui.components.ItemButtonWidget;
 import de.rettichlp.pkutils.common.gui.components.ToggleButtonWidget;
+import de.rettichlp.pkutils.common.models.config.Options;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,6 +19,8 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
@@ -100,24 +103,17 @@ public abstract class OptionsScreen extends Screen {
         widget.add(buttonWidget);
     }
 
-    public void addButton(@NotNull DirectionalLayoutWidget widget, String key, boolean defaultValue, int width) {
+    public void addToggleButton(@NotNull DirectionalLayoutWidget widget,
+                                String key,
+                                BiConsumer<Options, Boolean> onPress,
+                                @NotNull Function<Options, Boolean> currentValue,
+                                int width) {
         MutableText translatable = translatable(key);
-
-        // get default value from config if exists
-        Object configObject = configService.load().getOptions().get(key);
-
-        boolean configValue;
-        if (!(configObject instanceof Boolean)) {
-            LOGGER.warn("Config option '{}' is not of type Boolean! Falling back to default value '{}'", key, defaultValue);
-            configValue = defaultValue;
-        } else {
-            configValue = (Boolean) configObject;
-        }
 
         ToggleButtonWidget toggleButton = new ToggleButtonWidget(translatable, value -> configService.edit(mainConfig -> {
             LOGGER.debug("Set option '{}' to '{}'", key, value);
-            mainConfig.getOptions().put(key, value);
-        }), configValue);
+            onPress.accept(mainConfig.getOptions(), value);
+        }), currentValue.apply(configService.load().getOptions()));
 
         toggleButton.setWidth(width);
 
