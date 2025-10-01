@@ -58,7 +58,7 @@ public class BlackMarket {
         long minutes = duration.toMinutes();
 
         if (minutes >= 60) {
-            return of("> 1h").copy().formatted(RED);
+            return of("vor über einer Stunde").copy().formatted(RED);
         }
 
         if (minutes == 0) {
