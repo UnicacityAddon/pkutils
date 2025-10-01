@@ -38,6 +38,7 @@ import de.rettichlp.pkutils.listener.impl.BusinessListener;
 import de.rettichlp.pkutils.listener.impl.CarListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
 import de.rettichlp.pkutils.listener.impl.HudListener;
+import de.rettichlp.pkutils.listener.impl.MoneyListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
 import de.rettichlp.pkutils.listener.impl.faction.BombListener;
@@ -108,8 +109,8 @@ public class Registry {
             GarbageManListener.class,
             HudListener.class,
             LumberjackListener.class,
+            MoneyListener.class,
             ReviveListener.class,
-            RichTaxesCommand.class, // TODO find better solution for this
             ServiceListener.class,
             SyncListener.class,
             TransportListener.class,

@@ -55,6 +55,14 @@ public class Storage {
 
     @Getter
     @Setter
+    private int moneyBankAmount = 0;
+
+    @Getter
+    @Setter
+    private int moneyAtmAmount = 0;
+
+    @Getter
+    @Setter
     private ToggledChat toggledChat = NONE;
 
     @Getter
