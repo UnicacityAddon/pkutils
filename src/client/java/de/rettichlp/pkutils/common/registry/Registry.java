@@ -3,13 +3,13 @@ package de.rettichlp.pkutils.common.registry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.command.ADropMoneyCommand;
-import de.rettichlp.pkutils.command.ASetBlacklistCommand;
-import de.rettichlp.pkutils.command.ActivityCommand;
-import de.rettichlp.pkutils.command.EquipCommand;
+import de.rettichlp.pkutils.command.faction.ASetBlacklistCommand;
+import de.rettichlp.pkutils.command.faction.ActivityCommand;
+import de.rettichlp.pkutils.command.faction.EquippedCommand;
 import de.rettichlp.pkutils.command.MiCommand;
 import de.rettichlp.pkutils.command.MiaCommand;
 import de.rettichlp.pkutils.command.ModCommand;
-import de.rettichlp.pkutils.command.OwnUseCommand;
+import de.rettichlp.pkutils.command.faction.OwnUseCommand;
 import de.rettichlp.pkutils.command.SyncCommand;
 import de.rettichlp.pkutils.command.TodoCommand;
 import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
@@ -80,7 +80,7 @@ public class Registry {
             ActivityCommand.class,
             AllianceCommand.class,
             DepositCommand.class,
-            EquipCommand.class,
+            EquippedCommand.class,
             MiCommand.class,
             MiaCommand.class,
             MinusPointsCommand.class,
