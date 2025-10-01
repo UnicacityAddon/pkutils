@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.command.ADropMoneyCommand;
 import de.rettichlp.pkutils.command.faction.ASetBlacklistCommand;
 import de.rettichlp.pkutils.command.faction.ActivityCommand;
+import de.rettichlp.pkutils.command.faction.BlackMarketCommand;
 import de.rettichlp.pkutils.command.faction.EquippedCommand;
 import de.rettichlp.pkutils.command.MiCommand;
 import de.rettichlp.pkutils.command.MiaCommand;
@@ -80,6 +81,7 @@ public class Registry {
             ASetBlacklistCommand.class,
             ActivityCommand.class,
             AllianceCommand.class,
+            BlackMarketCommand.class,
             DepositCommand.class,
             EquippedCommand.class,
             MiCommand.class,

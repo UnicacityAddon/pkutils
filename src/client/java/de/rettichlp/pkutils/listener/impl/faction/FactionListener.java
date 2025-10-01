@@ -2,6 +2,7 @@ package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.Storage;
 import de.rettichlp.pkutils.common.models.ActivityEntry;
+import de.rettichlp.pkutils.common.models.BlackMarket;
 import de.rettichlp.pkutils.common.models.Reinforcement;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
@@ -9,13 +10,16 @@ import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
 import de.rettichlp.pkutils.listener.IMoveListener;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +33,7 @@ import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
 import static java.lang.Integer.parseInt;
 import static java.time.LocalDateTime.now;
+import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
@@ -201,6 +206,28 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
                     reinforcement.setAddedAsActivity(true);
                     api.trackActivity(ActivityEntry.Type.REINFORCEMENT);
                     LOGGER.info("Reinforcement reached, tracked activity");
+                });
+
+        // mark the black market spot as visited if within 60 blocks
+        stream(BlackMarket.Type.values())
+                .filter(type -> type.getBlockPos().isWithinDistance(blockPos, 60))
+                .forEach(type -> {
+                    // remove old type association if exists
+                    storage.getBlackMarkets().removeIf(blackMarket -> blackMarket.getType() == type);
+
+                    // check if black market was found there
+                    Box box = player.getBoundingBox().expand(60);
+                    Predicate<VillagerEntity> isBlackMarket = villagerEntity -> ofNullable(villagerEntity.getCustomName())
+                            .map(text -> text.getString().contains("Schwarzmarkt"))
+                            .orElse(false);
+
+                    assert MinecraftClient.getInstance().world != null; // cannot be null at this point
+                    boolean found = !MinecraftClient.getInstance().world.getEntitiesByClass(VillagerEntity.class, box, isBlackMarket).isEmpty();
+
+                    // add new black market entry
+                    BlackMarket blackMarket = new BlackMarket(type, now(), found);
+                    storage.getBlackMarkets().add(blackMarket);
+                    LOGGER.info("Marked black market spot as visited: {}", type);
                 });
     }
 

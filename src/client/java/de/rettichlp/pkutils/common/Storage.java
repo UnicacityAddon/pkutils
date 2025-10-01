@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common;
 
+import de.rettichlp.pkutils.common.models.BlackMarket;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.ContractEntry;
@@ -26,6 +27,7 @@ import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.time.Duration.ofMinutes;
 import static java.time.Duration.ofSeconds;
+import static java.util.Arrays.stream;
 
 public class Storage {
 
@@ -51,6 +53,9 @@ public class Storage {
     private final Map<String, Integer> retrievedNumbers = new HashMap<>();
 
     @Getter
+    private final List<BlackMarket> blackMarkets = new ArrayList<>();
+
+    @Getter
     private final List<WantedEntry> wantedEntries = new ArrayList<>();
 
     @Getter
@@ -69,6 +74,12 @@ public class Storage {
     @Setter
     private ToggledChat toggledChat = NONE;
 
+    {
+        this.blackMarkets.addAll(stream(BlackMarket.Type.values())
+                .map(type -> new BlackMarket(type, null, false))
+                .toList());
+    }
+
     public void print() {
         // factionMembers
         this.factionMembers.forEach((faction, factionMembers) -> LOGGER.info("factionMembers[{}:{}]: {}", faction, factionMembers.size(), factionMembers));
@@ -84,6 +95,8 @@ public class Storage {
         LOGGER.info("reinforcements[{}]: {}", this.reinforcements.size(), this.reinforcements);
         // retrievedNumbers
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
+        // visitedBlackMarkets
+        LOGGER.info("blackMarkets[{}]: {}", this.blackMarkets.size(), this.blackMarkets);
         // wantedEntries
         LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
         // toggledChat
