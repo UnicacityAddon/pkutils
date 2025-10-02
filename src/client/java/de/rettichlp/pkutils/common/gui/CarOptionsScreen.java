@@ -22,6 +22,7 @@ public class CarOptionsScreen extends OptionsScreen {
         directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.sections.general"), this.textRenderer), Positioner::alignHorizontalCenter);
 
         addToggleButton(directionalLayoutWidget, "pkutils.options.car.fast_lock", (options, value) -> options.car().fastLock(value), options -> options.car().fastLock(), 308);
+        addToggleButton(directionalLayoutWidget, "pkutils.options.car.highlight", (options, value) -> options.car().highlight(value), options -> options.car().highlight(), 308);
 
         directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.car.automation.title"), this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
 

@@ -22,6 +22,7 @@ import net.minecraft.text.Text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.renderService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
@@ -45,18 +46,18 @@ public class CarListener extends PKUtilsBase
     public void onEnterVehicle(Entity vehicle) {
         storage.setMinecartEntityToHighlight(null);
 
-        // TODO setting entry
-
         // the entity is a car
         if (!isCar(vehicle)) {
             return;
         }
 
-        // start the car with a small delay to ensure the player is fully in the vehicle
-        delayedAction(() -> sendCommand("car start"), 500);
+        if (configService.load().getOptions().car().automatedStart()) {
+            // start the car with a small delay to ensure the player is fully in the vehicle
+            delayedAction(() -> sendCommand("car start"), 500);
+        }
 
         // lock the car after 1 second and the small delay if not already locked
-        if (!this.carLocked) {
+        if (!this.carLocked && configService.load().getOptions().car().automatedLock()) {
             delayedAction(() -> sendCommand("car lock"), 1500);
         }
     }
@@ -66,7 +67,7 @@ public class CarListener extends PKUtilsBase
         MatrixStack matrices = context.matrixStack();
         VertexConsumerProvider vertexConsumers = context.consumers();
 
-        if (nonNull(matrices) && nonNull(vertexConsumers)) {
+        if (nonNull(matrices) && nonNull(vertexConsumers) && configService.load().getOptions().car().highlight()) {
             ofNullable(storage.getMinecartEntityToHighlight()).ifPresent(minecartEntity -> {
                 renderService.renderTextAboveEntity(matrices, vertexConsumers, minecartEntity, Text.of("🚗").copy().formatted(AQUA), 0.05F);
             });
@@ -94,7 +95,7 @@ public class CarListener extends PKUtilsBase
     public void onScreenOpen(Screen screen, int scaledWidth, int scaledHeight) {
         ClientPlayerInteractionManager interactionManager = MinecraftClient.getInstance().interactionManager;
 
-        if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen && genericContainerScreen.getTitle().getString().equals("CarControl")) { // TODO setting entry
+        if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen && genericContainerScreen.getTitle().getString().equals("CarControl") && configService.load().getOptions().car().fastLock()) {
             interactionManager.clickSlot(genericContainerScreen.getScreenHandler().syncId, 0, 0, PICKUP, player);
         }
     }

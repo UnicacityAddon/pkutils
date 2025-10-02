@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 public class CarOptions {
 
     private boolean fastLock = true;
+    private boolean highlight = true;
     private boolean automatedLock = true;
     private boolean automatedStart = true;
 }

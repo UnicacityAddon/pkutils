@@ -3,6 +3,8 @@
     "pkutils.options.car.title": "Auto",
     "pkutils.options.car.fast_lock.name": "Instant abschließen",
     "pkutils.options.car.fast_lock.description": "Schließt das Auto sofort ab, wenn '/car lock' ausgeführt wird",
+    "pkutils.options.car.highlight.name": "Markierung",
+    "pkutils.options.car.highlight.description": "Markiert dein Auto, wenn du es verlässt",
     "pkutils.options.car.automation.title": "Automatisierung",
     "pkutils.options.car.automation.lock.name": "Automatisches Abschließen",
     "pkutils.options.car.automation.lock.description": "Schließt das Auto automatisch ab, wenn du den Motor startest",
