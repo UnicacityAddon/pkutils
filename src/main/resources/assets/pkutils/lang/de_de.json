@@ -1,4 +1,5 @@
 {
+    "pkutils.options.sections.general": "Allgemein",
     "pkutils.options.reinforcementType": "Reinforcement Stil",
     "pkutils.options.nametag.title": "Nametag",
     "pkutils.options.nametag.faction_information.name": "Fraktionsinformation",

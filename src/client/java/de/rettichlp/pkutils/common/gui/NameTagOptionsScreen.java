@@ -21,7 +21,7 @@ public class NameTagOptionsScreen extends OptionsScreen {
     public void initBody() {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addBody(vertical().spacing(4));
 
-        directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.nametag.general"), this.textRenderer), Positioner::alignHorizontalCenter);
+        directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.sections.general"), this.textRenderer), Positioner::alignHorizontalCenter);
 
         addToggleButton(directionalLayoutWidget, "pkutils.options.nametag.faction_information", (options, value) -> options.nameTag().factionInformation(value), options -> options.nameTag().factionInformation(), 308);
 
