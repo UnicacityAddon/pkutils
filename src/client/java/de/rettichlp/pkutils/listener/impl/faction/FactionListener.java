@@ -25,12 +25,14 @@ import java.util.regex.Pattern;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
+import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.models.EquipEntry.Type.fromDisplayName;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
+import static de.rettichlp.pkutils.common.models.config.Options.ReinforcementType.UNICACITYADDON;
 import static java.lang.Integer.parseInt;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
@@ -82,21 +84,27 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             String naviPoint = reinforcementMatcher.group("naviPoint");
             String distance = reinforcementMatcher.group("distance");
 
-            Text reinforcementText = REINFORCEMENT.create(type, senderRank + " " + senderPlayerName, naviPoint, distance);
-            player.sendMessage(empty(), false);
-            player.sendMessage(reinforcementText, false);
-
             Reinforcement reinforcement = new Reinforcement(type, senderPlayerName, naviPoint, distance);
             LOGGER.info("Found new reinforcement: {}", reinforcement);
             storage.trackReinforcement(reinforcement);
 
-            return false;
+            boolean modernReinforcementStyle = configService.load().getOptions().reinforcementType() == UNICACITYADDON;
+            if (modernReinforcementStyle) {
+                Text reinforcementText = REINFORCEMENT.create(type, senderRank + " " + senderPlayerName, naviPoint, distance);
+                player.sendMessage(empty(), false);
+                player.sendMessage(reinforcementText, false);
+            }
+
+            return !modernReinforcementStyle;
         }
 
         Matcher reinforcementButtonMatcher = REINFORCEMENT_BUTTON_PATTERN.matcher(message);
         if (reinforcementButtonMatcher.find()) {
-            // send empty line after buttons
-            MinecraftClient.getInstance().execute(() -> player.sendMessage(empty(), false));
+            boolean modernReinforcementStyle = configService.load().getOptions().reinforcementType() == UNICACITYADDON;
+            if (modernReinforcementStyle) {
+                // send empty line after buttons
+                MinecraftClient.getInstance().execute(() -> player.sendMessage(empty(), false));
+            }
 
             List<ClickEvent> clickEvents = text.getSiblings().stream()
                     .map(Text::getStyle)
@@ -146,9 +154,6 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             String target = reinforcementOnTheWayMatcher.group("target");
             String distance = reinforcementOnTheWayMatcher.group("distance");
 
-            Text reinforcementAnswer = REINFORCEMENT_ON_THE_WAY.create(senderRank + " " + senderPlayerName, target, distance);
-            player.sendMessage(reinforcementAnswer, false);
-
             // mark all reinforcements of the sender (and not self) within the last 30 seconds as on-the-way
             String playerName = player.getGameProfile().getName();
             storage.getReinforcements().stream()
@@ -168,14 +173,20 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
                         LOGGER.info("Reinforcement accepted: {}", reinforcement);
                     });
 
-            return false;
+            boolean modernReinforcementStyle = configService.load().getOptions().reinforcementType() == UNICACITYADDON;
+            if (modernReinforcementStyle) {
+                Text reinforcementAnswer = REINFORCEMENT_ON_THE_WAY.create(senderRank + " " + senderPlayerName, target, distance);
+                player.sendMessage(reinforcementAnswer, false);
+            }
+
+            return !modernReinforcementStyle;
         }
 
         Matcher equipMatcher = EQUIP_PATTERN.matcher(message);
         if (equipMatcher.find()) {
             String type = equipMatcher.group("type");
             fromDisplayName(type).ifPresent(api::trackEquip);
-            return false;
+            return true;
         }
 
         return true;
