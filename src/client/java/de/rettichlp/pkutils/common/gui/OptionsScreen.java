@@ -6,6 +6,7 @@ import de.rettichlp.pkutils.common.models.config.Options;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
@@ -13,10 +14,12 @@ import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.client.gui.widget.ThreePartsLayoutWidget;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.resource.language.TranslationStorage;
 import net.minecraft.item.Item;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Language;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
@@ -128,14 +131,28 @@ public abstract class OptionsScreen extends Screen {
                                 BiConsumer<Options, Boolean> onPress,
                                 @NotNull Function<Options, Boolean> currentValue,
                                 int width) {
-        MutableText translatable = translatable(key);
+        Language language = TranslationStorage.getInstance();
 
-        ToggleButtonWidget toggleButton = new ToggleButtonWidget(translatable, value -> configService.edit(mainConfig -> {
+        String nameKey = key + ".name";
+        if (!language.hasTranslation(nameKey)) {
+            throw new IllegalArgumentException("Missing translation for key: " + nameKey);
+        }
+
+        String tooltipKey = key + ".description";
+        if (!language.hasTranslation(tooltipKey)) {
+            throw new IllegalArgumentException("Missing translation for key: " + tooltipKey);
+        }
+
+        Text nameText = translatable(nameKey);
+        Text tooltipText = translatable(tooltipKey);
+
+        ToggleButtonWidget toggleButton = new ToggleButtonWidget(nameText, value -> configService.edit(mainConfig -> {
             LOGGER.debug("Set option '{}' to '{}'", key, value);
             onPress.accept(mainConfig.getOptions(), value);
         }), currentValue.apply(configService.load().getOptions()));
 
         toggleButton.setWidth(width);
+        toggleButton.setTooltip(Tooltip.of(tooltipText));
 
         widget.add(toggleButton);
     }
