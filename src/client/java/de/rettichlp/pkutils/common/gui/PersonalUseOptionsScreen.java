@@ -11,12 +11,17 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
+import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.stream;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
-import static net.minecraft.text.Text.*;
+import static net.minecraft.text.Text.empty;
+import static net.minecraft.text.Text.of;
 import static net.minecraft.text.Text.translatable;
 
 public class PersonalUseOptionsScreen extends OptionsScreen {
@@ -64,7 +69,7 @@ public class PersonalUseOptionsScreen extends OptionsScreen {
         directionalLayoutWidget.add(widget, Positioner::alignVerticalCenter);
 
         // purity input
-        addCyclingButton(directionalLayoutWidget, "pkutils.purity.title", Purity.values(), Purity::getDisplayName, (options, value) -> personalUseEntry.setPurity(value), options -> personalUseEntry.getPurity(), 96);
+        addCyclingButton(directionalLayoutWidget, "pkutils.purity.title", Purity.values(), Purity::getDisplayName, (options, value) -> updatePersonalUseEntry(personalUseEntry, value), options -> personalUseEntry.getPurity(), 96);
 
         // amount input
         DirectionalLayoutWidget widget2 = personalUseInput(personalUseEntry);
@@ -78,6 +83,7 @@ public class PersonalUseOptionsScreen extends OptionsScreen {
 
         TextFieldWidget widget = new TextFieldWidget(this.textRenderer, 40, 20, empty());
         widget.setWidth(80);
+        widget.setChangedListener(value -> updatePersonalUseEntry(personalUseEntry, value));
         widget.setEditable(true);
         widget.setPlaceholder(of(valueOf(personalUseEntry.getAmount())));
 
@@ -89,5 +95,38 @@ public class PersonalUseOptionsScreen extends OptionsScreen {
         directionalLayoutWidget.add(widget1, Positioner::alignVerticalCenter);
 
         return directionalLayoutWidget;
+    }
+
+    private void updatePersonalUseEntry(@NotNull PersonalUseEntry personalUseEntry, Purity newPurity) {
+        personalUseEntry.setPurity(newPurity);
+        configService.edit(mainConfig -> {
+            List<PersonalUseEntry> personalUseEntries = mainConfig.getOptions().personalUse();
+            personalUseEntries.removeIf(pue -> pue.getInventoryItem() == personalUseEntry.getInventoryItem());
+            personalUseEntries.add(personalUseEntry);
+        });
+    }
+
+    private void updatePersonalUseEntry(@NotNull PersonalUseEntry personalUseEntry, String newAmount) {
+        int parsedInt;
+
+        try {
+            parsedInt = parseInt(newAmount);
+        } catch (NumberFormatException e) {
+            LOGGER.warn("Could not parse personal use amount: {}", newAmount);
+            parsedInt = -1;
+        }
+
+        // skip config edit if the amount did not change or is negative
+        if (parsedInt == personalUseEntry.getAmount() || parsedInt < 0) {
+            LOGGER.info("Skipping personal use config edit, amount did not change or is negative (newAmount: {}, currentAmount: {})", parsedInt, personalUseEntry.getAmount());
+            return;
+        }
+
+        personalUseEntry.setAmount(parsedInt);
+        configService.edit(mainConfig -> {
+            List<PersonalUseEntry> personalUseEntries = mainConfig.getOptions().personalUse();
+            personalUseEntries.removeIf(pue -> pue.getInventoryItem() == personalUseEntry.getInventoryItem());
+            personalUseEntries.add(personalUseEntry);
+        });
     }
 }

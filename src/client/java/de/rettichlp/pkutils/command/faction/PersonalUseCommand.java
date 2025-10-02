@@ -2,29 +2,18 @@ package de.rettichlp.pkutils.command.faction;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.common.models.InventoryItem;
-import de.rettichlp.pkutils.common.models.PersonalUseEntry;
-import de.rettichlp.pkutils.common.models.config.MainConfig;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.PlayerListEntry;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
-import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
-import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
-import static de.rettichlp.pkutils.common.models.InventoryItem.fromDisplayName;
-import static java.lang.Integer.MAX_VALUE;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.command.CommandSource.suggestMatching;
@@ -35,44 +24,6 @@ public class PersonalUseCommand extends CommandBase {
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
-                .then(literal("set")
-                        .then(argument("type", string())
-                                .suggests((context, builder) -> {
-                                    List<String> inventoryItemStrings = Arrays.stream(InventoryItem.values())
-                                            .filter(InventoryItem::isDrugBankItem)
-                                            .map(InventoryItem::getDisplayName)
-                                            .map(inventoryItemString -> "\"" + inventoryItemString + "\"")
-                                            .toList();
-                                    return suggestMatching(inventoryItemStrings, builder);
-                                })
-                                .then(argument("purity", integer(0, 3))
-                                        .then(argument("amount", integer(1, MAX_VALUE))
-                                                .executes(context -> {
-                                                    String inventoryItemString = getString(context, "type").replace("\"", "");
-                                                    Optional<InventoryItem> optionalInventoryItem = fromDisplayName(inventoryItemString);
-                                                    int purity = getInteger(context, "purity");
-                                                    int amount = getInteger(context, "amount");
-
-                                                    if (optionalInventoryItem.isEmpty()) {
-                                                        sendModMessage(inventoryItemString + " ist keine valide Eingabe.", true);
-                                                        return 1;
-                                                    }
-
-                                                    InventoryItem inventoryItem = optionalInventoryItem.get();
-
-                                                    configService.edit(mainConfig -> {
-                                                        // remove old entry if exists
-                                                        mainConfig.getOwnUseEntries().removeIf(ownUseEntry -> ownUseEntry.inventoryItem() == inventoryItem);
-
-                                                        // add new entry
-                                                        OwnUseEntry ownUseEntry = new OwnUseEntry(inventoryItem, purity, amount);
-                                                        mainConfig.getOwnUseEntries().add(ownUseEntry);
-
-                                                        sendModMessage("Eigenbedarf für " + inventoryItem.getDisplayName() + " auf " + amount + " (Reinheit: " + purity + ") gesetzt.", false);
-                                                    });
-
-                                                    return 1;
-                                                })))))
                 .then(literal("give")
                         .then(argument("player", word())
                                 .suggests((context, builder) -> {
@@ -94,23 +45,13 @@ public class PersonalUseCommand extends CommandBase {
     }
 
     private @NotNull List<String> createCommands(String commandTemplate) {
-        MainConfig mainConfig = configService.load();
-        List<PersonalUseEntry> ownUseEntries = mainConfig.getPersonalUseEntries();
-
-        List<String> commandStrings = new ArrayList<>();
-
-        for (PersonalUseEntry personalUseEntry : ownUseEntries) {
-            if (personalUseEntry.getAmount() <= 0) {
-                continue;
-            }
-
-            String commandString = commandTemplate
-                    .replace("%name%", personalUseEntry.getInventoryItem().getDisplayName())
-                    .replace("%amount%", String.valueOf(personalUseEntry.getAmount()))
-                    .replace("%purity%", String.valueOf(personalUseEntry.getPurity()));
-
-            commandStrings.add(commandString);
-        }
+        List<String> commandStrings = configService.load().getOptions().personalUse().stream()
+                .filter(personalUseEntry -> personalUseEntry.getAmount() > 0)
+                .map(personalUseEntry -> commandTemplate
+                        .replace("%name%", personalUseEntry.getInventoryItem().getDisplayName())
+                        .replace("%amount%", String.valueOf(personalUseEntry.getAmount()))
+                        .replace("%purity%", String.valueOf(personalUseEntry.getPurity())))
+                .toList();
 
         if (commandStrings.isEmpty()) {
             sendModMessage("Du hast keinen Eigenbedarf gesetzt.", false);
