@@ -1,0 +1,42 @@
+{
+    "bomb": {
+        "sounds": [
+            {
+                "name": "pkutils:bomb_sound",
+                "stream": true
+            }
+        ]
+    },
+    "contract.fulfilled": {
+        "sounds": [
+            {
+                "name": "pkutils:contract_fulfilled_sound",
+                "stream": true
+            }
+        ]
+    },
+    "contract.set": {
+        "sounds": [
+            {
+                "name": "pkutils:contract_set_sound",
+                "stream": true
+            }
+        ]
+    },
+    "report": {
+        "sounds": [
+            {
+                "name": "pkutils:report_sound",
+                "stream": true
+            }
+        ]
+    },
+    "service": {
+        "sounds": [
+            {
+                "name": "pkutils:service_sound",
+                "stream": true
+            }
+        ]
+    }
+}

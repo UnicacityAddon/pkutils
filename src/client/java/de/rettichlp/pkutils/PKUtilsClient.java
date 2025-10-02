@@ -34,6 +34,8 @@ public class PKUtilsClient implements ClientModInitializer {
     public void onInitializeClient() {
         // This entrypoint is suitable for setting up client-specific logic, such as rendering.
 
+        this.registry.registerSounds();
+
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             player = client.player;
             networkHandler = handler;

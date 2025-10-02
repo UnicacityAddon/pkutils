@@ -22,6 +22,7 @@ import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
 import de.rettichlp.pkutils.command.money.DepositCommand;
 import de.rettichlp.pkutils.command.money.RichTaxesCommand;
+import de.rettichlp.pkutils.common.models.Sound;
 import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
@@ -71,6 +72,8 @@ import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.util.Objects.isNull;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.entity.effect.StatusEffects.ABSORPTION;
+import static net.minecraft.registry.Registries.SOUND_EVENT;
+import static net.minecraft.registry.Registry.register;
 
 public class Registry {
 
@@ -122,6 +125,12 @@ public class Registry {
     private BlockPos lastPlayerPos = null;
     private boolean lastAbsorptionState = false;
     private boolean initialized = false;
+
+    public void registerSounds() {
+        for (Sound value : Sound.values()) {
+            register(SOUND_EVENT, value.getIdentifier(), value.getSoundEvent());
+        }
+    }
 
     public void registerCommands(@NotNull CommandDispatcher<FabricClientCommandSource> dispatcher) {
         for (Class<?> commandClass : this.commands /*ClassIndex.getAnnotated(PKUtilsCommand.class)*/) {
