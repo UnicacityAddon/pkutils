@@ -9,5 +9,18 @@
     "pkutils.options.nametag.additional.blacklist": "Schwarze Liste",
     "pkutils.options.nametag.additional.contract": "Kopfgeld",
     "pkutils.options.nametag.additional.houseban": "Hausverbot",
-    "pkutils.options.nametag.additional.wanted": "Gesucht"
+    "pkutils.options.nametag.additional.wanted": "Gesucht",
+    "pkutils.options.personal_use.title": "Eigenbedarf",
+    "pkutils.options.personal_use.header.name": "Item",
+    "pkutils.options.personal_use.header.purity": "Reinheit",
+    "pkutils.options.personal_use.header.amount": "Menge",
+    "pkutils.options.personal_use.powder": "Pulver",
+    "pkutils.options.personal_use.herbs": "Kräuter",
+    "pkutils.options.personal_use.crystals": "Kristalle",
+    "pkutils.options.personal_use.grab_bag": "Wundertüte",
+    "pkutils.purity.title":  "Reinheit",
+    "pkutils.purity.best": "Höchste",
+    "pkutils.purity.good": "Gute",
+    "pkutils.purity.medium": "Mittlere",
+    "pkutils.purity.bad": "Schlechte"
 }

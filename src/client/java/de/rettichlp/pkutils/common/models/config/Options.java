@@ -1,10 +1,14 @@
 package de.rettichlp.pkutils.common.models.config;
 
+import de.rettichlp.pkutils.common.models.PersonalUseEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.minecraft.text.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static de.rettichlp.pkutils.common.models.config.Options.ReinforcementType.UNICACITYADDON;
 import static net.minecraft.text.Text.*;
@@ -20,6 +24,7 @@ import static net.minecraft.util.Formatting.RED;
 public class Options {
 
     private final NameTagOptions nameTag = new NameTagOptions();
+    private final List<PersonalUseEntry> personalUse = new ArrayList<>();
 
     private ReinforcementType reinforcementType = UNICACITYADDON;
 

@@ -3,7 +3,7 @@ package de.rettichlp.pkutils.command.faction;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.models.InventoryItem;
-import de.rettichlp.pkutils.common.models.OwnUseEntry;
+import de.rettichlp.pkutils.common.models.PersonalUseEntry;
 import de.rettichlp.pkutils.common.models.config.MainConfig;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
@@ -30,7 +30,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 import static net.minecraft.command.CommandSource.suggestMatching;
 
 @PKUtilsCommand(label = "eigenbedarf")
-public class OwnUseCommand extends CommandBase {
+public class PersonalUseCommand extends CommandBase {
 
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
@@ -95,19 +95,19 @@ public class OwnUseCommand extends CommandBase {
 
     private @NotNull List<String> createCommands(String commandTemplate) {
         MainConfig mainConfig = configService.load();
-        List<OwnUseEntry> ownUseEntries = mainConfig.getOwnUseEntries();
+        List<PersonalUseEntry> ownUseEntries = mainConfig.getPersonalUseEntries();
 
         List<String> commandStrings = new ArrayList<>();
 
-        for (OwnUseEntry ownUseEntry : ownUseEntries) {
-            if (ownUseEntry.amount() <= 0) {
+        for (PersonalUseEntry personalUseEntry : ownUseEntries) {
+            if (personalUseEntry.getAmount() <= 0) {
                 continue;
             }
 
             String commandString = commandTemplate
-                    .replace("%name%", ownUseEntry.inventoryItem().getDisplayName())
-                    .replace("%amount%", String.valueOf(ownUseEntry.amount()))
-                    .replace("%purity%", String.valueOf(ownUseEntry.purity()));
+                    .replace("%name%", personalUseEntry.getInventoryItem().getDisplayName())
+                    .replace("%amount%", String.valueOf(personalUseEntry.getAmount()))
+                    .replace("%purity%", String.valueOf(personalUseEntry.getPurity()));
 
             commandStrings.add(commandString);
         }

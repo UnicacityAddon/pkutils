@@ -9,5 +9,18 @@
     "pkutils.options.nametag.additional.blacklist": "Blacklist",
     "pkutils.options.nametag.additional.contract": "Contract",
     "pkutils.options.nametag.additional.houseban": "Houseban",
-    "pkutils.options.nametag.additional.wanted": "Wanted"
+    "pkutils.options.nametag.additional.wanted": "Wanted",
+    "pkutils.options.personal_use.title": "Personal use",
+    "pkutils.options.personal_use.header.name": "Item",
+    "pkutils.options.personal_use.header.purity": "Purity",
+    "pkutils.options.personal_use.header.amount": "Amount",
+    "pkutils.options.personal_use.powder": "Powder",
+    "pkutils.options.personal_use.herbs": "Herbs",
+    "pkutils.options.personal_use.crystals": "Crystals",
+    "pkutils.options.personal_use.grab_bag": "Grab bag",
+    "pkutils.purity.title":  "Purity",
+    "pkutils.purity.best": "Best",
+    "pkutils.purity.good": "Good",
+    "pkutils.purity.medium": "Medium",
+    "pkutils.purity.bad": "Bad"
 }
