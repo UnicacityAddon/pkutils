@@ -14,6 +14,7 @@ import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
+import static java.lang.String.valueOf;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.command.CommandSource.suggestMatching;
@@ -49,8 +50,8 @@ public class PersonalUseCommand extends CommandBase {
                 .filter(personalUseEntry -> personalUseEntry.getAmount() > 0)
                 .map(personalUseEntry -> commandTemplate
                         .replace("%name%", personalUseEntry.getInventoryItem().getDisplayName())
-                        .replace("%amount%", String.valueOf(personalUseEntry.getAmount()))
-                        .replace("%purity%", String.valueOf(personalUseEntry.getPurity())))
+                        .replace("%amount%", valueOf(personalUseEntry.getAmount()))
+                        .replace("%purity%", valueOf(personalUseEntry.getPurity().ordinal())))
                 .toList();
 
         if (commandStrings.isEmpty()) {

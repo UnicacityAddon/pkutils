@@ -186,7 +186,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
         if (equipMatcher.find()) {
             String type = equipMatcher.group("type");
             fromDisplayName(type).ifPresent(api::trackEquip);
-            return false;
+            return true;
         }
 
         return true;
