@@ -8,6 +8,8 @@
     "pkutils.options.car.automation.lock.description": "Locks the car automatically when you start the engine",
     "pkutils.options.car.automation.start.name": "Automated starting",
     "pkutils.options.car.automation.start.description": "Starts the car automatically when you enter it",
+    "pkutils.options.custom_sounds.name": "Notification sounds",
+    "pkutils.options.custom_sounds.description": "Play custom sounds for some notifications",
     "pkutils.options.reinforcementType": "Reinforcement style",
     "pkutils.options.nametag.title": "Nametag",
     "pkutils.options.nametag.faction_information.name": "Faction information",

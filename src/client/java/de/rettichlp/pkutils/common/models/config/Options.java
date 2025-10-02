@@ -28,6 +28,7 @@ public class Options {
     private final CarOptions car = new CarOptions();
 
     private ReinforcementType reinforcementType = UNICACITYADDON;
+    private boolean customSounds = true;
 
     @Getter
     @AllArgsConstructor

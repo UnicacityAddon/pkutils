@@ -25,6 +25,7 @@ public class MainOptionsScreen extends OptionsScreen {
 
         DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(horizontal().spacing(8));
         addButton(directionalLayoutWidget2, "pkutils.options.car.title", button -> this.client.setScreen(new CarOptionsScreen(this)), 150);
+        addToggleButton(directionalLayoutWidget2, "pkutils.options.custom_sounds", Options::customSounds, Options::customSounds, 150);
 
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
     }
