@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
+import static de.rettichlp.pkutils.common.models.Sound.CONTRACT_FULFILLED;
+import static de.rettichlp.pkutils.common.models.Sound.CONTRACT_SET;
 import static java.lang.Integer.parseInt;
 import static java.lang.System.currentTimeMillis;
 import static java.util.regex.Pattern.compile;
@@ -49,6 +51,7 @@ public class ContractListener extends PKUtilsBase implements IMessageReceiveList
         if (contractAddMatcher.find()) {
             // show all entries to sync
             delayedAction(() -> sendCommand("contract"), 1000);
+            CONTRACT_SET.play();
             return true;
         }
 
@@ -63,6 +66,7 @@ public class ContractListener extends PKUtilsBase implements IMessageReceiveList
         if (contractKillMatcher.find()) {
             String targetName = contractKillMatcher.group("targetName");
             storage.getContractEntries().removeIf(contractEntry -> contractEntry.getPlayerName().equals(targetName));
+            CONTRACT_FULFILLED.play();
             return true;
         }
 

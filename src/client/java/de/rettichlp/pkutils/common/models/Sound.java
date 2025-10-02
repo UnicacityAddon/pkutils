@@ -18,8 +18,8 @@ public enum Sound {
     BOMB_SOUND("bomb"),
     CONTRACT_FULFILLED("contract.fulfilled"),
     CONTRACT_SET("contract.set"),
-    REPORT("report"),
-    SERVICE("service");
+    REPORT("report"), // TODO use sound
+    SERVICE("service"); // TODO use sound
 
     private final String path;
 

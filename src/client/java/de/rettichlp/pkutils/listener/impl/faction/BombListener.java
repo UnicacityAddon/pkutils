@@ -20,6 +20,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.POLIZEI;
 import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
+import static de.rettichlp.pkutils.common.models.Sound.BOMB_SOUND;
 import static java.lang.String.format;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
@@ -53,6 +54,7 @@ public class BombListener extends PKUtilsBase implements IMessageReceiveListener
         if (bombFoundMatcher.find()) {
             this.bombPlantedTime = now();
             this.bombLocationString = bombFoundMatcher.group("location");
+            BOMB_SOUND.play();
             return true;
         }
 
