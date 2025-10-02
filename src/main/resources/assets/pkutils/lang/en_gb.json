@@ -1,5 +1,13 @@
 {
     "pkutils.options.sections.general": "General",
+    "pkutils.options.car.title": "Car",
+    "pkutils.options.car.fast_lock.name": "Fast lock",
+    "pkutils.options.car.fast_lock.description": "Locks the car immediately when execution '/car lock'",
+    "pkutils.options.car.automation.title": "Automation",
+    "pkutils.options.car.automation.lock.name": "Automated locking",
+    "pkutils.options.car.automation.lock.description": "Locks the car automatically when you start the engine",
+    "pkutils.options.car.automation.start.name": "Automated starting",
+    "pkutils.options.car.automation.start.description": "Starts the car automatically when you enter it",
     "pkutils.options.reinforcementType": "Reinforcement style",
     "pkutils.options.nametag.title": "Nametag",
     "pkutils.options.nametag.faction_information.name": "Faction information",

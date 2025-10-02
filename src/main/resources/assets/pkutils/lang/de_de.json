@@ -1,5 +1,13 @@
 {
     "pkutils.options.sections.general": "Allgemein",
+    "pkutils.options.car.title": "Auto",
+    "pkutils.options.car.fast_lock.name": "Instant abschließen",
+    "pkutils.options.car.fast_lock.description": "Schließt das Auto sofort ab, wenn '/car lock' ausgeführt wird",
+    "pkutils.options.car.automation.title": "Automatisierung",
+    "pkutils.options.car.automation.lock.name": "Automatisches Abschließen",
+    "pkutils.options.car.automation.lock.description": "Schließt das Auto automatisch ab, wenn du den Motor startest",
+    "pkutils.options.car.automation.start.name": "Automatisches Starten",
+    "pkutils.options.car.automation.start.description": "Startet das Auto automatisch, wenn du einsteigst",
     "pkutils.options.reinforcementType": "Reinforcement Stil",
     "pkutils.options.nametag.title": "Nametag",
     "pkutils.options.nametag.faction_information.name": "Fraktionsinformation",

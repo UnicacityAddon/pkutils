@@ -25,6 +25,7 @@ public class Options {
 
     private final NameTagOptions nameTag = new NameTagOptions();
     private final List<PersonalUseEntry> personalUse = new ArrayList<>();
+    private final CarOptions car = new CarOptions();
 
     private ReinforcementType reinforcementType = UNICACITYADDON;
 
