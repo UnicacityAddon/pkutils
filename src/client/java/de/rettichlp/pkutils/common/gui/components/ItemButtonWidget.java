@@ -1,18 +1,22 @@
 package de.rettichlp.pkutils.common.gui.components;
 
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
+import static net.minecraft.text.Text.translatable;
+
 public class ItemButtonWidget extends ButtonWidget {
 
     private final Item item;
 
-    public ItemButtonWidget(Item item, PressAction onPress) {
+    public ItemButtonWidget(String key, Item item, PressAction onPress) {
         super(0, 0, 20, 20, Text.empty(), onPress, DEFAULT_NARRATION_SUPPLIER);
         this.item = item;
+        setTooltip(Tooltip.of(translatable(key)));
     }
 
     @Override
