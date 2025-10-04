@@ -68,11 +68,11 @@ public class Storage {
 
     @Getter
     @Setter
-    private int moneyBankAmount = 0;
+    private int moneyAtmAmount = 0;
 
     @Getter
     @Setter
-    private int moneyAtmAmount = 0;
+    private int moneyBankAmount = 0;
 
     @Getter
     @Setter
@@ -105,10 +105,14 @@ public class Storage {
         LOGGER.info("blackMarkets[{}]: {}", this.blackMarkets.size(), this.blackMarkets);
         // wantedEntries
         LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
-        // toggledChat
-        LOGGER.info("toggledChat: {}", this.toggledChat);
         // minecartEntityToHighlight
         LOGGER.info("minecartEntityToHighlight: {}", this.minecartEntityToHighlight);
+        // moneyAtmAmount
+        LOGGER.info("moneyAtmAmount: {}", this.moneyAtmAmount);
+        // moneyBankAmount
+        LOGGER.info("moneyBankAmount: {}", this.moneyBankAmount);
+        // toggledChat
+        LOGGER.info("toggledChat: {}", this.toggledChat);
     }
 
     public void addFactionMember(Faction faction, FactionMember factionMember) {

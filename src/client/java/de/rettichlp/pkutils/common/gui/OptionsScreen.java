@@ -77,6 +77,11 @@ public abstract class OptionsScreen extends Screen {
     }
 
     @Override
+    public void close() {
+        this.client.setScreen(null);
+    }
+
+    @Override
     protected void init() {
         initHeader();
         initBody();
@@ -86,17 +91,12 @@ public abstract class OptionsScreen extends Screen {
     }
 
     @Override
-    public void close() {
-        this.client.setScreen(null);
+    protected void refreshWidgetPositions() {
+        this.layout.refreshPositions();
     }
 
     public void back() {
         this.client.setScreen(this.parent);
-    }
-
-    @Override
-    protected void refreshWidgetPositions() {
-        this.layout.refreshPositions();
     }
 
     public void addButton(@NotNull DirectionalLayoutWidget widget, String key, ButtonWidget.PressAction onPress, int width) {
@@ -159,11 +159,11 @@ public abstract class OptionsScreen extends Screen {
     }
 
     public void addToggleButtonWithSettings(@NotNull DirectionalLayoutWidget widget,
-                                             String key,
-                                             BiConsumer<Options, Boolean> onPress,
-                                             ButtonWidget.PressAction onPressSettings,
-                                             @NotNull Function<Options, Boolean> currentValue,
-                                             int width) {
+                                            String key,
+                                            BiConsumer<Options, Boolean> onPress,
+                                            ButtonWidget.PressAction onPressSettings,
+                                            @NotNull Function<Options, Boolean> currentValue,
+                                            int width) {
         DirectionalLayoutWidget directionalLayoutWidget = widget.add(horizontal());
         addToggleButton(directionalLayoutWidget, key, onPress, currentValue, width - 20);
         addItemButton(directionalLayoutWidget, "pkutils.options.text.options", COMPARATOR, onPressSettings);

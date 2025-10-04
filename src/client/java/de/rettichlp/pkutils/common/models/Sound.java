@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static de.rettichlp.pkutils.PKUtilsClient.configService;
-import static net.minecraft.client.sound.PositionedSoundInstance.*;
+import static net.minecraft.client.sound.PositionedSoundInstance.master;
 
 @Getter
 @AllArgsConstructor

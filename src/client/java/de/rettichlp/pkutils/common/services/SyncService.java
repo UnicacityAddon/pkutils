@@ -21,10 +21,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.api;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
-import static de.rettichlp.pkutils.common.models.Faction.FBI;
-import static de.rettichlp.pkutils.common.models.Faction.HITMAN;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
-import static de.rettichlp.pkutils.common.models.Faction.POLIZEI;
 import static java.awt.Color.CYAN;
 import static java.awt.Color.WHITE;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -75,7 +72,7 @@ public class SyncService extends PKUtilsBase {
 
             switch (faction) {
                 case FBI, POLIZEI -> sendCommand("wanteds");
-                case HITMAN -> sendCommand("contract");
+                case HITMAN -> sendCommand("contractlist");
                 case RETTUNGSDIENST -> sendCommand("hausverbot list");
                 default -> {
                     if (faction.isBadFaction()) {
