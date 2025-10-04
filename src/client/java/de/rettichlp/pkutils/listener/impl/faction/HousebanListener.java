@@ -22,7 +22,7 @@ import static java.util.regex.Pattern.compile;
 public class HousebanListener extends PKUtilsBase implements IMessageReceiveListener {
 
     private static final Pattern HOUSEBAN_HEADER_PATTERN = compile("^Hausverbote \\(Rettungsdienst\\):$");
-    private static final Pattern HOUSEBAN_ENTRY_PATTERN = compile("^(?<playerName>[a-zA-Z0-9_]+) \\| (?<issuerPlayerName>[a-zA-Z0-9_]+) \\| (?<reasons>.+) \\| (?<expireDateDay>\\d+)\\.(?<expireDateMonth>\\d+)\\.(?<expireDateYear>\\d+) (?<expireTimeHour>\\d+):(?<expireTimeMinute>\\d+) \\[Entfernen]$");
+    private static final Pattern HOUSEBAN_ENTRY_PATTERN = compile("^§[aec](?<playerName>[a-zA-Z0-9_]+) \\| (?<issuerPlayerName>[a-zA-Z0-9_]+) \\| (?<reasons>.+) \\| (?<expireDateDay>\\d+)\\.(?<expireDateMonth>\\d+)\\.(?<expireDateYear>\\d+) (?<expireTimeHour>\\d+):(?<expireTimeMinute>\\d+) §8\\[§4Entfernen§8]$");
     private static final Pattern HOUSEBAN_ADD_PATTERN = compile("^(?<issuerPlayerName>[a-zA-Z0-9_]+) hat (?<playerName>[a-zA-Z0-9_]+) ein Hausverbot erteilt\\. \\((?<reason>.+) \\| Ende: (?<expireDateDay>\\d+)\\.(?<expireDateMonth>\\d+)\\.(?<expireDateYear>\\d+) (?<expireTimeHour>\\d+):(?<expireTimeMinute>\\d+)\\)$");
 
     private long activeCheck = 0;
