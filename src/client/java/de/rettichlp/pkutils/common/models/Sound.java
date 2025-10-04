@@ -20,7 +20,7 @@ public enum Sound {
     CONTRACT_FULFILLED("contract.fulfilled"),
     CONTRACT_SET("contract.set"),
     REPORT("report"), // TODO use sound
-    SERVICE("service"); // TODO use sound
+    SERVICE("service");
 
     private final String path;
 
