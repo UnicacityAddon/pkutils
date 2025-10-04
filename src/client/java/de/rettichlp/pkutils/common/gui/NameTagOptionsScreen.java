@@ -1,14 +1,22 @@
 package de.rettichlp.pkutils.common.gui;
 
+import de.rettichlp.pkutils.common.models.Color;
+import de.rettichlp.pkutils.common.models.Faction;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
+import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.Positioner;
 import net.minecraft.client.gui.widget.TextWidget;
+import org.jetbrains.annotations.NotNull;
 
-import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
+import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.common.models.Color.WHITE;
+import static de.rettichlp.pkutils.common.models.Faction.NULL;
+import static java.util.Arrays.stream;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
-import static net.minecraft.item.Items.COMPARATOR;
+import static net.minecraft.text.Text.of;
 import static net.minecraft.text.Text.translatable;
 
 public class NameTagOptionsScreen extends OptionsScreen {
@@ -23,15 +31,10 @@ public class NameTagOptionsScreen extends OptionsScreen {
 
         directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.faction"), this.textRenderer), Positioner::alignHorizontalCenter);
 
-        addToggleButton(directionalLayoutWidget, "pkutils.options.nametag.faction_information", (options, value) -> options.nameTag().factionInformation(value), options -> options.nameTag().factionInformation(), 308);
+        addToggleButton(directionalLayoutWidget, "pkutils.options.nametag.faction.information", (options, value) -> options.nameTag().factionInformation(value), options -> options.nameTag().factionInformation(), 308);
 
-        DirectionalLayoutWidget directionalLayoutWidget1 = directionalLayoutWidget.add(horizontal().spacing(8));
-        addToggleButton(directionalLayoutWidget1, "pkutils.options.nametag.highlight.faction", (options, value) -> options.nameTag().highlightFaction(value), options -> options.nameTag().highlightFaction(), 280);
-        addItemButton(directionalLayoutWidget1, COMPARATOR, button -> notificationService.sendWarningNotification("To be implemented"));
-
-        DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(horizontal().spacing(8));
-        addToggleButton(directionalLayoutWidget2, "pkutils.options.nametag.highlight.alliance", (options, value) -> options.nameTag().highlightAlliance(value), options -> options.nameTag().highlightAlliance(), 280);
-        addItemButton(directionalLayoutWidget2, COMPARATOR, button -> notificationService.sendWarningNotification("To be implemented"));
+        directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.color"), this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
+        directionalLayoutWidget.add(getFactionColorOptions());
 
         directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.additional"), this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
 
@@ -44,5 +47,21 @@ public class NameTagOptionsScreen extends OptionsScreen {
         addToggleButton(directionalLayoutWidget4, "pkutils.options.nametag.additional.wanted", (options, value) -> options.nameTag().additionalWanted(value), options -> options.nameTag().additionalWanted(), 150);
 
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
+    }
+
+    private @NotNull GridWidget getFactionColorOptions() {
+        GridWidget gridWidget = new GridWidget();
+        gridWidget.getMainPositioner().marginX(4).marginBottom(4).alignHorizontalCenter();
+        GridWidget.Adder adder = gridWidget.createAdder(2);
+
+        stream(Faction.values())
+                .filter(faction -> faction != NULL)
+                .map(faction -> new CyclingButtonWidget.Builder<>(Color::getDisplayName)
+                        .values(Color.values())
+                        .initially(configService.load().getOptions().nameTag().highlightFactions().getOrDefault(faction, WHITE))
+                        .build(of(faction.getDisplayName()), (button, value) -> configService.edit(mainConfig -> mainConfig.getOptions().nameTag().highlightFactions().put(faction, value))))
+                .forEach(adder::add);
+
+        return gridWidget;
     }
 }

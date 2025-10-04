@@ -25,18 +25,14 @@ import java.util.Optional;
 import static com.mojang.text2speech.Narrator.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.factionService;
-import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
-import static de.rettichlp.pkutils.common.models.Faction.NULL;
+import static de.rettichlp.pkutils.common.models.Color.WHITE;
 import static java.util.Objects.nonNull;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
-import static net.minecraft.util.Formatting.BLUE;
-import static net.minecraft.util.Formatting.DARK_BLUE;
 import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.DARK_RED;
 import static net.minecraft.util.Formatting.RED;
-import static net.minecraft.util.Formatting.WHITE;
 
 @Mixin(EntityRenderer.class)
 public abstract class EntityRendererMixin<S extends Entity, T extends EntityRenderState> {
@@ -71,18 +67,10 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
         Text newTargetDisplayNamePrefix = empty();
         Text newTargetDisplayName = targetDisplayName.copy();
         Text newTargetDisplayNameSuffix = nameTagOptions.factionInformation() ? targetFaction.getNameTagSuffix() : empty();
-        Formatting newTargetDisplayNameColor = WHITE;
+        Formatting newTargetDisplayNameColor;
 
-        // same faction -> blue name
-        Faction playerFaction = storage.getFaction(player.getName().getString());
-        if (nameTagOptions.highlightFaction() && playerFaction == targetFaction && targetFaction != NULL) {
-            newTargetDisplayNameColor = BLUE;
-        }
-
-        // alliance faction -> dark blue
-        if (nameTagOptions.highlightAlliance() && configService.load().getAllianceFaction() == targetFaction && targetFaction != NULL) {
-            newTargetDisplayNameColor = DARK_BLUE;
-        }
+        // highlight factions
+        newTargetDisplayNameColor = nameTagOptions.highlightFactions().getOrDefault(targetFaction, WHITE).getFormatting();
 
         Optional<BlacklistEntry> optionalTargetBlacklistEntry = storage.getBlacklistEntries().stream()
                 .filter(blacklistEntry -> blacklistEntry.getPlayerName().equals(targetName))
