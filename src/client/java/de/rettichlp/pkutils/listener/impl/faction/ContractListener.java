@@ -50,7 +50,7 @@ public class ContractListener extends PKUtilsBase implements IMessageReceiveList
         Matcher contractAddMatcher = CONTRACT_ADD_PATTERN.matcher(message);
         if (contractAddMatcher.find()) {
             // show all entries to sync
-            delayedAction(() -> sendCommand("contract"), 1000);
+            delayedAction(() -> sendCommand("contractlist"), 1000);
             CONTRACT_SET.play();
             return true;
         }

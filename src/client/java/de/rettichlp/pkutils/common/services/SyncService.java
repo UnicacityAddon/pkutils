@@ -78,7 +78,7 @@ public class SyncService extends PKUtilsBase {
             } else if (faction == FBI || faction == POLIZEI) {
                 sendCommand("wanteds");
             } else if (faction == HITMAN) {
-                sendCommand("contract");
+                sendCommand("contractlist");
             }
 
             notificationService.sendNotification("Synchronisiere fraktionsabhängige Daten...", WHITE, 1000);
