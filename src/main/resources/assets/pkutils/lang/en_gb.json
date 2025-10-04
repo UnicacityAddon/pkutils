@@ -1,5 +1,8 @@
 {
-    "pkutils.options.sections.general": "General",
+    "pkutils.options.text.additional": "Additional",
+    "pkutils.options.text.faction": "Faction",
+    "pkutils.options.text.general": "General",
+    "pkutils.options.text.options": "Options",
     "pkutils.options.car.title": "Car",
     "pkutils.options.car.fast_lock.name": "Fast lock",
     "pkutils.options.car.fast_lock.description": "Locks the car immediately when execution '/car lock'",

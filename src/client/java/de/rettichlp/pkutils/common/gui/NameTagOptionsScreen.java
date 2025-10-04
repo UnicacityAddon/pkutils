@@ -21,7 +21,7 @@ public class NameTagOptionsScreen extends OptionsScreen {
     public void initBody() {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addBody(vertical().spacing(4));
 
-        directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.sections.general"), this.textRenderer), Positioner::alignHorizontalCenter);
+        directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.faction"), this.textRenderer), Positioner::alignHorizontalCenter);
 
         addToggleButton(directionalLayoutWidget, "pkutils.options.nametag.faction_information", (options, value) -> options.nameTag().factionInformation(value), options -> options.nameTag().factionInformation(), 308);
 
@@ -33,7 +33,7 @@ public class NameTagOptionsScreen extends OptionsScreen {
         addToggleButton(directionalLayoutWidget2, "pkutils.options.nametag.highlight.alliance", (options, value) -> options.nameTag().highlightAlliance(value), options -> options.nameTag().highlightAlliance(), 280);
         addItemButton(directionalLayoutWidget2, COMPARATOR, button -> notificationService.sendWarningNotification("To be implemented"));
 
-        directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.nametag.additional"), this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
+        directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.additional"), this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
 
         DirectionalLayoutWidget directionalLayoutWidget3 = directionalLayoutWidget.add(horizontal().spacing(8));
         addToggleButton(directionalLayoutWidget3, "pkutils.options.nametag.additional.blacklist", (options, value) -> options.nameTag().additionalBlacklist(value), options -> options.nameTag().additionalBlacklist(), 150);

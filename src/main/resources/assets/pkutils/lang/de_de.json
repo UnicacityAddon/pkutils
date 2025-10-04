@@ -1,5 +1,8 @@
 {
-    "pkutils.options.sections.general": "Allgemein",
+    "pkutils.options.text.additional": "Erweitert",
+    "pkutils.options.text.options": "Optionen",
+    "pkutils.options.text.general": "Allgemein",
+    "pkutils.options.text.faction": "Fraktion",
     "pkutils.options.car.title": "Auto",
     "pkutils.options.car.fast_lock.name": "Instant abschließen",
     "pkutils.options.car.fast_lock.description": "Schließt das Auto sofort ab, wenn '/car lock' ausgeführt wird",
