@@ -6,6 +6,7 @@ import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.ContractEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
+import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.models.Reinforcement;
 import de.rettichlp.pkutils.common.models.WantedEntry;
 import lombok.AllArgsConstructor;
@@ -45,6 +46,9 @@ public class Storage {
 
     @Getter
     private final Map<Countdown, LocalDateTime> countdowns = new HashMap<>();
+
+    @Getter
+    private final List<HousebanEntry> housebanEntries = new ArrayList<>();
 
     @Getter
     private final List<Reinforcement> reinforcements = new ArrayList<>();
@@ -91,6 +95,8 @@ public class Storage {
         LOGGER.info("contractEntries[{}]: {}", this.contractEntries.size(), this.contractEntries);
         // countdowns
         this.countdowns.forEach((countdown, localDateTime) -> LOGGER.info("countdowns[{}:{}]: {}", countdown, countdown.getDuration(), localDateTime));
+        // housebanEntries
+        LOGGER.info("housebanEntries[{}]: {}", this.housebanEntries.size(), this.housebanEntries);
         // reinforcements
         LOGGER.info("reinforcements[{}]: {}", this.reinforcements.size(), this.reinforcements);
         // retrievedNumbers
