@@ -32,6 +32,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static net.minecraft.client.gui.screen.ConfirmLinkScreen.opening;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
+import static net.minecraft.item.Items.COMPARATOR;
 import static net.minecraft.screen.ScreenTexts.BACK;
 import static net.minecraft.screen.ScreenTexts.DONE;
 import static net.minecraft.text.Text.empty;
@@ -157,8 +158,19 @@ public abstract class OptionsScreen extends Screen {
         widget.add(toggleButton);
     }
 
-    public void addItemButton(@NotNull DirectionalLayoutWidget widget, Item item, ButtonWidget.PressAction onPress) {
-        ItemButtonWidget button = new ItemButtonWidget(item, onPress);
+    public void addToggleButtonWithSettings(@NotNull DirectionalLayoutWidget widget,
+                                             String key,
+                                             BiConsumer<Options, Boolean> onPress,
+                                             ButtonWidget.PressAction onPressSettings,
+                                             @NotNull Function<Options, Boolean> currentValue,
+                                             int width) {
+        DirectionalLayoutWidget directionalLayoutWidget = widget.add(horizontal());
+        addToggleButton(directionalLayoutWidget, key, onPress, currentValue, width - 20);
+        addItemButton(directionalLayoutWidget, "pkutils.options.text.options", COMPARATOR, onPressSettings);
+    }
+
+    public void addItemButton(@NotNull DirectionalLayoutWidget widget, String key, Item item, ButtonWidget.PressAction onPress) {
+        ItemButtonWidget button = new ItemButtonWidget(key, item, onPress);
         widget.add(button);
     }
 
