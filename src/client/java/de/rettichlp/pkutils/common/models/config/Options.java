@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static de.rettichlp.pkutils.common.models.config.Options.ReinforcementType.UNICACITYADDON;
-import static net.minecraft.text.Text.*;
 import static net.minecraft.text.Text.empty;
+import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.AQUA;
 import static net.minecraft.util.Formatting.BLUE;
 import static net.minecraft.util.Formatting.DARK_AQUA;
