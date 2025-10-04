@@ -73,12 +73,15 @@ public class SyncService extends PKUtilsBase {
 
             Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
 
-            if (faction.isBadFaction()) {
-                sendCommand("blacklist");
-            } else if (faction == FBI || faction == POLIZEI) {
-                sendCommand("wanteds");
-            } else if (faction == HITMAN) {
-                sendCommand("contractlist");
+            switch (faction) {
+                case FBI, POLIZEI -> sendCommand("wanteds");
+                case HITMAN -> sendCommand("contractlist");
+                case RETTUNGSDIENST -> sendCommand("hausverbot list");
+                default -> {
+                    if (faction.isBadFaction()) {
+                        sendCommand("blacklist");
+                    }
+                }
             }
 
             notificationService.sendNotification("Synchronisiere fraktionsabhängige Daten...", WHITE, 1000);

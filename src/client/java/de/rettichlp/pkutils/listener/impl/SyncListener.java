@@ -42,7 +42,7 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
 
     @Override
     public boolean onCommandSend(@NotNull String command) {
-        if (syncService.isGameSyncProcessActive() && !command.contains("memberinfoall") && !command.contains("wanteds") && !command.contains("blacklist")) {
+        if (syncService.isGameSyncProcessActive() && !command.contains("memberinfoall") && !command.contains("wanteds") && !command.contains("blacklist") && !command.contains("hausverbot list")) {
             notificationService.sendWarningNotification("Synchronisierung aktiv - Befehle blockiert");
             return false;
         }

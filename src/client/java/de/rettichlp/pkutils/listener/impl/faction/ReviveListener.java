@@ -21,7 +21,7 @@ import static java.util.regex.Pattern.compile;
 @PKUtilsListener
 public class ReviveListener extends PKUtilsBase implements ICommandSendListener, IMessageReceiveListener {
 
-    private static final Pattern KARMA_GET_PATTERN = compile("^ » Karma: (?<amount>[+-]\\d+) Karma \\((?<amountOverall>[+-]\\d+)\\)$");
+    private static final Pattern KARMA_GET_PATTERN = compile("^\\[Karma] \\+\\d Karma$");
 
     private LocalDateTime lastReviveStartetAt = MIN;
 
