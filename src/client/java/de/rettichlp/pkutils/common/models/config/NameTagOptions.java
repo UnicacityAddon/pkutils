@@ -1,8 +1,13 @@
 package de.rettichlp.pkutils.common.models.config;
 
+import de.rettichlp.pkutils.common.models.Color;
+import de.rettichlp.pkutils.common.models.Faction;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -10,8 +15,7 @@ import lombok.experimental.Accessors;
 public class NameTagOptions {
 
     private boolean factionInformation = true;
-    private boolean highlightFaction = true;
-    private boolean highlightAlliance = true;
+    private Map<Faction, Color> highlightFactions = new HashMap<>();
     private boolean additionalBlacklist = true;
     private boolean additionalContract = true;
     private boolean additionalHouseban = true;
