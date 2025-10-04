@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.StringJoiner;
 
-import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static java.lang.Character.isUpperCase;
 
 @PKUtilsListener
@@ -28,7 +27,7 @@ public class CommandSendListener extends PKUtilsBase implements ICommandSendList
                 stringJoiner.add(parts[1]);
             }
 
-            networkHandler.sendChatCommand(stringJoiner.toString());
+            sendCommand(stringJoiner.toString());
             return false;
         }
 

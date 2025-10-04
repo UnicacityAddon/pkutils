@@ -19,9 +19,9 @@ import static java.util.regex.Pattern.compile;
 public class BlacklistListener extends PKUtilsBase implements IMessageReceiveListener {
 
     private static final Pattern BLACKLIST_HEADER_PATTERN = compile("^==== Blacklist .+ ====$");
-    private static final Pattern BLACKLIST_ENTRY_PATTERN = compile("^ » (?<playerName>[a-zA-Z0-9_]+) \\| (?<reason>.+) \\| (?<dateTime>.+) \\| (?<kills>\\d+) Kills \\| (?<price>\\d+)\\$(| \\(AFK\\))$");
-    private static final Pattern BLACKLIST_ENTRY_ADD = compile("^\\[Blacklist] (?<targetName>[a-zA-Z0-9_]+) wurde von (?<playerName>[a-zA-Z0-9_]+) auf die Blacklist gesetzt!$");
-    private static final Pattern BLACKLIST_ENTRY_REMOVE = compile("^\\[Blacklist] (?<targetName>[a-zA-Z0-9_]+) wurde von (?<playerName>[a-zA-Z0-9_]+) von der Blacklist gelöscht!$");
+    private static final Pattern BLACKLIST_ENTRY_PATTERN = compile("^ » (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) \\| (?<reason>.+) \\| (?<dateTime>.+) \\| (?<kills>\\d+) Kills \\| (?<price>\\d+)\\$(| \\(AFK\\))$");
+    private static final Pattern BLACKLIST_ENTRY_ADD = compile("^\\[Blacklist] (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) wurde von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) auf die Blacklist gesetzt!$");
+    private static final Pattern BLACKLIST_ENTRY_REMOVE = compile("^\\[Blacklist] (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) wurde von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) von der Blacklist gelöscht!$");
 
     private long activeCheck = 0;
 
@@ -30,7 +30,7 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
         Matcher blacklistHeaderMatcher = BLACKLIST_HEADER_PATTERN.matcher(message);
         if (blacklistHeaderMatcher.find()) {
             this.activeCheck = currentTimeMillis();
-            storage.resetBlacklistEntries();
+            storage.getBlacklistEntries().clear();
             return !syncService.isGameSyncProcessActive();
         }
 
@@ -43,22 +43,21 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
             int price = parseInt(blacklistEntryMatcher.group("price"));
 
             BlacklistEntry blacklistEntry = new BlacklistEntry(playerName, reason, outlaw, kills, price);
-            storage.addBlacklistEntry(blacklistEntry);
+            storage.getBlacklistEntries().add(blacklistEntry);
             return !syncService.isGameSyncProcessActive();
         }
 
         Matcher blacklistEntryAddMatcher = BLACKLIST_ENTRY_ADD.matcher(message);
         if (blacklistEntryAddMatcher.find()) {
-            String targetName = blacklistEntryAddMatcher.group("targetName");
-            BlacklistEntry blacklistEntry = new BlacklistEntry(targetName, "Unbekannt", false, 0, 0);
-            storage.addBlacklistEntry(blacklistEntry);
+            // show all entries to sync
+            delayedAction(() -> sendCommand("blacklist"), 1000);
             return true;
         }
 
         Matcher blacklistEntryRemoveMatcher = BLACKLIST_ENTRY_REMOVE.matcher(message);
         if (blacklistEntryRemoveMatcher.find()) {
             String targetName = blacklistEntryRemoveMatcher.group("targetName");
-            storage.getBlacklistEntries().removeIf(blacklistEntry -> blacklistEntry.playerName().equals(targetName));
+            storage.getBlacklistEntries().removeIf(blacklistEntry -> blacklistEntry.getPlayerName().equals(targetName));
             return true;
         }
 

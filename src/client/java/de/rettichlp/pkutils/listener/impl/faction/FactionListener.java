@@ -1,7 +1,8 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.Storage;
-import de.rettichlp.pkutils.common.models.Activity;
+import de.rettichlp.pkutils.common.models.ActivityEntry;
+import de.rettichlp.pkutils.common.models.BlackMarket;
 import de.rettichlp.pkutils.common.models.Reinforcement;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
@@ -9,26 +10,32 @@ import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
 import de.rettichlp.pkutils.listener.IMoveListener;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
-import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
+import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
+import static de.rettichlp.pkutils.common.models.EquipEntry.Type.fromDisplayName;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
+import static de.rettichlp.pkutils.common.models.config.Options.ReinforcementType.UNICACITYADDON;
 import static java.lang.Integer.parseInt;
 import static java.time.LocalDateTime.now;
+import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
@@ -48,6 +55,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
     private static final Pattern REINFORCEMENT_PATTERN = compile("^(?:(?<type>.+)! )?(?<senderRank>.+) (?<senderPlayerName>.+) benötigt Unterstützung in der Nähe von (?<naviPoint>.+) \\((?<distance>\\d+)m\\)!$");
     private static final Pattern REINFORCEMENT_BUTTON_PATTERN = compile("^ §7» §cRoute anzeigen §7\\| §cUnterwegs$");
     private static final Pattern REINFORCMENT_ON_THE_WAY_PATTERN = compile("^(?<senderRank>.+) (?<senderPlayerName>.+) kommt zum Verstärkungsruf von (?<target>.+)! \\((?<distance>\\d+) Meter entfernt\\)$");
+    private static final Pattern EQUIP_PATTERN = compile("^\\[Equip] Du hast dich mit (?<type>.+) equipt!$");
 
     private static final ReinforcementConsumer<String, String, String, String> REINFORCEMENT = (type, sender, naviPoint, distance) -> empty()
             .append(of(type).copy().formatted(RED, BOLD)).append(" ")
@@ -76,21 +84,27 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             String naviPoint = reinforcementMatcher.group("naviPoint");
             String distance = reinforcementMatcher.group("distance");
 
-            Text reinforcementText = REINFORCEMENT.create(type, senderRank + " " + senderPlayerName, naviPoint, distance);
-            player.sendMessage(empty(), false);
-            player.sendMessage(reinforcementText, false);
-
             Reinforcement reinforcement = new Reinforcement(type, senderPlayerName, naviPoint, distance);
             LOGGER.info("Found new reinforcement: {}", reinforcement);
             storage.trackReinforcement(reinforcement);
 
-            return false;
+            boolean modernReinforcementStyle = configService.load().getOptions().reinforcementType() == UNICACITYADDON;
+            if (modernReinforcementStyle) {
+                Text reinforcementText = REINFORCEMENT.create(type, senderRank + " " + senderPlayerName, naviPoint, distance);
+                player.sendMessage(empty(), false);
+                player.sendMessage(reinforcementText, false);
+            }
+
+            return !modernReinforcementStyle;
         }
 
         Matcher reinforcementButtonMatcher = REINFORCEMENT_BUTTON_PATTERN.matcher(message);
         if (reinforcementButtonMatcher.find()) {
-            // send empty line after buttons
-            MinecraftClient.getInstance().execute(() -> player.sendMessage(empty(), false));
+            boolean modernReinforcementStyle = configService.load().getOptions().reinforcementType() == UNICACITYADDON;
+            if (modernReinforcementStyle) {
+                // send empty line after buttons
+                MinecraftClient.getInstance().execute(() -> player.sendMessage(empty(), false));
+            }
 
             List<ClickEvent> clickEvents = text.getSiblings().stream()
                     .map(Text::getStyle)
@@ -140,9 +154,6 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             String target = reinforcementOnTheWayMatcher.group("target");
             String distance = reinforcementOnTheWayMatcher.group("distance");
 
-            Text reinforcementAnswer = REINFORCEMENT_ON_THE_WAY.create(senderRank + " " + senderPlayerName, target, distance);
-            player.sendMessage(reinforcementAnswer, false);
-
             // mark all reinforcements of the sender (and not self) within the last 30 seconds as on-the-way
             String playerName = player.getGameProfile().getName();
             storage.getReinforcements().stream()
@@ -162,7 +173,20 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
                         LOGGER.info("Reinforcement accepted: {}", reinforcement);
                     });
 
-            return false;
+            boolean modernReinforcementStyle = configService.load().getOptions().reinforcementType() == UNICACITYADDON;
+            if (modernReinforcementStyle) {
+                Text reinforcementAnswer = REINFORCEMENT_ON_THE_WAY.create(senderRank + " " + senderPlayerName, target, distance);
+                player.sendMessage(reinforcementAnswer, false);
+            }
+
+            return !modernReinforcementStyle;
+        }
+
+        Matcher equipMatcher = EQUIP_PATTERN.matcher(message);
+        if (equipMatcher.find()) {
+            String type = equipMatcher.group("type");
+            fromDisplayName(type).ifPresent(api::trackEquip);
+            return true;
         }
 
         return true;
@@ -172,7 +196,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
     public boolean onMessageSend(String message) {
         Storage.ToggledChat toggledChat = storage.getToggledChat();
         if (toggledChat != NONE) {
-            networkHandler.sendChatCommand(toggledChat.getCommand() + " " + message);
+            sendCommand(toggledChat.getCommand() + " " + message);
             return false;
         }
 
@@ -191,8 +215,30 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
                 .filter(reinforcement -> !reinforcement.isAddedAsActivity())
                 .forEach(reinforcement -> {
                     reinforcement.setAddedAsActivity(true);
-                    api.trackActivity(Activity.Type.REINFORCEMENT);
+                    api.trackActivity(ActivityEntry.Type.REINFORCEMENT);
                     LOGGER.info("Reinforcement reached, tracked activity");
+                });
+
+        // mark the black market spot as visited if within 60 blocks
+        stream(BlackMarket.Type.values())
+                .filter(type -> type.getBlockPos().isWithinDistance(blockPos, 60))
+                .forEach(type -> {
+                    // remove old type association if exists
+                    storage.getBlackMarkets().removeIf(blackMarket -> blackMarket.getType() == type);
+
+                    // check if black market was found there
+                    Box box = player.getBoundingBox().expand(60);
+                    Predicate<VillagerEntity> isBlackMarket = villagerEntity -> ofNullable(villagerEntity.getCustomName())
+                            .map(text -> text.getString().contains("Schwarzmarkt"))
+                            .orElse(false);
+
+                    assert MinecraftClient.getInstance().world != null; // cannot be null at this point
+                    boolean found = !MinecraftClient.getInstance().world.getEntitiesByClass(VillagerEntity.class, box, isBlackMarket).isEmpty();
+
+                    // add new black market entry
+                    BlackMarket blackMarket = new BlackMarket(type, now(), found);
+                    storage.getBlackMarkets().add(blackMarket);
+                    LOGGER.info("Marked black market spot as visited: {}", type);
                 });
     }
 

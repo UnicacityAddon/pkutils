@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.registry;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -7,9 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.mojang.text2speech.Narrator.LOGGER;
+import static de.rettichlp.pkutils.PKUtils.MOD_ID;
+import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.lang.Boolean.getBoolean;
 import static java.lang.String.format;
@@ -35,6 +41,28 @@ public abstract class PKUtilsBase {
     protected static final int TEXT_BOX_MARGIN = 5;
     protected static final int TEXT_BOX_FULL_SIZE_Y = 9 /* text height */ + 2 * TEXT_BOX_PADDING + TEXT_BOX_MARGIN;
 
+    public void sendCommand(String command) {
+        LOGGER.info("PKUtils executing command: {}", command);
+        networkHandler.sendChatCommand(command);
+    }
+
+    public void sendCommands(List<String> commandStrings) {
+        // to modifiable list
+        List<String> commands = new ArrayList<>(commandStrings);
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (commands.isEmpty()) {
+                    this.cancel();
+                    return;
+                }
+
+                sendCommand(commands.removeFirst());
+            }
+        }, 0, 1000);
+    }
+
     public void sendModMessage(String message, boolean inActionbar) {
         sendModMessage(of(message).copy().formatted(WHITE), inActionbar);
     }
@@ -51,6 +79,12 @@ public abstract class PKUtilsBase {
                 MinecraftClient.getInstance().execute(runnable);
             }
         }, milliseconds);
+    }
+
+    public String getVersion() {
+        return FabricLoader.getInstance().getModContainer(MOD_ID)
+                .map(modContainer -> modContainer.getMetadata().getVersion().getFriendlyString())
+                .orElseThrow(() -> new NullPointerException("Cannot find version"));
     }
 
     public boolean isSuperUser() {

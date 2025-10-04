@@ -3,7 +3,7 @@ package de.rettichlp.pkutils.listener.impl;
 import de.rettichlp.pkutils.common.Storage;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
-import de.rettichlp.pkutils.common.services.HudService;
+import de.rettichlp.pkutils.common.services.NotificationService;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static de.rettichlp.pkutils.PKUtilsClient.hudService;
+import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
+import static de.rettichlp.pkutils.PKUtilsClient.renderService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
@@ -65,7 +66,7 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
         MutableText countdownText = empty();
         countdownStrings.forEach(mutableText -> countdownText.append(mutableText).append(" "));
 
-        hudService.renderTextBox(
+        renderService.renderTextBox(
                 drawContext,
                 countdownText,
                 new Color(127, 127, 127, 100),
@@ -74,16 +75,16 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
     }
 
     private void renderNotifications(DrawContext drawContext) {
-        List<HudService.Notification> activeNotifications = hudService.getActiveNotifications();
+        List<NotificationService.Notification> activeNotifications = notificationService.getActiveNotifications();
 
         if (activeNotifications.isEmpty()) {
             return;
         }
 
-        Map<HudService.Notification, Integer> notificationIndexes = activeNotifications.stream()
+        Map<NotificationService.Notification, Integer> notificationIndexes = activeNotifications.stream()
                 .collect(toMap(notification -> notification, activeNotifications::indexOf));
 
-        notificationIndexes.forEach((notification, notificationIndex) -> hudService.renderTextBox(
+        notificationIndexes.forEach((notification, notificationIndex) -> renderService.renderTextBox(
                 drawContext,
                 notification.getText(),
                 notification.getBackgroundColor(),

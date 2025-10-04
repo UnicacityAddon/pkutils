@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 
-public record Activity(String id, Instant timeStamp, Type type) {
+public record ActivityEntry(String id, Instant timeStamp, Type type) {
 
     @Getter
     @AllArgsConstructor
@@ -20,10 +20,10 @@ public record Activity(String id, Instant timeStamp, Type type) {
         REINFORCEMENT("Reinforcement"),
         REVIVE("Wiederbelebung");
 
-        private final String displayMessage;
+        private final String displayName;
 
         public @NotNull String getSuccessMessage() {
-            return "Aktivität '" + this.displayMessage + "' wurde getrackt!";
+            return "Aktivität '" + this.displayName + "' wurde getrackt!";
         }
     }
 }

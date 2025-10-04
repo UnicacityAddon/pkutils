@@ -13,4 +13,5 @@ public class MainConfig {
 
     private List<TodoEntry> todos = new ArrayList<>();
     private Faction allianceFaction = NULL;
+    private Options options = new Options();
 }

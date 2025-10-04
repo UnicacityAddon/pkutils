@@ -8,19 +8,25 @@ import de.rettichlp.pkutils.command.MiaCommand;
 import de.rettichlp.pkutils.command.ModCommand;
 import de.rettichlp.pkutils.command.SyncCommand;
 import de.rettichlp.pkutils.command.TodoCommand;
-import de.rettichlp.pkutils.command.activity.ActivityCommand;
 import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleWChatCommand;
+import de.rettichlp.pkutils.command.faction.ASetBlacklistCommand;
+import de.rettichlp.pkutils.command.faction.ActivityCommand;
 import de.rettichlp.pkutils.command.faction.AllianceCommand;
+import de.rettichlp.pkutils.command.faction.BlackMarketCommand;
+import de.rettichlp.pkutils.command.faction.EquippedCommand;
 import de.rettichlp.pkutils.command.faction.MinusPointsCommand;
+import de.rettichlp.pkutils.command.faction.PersonalUseCommand;
 import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
 import de.rettichlp.pkutils.command.money.DepositCommand;
 import de.rettichlp.pkutils.command.money.RichTaxesCommand;
+import de.rettichlp.pkutils.common.models.Sound;
 import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
+import de.rettichlp.pkutils.listener.IEntityRenderListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
@@ -34,10 +40,13 @@ import de.rettichlp.pkutils.listener.impl.BusinessListener;
 import de.rettichlp.pkutils.listener.impl.CarListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
 import de.rettichlp.pkutils.listener.impl.HudListener;
+import de.rettichlp.pkutils.listener.impl.MoneyListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
 import de.rettichlp.pkutils.listener.impl.faction.BombListener;
+import de.rettichlp.pkutils.listener.impl.faction.ContractListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionListener;
+import de.rettichlp.pkutils.listener.impl.faction.HousebanListener;
 import de.rettichlp.pkutils.listener.impl.faction.ReviveListener;
 import de.rettichlp.pkutils.listener.impl.faction.ServiceListener;
 import de.rettichlp.pkutils.listener.impl.faction.WantedListener;
@@ -50,6 +59,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -63,6 +73,8 @@ import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.util.Objects.isNull;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.entity.effect.StatusEffects.ABSORPTION;
+import static net.minecraft.registry.Registries.SOUND_EVENT;
+import static net.minecraft.registry.Registry.register;
 
 public class Registry {
 
@@ -70,13 +82,17 @@ public class Registry {
             ACallCommand.class,
             ADropMoneyCommand.class,
             ASMSCommand.class,
+            ASetBlacklistCommand.class,
             ActivityCommand.class,
             AllianceCommand.class,
+            BlackMarketCommand.class,
             DepositCommand.class,
+            EquippedCommand.class,
             MiCommand.class,
             MiaCommand.class,
             MinusPointsCommand.class,
             ModCommand.class,
+            PersonalUseCommand.class,
             RichTaxesCommand.class,
             SyncCommand.class,
             TodoCommand.class,
@@ -86,34 +102,37 @@ public class Registry {
     );
 
     private final Set<Class<?>> listeners = Set.of(
-            // business
-            BusinessListener.class,
-            // faction
-            BombListener.class,
+            AbsorptionListener.class,
             BlacklistListener.class,
+            BombListener.class,
+            BusinessListener.class,
+            CarListener.class,
+            CommandSendListener.class,
+            ContractListener.class,
+            DepositCommand.class,
             FactionListener.class,
-            HudListener.class,
-            ReviveListener.class,
-            ServiceListener.class,
-            WantedListener.class,
-            // job
             FisherListener.class,
             GarbageManListener.class,
+            HousebanListener.class,
+            HudListener.class,
             LumberjackListener.class,
+            MoneyListener.class,
+            ReviveListener.class,
+            ServiceListener.class,
+            SyncListener.class,
             TransportListener.class,
-            // vehicle
-            CarListener.class,
-            // other
-            AbsorptionListener.class,
-            CommandSendListener.class,
-            DepositCommand.class,
-            RichTaxesCommand.class, // TODO find better solution for this
-            SyncListener.class
+            WantedListener.class
     );
 
     private BlockPos lastPlayerPos = null;
     private boolean lastAbsorptionState = false;
     private boolean initialized = false;
+
+    public void registerSounds() {
+        for (Sound value : Sound.values()) {
+            register(SOUND_EVENT, value.getIdentifier(), value.getSoundEvent());
+        }
+    }
 
     public void registerCommands(@NotNull CommandDispatcher<FabricClientCommandSource> dispatcher) {
         for (Class<?> commandClass : this.commands /*ClassIndex.getAnnotated(PKUtilsCommand.class)*/) {
@@ -166,6 +185,10 @@ public class Registry {
 
                 if (listenerInstance instanceof IEnterVehicleListener iEnterVehicleListener) {
                     PlayerEnterVehicleCallback.EVENT.register(iEnterVehicleListener::onEnterVehicle);
+                }
+
+                if (listenerInstance instanceof IEntityRenderListener iEntityRenderListener) {
+                    WorldRenderEvents.AFTER_ENTITIES.register(iEntityRenderListener::onEntityRender);
                 }
 
                 if (listenerInstance instanceof IHudRenderListener iHudRenderListener) {

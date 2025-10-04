@@ -1,8 +1,11 @@
 package de.rettichlp.pkutils.mixin.client;
 
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
+import de.rettichlp.pkutils.common.models.ContractEntry;
 import de.rettichlp.pkutils.common.models.Faction;
+import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.models.WantedEntry;
+import de.rettichlp.pkutils.common.models.config.NameTagOptions;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.ItemEntityRenderState;
@@ -23,18 +26,15 @@ import java.util.Optional;
 import static com.mojang.text2speech.Narrator.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.factionService;
-import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
-import static de.rettichlp.pkutils.common.models.Faction.NULL;
+import static de.rettichlp.pkutils.common.models.Color.WHITE;
+import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
-import static net.minecraft.util.Formatting.BLUE;
-import static net.minecraft.util.Formatting.DARK_BLUE;
 import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.DARK_RED;
 import static net.minecraft.util.Formatting.RED;
-import static net.minecraft.util.Formatting.WHITE;
 
 @Mixin(EntityRenderer.class)
 public abstract class EntityRendererMixin<S extends Entity, T extends EntityRenderState> {
@@ -63,41 +63,58 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
 
     @Unique
     private MutableText getFormattedTargetDisplayName(@NotNull Text targetDisplayName, String targetName) {
+        NameTagOptions nameTagOptions = configService.load().getOptions().nameTag();
         Faction targetFaction = storage.getFaction(targetName);
 
         Text newTargetDisplayNamePrefix = empty();
         Text newTargetDisplayName = targetDisplayName.copy();
-        Text newTargetDisplayNameSuffix = targetFaction.getNameTagSuffix();
-        Formatting newTargetDisplayNameColor = WHITE;
+        Text newTargetDisplayNameSuffix = nameTagOptions.factionInformation() ? targetFaction.getNameTagSuffix() : empty();
+        Formatting newTargetDisplayNameColor;
 
-        // same faction -> blue name
-        Faction playerFaction = storage.getFaction(player.getName().getString());
-        if (playerFaction == targetFaction && targetFaction != NULL) {
-            newTargetDisplayNameColor = BLUE;
-        }
+        // highlight factions
+        newTargetDisplayNameColor = nameTagOptions.highlightFactions().getOrDefault(targetFaction, WHITE).getFormatting();
 
-        // alliance faction -> dark blue
-        if (configService.load().getAllianceFaction() == targetFaction && targetFaction != NULL) {
-            newTargetDisplayNameColor = DARK_BLUE;
-        }
-
+        // blacklist
         Optional<BlacklistEntry> optionalTargetBlacklistEntry = storage.getBlacklistEntries().stream()
-                .filter(blacklistEntry -> blacklistEntry.playerName().equals(targetName))
+                .filter(blacklistEntry -> blacklistEntry.getPlayerName().equals(targetName))
                 .findAny();
 
-        if (optionalTargetBlacklistEntry.isPresent()) {
+        if (optionalTargetBlacklistEntry.isPresent() && nameTagOptions.additionalBlacklist()) {
             newTargetDisplayNameColor = RED;
-            newTargetDisplayNamePrefix = !optionalTargetBlacklistEntry.get().outlaw() ? empty() : empty()
+            newTargetDisplayNamePrefix = !optionalTargetBlacklistEntry.get().isOutlaw() ? empty() : empty()
                     .append(of("[").copy().formatted(DARK_GRAY))
                     .append(of("V").copy().formatted(DARK_RED))
                     .append(of("]").copy().formatted(DARK_GRAY));
         }
 
+        // contract
+        Optional<ContractEntry> optionalTargetContractEntry = storage.getContractEntries().stream()
+                .filter(contractEntry -> contractEntry.getPlayerName().equals(targetName))
+                .findAny();
+
+        if (optionalTargetContractEntry.isPresent() && nameTagOptions.additionalContract()) {
+            newTargetDisplayNameColor = RED;
+        }
+
+        // houseban
+        Optional<HousebanEntry> optionalTargetHousebanEntry = storage.getHousebanEntries().stream()
+                .filter(housebanEntry -> housebanEntry.getPlayerName().equals(targetName))
+                .filter(housebanEntry -> housebanEntry.getUnbanDateTime().isAfter(now()))
+                .findAny();
+
+        if (optionalTargetHousebanEntry.isPresent() && nameTagOptions.additionalHouseban()) {
+            newTargetDisplayNamePrefix = empty()
+                    .append(of("[").copy().formatted(DARK_GRAY))
+                    .append(of("HV").copy().formatted(DARK_RED))
+                    .append(of("]").copy().formatted(DARK_GRAY));
+        }
+
+        // wanted
         Optional<WantedEntry> optionalTargetWantedEntry = storage.getWantedEntries().stream()
                 .filter(wantedEntry -> wantedEntry.getPlayerName().equals(targetName))
                 .findAny();
 
-        if (optionalTargetWantedEntry.isPresent()) {
+        if (optionalTargetWantedEntry.isPresent() && nameTagOptions.additionalWanted()) {
             newTargetDisplayNameColor = factionService.getWantedPointColor(optionalTargetWantedEntry.get().getWantedPointAmount());
         }
 

@@ -48,6 +48,6 @@ public class ACallCommand extends CommandBase {
     }
 
     private void call(int number) {
-        networkHandler.sendChatCommand("call " + number);
+        sendCommand("call " + number);
     }
 }

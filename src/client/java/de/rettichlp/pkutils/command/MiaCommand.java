@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
-import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.models.Faction.fromDisplayName;
@@ -29,7 +28,7 @@ public class MiaCommand extends CommandBase {
                         .executes(context -> {
                             String input = getString(context, "faction");
                             fromDisplayName(input).ifPresentOrElse(faction -> {
-                                networkHandler.sendChatCommand("memberinfoall " + faction.getMemberInfoCommandName());
+                                sendCommand("memberinfoall " + faction.getMemberInfoCommandName());
                             }, () -> {
                                 sendModMessage("Die Fraktion" + input + " konnte nicht gefunden werden.", false);
                             });
@@ -40,7 +39,7 @@ public class MiaCommand extends CommandBase {
                 .executes(context -> {
                     String playerName = player.getName().getString();
                     Faction faction = storage.getFaction(playerName);
-                    networkHandler.sendChatCommand("memberinfoall " + faction.getMemberInfoCommandName());
+                    sendCommand("memberinfoall " + faction.getMemberInfoCommandName());
                     return 1;
                 });
     }

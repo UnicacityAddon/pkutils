@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtilsClient.api;
-import static de.rettichlp.pkutils.common.models.Activity.Type.REVIVE;
+import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.REVIVE;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
@@ -21,7 +21,7 @@ import static java.util.regex.Pattern.compile;
 @PKUtilsListener
 public class ReviveListener extends PKUtilsBase implements ICommandSendListener, IMessageReceiveListener {
 
-    private static final Pattern KARMA_GET_PATTERN = compile("^ » Karma: (?<amount>[+-]\\d+) Karma \\((?<amountOverall>[+-]\\d+)\\)$");
+    private static final Pattern KARMA_GET_PATTERN = compile("^\\[Karma] \\+\\d Karma$");
 
     private LocalDateTime lastReviveStartetAt = MIN;
 

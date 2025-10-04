@@ -9,23 +9,28 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtilsClient.api;
-import static de.rettichlp.pkutils.PKUtilsClient.player;
-import static de.rettichlp.pkutils.common.models.Activity.Type.EMERGENCY_SERVICE;
+import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.EMERGENCY_SERVICE;
+import static de.rettichlp.pkutils.common.models.Sound.SERVICE;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
 public class ServiceListener extends PKUtilsBase implements IMessageReceiveListener {
 
-    private static final Pattern SERVICE_ACCEPT_PATTERN = compile("^HQ: (?<playerName>[a-zA-Z0-9_]+) hat den Notruf von (?<targetName>[a-zA-Z0-9_]+) angenommen\\.$");
+    private static final Pattern SERVICE_PATTERN = compile("Ein Notruf von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) \\((?<message>.+)\\)\\.");
+    private static final Pattern SERVICE_DONE_PATTERN = compile("^Du hast den Service von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) als 'Erledigt' markiert\\.$");
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
-        Matcher serviceAcceptMatcher = SERVICE_ACCEPT_PATTERN.matcher(message);
-        if (serviceAcceptMatcher.find()) {
-            String playerName = serviceAcceptMatcher.group("playerName");
-            if (player.getName().getString().equals(playerName)) {
-                api.trackActivity(EMERGENCY_SERVICE);
-            }
+        Matcher serviceMatcher = SERVICE_PATTERN.matcher(message);
+        if (serviceMatcher.find()) {
+            SERVICE.play();
+            return true;
+        }
+
+        Matcher serviceDoneMatcher = SERVICE_DONE_PATTERN.matcher(message);
+        if (serviceDoneMatcher.find()) {
+            api.trackActivity(EMERGENCY_SERVICE);
+            return true;
         }
 
         return true;

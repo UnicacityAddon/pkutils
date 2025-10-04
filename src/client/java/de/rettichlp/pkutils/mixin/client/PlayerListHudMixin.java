@@ -73,9 +73,9 @@ public abstract class PlayerListHudMixin {
             return 4; // NEWS
         } else if (storage.getWantedEntries().stream().anyMatch(wantedEntry -> wantedEntry.getPlayerName().equals(playerName))) {
             return 6; // WANTED
-        } else if (storage.getBlacklistEntries().stream().anyMatch(blacklistEntry -> blacklistEntry.playerName().equals(playerName))) {
+        } else if (storage.getBlacklistEntries().stream().anyMatch(blacklistEntry -> blacklistEntry.getPlayerName().equals(playerName))) {
             return 7; // BLACKLIST
-        } else if (false) { // TODO
+        } else if (storage.getContractEntries().stream().anyMatch(contractEntry -> contractEntry.getPlayerName().equals(playerName))) {
             return 8; // CONTRACT
         } else {
             return 9; // OTHER
@@ -93,7 +93,7 @@ public abstract class PlayerListHudMixin {
                 .anyMatch(wantedEntry -> wantedEntry.getPlayerName().equals(playerName))) {
             icon = " 🔍";
         } else if (storage.getBlacklistEntries().stream()
-                .anyMatch(blacklistEntry -> blacklistEntry.playerName().equals(playerName))) {
+                .anyMatch(blacklistEntry -> blacklistEntry.getPlayerName().equals(playerName))) {
             icon = " 💀";
         }
 

@@ -1,13 +1,18 @@
 package de.rettichlp.pkutils.common;
 
+import de.rettichlp.pkutils.common.models.BlackMarket;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
+import de.rettichlp.pkutils.common.models.BlacklistReason;
+import de.rettichlp.pkutils.common.models.ContractEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
+import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.models.Reinforcement;
 import de.rettichlp.pkutils.common.models.WantedEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.entity.vehicle.MinecartEntity;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,6 +28,7 @@ import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.time.Duration.ofMinutes;
 import static java.time.Duration.ofSeconds;
+import static java.util.Arrays.stream;
 
 public class Storage {
 
@@ -33,7 +39,16 @@ public class Storage {
     private final List<BlacklistEntry> blacklistEntries = new ArrayList<>();
 
     @Getter
-    private final List<WantedEntry> wantedEntries = new ArrayList<>();
+    private final Map<Faction, List<BlacklistReason>> blacklistReasons = new HashMap<>();
+
+    @Getter
+    private final List<ContractEntry> contractEntries = new ArrayList<>();
+
+    @Getter
+    private final Map<Countdown, LocalDateTime> countdowns = new HashMap<>();
+
+    @Getter
+    private final List<HousebanEntry> housebanEntries = new ArrayList<>();
 
     @Getter
     private final List<Reinforcement> reinforcements = new ArrayList<>();
@@ -42,33 +57,62 @@ public class Storage {
     private final Map<String, Integer> retrievedNumbers = new HashMap<>();
 
     @Getter
-    private final Map<Countdown, LocalDateTime> countdowns = new HashMap<>();
+    private final List<BlackMarket> blackMarkets = new ArrayList<>();
+
+    @Getter
+    private final List<WantedEntry> wantedEntries = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private MinecartEntity minecartEntityToHighlight;
+
+    @Getter
+    @Setter
+    private int moneyAtmAmount = 0;
+
+    @Getter
+    @Setter
+    private int moneyBankAmount = 0;
 
     @Getter
     @Setter
     private ToggledChat toggledChat = NONE;
+
+    {
+        this.blackMarkets.addAll(stream(BlackMarket.Type.values())
+                .map(type -> new BlackMarket(type, null, false))
+                .toList());
+    }
 
     public void print() {
         // factionMembers
         this.factionMembers.forEach((faction, factionMembers) -> LOGGER.info("factionMembers[{}:{}]: {}", faction, factionMembers.size(), factionMembers));
         // blacklistEntries
         LOGGER.info("blacklistEntries[{}]: {}", this.blacklistEntries.size(), this.blacklistEntries);
-        // wantedEntries
-        LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
+        // blacklistReasons
+        this.blacklistReasons.forEach((faction, blacklistReasons) -> LOGGER.info("blacklistReasons[{}:{}]: {}", faction, blacklistReasons.size(), blacklistReasons));
+        // contractEntries
+        LOGGER.info("contractEntries[{}]: {}", this.contractEntries.size(), this.contractEntries);
+        // countdowns
+        this.countdowns.forEach((countdown, localDateTime) -> LOGGER.info("countdowns[{}:{}]: {}", countdown, countdown.getDuration(), localDateTime));
+        // housebanEntries
+        LOGGER.info("housebanEntries[{}]: {}", this.housebanEntries.size(), this.housebanEntries);
         // reinforcements
         LOGGER.info("reinforcements[{}]: {}", this.reinforcements.size(), this.reinforcements);
         // retrievedNumbers
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
+        // visitedBlackMarkets
+        LOGGER.info("blackMarkets[{}]: {}", this.blackMarkets.size(), this.blackMarkets);
+        // wantedEntries
+        LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
+        // minecartEntityToHighlight
+        LOGGER.info("minecartEntityToHighlight: {}", this.minecartEntityToHighlight);
+        // moneyAtmAmount
+        LOGGER.info("moneyAtmAmount: {}", this.moneyAtmAmount);
+        // moneyBankAmount
+        LOGGER.info("moneyBankAmount: {}", this.moneyBankAmount);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
-    }
-
-    public void addBlacklistEntry(BlacklistEntry entry) {
-        this.blacklistEntries.add(entry);
-    }
-
-    public void resetBlacklistEntries() {
-        this.blacklistEntries.clear();
     }
 
     public void addFactionMember(Faction faction, FactionMember factionMember) {
@@ -87,18 +131,6 @@ public class Storage {
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(NULL);
-    }
-
-    public void resetFactionMembers(Faction faction) {
-        this.factionMembers.put(faction, new HashSet<>());
-    }
-
-    public void addWantedEntry(WantedEntry entry) {
-        this.wantedEntries.add(entry);
-    }
-
-    public void resetWantedEntries() {
-        this.wantedEntries.clear();
     }
 
     public void trackReinforcement(Reinforcement reinforcement) {

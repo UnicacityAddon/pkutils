@@ -18,7 +18,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.lang.Double.compare;
 import static java.lang.System.currentTimeMillis;
@@ -81,7 +80,7 @@ public class GarbageManListener extends PKUtilsBase implements IMessageReceiveLi
         }
 
         this.lastCommandExecution = now;
-        networkHandler.sendChatCommand("dropwaste");
+        sendCommand("dropwaste");
 
         delayedAction(() -> sendModMessage("5", true), 200);
         delayedAction(() -> sendModMessage("4", true), 1200);

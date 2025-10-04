@@ -18,7 +18,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.lang.Double.compare;
 import static java.util.Arrays.stream;
@@ -40,16 +39,16 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
         if (fisherStartMatcher.find()) {
             this.currentFisherJobSpots = new ArrayList<>();
             String naviCommand = FisherJobSpot.SPOT_1.getNaviCommand();
-            networkHandler.sendChatCommand(naviCommand);
+            sendCommand(naviCommand);
             return true;
         }
 
         Matcher fisherSpotFoundMatcher = FISHER_SPOT_FOUND_PATTERN.matcher(message);
         if (fisherSpotFoundMatcher.find()) {
-            networkHandler.sendChatCommand("stoproute");
+            sendCommand("stoproute");
             FisherJobSpot nearestFisherJobSpot = getNearestFisherJobSpot(getNotVisitedFisherJobSpots()).orElseThrow();
             this.currentFisherJobSpots.add(nearestFisherJobSpot);
-            delayedAction(() -> networkHandler.sendChatCommand("catchfish"), 1000);
+            delayedAction(() -> sendCommand("catchfish"), 1000);
             return true;
         }
 
@@ -61,10 +60,10 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
 
             nearestFisherJobSpot.ifPresentOrElse(fisherJobSpot -> {
                 String naviCommand = fisherJobSpot.getNaviCommand();
-                networkHandler.sendChatCommand(naviCommand);
+                sendCommand(naviCommand);
             }, () -> {
                 // all spots visited, go to harbor
-                networkHandler.sendChatCommand("navi -504 63 197");
+                sendCommand("navi -504 63 197");
             });
 
             return true;
@@ -77,7 +76,7 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
     public void onNaviSpotReached() {
         if (this.currentFisherJobSpots.size() == 5) {
             this.currentFisherJobSpots = new ArrayList<>();
-            networkHandler.sendChatCommand("dropfish");
+            sendCommand("dropfish");
         }
     }
 
