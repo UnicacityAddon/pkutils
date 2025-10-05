@@ -86,7 +86,7 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
 
         notificationIndexes.forEach((notification, notificationIndex) -> renderService.renderTextBox(
                 drawContext,
-                notification.getText(),
+                notification.getTextSupplier().get(),
                 notification.getBackgroundColor(),
                 notification.getBorderColor(),
                 notificationIndex + 1)); // +1 because placeholder for countdowns
