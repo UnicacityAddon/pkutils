@@ -24,6 +24,7 @@ import de.rettichlp.pkutils.command.money.DepositCommand;
 import de.rettichlp.pkutils.command.money.RichTaxesCommand;
 import de.rettichlp.pkutils.common.models.Sound;
 import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
+import de.rettichlp.pkutils.listener.IClickListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
 import de.rettichlp.pkutils.listener.IEntityRenderListener;
@@ -234,6 +235,12 @@ public class Registry {
                 if (listenerInstance instanceof ITickListener iTickListener) {
                     ClientTickEvents.END_CLIENT_TICK.register((server) -> {
                         iTickListener.onTick();
+                    });
+                }
+
+                if (listenerInstance instanceof IClickListener iClickListener) {
+                    ClientTickEvents.END_CLIENT_TICK.register((server) -> {
+                        iClickListener.onClick();
                     });
                 }
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
