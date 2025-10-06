@@ -27,6 +27,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.common.models.Job.LUMBERJACK;
 import static de.rettichlp.pkutils.common.models.Job.PIZZA_DELIVERY;
 import static de.rettichlp.pkutils.common.models.Job.TOBACCO_PLANTATION;
+import static de.rettichlp.pkutils.common.models.Job.URANIUM_TRANSPORT;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
@@ -123,6 +124,11 @@ public class JobListener extends PKUtilsBase
 
         if (this.currentJob == TOBACCO_PLANTATION && player.getBlockPos().isWithinDistance(new BlockPos(-133, 69, -78), 3)) {
             sendCommand("droptabak");
+            return;
+        }
+
+        if (this.currentJob == URANIUM_TRANSPORT && player.getBlockPos().isWithinDistance(new BlockPos(1132, 68, 396), 2)) {
+            sendCommand("dropuran");
             return;
         }
     }
