@@ -53,8 +53,6 @@ import de.rettichlp.pkutils.listener.impl.faction.WantedListener;
 import de.rettichlp.pkutils.listener.impl.job.FisherListener;
 import de.rettichlp.pkutils.listener.impl.job.GarbageManListener;
 import de.rettichlp.pkutils.listener.impl.job.JobListener;
-import de.rettichlp.pkutils.listener.impl.job.LumberjackListener;
-import de.rettichlp.pkutils.listener.impl.job.TransportListener;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -117,12 +115,10 @@ public class Registry {
             HousebanListener.class,
             HudListener.class,
             JobListener.class,
-            LumberjackListener.class,
             MoneyListener.class,
             ReviveListener.class,
             ServiceListener.class,
             SyncListener.class,
-            TransportListener.class,
             WantedListener.class
     );
 

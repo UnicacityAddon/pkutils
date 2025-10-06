@@ -12,7 +12,7 @@ import static java.util.regex.Pattern.compile;
 public enum Job {
 
     WASTE_COLLECTOR("Müllmann", ofMinutes(15), compile("^\\[Müllmann] Entleere bis zu \\d Mülltonnen an den Türen der Häuser und entlade hier alles\\.$")),
-    LOGGER("Holzfäller", compile("^\\[Holzfäller] Fälle \\d+ Bäume und bringe sie zu den Sägen zur Weiterverarbeitung!$")),
+    LUMBERJACK("Holzfäller", compile("^\\[Holzfäller] Fälle \\d+ Bäume und bringe sie zu den Sägen zur Weiterverarbeitung!$")),
     MINER("Bergarbeiter", compile("^\\[Steinbruch] Mit dem Zünder kannst du an Erzadern eine Sprengung vornehmen\\. Glück auf!$")),
     URANIUM_TRANSPORT("URAN-Transport", compile("^\\[URAN] Suche Uran-Erz \\(Emerald-Erz\\) und bau es ab\\. Danach musst du es zum Atomkraftwerk bringen\\. \\(/dropuran\\)$")),
     BEVERAGE_SUPPLIER("Getränkelieferant", compile("^\\[Lieferant] Bringe bitte die Bierflaschen zur Bar! \\(/dropdrink\\)$")),
