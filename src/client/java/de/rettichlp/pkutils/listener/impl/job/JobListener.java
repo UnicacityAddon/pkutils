@@ -27,6 +27,8 @@ import static net.minecraft.util.Formatting.GRAY;
 @PKUtilsListener
 public class JobListener extends PKUtilsBase implements IMessageReceiveListener, ITickListener {
 
+    private Job job;
+
     @Override
     public boolean onMessageReceive(Text text, String message) {
         // refresh job cooldowns
@@ -35,8 +37,8 @@ public class JobListener extends PKUtilsBase implements IMessageReceiveListener,
                 .findFirst();
 
         if (optionalJob.isPresent()) {
-            Job job = optionalJob.get();
-            Duration cooldown = job.getCooldown();
+            this.job = optionalJob.get();
+            Duration cooldown = this.job.getCooldown();
             LocalDateTime jobCooldownEntTime = now().plus(cooldown);
 
             configService.edit(mainConfig -> mainConfig.getJobCooldownEndTimes().put(job, jobCooldownEntTime));
@@ -44,10 +46,10 @@ public class JobListener extends PKUtilsBase implements IMessageReceiveListener,
             notificationService.sendNotification(() -> {
                 long remainingMillis = between(now(), jobCooldownEntTime).toMillis();
                 return empty()
-                        .append(of(job.getDisplayName()).copy().formatted(GRAY))
+                        .append(of(this.job.getDisplayName()).copy().formatted(GRAY))
                         .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                         .append(of(millisToFriendlyString(remainingMillis)));
-            }, Color.GRAY, cooldown.toMillis());
+            }, Color.WHITE, cooldown.toMillis());
 
             return true;
         }
