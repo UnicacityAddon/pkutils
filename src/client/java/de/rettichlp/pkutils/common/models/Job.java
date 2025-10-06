@@ -11,12 +11,12 @@ import static java.util.regex.Pattern.compile;
 @Getter
 public enum Job {
 
-    WASTE_COLLECTOR("Müllmann", compile("^\\[Müllmann] Entleere bis zu \\d Mülltonnen an den Türen der Häuser und entlade hier alles\\.$")),
+    WASTE_COLLECTOR("Müllmann", ofMinutes(15), compile("^\\[Müllmann] Entleere bis zu \\d Mülltonnen an den Türen der Häuser und entlade hier alles\\.$")),
     LOGGER("Holzfäller", compile("^\\[Holzfäller] Fälle \\d+ Bäume und bringe sie zu den Sägen zur Weiterverarbeitung!$")),
     MINER("Bergarbeiter", compile("^\\[Steinbruch] Mit dem Zünder kannst du an Erzadern eine Sprengung vornehmen\\. Glück auf!$")),
     URANIUM_TRANSPORT("URAN-Transport", compile("^\\[URAN] Suche Uran-Erz \\(Emerald-Erz\\) und bau es ab\\. Danach musst du es zum Atomkraftwerk bringen\\. \\(/dropuran\\)$")),
     BEVERAGE_SUPPLIER("Getränkelieferant", compile("^\\[Lieferant] Bringe bitte die Bierflaschen zur Bar! \\(/dropdrink\\)$")),
-    SUPPLIER("Lieferant", compile("^\\[Transport] Liefere (die Kisten|das Weizen) (zu einem Geschäft deiner Wahl|zur Bäckerei), benutze dazu /droptransport$")),
+    SUPPLIER("Lieferant", ofMinutes(15), compile("^\\[Transport] Liefere (die Kisten|die Waffenkisten|das Weizen) (zu einem Geschäft deiner Wahl|zu einem Waffenladen deiner Wahl|zur Bäckerei), benutze dazu /droptransport$")),
     FARMER("Farmer", compile("^\\[Farmer] Ernte das ganze Weizen und bring es dann zur Mühle\\.$")),
     CASH_TRANSPORT("Geldtransport", compile("^\\[Geldtransport] Bringe das Geld an einen Bankautomaten und benutze /dropmoney\\.$")),
     POWDER_MINE("Pulvermine", compile("^\\[Mine] Baue bitte \\d+ Schwarzpulver-Erze ab! \\(Kohle-Erze\\)$")),
@@ -33,7 +33,7 @@ public enum Job {
     Job(String displayName, Pattern jobStartPattern) {
         this.displayName = displayName;
         this.jobStartPattern = jobStartPattern;
-        this.cooldown = ofMinutes(15);
+        this.cooldown = ofMinutes(20);
     }
 
     Job(String displayName, Duration cooldown, Pattern jobStartPattern) {
