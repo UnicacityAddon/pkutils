@@ -10,6 +10,7 @@ import de.rettichlp.pkutils.listener.ITickListener;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
 import java.time.Duration;
@@ -45,7 +46,8 @@ public class JobListener extends PKUtilsBase
     private static final Pattern DRINK_TRANSPORT_DELIVER_PATTERN = compile("^\\[Bar] Du hast eine Flasche abgegeben!$");
     private static final Pattern PIZZA_JOB_TRANSPORT_GET_PIZZA_PATTERN = compile("^\\[Pizzalieferant] Sobald du 10 Pizzen dabei hast, wird dir deine erste Route angezeigt\\.$");
 
-    private Job job;
+    @Nullable
+    private Job currentJob;
 
     @Override
     public boolean onCommandSend(@NotNull String command) {
@@ -82,21 +84,23 @@ public class JobListener extends PKUtilsBase
                 .findFirst();
 
         if (optionalJob.isPresent()) {
-            this.job = optionalJob.get();
-            Duration cooldown = this.job.getCooldown();
+            Job job = optionalJob.get();
+            this.currentJob = job;
+
+            Duration cooldown = job.getCooldown();
             LocalDateTime jobCooldownEntTime = now().plus(cooldown);
 
-            configService.edit(mainConfig -> mainConfig.getJobCooldownEndTimes().put(this.job, jobCooldownEntTime));
+            configService.edit(mainConfig -> mainConfig.getJobCooldownEndTimes().put(job, jobCooldownEntTime));
 
             notificationService.sendNotification(() -> {
                 long remainingMillis = between(now(), jobCooldownEntTime).toMillis();
                 return empty()
-                        .append(of(this.job.getDisplayName()).copy().formatted(GRAY))
+                        .append(of(job.getDisplayName()).copy().formatted(GRAY))
                         .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                         .append(of(millisToFriendlyString(remainingMillis)));
             }, Color.WHITE, cooldown.toMillis());
 
-            if (this.job == LUMBERJACK) {
+            if (job == LUMBERJACK) {
                 delayedAction(() -> sendCommand("findtree"), 1000);
             }
 
@@ -108,16 +112,16 @@ public class JobListener extends PKUtilsBase
 
     @Override
     public void onNaviSpotReached() {
-        if (isNull(this.job)) {
+        if (isNull(this.currentJob)) {
             return;
         }
 
-        if (this.job == PIZZA_DELIVERY && player.getBlockPos().isWithinDistance(new BlockPos(266, 69, 54), 2)) {
+        if (this.currentJob == PIZZA_DELIVERY && player.getBlockPos().isWithinDistance(new BlockPos(266, 69, 54), 2)) {
             sendCommand("getpizza");
             return;
         }
 
-        if (this.job == TOBACCO_PLANTATION && player.getBlockPos().isWithinDistance(new BlockPos(-133, 69, -78), 3)) {
+        if (this.currentJob == TOBACCO_PLANTATION && player.getBlockPos().isWithinDistance(new BlockPos(-133, 69, -78), 3)) {
             sendCommand("droptabak");
             return;
         }
