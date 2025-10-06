@@ -1,7 +1,7 @@
-package de.rettichlp.pkutils.common.gui;
+package de.rettichlp.pkutils.common.gui.options;
 
-import de.rettichlp.pkutils.common.gui.components.ItemButtonWidget;
-import de.rettichlp.pkutils.common.gui.components.ToggleButtonWidget;
+import de.rettichlp.pkutils.common.gui.options.components.ItemButtonWidget;
+import de.rettichlp.pkutils.common.gui.options.components.ToggleButtonWidget;
 import de.rettichlp.pkutils.common.models.config.Options;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;

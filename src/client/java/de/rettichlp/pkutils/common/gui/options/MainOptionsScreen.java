@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.gui;
+package de.rettichlp.pkutils.common.gui.options;
 
 import de.rettichlp.pkutils.common.models.config.Options;
 import net.minecraft.client.gui.screen.GameMenuScreen;

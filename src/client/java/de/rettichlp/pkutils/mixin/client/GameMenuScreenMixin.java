@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import de.rettichlp.pkutils.common.gui.MainOptionsScreen;
+import de.rettichlp.pkutils.common.gui.options.MainOptionsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;

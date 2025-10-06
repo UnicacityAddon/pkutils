@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.gui;
+package de.rettichlp.pkutils.common.gui.options;
 
 import de.rettichlp.pkutils.common.models.InventoryItem;
 import de.rettichlp.pkutils.common.models.PersonalUseEntry;
