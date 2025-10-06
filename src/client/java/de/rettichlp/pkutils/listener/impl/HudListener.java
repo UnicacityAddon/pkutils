@@ -17,6 +17,7 @@ import java.util.Map;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.renderService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
+import static de.rettichlp.pkutils.common.services.RenderService.TextBoxPosition.TOP_LEFT;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
 import static java.util.stream.Collectors.toMap;
@@ -31,6 +32,7 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
         renderCountdowns(drawContext);
+        renderDateTime(drawContext);
         renderNotifications(drawContext);
     }
 
@@ -72,6 +74,11 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
                 new Color(127, 127, 127, 100),
                 new Color(255, 255, 255, 255),
                 0);
+    }
+
+    private void renderDateTime(DrawContext drawContext) {
+        String dateTimeToFriendlyString = dateTimeToFriendlyString(now());
+        renderService.renderTextBox(drawContext, of(dateTimeToFriendlyString), TOP_LEFT);
     }
 
     private void renderNotifications(DrawContext drawContext) {
