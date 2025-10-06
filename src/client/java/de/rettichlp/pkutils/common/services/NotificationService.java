@@ -3,6 +3,7 @@ package de.rettichlp.pkutils.common.services;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Data;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static java.awt.Color.CYAN;
 import static java.awt.Color.GREEN;
@@ -44,7 +46,11 @@ public class NotificationService extends PKUtilsBase {
     }
 
     public void sendNotification(String message, Color color, long durationInMillis) {
-        Notification notification = new Notification(Text.of(message), durationInMillis);
+        sendNotification(() -> Text.of(message), color, durationInMillis);
+    }
+
+    public void sendNotification(@NotNull Supplier<Text> messageSupplier, Color color, long durationInMillis) {
+        Notification notification = new Notification(messageSupplier, durationInMillis);
         notification.setBorderColor(color);
         notification.setBackgroundColor(new Color(color.getRed() / 2, color.getGreen() / 2, color.getBlue() / 2, 100));
         this.notifications.add(notification);
@@ -61,7 +67,7 @@ public class NotificationService extends PKUtilsBase {
     public static class Notification {
 
         private final UUID id = randomUUID();
-        private final Text text;
+        private final Supplier<Text> textSupplier;
         private final long durationInMillis;
         private final LocalDateTime timestamp = now();
         private Color borderColor = new Color(255, 255, 255, 255);
@@ -69,7 +75,7 @@ public class NotificationService extends PKUtilsBase {
 
         @Override
         public int hashCode() {
-            return hash(this.id, this.text, this.durationInMillis, this.timestamp, this.borderColor, this.backgroundColor);
+            return hash(this.id, this.textSupplier, this.durationInMillis, this.timestamp, this.borderColor, this.backgroundColor);
         }
 
         @Override
