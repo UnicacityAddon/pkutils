@@ -13,7 +13,6 @@ import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleWChatCommand;
 import de.rettichlp.pkutils.command.faction.ASetBlacklistCommand;
 import de.rettichlp.pkutils.command.faction.ActivityCommand;
-import de.rettichlp.pkutils.command.faction.AllianceCommand;
 import de.rettichlp.pkutils.command.faction.BlackMarketCommand;
 import de.rettichlp.pkutils.command.faction.EquippedCommand;
 import de.rettichlp.pkutils.command.faction.MinusPointsCommand;
@@ -87,7 +86,6 @@ public class Registry {
             ASMSCommand.class,
             ASetBlacklistCommand.class,
             ActivityCommand.class,
-            AllianceCommand.class,
             BlackMarketCommand.class,
             DepositCommand.class,
             EquippedCommand.class,
