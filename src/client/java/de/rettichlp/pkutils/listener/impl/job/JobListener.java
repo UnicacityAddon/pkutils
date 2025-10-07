@@ -126,7 +126,7 @@ public class JobListener extends PKUtilsBase
             return;
         }
 
-        if (this.currentJob == URANIUM_TRANSPORT && player.getBlockPos().isWithinDistance(new BlockPos(1132, 68, 396), 1.8)) {
+        if (this.currentJob == URANIUM_TRANSPORT && player.getBlockPos().isWithinDistance(new BlockPos(1132, 68, 396), 2)) {
             sendCommand("dropuran");
         }
     }
