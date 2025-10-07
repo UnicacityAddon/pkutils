@@ -35,13 +35,13 @@ public enum Faction {
     POLIZEI("polizei", "Polizei", false, BLUE, "✯"),
     RETTUNGSDIENST("rettungsdienst", "Rettungsdienst", false, DARK_RED, "✚"),
 
-    CALDERON("calderon", "Calderón Kartell", true, GOLD, "☀"),
+    CALDERON("kartell", "Calderón Kartell", true, GOLD, "☀"),
     KERZAKOV("kerzakov", "Kerzakov Familie", true, RED, "✮"),
-    LACOSANOSTRA("lacosanostra", "La Cosa Nostra", true, DARK_AQUA, "⚜"),
+    LACOSANOSTRA("lcn", "La Cosa Nostra", true, DARK_AQUA, "⚜"),
     LEMILIEU("le_milieu", "Le Milieu", true, DARK_AQUA, "Ⓜ"),
     OBRIEN("obrien", "O'Brien Familie", true, DARK_GREEN, "☘"),
     TRIADEN("triaden", "Triaden", true, RED, "☯"),
-    WESTSIDEBALLAS("westsideballas", "Westside Ballas", true, DARK_PURPLE, "☠"),
+    WESTSIDEBALLAS("ballas", "Westside Ballas", true, DARK_PURPLE, "☠"),
 
     HITMAN("hitman", "Hitman", false, AQUA, "➹"),
     KIRCHE("kirche", "Kirche", false, LIGHT_PURPLE, "†"),
