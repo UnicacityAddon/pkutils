@@ -24,7 +24,7 @@ import static net.minecraft.util.math.RotationAxis.POSITIVE_Y;
 public class RenderService extends PKUtilsBase {
 
     public static final int TEXT_BOX_PADDING = 3;
-    public static final int TEXT_BOX_MARGIN = 5;
+    public static final int TEXT_BOX_MARGIN = 2;
 
     public int getTextBoxSizeX(StringVisitable text) {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
