@@ -14,6 +14,22 @@ public class AlignHorizontalOverlay extends AlignOverlay<OverlayEntry> {
     }
 
     @Override
+    public void draw(@NotNull DrawContext drawContext, int x, int y, Alignment alignment) {
+        int innerX = x + TEXT_BOX_MARGIN;
+        int innerY = y + TEXT_BOX_MARGIN;
+
+        int xOffset = innerX;
+
+        for (OverlayEntry overlayEntry : this.overlayEntries) {
+            overlayEntry.draw(drawContext, xOffset, innerY, alignment);
+            xOffset += overlayEntry.getWidth();
+        }
+
+        // debug: draw background
+        //drawContext.fill(x, y, getWidth(), getHeight(), new Color(255, 0, 0, 100).getRGB());
+    }
+
+    @Override
     public int getWidth() {
         int entryWidth = this.overlayEntries.stream().map(OverlayEntry::getWidth).reduce(0, Integer::sum);
         return entryWidth + 2 * TEXT_BOX_MARGIN; // left + right margin
@@ -23,25 +39,5 @@ public class AlignHorizontalOverlay extends AlignOverlay<OverlayEntry> {
     public int getHeight() {
         int entryHeight = this.overlayEntries.stream().map(OverlayEntry::getHeight).max(Integer::compareTo).orElse(renderService.getTextBoxSizeY());
         return entryHeight + 2 * TEXT_BOX_MARGIN; // top + bottom margin
-    }
-
-    @Override
-    public void draw(@NotNull DrawContext drawContext, @NotNull AlignOverlay.DrawPosition drawPosition) {
-        draw(drawContext, drawPosition.getX(getWidth()), drawPosition.getY(getHeight()), drawPosition.getAlignment());
-
-        // debug: draw background
-        //drawContext.fill(drawPosition.getX(getWidth()), drawPosition.getY(getHeight()), getWidth(), getHeight(), RED.getRGB());
-    }
-
-    public void draw(DrawContext drawContext, int x, int y, AlignOverlay.Alignment alignment) {
-        int innerX = x + TEXT_BOX_MARGIN;
-        int innerY = y + TEXT_BOX_MARGIN;
-
-        int xOffset = innerX;
-
-        for (OverlayEntry overlayEntry : this.overlayEntries) {
-            overlayEntry.draw(drawContext, xOffset, innerY);
-            xOffset += overlayEntry.getWidth();
-        }
     }
 }

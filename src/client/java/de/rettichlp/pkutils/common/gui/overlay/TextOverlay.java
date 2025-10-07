@@ -35,7 +35,7 @@ public class TextOverlay extends OverlayEntry {
     }
 
     @Override
-    public void draw(@NotNull DrawContext drawContext, int x, int y) {
+    public void draw(@NotNull DrawContext drawContext, int x, int y, Alignment alignment) {
         int innerX = x + TEXT_BOX_MARGIN;
         int innerY = y + TEXT_BOX_MARGIN;
 
@@ -44,6 +44,6 @@ public class TextOverlay extends OverlayEntry {
         drawContext.drawTextWithShadow(this.textRenderer, this.textSupplier.get(), innerX + TEXT_BOX_PADDING, innerY + TEXT_BOX_PADDING, 0xFFFFFF);
 
         // debug: draw outline
-        //drawContext.drawBorder(x, y, getWidth(), getHeight(), BLUE.getRGB());
+        //drawContext.drawBorder(x, y, getWidth(), getHeight(), new Color(0, 0, 255).getRGB());
     }
 }
