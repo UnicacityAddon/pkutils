@@ -9,7 +9,7 @@ import java.net.URI;
 
 import static java.net.URI.create;
 
-public record FactionDataGetRequest(Faction faction) implements IRequest {
+public record FactionMemberDataGetRequest(Faction faction) implements IRequest {
 
     @Contract(" -> new")
     @Override

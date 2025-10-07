@@ -11,7 +11,7 @@ import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
 import de.rettichlp.pkutils.common.api.request.EquipAddRequest;
 import de.rettichlp.pkutils.common.api.request.EquipGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.EquipGetRequest;
-import de.rettichlp.pkutils.common.api.request.FactionDataGetRequest;
+import de.rettichlp.pkutils.common.api.request.FactionMemberDataGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
@@ -285,10 +285,10 @@ public class Api {
         });
     }
 
-    public CompletableFuture<Map<String, Object>> getFactionData(Faction faction) {
-        Request<FactionDataGetRequest> request = Request.<FactionDataGetRequest>builder()
+    public CompletableFuture<Map<String, Object>> getFactionMemberData(Faction faction) {
+        Request<FactionMemberDataGetRequest> request = Request.<FactionMemberDataGetRequest>builder()
                 .method("GET")
-                .requestData(new FactionDataGetRequest(faction))
+                .requestData(new FactionMemberDataGetRequest(faction))
                 .build();
 
         return request.send().thenApply(httpResponse -> {
