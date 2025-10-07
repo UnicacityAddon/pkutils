@@ -78,10 +78,6 @@ public class SyncService extends PKUtilsBase {
         notificationService.sendSuccessNotification("PKUtils synchronisiert");
     }
 
-    public void stopSync() {
-        this.gameSyncProcessActive = false;
-    }
-
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
         sendCommand("nummer " + playerName);
 
