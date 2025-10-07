@@ -58,16 +58,16 @@ public class Api {
     @Getter
     private final String baseUrl = "https://pkutils.rettichlp.de/v1"; // http://localhost:6010/pkutils/v1
 
-    public void registerUser(String version) {
+    public CompletableFuture<Void> registerUser(String version) {
         Request<UserRegisterRequest> request = Request.<UserRegisterRequest>builder()
                 .method("POST")
                 .requestData(new UserRegisterRequest(storage.getFactionMembers()))
                 .headers(Map.of("X-PKU-Version", version))
                 .build();
 
-        request.send().thenAccept(httpResponse -> {
+        return request.send().thenAccept(httpResponse -> {
             validate(httpResponse);
-            notificationService.sendSuccessNotification("API Login erfolgreich");
+            LOGGER.info("User successfully registered on PKUtils API");
         }).exceptionally(throwable -> {
             LOGGER.error("Error while registering user", throwable);
 
