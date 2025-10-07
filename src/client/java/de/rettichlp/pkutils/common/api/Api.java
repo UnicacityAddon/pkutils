@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.api;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
@@ -8,16 +9,20 @@ import com.google.gson.JsonSerializer;
 import de.rettichlp.pkutils.common.api.request.ActivityAddRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
+import de.rettichlp.pkutils.common.api.request.BlacklistReasonDataGetRequest;
 import de.rettichlp.pkutils.common.api.request.EquipAddRequest;
 import de.rettichlp.pkutils.common.api.request.EquipGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.EquipGetRequest;
+import de.rettichlp.pkutils.common.api.request.FactionMemberDataGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
 import de.rettichlp.pkutils.common.api.request.UserInfoRequest;
 import de.rettichlp.pkutils.common.api.request.UserRegisterRequest;
 import de.rettichlp.pkutils.common.models.ActivityEntry;
+import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.EquipEntry;
+import de.rettichlp.pkutils.common.models.Faction;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -56,16 +61,16 @@ public class Api {
     @Getter
     private final String baseUrl = "https://pkutils.rettichlp.de/v1"; // http://localhost:6010/pkutils/v1
 
-    public void registerUser(String version) {
+    public CompletableFuture<Void> registerUser(String version) {
         Request<UserRegisterRequest> request = Request.<UserRegisterRequest>builder()
                 .method("POST")
                 .requestData(new UserRegisterRequest(storage.getFactionMembers()))
                 .headers(Map.of("X-PKU-Version", version))
                 .build();
 
-        request.send().thenAccept(httpResponse -> {
+        return request.send().thenAccept(httpResponse -> {
             validate(httpResponse);
-            notificationService.sendSuccessNotification("API Login erfolgreich");
+            LOGGER.info("User successfully registered on PKUtils API");
         }).exceptionally(throwable -> {
             LOGGER.error("Error while registering user", throwable);
 
@@ -280,6 +285,46 @@ public class Api {
             }
 
             return MIN_VALUE;
+        });
+    }
+
+    public CompletableFuture<Map<Faction, List<BlacklistReason>>> getBlacklistReasonData() {
+        Request<BlacklistReasonDataGetRequest> request = Request.<BlacklistReasonDataGetRequest>builder()
+                .method("GET")
+                .requestData(new BlacklistReasonDataGetRequest())
+                .build();
+
+        return request.send().thenApply(httpResponse -> {
+            Type type = new TypeToken<Map<Faction, List<BlacklistReason>>>() {}.getType();
+            return (Map<Faction, List<BlacklistReason>>) validateAndParse(httpResponse, type);
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching faction data", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return null;
+        });
+    }
+
+    public CompletableFuture<Map<String, Object>> getFactionMemberData(Faction faction) {
+        Request<FactionMemberDataGetRequest> request = Request.<FactionMemberDataGetRequest>builder()
+                .method("GET")
+                .requestData(new FactionMemberDataGetRequest(faction))
+                .build();
+
+        return request.send().thenApply(httpResponse -> {
+            Type type = getParameterized(Map.class, String.class, Object.class).getType();
+            return (Map<String, Object>) validateAndParse(httpResponse, type);
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching faction data", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return new HashMap<>();
         });
     }
 
