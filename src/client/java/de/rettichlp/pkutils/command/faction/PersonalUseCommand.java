@@ -40,7 +40,7 @@ public class PersonalUseCommand extends CommandBase {
                                     return 1;
                                 })))
                 .executes(context -> {
-                    sendCommands(createCommands("dbank get %name% %purity% %amount%"));
+                    sendCommands(createCommands("dbank get %name% %amount% %purity%"));
                     return 1;
                 });
     }
