@@ -5,6 +5,7 @@ import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
+import de.rettichlp.pkutils.listener.IMoveListener;
 import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
 import de.rettichlp.pkutils.listener.ITickListener;
 import net.minecraft.text.Text;
@@ -41,7 +42,7 @@ import static net.minecraft.util.Formatting.GRAY;
 
 @PKUtilsListener
 public class JobListener extends PKUtilsBase
-        implements ICommandSendListener, IMessageReceiveListener, INaviSpotReachedListener, ITickListener {
+        implements ICommandSendListener, IMessageReceiveListener, IMoveListener, INaviSpotReachedListener, ITickListener {
 
     private static final Pattern TRANSPORT_DELIVER_PATTERN = compile("^\\[Transport] Du hast (eine Kiste|eine Waffenkiste|ein Weizen Paket|eine Schwarzpulverkiste) abgeliefert\\.$");
     private static final Pattern DRINK_TRANSPORT_DELIVER_PATTERN = compile("^\\[Bar] Du hast eine Flasche abgegeben!$");
@@ -112,6 +113,17 @@ public class JobListener extends PKUtilsBase
     }
 
     @Override
+    public void onMove(BlockPos blockPos) {
+        if (isNull(this.currentJob)) {
+            return;
+        }
+
+        if (this.currentJob == URANIUM_TRANSPORT && player.getBlockPos().isWithinDistance(new BlockPos(1132, 68, 396), 1.8)) {
+            sendCommand("dropuran");
+        }
+    }
+
+    @Override
     public void onNaviSpotReached() {
         if (isNull(this.currentJob)) {
             return;
@@ -124,12 +136,6 @@ public class JobListener extends PKUtilsBase
 
         if (this.currentJob == TOBACCO_PLANTATION && player.getBlockPos().isWithinDistance(new BlockPos(-133, 69, -78), 3)) {
             sendCommand("droptabak");
-            return;
-        }
-
-        if (this.currentJob == URANIUM_TRANSPORT && player.getBlockPos().isWithinDistance(new BlockPos(1132, 68, 396), 2)) {
-            sendCommand("dropuran");
-            return;
         }
     }
 
