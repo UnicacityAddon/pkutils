@@ -47,6 +47,7 @@ public class JobListener extends PKUtilsBase
     private static final Pattern TRANSPORT_DELIVER_PATTERN = compile("^\\[Transport] Du hast (eine Kiste|eine Waffenkiste|ein Weizen Paket|eine Schwarzpulverkiste) abgeliefert\\.$");
     private static final Pattern DRINK_TRANSPORT_DELIVER_PATTERN = compile("^\\[Bar] Du hast eine Flasche abgegeben!$");
     private static final Pattern PIZZA_JOB_TRANSPORT_GET_PIZZA_PATTERN = compile("^\\[Pizzalieferant] Sobald du 10 Pizzen dabei hast, wird dir deine erste Route angezeigt\\.$");
+    private static final Pattern PAYDAY_SALARY_PATTERN = compile("^\\[PayDay] Du bekommst dein Gehalt von (?<money>\\d+)\\$ am PayDay ausgezahlt\\.$");
 
     @Nullable
     private Job currentJob;
@@ -106,6 +107,13 @@ public class JobListener extends PKUtilsBase
                 delayedAction(() -> sendCommand("findtree"), 1000);
             }
 
+            return true;
+        }
+
+        // job end
+        Matcher paydaySalaryMatcher = PAYDAY_SALARY_PATTERN.matcher(message);
+        if (paydaySalaryMatcher.find() && !isNull(this.currentJob)) {
+            this.currentJob = null;
             return true;
         }
 
