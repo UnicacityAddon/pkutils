@@ -46,6 +46,7 @@ import de.rettichlp.pkutils.listener.impl.SyncListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
 import de.rettichlp.pkutils.listener.impl.faction.BombListener;
 import de.rettichlp.pkutils.listener.impl.faction.ContractListener;
+import de.rettichlp.pkutils.listener.impl.faction.FactionDoorListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionListener;
 import de.rettichlp.pkutils.listener.impl.faction.HousebanListener;
 import de.rettichlp.pkutils.listener.impl.faction.ReviveListener;
@@ -113,6 +114,7 @@ public class Registry {
             CommandSendListener.class,
             ContractListener.class,
             DepositCommand.class,
+            FactionDoorListener.class,
             FactionListener.class,
             FisherListener.class,
             GarbageManListener.class,

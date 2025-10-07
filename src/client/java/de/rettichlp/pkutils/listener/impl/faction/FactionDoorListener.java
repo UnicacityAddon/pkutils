@@ -1,40 +1,45 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.models.Faction;
-import de.rettichlp.pkutils.listener.IClickListener;
+import de.rettichlp.pkutils.common.registry.PKUtilsBase;
+import de.rettichlp.pkutils.listener.IBlockRightClickListener;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static de.rettichlp.pkutils.PKUtilsClient.*;
+import static de.rettichlp.pkutils.PKUtilsClient.player;
+import static de.rettichlp.pkutils.PKUtilsClient.storage;
+import static de.rettichlp.pkutils.common.models.Faction.FBI;
+import static de.rettichlp.pkutils.common.models.Faction.KERZAKOV;
+import static de.rettichlp.pkutils.common.models.Faction.WESTSIDEBALLAS;
+import static java.util.Collections.emptySet;
+import static java.util.Objects.isNull;
+import static net.minecraft.util.Hand.OFF_HAND;
 
-public class FactionDoorListener implements IClickListener {
+public class FactionDoorListener extends PKUtilsBase implements IBlockRightClickListener {
 
-    public List<BlockPos> doorPositions = List.of(
-            new BlockPos(-166, 68, 205), //Ballas
-            new BlockPos(936, 69, 191), //Kerzakov rechts
-            new BlockPos(936, 69, 174), //Kerzakov links
-            new BlockPos(879, 62, -87)); //FBI
+    private static final Map<Faction, Set<BlockPos>> FACTION_DOOR_POSITIONS = Map.of(
+            FBI, Set.of(new BlockPos(879, 62, -87)),
+            KERZAKOV, Set.of(new BlockPos(936, 69, 191), new BlockPos(936, 69, 174)),
+            WESTSIDEBALLAS, Set.of(new BlockPos(-166, 68, 205)));
+    private static final int DISTANCE = 4;
 
     @Override
-    public void onClick() {
-        if (player.getWorld() == null) return;
-
-        if (!isInFaction(Faction.FBI) || !isInFaction(Faction.WESTSIDEBALLAS) || !isInFaction(Faction.KERZAKOV)) {
+    public void onBlockRightClick(World world, Hand hand, BlockHitResult hitResult) {
+        if (isNull(world) || hand == OFF_HAND) {
             return;
         }
 
-        BlockPos clickedBlockPos = player.getBlockPos().offset(player.getHorizontalFacing());
-        int distance = 4;
+        Faction faction = storage.getFaction(player.getName().getString());
+        Set<BlockPos> factionDoorPositions = FACTION_DOOR_POSITIONS.getOrDefault(faction, emptySet());
 
-        for (BlockPos doorPosition : doorPositions) {
-            if (clickedBlockPos.isWithinDistance(doorPosition, distance)) {
-                networkHandler.sendCommand("/fdoor");
-            }
-        }
-    }
-
-    private boolean isInFaction(Faction faction) {
-        return storage.getFaction(player.getName().toString()).equals(faction);
+        factionDoorPositions.stream()
+                .filter(blockPos -> blockPos.isWithinDistance(hitResult.getBlockPos(), DISTANCE))
+                .findAny()
+                .ifPresent(blockPos -> sendCommand("fdoor"));
     }
 }
