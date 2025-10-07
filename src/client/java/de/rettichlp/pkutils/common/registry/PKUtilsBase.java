@@ -37,10 +37,6 @@ public abstract class PKUtilsBase {
             .append(of("|").copy().formatted(DARK_GRAY))
             .append(of(" "));
 
-    protected static final int TEXT_BOX_PADDING = 3;
-    protected static final int TEXT_BOX_MARGIN = 5;
-    protected static final int TEXT_BOX_FULL_SIZE_Y = 9 /* text height */ + 2 * TEXT_BOX_PADDING + TEXT_BOX_MARGIN;
-
     public void sendCommand(String command) {
         LOGGER.info("PKUtils executing command: {}", command);
         networkHandler.sendChatCommand(command);
