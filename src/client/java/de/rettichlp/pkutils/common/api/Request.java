@@ -32,7 +32,7 @@ public class Request<T extends IRequest> {
             try {
                 HttpRequest httpRequest = getHttpRequest();
                 HttpResponse<String> httpResponse = HTTP_CLIENT.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-                LOGGER.info("Sent request: {} -> [{}] {}", httpRequest, httpResponse.statusCode(), httpResponse.body());
+                LOGGER.info("Sent request: {} -> [{}] {}", httpRequest, httpResponse.statusCode(), httpResponse.body().replace("\n", ""));
                 return httpResponse;
             } catch (IOException | InterruptedException e) {
                 throw new CompletionException(e);

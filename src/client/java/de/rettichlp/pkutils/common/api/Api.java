@@ -295,7 +295,7 @@ public class Api {
                 .build();
 
         return request.send().thenApply(httpResponse -> {
-            Type type = new TypeToken<Map<String, List<BlacklistReason>>>() {}.getType();
+            Type type = new TypeToken<Map<Faction, List<BlacklistReason>>>() {}.getType();
             return (Map<Faction, List<BlacklistReason>>) validateAndParse(httpResponse, type);
         }).exceptionally(throwable -> {
             LOGGER.error("Error while fetching faction data", throwable);

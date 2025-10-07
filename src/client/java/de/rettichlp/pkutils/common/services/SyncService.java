@@ -1,21 +1,18 @@
 package de.rettichlp.pkutils.common.services;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import de.rettichlp.pkutils.common.models.BlacklistReason;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -27,14 +24,12 @@ import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static de.rettichlp.pkutils.common.models.Faction.TRIADEN;
 import static java.awt.Color.WHITE;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.CompletableFuture.allOf;
-import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 @Getter
 @Setter
@@ -47,26 +42,20 @@ public class SyncService extends PKUtilsBase {
         this.gameSyncProcessActive = true;
         notificationService.sendInfoNotification("PKUtils wird synchronisiert...");
 
-        // parse blacklist reasons from GitHub Gist
-        CompletableFuture<Void> syncBlacklistEntriesFuture = syncBlacklistEntries();
-
         // parse faction data
         CompletableFuture<?>[] syncFactionMembersFutures = stream(Faction.values())
                 .filter(faction -> faction != NULL && faction != TRIADEN)
-                .map(this::syncFactionMembers)
+                .map(this::syncFactionMemberData)
                 .toArray(CompletableFuture[]::new);
 
-        CompletableFuture<Void> syncFactionMembersFuture = allOf(syncFactionMembersFutures);
-
-        // login to PKUtils API
-        CompletableFuture<Void> registerUserFuture = api.registerUser(getVersion());
-
-        // wait for all async tasks to be done
-        CompletableFuture<Void> overallFuture = allOf(syncBlacklistEntriesFuture, syncFactionMembersFuture, registerUserFuture);
+        // run each task sequentially
+        CompletableFuture<Void> overallFuture = syncBlacklistReasonData() // parse blacklist reasons from GitHub Gist
+                .thenCompose(unused -> allOf(syncFactionMembersFutures)) // run all sync tasks in parallel
+                .thenCompose(unused -> api.registerUser(getVersion())); // login to PKUtils API
 
         // parse from faction-related init commands after all faction members are synced
-        overallFuture.thenRun(() -> {
-            notificationService.sendNotification("Synchronisiere fraktionsabhängige Daten...", WHITE, 1000);
+        overallFuture.thenAccept(unused -> {
+            notificationService.sendInfoNotification("Synchronisiere fraktionsabhängige Daten...");
 
             Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
             switch (faction) {
@@ -80,9 +69,16 @@ public class SyncService extends PKUtilsBase {
                 }
             }
 
-            this.gameSyncProcessActive = false;
             this.lastSyncTimestamp = now();
-        }).thenRun(() -> notificationService.sendSuccessNotification("PKUtils synchronisiert"));
+
+            delayedAction(() -> {
+                this.gameSyncProcessActive = false;
+                notificationService.sendSuccessNotification("PKUtils synchronisiert");
+            }, 200);
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while syncing process", throwable);
+            return null;
+        });
     }
 
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
@@ -95,31 +91,28 @@ public class SyncService extends PKUtilsBase {
         }, 1000);
     }
 
-    private CompletableFuture<Void> syncBlacklistEntries() {
-        return supplyAsync(() -> {
+    private @NotNull CompletableFuture<Void> syncBlacklistReasonData() {
+        return api.getBlacklistReasonData().thenAccept(factionListMap -> {
             storage.getBlacklistReasons().clear();
-
-            try (InputStreamReader reader = new InputStreamReader(URI.create("https://gist.githubusercontent.com/rettichlp/54e97f4dbb3988bf22554c01d62af666/raw/pkutils-blacklistreasons.json").toURL().openStream(), UTF_8)) {
-                Type type = new TypeToken<Map<String, List<BlacklistReason>>>() {}.getType();
-                Map<String, List<BlacklistReason>> factionBlacklistReasons = new Gson().fromJson(reader, type);
-                factionBlacklistReasons.forEach((factionString, blacklistReasons) -> storage.getBlacklistReasons().put(Faction.valueOf(factionString), blacklistReasons));
-            } catch (Exception e) {
-                LOGGER.error("Failed to fetch blacklist reasons", e);
-            }
-
-            return null;
+            storage.getBlacklistReasons().putAll(factionListMap);
         });
     }
 
-    private CompletableFuture<Void> syncFactionMembers(Faction faction) {
-        return api.getFactionData(faction).thenAccept(objectMap -> {
+    private @NotNull CompletableFuture<Void> syncFactionMemberData(Faction faction) {
+        return api.getFactionMemberData(faction).thenAccept(objectMap -> {
             Gson gson = api.getGson();
-            String memberJsonString = gson.toJson(objectMap.get("members"));
 
-            Type type = new TypeToken<List<FactionMember>>() {}.getType();
-            Set<FactionMember> members = gson.fromJson(memberJsonString, type);
+            JsonArray members = gson.toJsonTree(objectMap.get("members")).getAsJsonArray();
+            List<FactionMember> factionMembers = members.asList().stream()
+                    .map(jsonElement -> {
+                        JsonObject jsonObject = jsonElement.getAsJsonObject();
+                        String username = jsonObject.get("username").getAsString();
+                        int rank = jsonObject.get("rank").getAsInt();
+                        return new FactionMember(username, rank);
+                    })
+                    .toList();
 
-            storage.getFactionMembers().put(faction, members);
+            storage.getFactionMembers().put(faction, new HashSet<>(factionMembers));
         });
     }
 }
