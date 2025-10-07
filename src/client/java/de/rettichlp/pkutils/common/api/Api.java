@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.api;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
@@ -8,6 +9,7 @@ import com.google.gson.JsonSerializer;
 import de.rettichlp.pkutils.common.api.request.ActivityAddRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
+import de.rettichlp.pkutils.common.api.request.BlacklistReasonDataGetRequest;
 import de.rettichlp.pkutils.common.api.request.EquipAddRequest;
 import de.rettichlp.pkutils.common.api.request.EquipGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.EquipGetRequest;
@@ -18,6 +20,7 @@ import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
 import de.rettichlp.pkutils.common.api.request.UserInfoRequest;
 import de.rettichlp.pkutils.common.api.request.UserRegisterRequest;
 import de.rettichlp.pkutils.common.models.ActivityEntry;
+import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.EquipEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import lombok.Getter;
@@ -282,6 +285,26 @@ public class Api {
             }
 
             return MIN_VALUE;
+        });
+    }
+
+    public CompletableFuture<Map<Faction, List<BlacklistReason>>> getBlacklistReasonData() {
+        Request<BlacklistReasonDataGetRequest> request = Request.<BlacklistReasonDataGetRequest>builder()
+                .method("GET")
+                .requestData(new BlacklistReasonDataGetRequest())
+                .build();
+
+        return request.send().thenApply(httpResponse -> {
+            Type type = new TypeToken<Map<String, List<BlacklistReason>>>() {}.getType();
+            return (Map<Faction, List<BlacklistReason>>) validateAndParse(httpResponse, type);
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching faction data", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return null;
         });
     }
 
