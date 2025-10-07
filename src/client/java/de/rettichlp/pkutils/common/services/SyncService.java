@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.Faction;
+import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
@@ -22,6 +24,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
+import static de.rettichlp.pkutils.common.models.Faction.TRIADEN;
 import static java.awt.Color.CYAN;
 import static java.awt.Color.WHITE;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -36,71 +39,46 @@ public class SyncService extends PKUtilsBase {
 
     private LocalDateTime lastSyncTimestamp = MIN;
     private boolean gameSyncProcessActive = false;
-    private boolean abortGameSyncProcess = false;
 
     public void executeSync() {
-        this.abortGameSyncProcess = false;
         this.gameSyncProcessActive = true;
         notificationService.sendNotification("PKUtils wird synchronisiert...", CYAN, Faction.values().length * 1000L + 1000);
 
-        // without scheduled timings
-        parseBlacklistEntries();
+        // parse blacklist reasons from GitHub Gist
+        syncBlacklistEntries();
 
-        // seconds 1-13: execute commands for all factions -> blocks command input for 13 * 1000 ms
+        // parse faction data
         for (Faction faction : Faction.values()) {
-            if (faction == NULL) {
+            if (faction == NULL || faction == TRIADEN) {
                 continue;
             }
 
-            delayedAction(() -> {
-                if (this.abortGameSyncProcess) {
-                    return;
-                }
-
-                sendCommand("memberinfoall " + faction.getMemberInfoCommandName());
-                notificationService.sendNotification("Synchronisiere Fraktion " + faction.getDisplayName() + "...", WHITE, 1000);
-            }, 1000 * faction.ordinal());
+            syncFactionMembers(faction);
         }
 
-        // second 13: faction-related init commands
-        delayedAction(() -> {
-            if (this.abortGameSyncProcess) {
-                return;
-            }
-
-            Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
-
-            switch (faction) {
-                case FBI, POLIZEI -> sendCommand("wanteds");
-                case HITMAN -> sendCommand("contractlist");
-                case RETTUNGSDIENST -> sendCommand("hausverbot list");
-                default -> {
-                    if (faction.isBadFaction()) {
-                        sendCommand("blacklist");
-                    }
+        // parse from faction-related init commands
+        notificationService.sendNotification("Synchronisiere fraktionsabhängige Daten...", WHITE, 1000);
+        Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
+        switch (faction) {
+            case FBI, POLIZEI -> sendCommand("wanteds");
+            case HITMAN -> sendCommand("contractlist");
+            case RETTUNGSDIENST -> sendCommand("hausverbot list");
+            default -> {
+                if (faction.isBadFaction()) {
+                    sendCommand("blacklist");
                 }
             }
+        }
 
-            notificationService.sendNotification("Synchronisiere fraktionsabhängige Daten...", WHITE, 1000);
-        }, Faction.values().length * 1000L);
+        // sync with api
+        api.registerUser(getVersion());
 
-        // end: init commands dons
-        delayedAction(() -> {
-            if (this.abortGameSyncProcess) {
-                return;
-            }
-
-            // api login
-            api.registerUser(getVersion());
-
-            this.gameSyncProcessActive = false;
-            notificationService.sendSuccessNotification("PKUtils synchronisiert");
-            this.lastSyncTimestamp = now();
-        }, Faction.values().length * 1000L + 1000);
+        this.gameSyncProcessActive = false;
+        this.lastSyncTimestamp = now();
+        notificationService.sendSuccessNotification("PKUtils synchronisiert");
     }
 
     public void stopSync() {
-        this.abortGameSyncProcess = true;
         this.gameSyncProcessActive = false;
     }
 
@@ -114,7 +92,7 @@ public class SyncService extends PKUtilsBase {
         }, 1000);
     }
 
-    private void parseBlacklistEntries() {
+    private void syncBlacklistEntries() {
         new Thread(() -> {
             storage.getBlacklistReasons().clear();
 
@@ -126,5 +104,17 @@ public class SyncService extends PKUtilsBase {
                 LOGGER.error("Failed to fetch blacklist reasons", e);
             }
         }).start();
+    }
+
+    private void syncFactionMembers(Faction faction) {
+        api.getFactionData(faction).thenAccept(objectMap -> {
+            Gson gson = api.getGson();
+            String jsonString = gson.toJson(objectMap);
+
+            Type type = new TypeToken<List<FactionMember>>() {}.getType();
+            Set<FactionMember> members = gson.fromJson(jsonString, type);
+
+            storage.getFactionMembers().put(faction, members);
+        });
     }
 }
