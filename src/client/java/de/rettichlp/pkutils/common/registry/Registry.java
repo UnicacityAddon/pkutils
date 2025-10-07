@@ -121,6 +121,7 @@ public class Registry {
             HudListener.class,
             JobListener.class,
             MoneyListener.class,
+            PersonalUseCommand.class,
             ReviveListener.class,
             ServiceListener.class,
             SyncListener.class,
