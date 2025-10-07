@@ -24,7 +24,7 @@ import de.rettichlp.pkutils.command.money.DepositCommand;
 import de.rettichlp.pkutils.command.money.RichTaxesCommand;
 import de.rettichlp.pkutils.common.models.Sound;
 import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
-import de.rettichlp.pkutils.listener.IClickListener;
+import de.rettichlp.pkutils.listener.IBlockRightClickListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
 import de.rettichlp.pkutils.listener.IEntityRenderListener;
@@ -62,6 +62,7 @@ import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,6 +77,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 import static net.minecraft.entity.effect.StatusEffects.ABSORPTION;
 import static net.minecraft.registry.Registries.SOUND_EVENT;
 import static net.minecraft.registry.Registry.register;
+import static net.minecraft.util.ActionResult.PASS;
 
 public class Registry {
 
@@ -180,6 +182,13 @@ public class Registry {
                     });
                 }
 
+                if (listenerInstance instanceof IBlockRightClickListener iBlockRightClickListener) {
+                    UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+                        iBlockRightClickListener.onBlockRightClick(world, hand, hitResult);
+                        return PASS;
+                    });
+                }
+
                 if (listenerInstance instanceof ICommandSendListener iCommandSendListener) {
                     ClientSendMessageEvents.ALLOW_COMMAND.register(iCommandSendListener::onCommandSend);
                 }
@@ -235,12 +244,6 @@ public class Registry {
                 if (listenerInstance instanceof ITickListener iTickListener) {
                     ClientTickEvents.END_CLIENT_TICK.register((server) -> {
                         iTickListener.onTick();
-                    });
-                }
-
-                if (listenerInstance instanceof IClickListener iClickListener) {
-                    ClientTickEvents.END_CLIENT_TICK.register((server) -> {
-                        iClickListener.onClick();
                     });
                 }
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
