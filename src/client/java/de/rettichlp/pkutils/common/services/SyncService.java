@@ -105,10 +105,10 @@ public class SyncService extends PKUtilsBase {
     private void syncFactionMembers(Faction faction) {
         api.getFactionData(faction).thenAccept(objectMap -> {
             Gson gson = api.getGson();
-            String jsonString = gson.toJson(objectMap);
+            String memberJsonString = gson.toJson(objectMap.get("members"));
 
             Type type = new TypeToken<List<FactionMember>>() {}.getType();
-            Set<FactionMember> members = gson.fromJson(jsonString, type);
+            Set<FactionMember> members = gson.fromJson(memberJsonString, type);
 
             storage.getFactionMembers().put(faction, members);
         });

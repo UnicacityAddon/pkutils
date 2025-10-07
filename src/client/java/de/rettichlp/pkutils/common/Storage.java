@@ -115,11 +115,6 @@ public class Storage {
         LOGGER.info("toggledChat: {}", this.toggledChat);
     }
 
-    public void addFactionMember(Faction faction, FactionMember factionMember) {
-        this.factionMembers.computeIfAbsent(faction, f -> new HashSet<>())
-                .add(factionMember);
-    }
-
     public Set<FactionMember> getFactionMembers(Faction faction) {
         return this.factionMembers.getOrDefault(faction, new HashSet<>());
     }
