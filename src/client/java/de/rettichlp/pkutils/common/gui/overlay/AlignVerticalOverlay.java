@@ -14,8 +14,8 @@ public class AlignVerticalOverlay extends AlignOverlay<OverlayEntry> {
 
     @Override
     public void draw(@NotNull DrawContext drawContext, int x, int y, Alignment alignment) {
-        int innerX = x + TEXT_BOX_MARGIN;
-        int innerY = y + TEXT_BOX_MARGIN;
+        int innerX = x + (this.disableMargin ? 0 : TEXT_BOX_MARGIN);
+        int innerY = y + (this.disableMargin ? 0 : TEXT_BOX_MARGIN);
 
         int yOffset = innerY;
 
@@ -31,12 +31,12 @@ public class AlignVerticalOverlay extends AlignOverlay<OverlayEntry> {
     @Override
     public int getWidth() {
         int entryWidth = this.overlayEntries.stream().map(OverlayEntry::getWidth).max(Integer::compareTo).orElse(0);
-        return entryWidth + 2 * TEXT_BOX_MARGIN; // left + right margin
+        return entryWidth + (this.disableMargin ? 0 : 2 * TEXT_BOX_MARGIN); // left + right margin
     }
 
     @Override
     public int getHeight() {
         int entryHeight = this.overlayEntries.stream().map(OverlayEntry::getHeight).reduce(0, Integer::sum);
-        return entryHeight + 2 * TEXT_BOX_MARGIN; // top + bottom margin
+        return entryHeight + (this.disableMargin ? 0 : 2 * TEXT_BOX_MARGIN); // top + bottom margin
     }
 }
