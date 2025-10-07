@@ -11,6 +11,7 @@ import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
 import de.rettichlp.pkutils.common.api.request.EquipAddRequest;
 import de.rettichlp.pkutils.common.api.request.EquipGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.EquipGetRequest;
+import de.rettichlp.pkutils.common.api.request.FactionDataGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
@@ -18,6 +19,7 @@ import de.rettichlp.pkutils.common.api.request.UserInfoRequest;
 import de.rettichlp.pkutils.common.api.request.UserRegisterRequest;
 import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.models.EquipEntry;
+import de.rettichlp.pkutils.common.models.Faction;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -280,6 +282,26 @@ public class Api {
             }
 
             return MIN_VALUE;
+        });
+    }
+
+    public CompletableFuture<Map<String, Object>> getFactionData(Faction faction) {
+        Request<FactionDataGetRequest> request = Request.<FactionDataGetRequest>builder()
+                .method("GET")
+                .requestData(new FactionDataGetRequest(faction))
+                .build();
+
+        return request.send().thenApply(httpResponse -> {
+            Type type = getParameterized(Map.class, String.class, Object.class).getType();
+            return (Map<String, Object>) validateAndParse(httpResponse, type);
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching faction data", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return new HashMap<>();
         });
     }
 
