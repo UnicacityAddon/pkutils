@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.time.Duration;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.time.Duration.ofMinutes;
 import static java.util.regex.Pattern.compile;
@@ -44,6 +45,6 @@ public enum Job {
     }
 
     public void startCountdown() {
-        storage.getCountdowns().add(new Countdown(this.displayName, this.cooldown));
+        storage.getCountdowns().add(new Countdown(this.displayName, this.cooldown, () -> notificationService.sendInfoNotification("Cooldown für '" + this.displayName + "' abgelaufen")));
     }
 }

@@ -3,7 +3,6 @@ package de.rettichlp.pkutils.common.services;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -15,8 +14,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.entity.EntityLike;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
-
-import java.awt.Color;
 
 import static net.minecraft.client.render.RenderLayer.getLines;
 import static net.minecraft.util.math.RotationAxis.POSITIVE_Y;
@@ -78,66 +75,6 @@ public class RenderService extends PKUtilsBase {
         drawLine(consumer, matrix, minX, minY, maxZ, minX, maxY, maxZ);
     }
 
-    public void renderTextBox(@NotNull DrawContext drawContext,
-                              Text text,
-                              @NotNull Color backgroundColor,
-                              @NotNull Color borderColor,
-                              int boxIndex) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        TextRenderer textRenderer = client.textRenderer;
-
-        int textWidth = textRenderer.getWidth(text);
-        int textHeight = textRenderer.fontHeight;
-        int x = client.getWindow().getScaledWidth() - textWidth - TEXT_BOX_MARGIN;
-        int y = getTextBoxSizeY() * boxIndex + TEXT_BOX_MARGIN;
-
-        drawContext.fill(
-                x - TEXT_BOX_PADDING,
-                y - TEXT_BOX_PADDING,
-                x + textWidth + TEXT_BOX_PADDING,
-                y + textHeight + TEXT_BOX_PADDING,
-                backgroundColor.getRGB()
-        );
-
-        drawContext.drawBorder(
-                x - TEXT_BOX_PADDING,
-                y - TEXT_BOX_PADDING,
-                textWidth + TEXT_BOX_PADDING * 2,
-                textHeight + TEXT_BOX_PADDING * 2,
-                borderColor.getRGB()
-        );
-
-        drawContext.drawTextWithShadow(textRenderer, text, x, y, 0xFFFFFF);
-    }
-
-    public void renderTextBox(@NotNull DrawContext drawContext, Text text, TextBoxPosition textBoxPosition) {
-        renderTextBox(drawContext, text, textBoxPosition, new Color(127, 127, 127, 100), new Color(255, 255, 255, 255), 0, 0);
-    }
-
-    public void renderTextBox(@NotNull DrawContext drawContext, Text text, TextBoxPosition textBoxPosition, int xOffset, int yOffset) {
-        renderTextBox(drawContext, text, textBoxPosition, new Color(127, 127, 127, 100), new Color(255, 255, 255, 255), xOffset, yOffset);
-    }
-
-    public void renderTextBox(@NotNull DrawContext drawContext,
-                              Text text,
-                              TextBoxPosition textBoxPosition,
-                              @NotNull Color backgroundColor,
-                              @NotNull Color borderColor,
-                              int xOffset,
-                              int yOffset) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        TextRenderer textRenderer = client.textRenderer;
-
-        int textWidth = textRenderer.getWidth(text);
-        int textHeight = textRenderer.fontHeight;
-        int x = textBoxPosition.getX(textWidth) + xOffset;
-        int y = textBoxPosition.getY(textHeight) + yOffset;
-
-        drawContext.fill(x, y, x + textWidth + TEXT_BOX_PADDING * 2, y + textHeight + TEXT_BOX_PADDING * 2, backgroundColor.getRGB());
-        drawContext.drawBorder(x, y, textWidth + TEXT_BOX_PADDING * 2, textHeight + TEXT_BOX_PADDING * 2, borderColor.getRGB());
-        drawContext.drawTextWithShadow(textRenderer, text, x + TEXT_BOX_PADDING, y + TEXT_BOX_PADDING, 0xFFFFFF);
-    }
-
     public void renderTextAboveEntity(@NotNull MatrixStack matrices,
                                       VertexConsumerProvider vertexConsumers,
                                       @NotNull Entity entity,
@@ -189,32 +126,5 @@ public class RenderService extends PKUtilsBase {
                          float z2) {
         consumer.vertex(matrix, x1, y1, z1).color(1f, 1f, 0f, 0.6f).normal(0, 1, 0);
         consumer.vertex(matrix, x2, y2, z2).color(1f, 1f, 0f, 0.6f).normal(0, 1, 0);
-    }
-
-    public enum TextBoxPosition {
-
-        TOP_RIGHT,
-        TOP_LEFT,
-        TOP_CENTER,
-        BOTTOM_RIGHT,
-        BOTTOM_LEFT,
-        BOTTOM_CENTER;
-
-        public int getX(int textWidth) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            return switch (this) {
-                case TOP_RIGHT, BOTTOM_RIGHT -> client.getWindow().getScaledWidth() - textWidth - TEXT_BOX_MARGIN;
-                case TOP_LEFT, BOTTOM_LEFT -> TEXT_BOX_MARGIN;
-                case TOP_CENTER, BOTTOM_CENTER -> (client.getWindow().getScaledWidth() - textWidth) / 2;
-            };
-        }
-
-        public int getY(int textHeight) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            return switch (this) {
-                case TOP_RIGHT, TOP_LEFT, TOP_CENTER -> TEXT_BOX_MARGIN;
-                case BOTTOM_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER -> client.getWindow().getScaledHeight() - textHeight - TEXT_BOX_MARGIN;
-            };
-        }
     }
 }
