@@ -42,6 +42,7 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
             configService.edit(mainConfig -> {
                 mainConfig.setMinutesSinceLastPayDay(0);
                 mainConfig.setPredictedPayDaySalary(0);
+                mainConfig.setPredictedPayDayExp(0);
             });
         }
 

@@ -30,7 +30,7 @@ public class MiaCommand extends CommandBase {
                             fromDisplayName(input).ifPresentOrElse(faction -> {
                                 sendCommand("memberinfoall " + faction.getMemberInfoCommandName());
                             }, () -> {
-                                sendModMessage("Die Fraktion" + input + " konnte nicht gefunden werden.", false);
+                                sendModMessage("Die Fraktion " + input + " konnte nicht gefunden werden.", false);
                             });
 
                             return 1;
