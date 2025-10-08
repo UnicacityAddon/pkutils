@@ -8,12 +8,14 @@ import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
+import de.rettichlp.pkutils.common.models.Job;
 import de.rettichlp.pkutils.common.models.Reinforcement;
 import de.rettichlp.pkutils.common.models.WantedEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.entity.vehicle.MinecartEntity;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +63,11 @@ public class Storage {
 
     @Getter
     @Setter
+    @Nullable
+    private Job currentJob;
+
+    @Getter
+    @Setter
     private MinecartEntity minecartEntityToHighlight;
 
     @Getter
@@ -102,6 +109,8 @@ public class Storage {
         LOGGER.info("blackMarkets[{}]: {}", this.blackMarkets.size(), this.blackMarkets);
         // wantedEntries
         LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
+        // currentJob
+        LOGGER.info("currentJob: {}", this.currentJob);
         // minecartEntityToHighlight
         LOGGER.info("minecartEntityToHighlight: {}", this.minecartEntityToHighlight);
         // moneyAtmAmount

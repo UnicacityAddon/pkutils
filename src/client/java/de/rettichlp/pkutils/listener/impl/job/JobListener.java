@@ -11,7 +11,6 @@ import de.rettichlp.pkutils.listener.ITickListener;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,7 @@ import java.util.regex.Pattern;
 import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
+import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.models.Job.LUMBERJACK;
 import static de.rettichlp.pkutils.common.models.Job.PIZZA_DELIVERY;
 import static de.rettichlp.pkutils.common.models.Job.TOBACCO_PLANTATION;
@@ -40,9 +40,6 @@ public class JobListener extends PKUtilsBase
     private static final Pattern DRINK_TRANSPORT_DELIVER_PATTERN = compile("^\\[Bar] Du hast eine Flasche abgegeben!$");
     private static final Pattern PIZZA_JOB_TRANSPORT_GET_PIZZA_PATTERN = compile("^\\[Pizzalieferant] Sobald du 10 Pizzen dabei hast, wird dir deine erste Route angezeigt\\.$");
     private static final Pattern PAYDAY_SALARY_PATTERN = compile("^\\[PayDay] Du bekommst dein Gehalt von (?<money>\\d+)\\$ am PayDay ausgezahlt\\.$");
-
-    @Nullable
-    private Job currentJob;
 
     @Override
     public boolean onCommandSend(@NotNull String command) {
@@ -80,7 +77,7 @@ public class JobListener extends PKUtilsBase
 
         if (optionalJob.isPresent()) {
             Job job = optionalJob.get();
-            this.currentJob = job;
+            storage.setCurrentJob(job);
 
             job.startCountdown();
 
@@ -93,8 +90,8 @@ public class JobListener extends PKUtilsBase
 
         // job end
         Matcher paydaySalaryMatcher = PAYDAY_SALARY_PATTERN.matcher(message);
-        if (paydaySalaryMatcher.find() && !isNull(this.currentJob)) {
-            this.currentJob = null;
+        if (paydaySalaryMatcher.find() && !isNull(storage.getCurrentJob())) {
+            storage.setCurrentJob(null);
             return true;
         }
 
@@ -103,27 +100,27 @@ public class JobListener extends PKUtilsBase
 
     @Override
     public void onMove(BlockPos blockPos) {
-        if (isNull(this.currentJob)) {
+        if (isNull(storage.getCurrentJob())) {
             return;
         }
 
-        if (this.currentJob == URANIUM_TRANSPORT && player.getBlockPos().isWithinDistance(new BlockPos(1132, 68, 396), 2)) {
+        if (storage.getCurrentJob() == URANIUM_TRANSPORT && player.getBlockPos().isWithinDistance(new BlockPos(1132, 68, 396), 2)) {
             sendCommand("dropuran");
         }
     }
 
     @Override
     public void onNaviSpotReached() {
-        if (isNull(this.currentJob)) {
+        if (isNull(storage.getCurrentJob())) {
             return;
         }
 
-        if (this.currentJob == PIZZA_DELIVERY && player.getBlockPos().isWithinDistance(new BlockPos(266, 69, 54), 2)) {
+        if (storage.getCurrentJob() == PIZZA_DELIVERY && player.getBlockPos().isWithinDistance(new BlockPos(266, 69, 54), 2)) {
             sendCommand("getpizza");
             return;
         }
 
-        if (this.currentJob == TOBACCO_PLANTATION && player.getBlockPos().isWithinDistance(new BlockPos(-133, 69, -78), 3)) {
+        if (storage.getCurrentJob() == TOBACCO_PLANTATION && player.getBlockPos().isWithinDistance(new BlockPos(-133, 69, -78), 3)) {
             sendCommand("droptabak");
         }
     }
