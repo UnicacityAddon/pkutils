@@ -1,6 +1,7 @@
 package de.rettichlp.pkutils.listener.impl;
 
 import de.rettichlp.pkutils.common.Storage;
+import de.rettichlp.pkutils.common.gui.overlay.AlignVerticalOverlay;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.common.services.NotificationService;
@@ -17,6 +18,7 @@ import java.util.Map;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.renderService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
+import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.TOP_RIGHT;
 import static de.rettichlp.pkutils.common.services.RenderService.TextBoxPosition.TOP_LEFT;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
@@ -28,6 +30,8 @@ import static net.minecraft.util.Formatting.GRAY;
 
 @PKUtilsListener
 public class HudListener extends PKUtilsBase implements IHudRenderListener {
+
+    private final AlignVerticalOverlay notificationOverlay = new AlignVerticalOverlay();
 
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
@@ -82,20 +86,12 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
     }
 
     private void renderNotifications(DrawContext drawContext) {
-        List<NotificationService.Notification> activeNotifications = notificationService.getActiveNotifications();
+        this.notificationOverlay.clear();
 
-        if (activeNotifications.isEmpty()) {
-            return;
-        }
+        notificationService.getActiveNotifications().stream()
+                .map(NotificationService.Notification::toTextOverlay)
+                .forEach(this.notificationOverlay::add);
 
-        Map<NotificationService.Notification, Integer> notificationIndexes = activeNotifications.stream()
-                .collect(toMap(notification -> notification, activeNotifications::indexOf));
-
-        notificationIndexes.forEach((notification, notificationIndex) -> renderService.renderTextBox(
-                drawContext,
-                notification.getTextSupplier().get(),
-                notification.getBackgroundColor(),
-                notification.getBorderColor(),
-                notificationIndex + 1)); // +1 because placeholder for countdowns
+        this.notificationOverlay.draw(drawContext, TOP_RIGHT);
     }
 }

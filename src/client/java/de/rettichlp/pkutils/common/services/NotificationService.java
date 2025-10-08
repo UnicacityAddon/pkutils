@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.services;
 
+import de.rettichlp.pkutils.common.gui.overlay.TextOverlay;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Data;
 import net.minecraft.text.Text;
@@ -81,6 +82,14 @@ public class NotificationService extends PKUtilsBase {
         @Override
         public boolean equals(Object o) {
             return nonNull(o) && o instanceof Notification that && Objects.equals(this.id, that.id);
+        }
+
+        public TextOverlay toTextOverlay() {
+            return TextOverlay.builder()
+                    .textSupplier(this.textSupplier)
+                    .backgroundColor(this.backgroundColor)
+                    .borderColor(this.borderColor)
+                    .build();
         }
     }
 }
