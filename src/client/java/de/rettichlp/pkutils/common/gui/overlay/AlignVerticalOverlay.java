@@ -3,6 +3,9 @@ package de.rettichlp.pkutils.common.gui.overlay;
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.Color;
+
+import static de.rettichlp.pkutils.PKUtilsClient.renderService;
 import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_MARGIN;
 
 public class AlignVerticalOverlay extends AlignOverlay<OverlayEntry> {
@@ -24,8 +27,10 @@ public class AlignVerticalOverlay extends AlignOverlay<OverlayEntry> {
             yOffset += overlayEntry.getHeight();
         }
 
-        // debug: draw background
-        //drawContext.fill(x, y, getWidth(), getHeight(), new Color(0, 255, 0, 100).getRGB());
+        // debug: draw outline
+        if (renderService.isDebugEnabled()) {
+            drawContext.drawBorder(x, y, getWidth(), getHeight(), new Color(0, 255, 0).getRGB());
+        }
     }
 
     @Override

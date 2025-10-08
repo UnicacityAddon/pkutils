@@ -37,6 +37,10 @@ public class RenderService extends PKUtilsBase {
         return textRenderer.fontHeight + 2 * TEXT_BOX_PADDING + 2 * TEXT_BOX_MARGIN;
     }
 
+    public boolean isDebugEnabled() {
+        return false;
+    }
+
     public void renderOutline(@NotNull MatrixStack matrices,
                               @NotNull VertexConsumerProvider vertexConsumers,
                               @NotNull EntityLike entity,
