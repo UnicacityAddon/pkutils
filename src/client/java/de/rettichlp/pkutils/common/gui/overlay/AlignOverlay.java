@@ -10,6 +10,10 @@ public abstract class AlignOverlay<T> extends OverlayEntry {
 
     public abstract void add(T entry);
 
+    public void clear() {
+        this.overlayEntries.clear();
+    }
+
     public AlignOverlay<T> disableMargin() {
         this.disableMargin = true;
         return this;
