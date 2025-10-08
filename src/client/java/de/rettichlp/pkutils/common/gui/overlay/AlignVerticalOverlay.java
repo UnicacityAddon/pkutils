@@ -23,7 +23,14 @@ public class AlignVerticalOverlay extends AlignOverlay<OverlayEntry> {
         int yOffset = innerY;
 
         for (OverlayEntry overlayEntry : this.overlayEntries) {
-            overlayEntry.draw(drawContext, innerX, yOffset, alignment);
+            // apply alignment
+            int alignmentXModifier = switch (alignment) {
+                case LEFT -> 0;
+                case CENTER -> (getContentWidth() - overlayEntry.getWidth()) / 2;
+                case RIGHT -> getContentWidth() - overlayEntry.getWidth();
+            };
+
+            overlayEntry.draw(drawContext, innerX + alignmentXModifier, yOffset, alignment);
             yOffset += overlayEntry.getHeight();
         }
 
