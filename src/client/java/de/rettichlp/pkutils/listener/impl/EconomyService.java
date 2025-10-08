@@ -13,7 +13,7 @@ import static java.lang.Integer.parseInt;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class MoneyListener extends PKUtilsBase implements IMessageReceiveListener {
+public class EconomyService extends PKUtilsBase implements IMessageReceiveListener {
 
     private static final Pattern PLAYER_MONEY_BANK_AMOUNT = compile("^Ihr Bankguthaben beträgt: (?<moneyBankAmount>([+-])\\d+)\\$$");
     private static final Pattern MONEY_ATM_AMOUNT = compile("ATM \\d+: (?<moneyAtmAmount>\\d+)/100000\\$");
