@@ -36,6 +36,13 @@ public class PKUtilsClient implements ClientModInitializer {
 
         this.registry.registerSounds();
 
+        // parse blacklist reasons from GitHub Gist
+        syncService.syncBlacklistReasonData();
+        // parse faction data
+        syncService.syncFactionData();
+        // login to PKUtils API
+        syncService.syncPKUtilsData();
+
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             player = client.player;
             networkHandler = handler;
