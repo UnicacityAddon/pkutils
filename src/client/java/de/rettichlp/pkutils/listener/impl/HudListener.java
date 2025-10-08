@@ -4,6 +4,7 @@ import de.rettichlp.pkutils.common.Storage;
 import de.rettichlp.pkutils.common.gui.overlay.AlignHorizontalOverlay;
 import de.rettichlp.pkutils.common.gui.overlay.AlignVerticalOverlay;
 import de.rettichlp.pkutils.common.gui.overlay.TextOverlay;
+import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.common.services.NotificationService;
@@ -24,7 +25,6 @@ import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.
 import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.TOP_RIGHT;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
-import static java.util.stream.Collectors.toMap;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
@@ -38,53 +38,17 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
 
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
-        renderCountdowns(drawContext);
         renderNotifications(drawContext);
         renderStatsOverlay(drawContext);
     }
 
-    private void renderCountdowns(DrawContext drawContext) {
-        Map<Storage.Countdown, Long> activeCountdownRemainingMillis = storage.getCountdowns().entrySet().stream()
-                .filter(cooldownLocalDateTimeEntry -> {
-                    LocalDateTime cooldownStartTime = cooldownLocalDateTimeEntry.getValue();
-                    Storage.Countdown countdown = cooldownLocalDateTimeEntry.getKey();
-                    LocalDateTime countdownExpiredTime = cooldownStartTime.plus(countdown.getDuration());
-                    return now().isBefore(countdownExpiredTime); // the countdown is active
-                })
-                .collect(toMap(
-                        Map.Entry::getKey,
-                        entry -> between(now(), entry.getValue().plus(entry.getKey().getDuration())).toMillis()
-                ));
-
-        if (activeCountdownRemainingMillis.isEmpty()) {
-            return;
-        }
-
-        // build countdown strings
-        List<MutableText> countdownStrings = activeCountdownRemainingMillis.entrySet().stream()
-                .map(entry -> {
-                    String millisToFriendlyString = millisToFriendlyString(entry.getValue());
-                    return empty()
-                            .append(of(entry.getKey().getDisplayName()).copy().formatted(GRAY))
-                            .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                            .append(of(millisToFriendlyString));
-                })
-                .toList();
-
-        // build text box
-        MutableText countdownText = empty();
-        countdownStrings.forEach(mutableText -> countdownText.append(mutableText).append(" "));
-
-        renderService.renderTextBox(
-                drawContext,
-                countdownText,
-                new Color(127, 127, 127, 100),
-                new Color(255, 255, 255, 255),
-                0);
-    }
-
     private void renderNotifications(DrawContext drawContext) {
         this.notificationOverlay.clear();
+
+        storage.getCountdowns().stream()
+                .filter(Countdown::isActive)
+                .map(Countdown::toTextWidget)
+                .forEach(this.notificationOverlay::add);
 
         notificationService.getActiveNotifications().stream()
                 .map(NotificationService.Notification::toTextOverlay)
