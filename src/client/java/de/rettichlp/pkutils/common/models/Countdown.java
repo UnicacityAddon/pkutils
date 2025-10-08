@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
+import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
@@ -21,6 +23,13 @@ public class Countdown extends PKUtilsBase {
     private final LocalDateTime startTime = now();
     private final String title;
     private final Duration duration;
+
+    public Countdown(String title, Duration duration, Runnable runAfter) {
+        this.title = title;
+        this.duration = duration;
+
+        newSingleThreadScheduledExecutor().schedule(runAfter, this.duration.toMillis(), MILLISECONDS);
+    }
 
     public boolean isActive() {
         return getRemainingDuration().isPositive();
