@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.lang.Double.compare;
+import static java.time.DayOfWeek.WEDNESDAY;
+import static java.time.LocalDate.now;
 import static java.util.Arrays.stream;
 import static java.util.regex.Pattern.compile;
 
@@ -74,7 +76,7 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
 
     @Override
     public void onNaviSpotReached() {
-        if (this.currentFisherJobSpots.size() == 5) {
+        if (this.currentFisherJobSpots.size() == getNetAmount()) {
             this.currentFisherJobSpots = new ArrayList<>();
             sendCommand("dropfish");
         }
@@ -95,6 +97,10 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
                 .toList();
     }
 
+    private int getNetAmount() {
+        return now().getDayOfWeek() != WEDNESDAY ? 5 : 6;
+    }
+
     @Getter
     @AllArgsConstructor
     private enum FisherJobSpot {
@@ -103,7 +109,8 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
         SPOT_2(new BlockPos(-547, 63, 104)),
         SPOT_3(new BlockPos(-562, 63, 50)),
         SPOT_4(new BlockPos(-506, 63, 18)),
-        SPOT_5(new BlockPos(-452, 63, 26));
+        SPOT_5(new BlockPos(-452, 63, 26)),
+        SPOT_6(new BlockPos(-497, 63, -22));
 
         private final BlockPos position;
 
