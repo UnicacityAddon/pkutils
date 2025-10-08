@@ -15,6 +15,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.lang.Integer.parseInt;
+import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.text.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.text.HoverEvent.Action.SHOW_TEXT;
@@ -78,7 +79,8 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
         Matcher expMatcher = EXP_PATTERN.matcher(message);
         if (expMatcher.find()) {
             int amount = parseInt(expMatcher.group("amount"));
-            int multiplier = expMatcher.namedGroups().containsKey("multiplier") ? parseInt(expMatcher.group("multiplier")) : 1;
+            String multiplierString = expMatcher.group("multiplier");
+            int multiplier = ofNullable(multiplierString).map(Integer::parseInt).orElse(1);
 
             configService.edit(mainConfig -> mainConfig.addPredictedPayDayExp(amount * multiplier));
             return true;
