@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.gui;
+package de.rettichlp.pkutils.common.gui.options;
 
 import de.rettichlp.pkutils.common.models.Color;
 import de.rettichlp.pkutils.common.models.Faction;

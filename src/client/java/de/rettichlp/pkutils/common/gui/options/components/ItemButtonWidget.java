@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.gui.components;
+package de.rettichlp.pkutils.common.gui.options.components;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;

@@ -9,6 +9,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.entity.EntityLike;
@@ -21,6 +22,24 @@ import static net.minecraft.client.render.RenderLayer.getLines;
 import static net.minecraft.util.math.RotationAxis.POSITIVE_Y;
 
 public class RenderService extends PKUtilsBase {
+
+    public static final int TEXT_BOX_PADDING = 3;
+    public static final int TEXT_BOX_MARGIN = 2;
+
+    public int getTextBoxSizeX(StringVisitable text) {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        int fontWidth = textRenderer.getWidth(text);
+        return fontWidth + 2 * TEXT_BOX_PADDING + 2 * TEXT_BOX_MARGIN;
+    }
+
+    public int getTextBoxSizeY() {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        return textRenderer.fontHeight + 2 * TEXT_BOX_PADDING + 2 * TEXT_BOX_MARGIN;
+    }
+
+    public boolean isDebugEnabled() {
+        return false;
+    }
 
     public void renderOutline(@NotNull MatrixStack matrices,
                               @NotNull VertexConsumerProvider vertexConsumers,
@@ -70,7 +89,7 @@ public class RenderService extends PKUtilsBase {
         int textWidth = textRenderer.getWidth(text);
         int textHeight = textRenderer.fontHeight;
         int x = client.getWindow().getScaledWidth() - textWidth - TEXT_BOX_MARGIN;
-        int y = TEXT_BOX_FULL_SIZE_Y * boxIndex + TEXT_BOX_MARGIN;
+        int y = getTextBoxSizeY() * boxIndex + TEXT_BOX_MARGIN;
 
         drawContext.fill(
                 x - TEXT_BOX_PADDING,
