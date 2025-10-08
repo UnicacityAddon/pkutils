@@ -103,7 +103,8 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
         SPOT_2(new BlockPos(-547, 63, 104)),
         SPOT_3(new BlockPos(-562, 63, 50)),
         SPOT_4(new BlockPos(-506, 63, 18)),
-        SPOT_5(new BlockPos(-452, 63, 26));
+        SPOT_5(new BlockPos(-452, 63, 26)),
+        SPOT_6(new BlockPos(-497, 63, -22));
 
         private final BlockPos position;
 
