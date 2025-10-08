@@ -61,28 +61,29 @@ public class SyncService extends PKUtilsBase {
 
     public void syncIngameData() {
         this.gameSyncProcessActive = true;
+        this.lastSyncTimestamp = now();
 
         // parse from faction-related init commands after all faction members are synced
         notificationService.sendInfoNotification("Synchronisiere fraktionsabhängige Daten...");
 
-        Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
-        switch (faction) {
-            case FBI, POLIZEI -> sendCommand("wanteds");
-            case HITMAN -> sendCommand("contractlist");
-            case RETTUNGSDIENST -> sendCommand("hausverbot list");
-            default -> {
-                if (faction.isBadFaction()) {
-                    sendCommand("blacklist");
+        delayedAction(() -> {
+            Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
+            switch (faction) {
+                case FBI, POLIZEI -> sendCommand("wanteds");
+                case HITMAN -> sendCommand("contractlist");
+                case RETTUNGSDIENST -> sendCommand("hausverbot list");
+                default -> {
+                    if (faction.isBadFaction()) {
+                        sendCommand("blacklist");
+                    }
                 }
             }
-        }
-
-        this.lastSyncTimestamp = now();
+        }, 1000);
 
         delayedAction(() -> {
             this.gameSyncProcessActive = false;
             notificationService.sendSuccessNotification("PKUtils synchronisiert");
-        }, 200);
+        }, 1200);
     }
 
     public void executeSync() {
