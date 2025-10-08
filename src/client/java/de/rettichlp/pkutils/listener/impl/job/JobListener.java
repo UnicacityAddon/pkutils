@@ -88,13 +88,6 @@ public class JobListener extends PKUtilsBase
             return true;
         }
 
-        // job end
-        Matcher paydaySalaryMatcher = PAYDAY_SALARY_PATTERN.matcher(message);
-        if (paydaySalaryMatcher.find() && !isNull(storage.getCurrentJob())) {
-            storage.setCurrentJob(null);
-            return true;
-        }
-
         return true;
     }
 

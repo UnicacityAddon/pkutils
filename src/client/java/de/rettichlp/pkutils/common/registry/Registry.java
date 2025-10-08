@@ -35,12 +35,11 @@ import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
 import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import de.rettichlp.pkutils.listener.ITickListener;
 import de.rettichlp.pkutils.listener.callback.PlayerEnterVehicleCallback;
-import de.rettichlp.pkutils.listener.impl.AbsorptionListener;
-import de.rettichlp.pkutils.listener.impl.BusinessListener;
 import de.rettichlp.pkutils.listener.impl.CarListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
+import de.rettichlp.pkutils.listener.impl.EconomyService;
 import de.rettichlp.pkutils.listener.impl.HudListener;
-import de.rettichlp.pkutils.listener.impl.MoneyListener;
+import de.rettichlp.pkutils.listener.impl.PlayerListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
 import de.rettichlp.pkutils.listener.impl.faction.BombListener;
@@ -103,14 +102,13 @@ public class Registry {
     );
 
     private final Set<Class<?>> listeners = Set.of(
-            AbsorptionListener.class,
             BlacklistListener.class,
             BombListener.class,
-            BusinessListener.class,
             CarListener.class,
             CommandSendListener.class,
             ContractListener.class,
             DepositCommand.class,
+            EconomyService.class,
             FactionDoorListener.class,
             FactionListener.class,
             FisherListener.class,
@@ -118,8 +116,8 @@ public class Registry {
             HousebanListener.class,
             HudListener.class,
             JobListener.class,
-            MoneyListener.class,
             PersonalUseCommand.class,
+            PlayerListener.class,
             ReviveListener.class,
             ServiceListener.class,
             SyncListener.class,
