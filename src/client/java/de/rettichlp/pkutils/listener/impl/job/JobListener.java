@@ -13,9 +13,6 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,16 +26,11 @@ import static de.rettichlp.pkutils.common.models.Job.LUMBERJACK;
 import static de.rettichlp.pkutils.common.models.Job.PIZZA_DELIVERY;
 import static de.rettichlp.pkutils.common.models.Job.TOBACCO_PLANTATION;
 import static de.rettichlp.pkutils.common.models.Job.URANIUM_TRANSPORT;
-import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.regex.Pattern.compile;
-import static net.minecraft.text.Text.empty;
-import static net.minecraft.text.Text.of;
-import static net.minecraft.util.Formatting.DARK_GRAY;
-import static net.minecraft.util.Formatting.GRAY;
 
 @PKUtilsListener
 public class JobListener extends PKUtilsBase
@@ -90,18 +82,7 @@ public class JobListener extends PKUtilsBase
             Job job = optionalJob.get();
             this.currentJob = job;
 
-            Duration cooldown = job.getCooldown();
-            LocalDateTime jobCooldownEntTime = now().plus(cooldown);
-
-            configService.edit(mainConfig -> mainConfig.getJobCooldownEndTimes().put(job, jobCooldownEntTime));
-
-            notificationService.sendNotification(() -> {
-                long remainingMillis = between(now(), jobCooldownEntTime).toMillis();
-                return empty()
-                        .append(of(job.getDisplayName()).copy().formatted(GRAY))
-                        .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                        .append(of(millisToFriendlyString(remainingMillis)));
-            }, Color.WHITE, cooldown.toMillis());
+            job.startCountdown();
 
             if (job == LUMBERJACK) {
                 delayedAction(() -> sendCommand("findtree"), 1000);

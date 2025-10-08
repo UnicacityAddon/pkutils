@@ -4,6 +4,7 @@ import de.rettichlp.pkutils.common.models.BlackMarket;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.ContractEntry;
+import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
@@ -14,8 +15,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.entity.vehicle.MinecartEntity;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,8 +25,6 @@ import java.util.Set;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
-import static java.time.Duration.ofMinutes;
-import static java.time.Duration.ofSeconds;
 import static java.util.Arrays.stream;
 
 public class Storage {
@@ -45,7 +42,7 @@ public class Storage {
     private final List<ContractEntry> contractEntries = new ArrayList<>();
 
     @Getter
-    private final Map<Countdown, LocalDateTime> countdowns = new HashMap<>();
+    private final List<Countdown> countdowns = new ArrayList<>();
 
     @Getter
     private final List<HousebanEntry> housebanEntries = new ArrayList<>();
@@ -94,7 +91,7 @@ public class Storage {
         // contractEntries
         LOGGER.info("contractEntries[{}]: {}", this.contractEntries.size(), this.contractEntries);
         // countdowns
-        this.countdowns.forEach((countdown, localDateTime) -> LOGGER.info("countdowns[{}:{}]: {}", countdown, countdown.getDuration(), localDateTime));
+        LOGGER.info("countdowns[{}]: {}", this.countdowns.size(), this.countdowns);
         // housebanEntries
         LOGGER.info("housebanEntries[{}]: {}", this.housebanEntries.size(), this.housebanEntries);
         // reinforcements
@@ -133,18 +130,6 @@ public class Storage {
         this.reinforcements.removeIf(r -> r.getSenderPlayerName().equals(reinforcement.getSenderPlayerName()));
         // add new reinforcement
         this.reinforcements.add(reinforcement);
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public enum Countdown {
-
-        BANDAGE("Bandage", ofMinutes(4)),
-        PILL("Schmerzpille", ofSeconds(60)),
-        ABSORPTION("Absorption", ofMinutes(3));
-
-        private final String displayName;
-        private final Duration duration;
     }
 
     @Getter

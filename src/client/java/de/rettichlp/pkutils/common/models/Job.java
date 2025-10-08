@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.time.Duration;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.time.Duration.ofMinutes;
 import static java.util.regex.Pattern.compile;
 
@@ -40,5 +41,9 @@ public enum Job {
         this.displayName = displayName;
         this.cooldown = cooldown;
         this.jobStartPattern = jobStartPattern;
+    }
+
+    public void startCountdown() {
+        storage.getCountdowns().add(new Countdown(this.displayName, this.cooldown));
     }
 }

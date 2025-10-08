@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.listener.impl;
 
+import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
@@ -13,10 +14,8 @@ import java.util.regex.Pattern;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.PKUtilsClient.syncService;
-import static de.rettichlp.pkutils.common.Storage.Countdown.BANDAGE;
-import static de.rettichlp.pkutils.common.Storage.Countdown.PILL;
 import static java.lang.Integer.parseInt;
-import static java.time.LocalDateTime.now;
+import static java.time.Duration.ofMinutes;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
@@ -60,13 +59,13 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
 
         Matcher medicBandageMatcher = MEDIC_BANDAGE_PATTERN.matcher(message);
         if (medicBandageMatcher.find()) {
-            storage.getCountdowns().put(BANDAGE, now());
+            storage.getCountdowns().add(new Countdown("Bandage", ofMinutes(4)));
             return true;
         }
 
         Matcher medicPillMatcher = MEDIC_PILL_PATTERN.matcher(message);
         if (medicPillMatcher.find()) {
-            storage.getCountdowns().put(PILL, now());
+            storage.getCountdowns().add(new Countdown("Schmerzpille", ofMinutes(1)));
             return true;
         }
 
