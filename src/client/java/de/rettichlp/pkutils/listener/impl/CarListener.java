@@ -4,6 +4,7 @@ import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
 import de.rettichlp.pkutils.listener.IEntityRenderListener;
+import de.rettichlp.pkutils.listener.IEntityRightClickListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
@@ -18,6 +19,9 @@ import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.world.World;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,7 +39,8 @@ import static net.minecraft.util.Formatting.AQUA;
 
 @PKUtilsListener
 public class CarListener extends PKUtilsBase
-        implements IEnterVehicleListener, IEntityRenderListener, IMessageReceiveListener, IScreenOpenListener {
+        implements IEnterVehicleListener, IEntityRenderListener, IEntityRightClickListener, IMessageReceiveListener,
+                   IScreenOpenListener {
 
     private static final Pattern CAR_UNLOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ aufgeschlossen\\.$");
     private static final Pattern CAR_LOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ abgeschlossen\\.$");
@@ -71,6 +76,16 @@ public class CarListener extends PKUtilsBase
             ofNullable(storage.getMinecartEntityToHighlight()).ifPresent(minecartEntity -> {
                 renderService.renderTextAboveEntity(matrices, vertexConsumers, minecartEntity, Text.of("🚗").copy().formatted(AQUA), 0.05F);
             });
+        }
+    }
+
+    @Override
+    public void onEntityRightClick(World world, Hand hand, Entity entity, EntityHitResult hitResult) {
+        if (entity instanceof MinecartEntity minecartEntity) {
+            MinecartEntity minecartEntityToHighlight = storage.getMinecartEntityToHighlight();
+            if (nonNull(minecartEntityToHighlight) && minecartEntityToHighlight.equals(minecartEntity)) {
+                sendCommand("car lock");
+            }
         }
     }
 
