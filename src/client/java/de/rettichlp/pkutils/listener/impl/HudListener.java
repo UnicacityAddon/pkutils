@@ -22,7 +22,6 @@ import static de.rettichlp.pkutils.PKUtilsClient.renderService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.TOP_LEFT;
 import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.TOP_RIGHT;
-import static de.rettichlp.pkutils.common.services.RenderService.TextBoxPosition.TOP_LEFT;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
 import static java.util.stream.Collectors.toMap;
