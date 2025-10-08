@@ -15,4 +15,14 @@ public class MainConfig {
     private final Map<Job, LocalDateTime> jobCooldownEndTimes = new HashMap<>();
     private List<TodoEntry> todos = new ArrayList<>();
     private Options options = new Options();
+    private int minutesSinceLastPayDay = 0;
+    private int predictedPayDaySalary = 0;
+
+    public void addMinutesSinceLastPayDay(int minutes) {
+        this.minutesSinceLastPayDay += minutes;
+    }
+
+    public void addPredictedPayDaySalary(int salary) {
+        this.predictedPayDaySalary += salary;
+    }
 }
