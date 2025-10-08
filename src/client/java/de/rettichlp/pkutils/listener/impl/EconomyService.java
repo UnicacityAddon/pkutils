@@ -33,6 +33,7 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
     private static final Pattern PLAYER_MONEY_BANK_AMOUNT = compile("^Ihr Bankguthaben beträgt: (?<moneyBankAmount>([+-])\\d+)\\$$");
     private static final Pattern MONEY_ATM_AMOUNT = compile("ATM \\d+: (?<moneyAtmAmount>\\d+)/100000\\$");
     private static final Pattern BUSINESS_CASH_PATTERN = compile("^Kasse: (\\d+)\\$$");
+    private static final Pattern EXP_PATTERN = compile("(?<amount>[+-]\\d+) Exp!( \\(x(?<multiplier>\\d)\\))?");
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
@@ -70,6 +71,15 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
         if (moneyAtmAmountMatcher.find()) {
             int moneyAtmAmount = parseInt(moneyAtmAmountMatcher.group("moneyAtmAmount"));
             storage.setMoneyAtmAmount(moneyAtmAmount);
+            return true;
+        }
+
+        Matcher expMatcher = EXP_PATTERN.matcher(message);
+        if (expMatcher.find()) {
+            int amount = parseInt(expMatcher.group("amount"));
+            int multiplier = expMatcher.namedGroups().containsKey("multiplier") ? parseInt(expMatcher.group("multiplier")) : 1;
+
+            configService.edit(mainConfig -> mainConfig.addPredictedPayDayExp(amount * multiplier));
             return true;
         }
 

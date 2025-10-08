@@ -82,7 +82,10 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
                 .append(of("60")).append(" ")
                 .append(of("Gehalt").copy().formatted(GRAY))
                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                .append(of(mainConfig.getPredictedPayDaySalary() + "$"));
+                .append(of(mainConfig.getPredictedPayDaySalary() + "$")).append(" ")
+                .append(of("Exp").copy().formatted(GRAY))
+                .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                .append(of(valueOf(mainConfig.getPredictedPayDayExp())));
 
         return TextOverlay.builder()
                 .textSupplier(() -> payDayInfoText)

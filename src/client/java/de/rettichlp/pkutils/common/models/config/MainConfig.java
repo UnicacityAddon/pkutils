@@ -12,6 +12,7 @@ public class MainConfig {
     private Options options = new Options();
     private int minutesSinceLastPayDay = 0;
     private int predictedPayDaySalary = 0;
+    private int predictedPayDayExp = 0;
 
     public void addMinutesSinceLastPayDay(int minutes) {
         this.minutesSinceLastPayDay += minutes;
@@ -19,5 +20,9 @@ public class MainConfig {
 
     public void addPredictedPayDaySalary(int salary) {
         this.predictedPayDaySalary += salary;
+    }
+
+    public void addPredictedPayDayExp(int exp) {
+        this.predictedPayDayExp += exp;
     }
 }
