@@ -1,6 +1,7 @@
 package de.rettichlp.pkutils.listener.impl;
 
 import de.rettichlp.pkutils.common.models.Countdown;
+import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.ITickListener;
@@ -15,7 +16,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.time.Duration.ofMinutes;
 import static java.util.regex.Pattern.compile;
 
-public class PlayerListener implements IAbsorptionGetListener, IMessageReceiveListener, ITickListener {
+public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListener, IMessageReceiveListener, ITickListener {
 
     // afk
     private static final Pattern AFK_START_PATTERN = compile("^Du bist nun im AFK-Modus\\.$");
