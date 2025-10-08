@@ -23,10 +23,10 @@ import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static de.rettichlp.pkutils.common.models.Faction.TRIADEN;
-import static java.awt.Color.WHITE;
 import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.CompletableFuture.allOf;
@@ -38,25 +38,35 @@ public class SyncService extends PKUtilsBase {
     private LocalDateTime lastSyncTimestamp = MIN;
     private boolean gameSyncProcessActive = false;
 
-    public void executeSync() {
-        this.gameSyncProcessActive = true;
-        notificationService.sendInfoNotification("PKUtils wird synchronisiert...");
+    public void syncBlacklistReasonData() {
+        api.getBlacklistReasonData().thenAccept(factionListMap -> {
+            storage.getBlacklistReasons().clear();
+            storage.getBlacklistReasons().putAll(factionListMap);
+        }).thenAccept(unused -> LOGGER.info("Blacklist reason data synced"));
+    }
 
-        // parse faction data
+    public void syncFactionData() {
         CompletableFuture<?>[] syncFactionMembersFutures = stream(Faction.values())
                 .filter(faction -> faction != NULL && faction != TRIADEN)
-                .map(this::syncFactionMemberData)
+                .map(this::syncFactionData)
                 .toArray(CompletableFuture[]::new);
 
-        // run each task sequentially
-        CompletableFuture<Void> overallFuture = syncBlacklistReasonData() // parse blacklist reasons from GitHub Gist
-                .thenCompose(unused -> allOf(syncFactionMembersFutures)) // run all sync tasks in parallel
-                .thenCompose(unused -> api.registerUser(getVersion())); // login to PKUtils API
+        CompletableFuture<Void> completableFuture = allOf(syncFactionMembersFutures);
+        completableFuture.thenAccept(unused -> LOGGER.info("Faction member data synced"));
+    }
+
+    public void syncPKUtilsData() {
+        api.registerUser(getVersion());
+    }
+
+    public void syncIngameData() {
+        this.gameSyncProcessActive = true;
+        this.lastSyncTimestamp = now();
 
         // parse from faction-related init commands after all faction members are synced
-        overallFuture.thenAccept(unused -> {
-            notificationService.sendInfoNotification("Synchronisiere fraktionsabhängige Daten...");
+        notificationService.sendInfoNotification("Synchronisiere fraktionsabhängige Daten...");
 
+        delayedAction(() -> {
             Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
             switch (faction) {
                 case FBI, POLIZEI -> sendCommand("wanteds");
@@ -68,17 +78,22 @@ public class SyncService extends PKUtilsBase {
                     }
                 }
             }
+        }, 1000);
 
-            this.lastSyncTimestamp = now();
+        delayedAction(() -> {
+            this.gameSyncProcessActive = false;
+            notificationService.sendSuccessNotification("PKUtils synchronisiert");
+        }, 1200);
+    }
 
-            delayedAction(() -> {
-                this.gameSyncProcessActive = false;
-                notificationService.sendSuccessNotification("PKUtils synchronisiert");
-            }, 200);
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while syncing process", throwable);
-            return null;
-        });
+    public void executeSync() {
+        syncBlacklistReasonData();
+        syncFactionData();
+        syncPKUtilsData();
+
+        if (nonNull(player)) {
+            syncIngameData();
+        }
     }
 
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
@@ -91,14 +106,7 @@ public class SyncService extends PKUtilsBase {
         }, 1000);
     }
 
-    private @NotNull CompletableFuture<Void> syncBlacklistReasonData() {
-        return api.getBlacklistReasonData().thenAccept(factionListMap -> {
-            storage.getBlacklistReasons().clear();
-            storage.getBlacklistReasons().putAll(factionListMap);
-        });
-    }
-
-    private @NotNull CompletableFuture<Void> syncFactionMemberData(Faction faction) {
+    private @NotNull CompletableFuture<Void> syncFactionData(Faction faction) {
         return api.getFactionMemberData(faction).thenAccept(objectMap -> {
             Gson gson = api.getGson();
 

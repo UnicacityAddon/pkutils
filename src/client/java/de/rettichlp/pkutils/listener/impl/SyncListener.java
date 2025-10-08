@@ -44,14 +44,14 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
         // if a password is not set, start the game sync process
         Matcher serverPasswordMissingMatcher = SERVER_PASSWORD_MISSING_PATTERN.matcher(message);
         if (serverPasswordMissingMatcher.find()) {
-            syncService.executeSync();
+            syncService.syncIngameData();
             return true;
         }
 
         // if a password is accepted, start the game sync process
         Matcher serverPasswordAcceptedMatcher = SERVER_PASSWORD_ACCEPTED_PATTERN.matcher(message);
         if (serverPasswordAcceptedMatcher.find()) {
-            syncService.executeSync();
+            syncService.syncIngameData();
             return true;
         }
 
