@@ -49,12 +49,12 @@ public class CarListener extends PKUtilsBase
 
     @Override
     public void onEnterVehicle(Entity vehicle) {
-        storage.setMinecartEntityToHighlight(null);
-
         // the entity is a car
         if (!isCar(vehicle)) {
             return;
         }
+
+        storage.setMinecartEntityToHighlight(null);
 
         if (configService.load().getOptions().car().automatedStart()) {
             // start the car with a small delay to ensure the player is fully in the vehicle
