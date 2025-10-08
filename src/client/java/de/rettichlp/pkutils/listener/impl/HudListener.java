@@ -1,7 +1,9 @@
 package de.rettichlp.pkutils.listener.impl;
 
 import de.rettichlp.pkutils.common.Storage;
+import de.rettichlp.pkutils.common.gui.overlay.AlignHorizontalOverlay;
 import de.rettichlp.pkutils.common.gui.overlay.AlignVerticalOverlay;
+import de.rettichlp.pkutils.common.gui.overlay.TextOverlay;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.common.services.NotificationService;
@@ -18,8 +20,8 @@ import java.util.Map;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.renderService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
+import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.TOP_LEFT;
 import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.TOP_RIGHT;
-import static de.rettichlp.pkutils.common.services.RenderService.TextBoxPosition.TOP_LEFT;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
 import static java.util.stream.Collectors.toMap;
@@ -32,12 +34,13 @@ import static net.minecraft.util.Formatting.GRAY;
 public class HudListener extends PKUtilsBase implements IHudRenderListener {
 
     private final AlignVerticalOverlay notificationOverlay = new AlignVerticalOverlay();
+    private final AlignVerticalOverlay statsOverlay = new AlignVerticalOverlay();
 
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
         renderCountdowns(drawContext);
-        renderDateTime(drawContext);
         renderNotifications(drawContext);
+        renderStatsOverlay(drawContext);
     }
 
     private void renderCountdowns(DrawContext drawContext) {
@@ -80,11 +83,6 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
                 0);
     }
 
-    private void renderDateTime(DrawContext drawContext) {
-        String dateTimeToFriendlyString = dateTimeToFriendlyString(now());
-        renderService.renderTextBox(drawContext, of(dateTimeToFriendlyString), TOP_LEFT);
-    }
-
     private void renderNotifications(DrawContext drawContext) {
         this.notificationOverlay.clear();
 
@@ -93,5 +91,21 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
                 .forEach(this.notificationOverlay::add);
 
         this.notificationOverlay.draw(drawContext, TOP_RIGHT);
+    }
+
+    private void renderStatsOverlay(DrawContext drawContext) {
+        this.statsOverlay.clear();
+
+        TextOverlay dateTimeTextOverlay = TextOverlay.builder()
+                .textSupplier(() -> of(dateTimeToFriendlyString(now())))
+                .build();
+
+        // first row
+        AlignHorizontalOverlay alignHorizontalOverlay = new AlignHorizontalOverlay();
+        alignHorizontalOverlay.add(dateTimeTextOverlay);
+
+        this.statsOverlay.add(alignHorizontalOverlay.disableMargin());
+
+        this.statsOverlay.draw(drawContext, TOP_LEFT);
     }
 }
