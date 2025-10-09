@@ -51,6 +51,7 @@ public abstract class OptionsScreen extends Screen {
 
     private final Screen parent;
     private final Text subTitle;
+    private final boolean renderBackground;
 
     public OptionsScreen(Screen parent) {
         super(empty()
@@ -58,6 +59,7 @@ public abstract class OptionsScreen extends Screen {
                 .append(translatable("options.title")));
         this.parent = parent;
         this.subTitle = of("v" + getVersion());
+        this.renderBackground = true;
     }
 
     public OptionsScreen(Screen parent, String subTitelKey) {
@@ -66,15 +68,31 @@ public abstract class OptionsScreen extends Screen {
                 .append(translatable("options.title")));
         this.parent = parent;
         this.subTitle = translatable(subTitelKey);
+        this.renderBackground = true;
+    }
+
+    public OptionsScreen(Screen parent, String subTitelKey, boolean renderBackground) {
+        super(empty()
+                .append("PKUtils").append(" ")
+                .append(translatable("options.title")));
+        this.parent = parent;
+        this.subTitle = translatable(subTitelKey);
+        this.renderBackground = renderBackground;
     }
 
     public abstract void initBody();
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        drawMenuListBackground(context);
+        if (this.renderBackground) {
+            drawMenuListBackground(context);
+        }
+
         super.render(context, mouseX, mouseY, delta);
-        drawHeaderAndFooterSeparators(context);
+
+        if (this.renderBackground) {
+            drawHeaderAndFooterSeparators(context);
+        }
     }
 
     @Override
