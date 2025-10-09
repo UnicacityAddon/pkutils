@@ -17,7 +17,7 @@ import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.KERZAKOV;
 import static de.rettichlp.pkutils.common.models.Faction.WESTSIDEBALLAS;
 import static java.util.Collections.emptySet;
-import static java.util.Objects.isNull;
+import static net.minecraft.util.Hand.MAIN_HAND;
 import static net.minecraft.util.Hand.OFF_HAND;
 
 public class FactionDoorListener extends PKUtilsBase implements IBlockRightClickListener {
@@ -30,7 +30,7 @@ public class FactionDoorListener extends PKUtilsBase implements IBlockRightClick
 
     @Override
     public void onBlockRightClick(World world, Hand hand, BlockHitResult hitResult) {
-        if (isNull(world) || hand == OFF_HAND) {
+        if (hand == OFF_HAND || !player.getStackInHand(MAIN_HAND).isEmpty()) {
             return;
         }
 
