@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.scoreboard.Scoreboard;
@@ -67,11 +68,12 @@ public class CarListener extends PKUtilsBase
     public void onEntityRender(WorldRenderContext context) {
         MatrixStack matrices = context.matrixStack();
         VertexConsumerProvider vertexConsumers = context.consumers();
+        ClientWorld world = MinecraftClient.getInstance().world;
 
-        if (nonNull(matrices) && nonNull(vertexConsumers) && configService.load().getOptions().car().highlight()) {
-            ofNullable(storage.getMinecartEntityToHighlight()).ifPresent(minecartEntity -> {
-                renderService.renderTextAboveEntity(matrices, vertexConsumers, minecartEntity, Text.of("🚗").copy().formatted(AQUA), 0.05F);
-            });
+        if (nonNull(matrices) && nonNull(vertexConsumers) && nonNull(world) && configService.load().getOptions().car().highlight()) {
+            ofNullable(storage.getMinecartEntityToHighlight())
+                    .map(minecartEntity -> world.getEntityById(minecartEntity.getId()))
+                    .ifPresent(minecartEntity -> renderService.renderTextAboveEntity(matrices, vertexConsumers, minecartEntity, Text.of("🚗").copy().formatted(AQUA), 0.05F));
         }
     }
 
