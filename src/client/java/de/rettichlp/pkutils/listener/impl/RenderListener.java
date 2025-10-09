@@ -92,6 +92,7 @@ public class RenderListener extends PKUtilsBase implements IHudRenderListener {
                 .textSupplier(() -> of(dateTimeToFriendlyString(now())))
                 .build();
     }
+
     private TextOverlay getPayDayTextOverlay() {
         OverlayOptions overlayOptions = configuration.getOptions().overlay();
 
