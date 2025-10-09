@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.api;
-import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
@@ -88,7 +88,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             LOGGER.info("Found new reinforcement: {}", reinforcement);
             storage.trackReinforcement(reinforcement);
 
-            boolean modernReinforcementStyle = configService.load().getOptions().reinforcementType() == UNICACITYADDON;
+            boolean modernReinforcementStyle = configuration.getOptions().reinforcementType() == UNICACITYADDON;
             if (modernReinforcementStyle) {
                 Text reinforcementText = REINFORCEMENT.create(type, senderRank + " " + senderPlayerName, naviPoint, distance);
                 player.sendMessage(empty(), false);
@@ -100,7 +100,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
 
         Matcher reinforcementButtonMatcher = REINFORCEMENT_BUTTON_PATTERN.matcher(message);
         if (reinforcementButtonMatcher.find()) {
-            boolean modernReinforcementStyle = configService.load().getOptions().reinforcementType() == UNICACITYADDON;
+            boolean modernReinforcementStyle = configuration.getOptions().reinforcementType() == UNICACITYADDON;
             if (modernReinforcementStyle) {
                 // send empty line after buttons
                 MinecraftClient.getInstance().execute(() -> player.sendMessage(empty(), false));
@@ -173,7 +173,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
                         LOGGER.info("Reinforcement accepted: {}", reinforcement);
                     });
 
-            boolean modernReinforcementStyle = configService.load().getOptions().reinforcementType() == UNICACITYADDON;
+            boolean modernReinforcementStyle = configuration.getOptions().reinforcementType() == UNICACITYADDON;
             if (modernReinforcementStyle) {
                 Text reinforcementAnswer = REINFORCEMENT_ON_THE_WAY.create(senderRank + " " + senderPlayerName, target, distance);
                 player.sendMessage(reinforcementAnswer, false);

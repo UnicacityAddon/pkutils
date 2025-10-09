@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.common.models.config.MainConfig;
 import de.rettichlp.pkutils.common.models.config.TodoEntry;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
@@ -12,7 +11,7 @@ import java.util.List;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
-import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
@@ -32,7 +31,7 @@ public class TodoCommand extends CommandBase {
                                     String taskString = getString(context, "task");
                                     TodoEntry todoEntry = new TodoEntry(taskString);
 
-                                    configService.edit(mainConfig -> mainConfig.getTodos().add(todoEntry));
+                                    configuration.getTodos().add(todoEntry);
 
                                     sendTodoList();
                                     return 1;
@@ -42,8 +41,8 @@ public class TodoCommand extends CommandBase {
                                 .executes(context -> {
                                     String id = getString(context, "id");
 
-                                    configService.edit(mainConfig -> mainConfig.getTodos()
-                                            .removeIf(todoEntry -> todoEntry.getCreatedAt().toString().equals(id)));
+                                    configuration.getTodos()
+                                            .removeIf(todoEntry -> todoEntry.getCreatedAt().toString().equals(id));
 
                                     sendTodoList();
                                     return 1;
@@ -53,10 +52,10 @@ public class TodoCommand extends CommandBase {
                                 .executes(context -> {
                                     String id = getString(context, "id");
 
-                                    configService.edit(mainConfig -> mainConfig.getTodos().stream()
+                                    configuration.getTodos().stream()
                                             .filter(todoEntry -> todoEntry.getCreatedAt().toString().equals(id))
                                             .findFirst()
-                                            .ifPresent(todoEntry -> todoEntry.setDone(true)));
+                                            .ifPresent(todoEntry -> todoEntry.setDone(true));
 
                                     sendTodoList();
                                     return 1;
@@ -68,8 +67,7 @@ public class TodoCommand extends CommandBase {
     }
 
     private void sendTodoList() {
-        MainConfig mainConfig = configService.load();
-        List<TodoEntry> todos = mainConfig.getTodos();
+        List<TodoEntry> todos = configuration.getTodos();
 
         player.sendMessage(empty(), false);
         sendModMessage("TODOs:", false);

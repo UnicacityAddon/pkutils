@@ -28,7 +28,7 @@ import java.util.function.Function;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
-import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static net.minecraft.client.gui.screen.ConfirmLinkScreen.opening;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
@@ -119,8 +119,8 @@ public abstract class OptionsScreen extends Screen {
 
         CyclingButtonWidget<E> cyclingButton = CyclingButtonWidget.builder(displayNameFunction)
                 .values(values)
-                .initially(currentValue.apply(configService.load().getOptions()))
-                .build(translatable, (button, value) -> configService.edit(mainConfig -> onValueChange.accept(mainConfig.getOptions(), value)));
+                .initially(currentValue.apply(configuration.getOptions()))
+                .build(translatable, (button, value) -> onValueChange.accept(configuration.getOptions(), value));
 
         cyclingButton.setWidth(width);
 
@@ -147,10 +147,10 @@ public abstract class OptionsScreen extends Screen {
         Text nameText = translatable(nameKey);
         Text tooltipText = translatable(tooltipKey);
 
-        ToggleButtonWidget toggleButton = new ToggleButtonWidget(nameText, value -> configService.edit(mainConfig -> {
+        ToggleButtonWidget toggleButton = new ToggleButtonWidget(nameText, value -> {
             LOGGER.debug("Set option '{}' to '{}'", key, value);
-            onPress.accept(mainConfig.getOptions(), value);
-        }), currentValue.apply(configService.load().getOptions()));
+            onPress.accept(configuration.getOptions(), value);
+        }, currentValue.apply(configuration.getOptions()));
 
         toggleButton.setWidth(width);
         toggleButton.setTooltip(Tooltip.of(tooltipText));

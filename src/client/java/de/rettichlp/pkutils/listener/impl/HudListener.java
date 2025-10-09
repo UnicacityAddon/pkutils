@@ -4,7 +4,6 @@ import de.rettichlp.pkutils.common.gui.overlay.AlignHorizontalOverlay;
 import de.rettichlp.pkutils.common.gui.overlay.AlignVerticalOverlay;
 import de.rettichlp.pkutils.common.gui.overlay.TextOverlay;
 import de.rettichlp.pkutils.common.models.Countdown;
-import de.rettichlp.pkutils.common.models.config.MainConfig;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.common.services.NotificationService;
@@ -14,7 +13,7 @@ import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
-import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.TOP_LEFT;
@@ -76,20 +75,18 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
     }
 
     private TextOverlay getPayDayTextOverlay() {
-        MainConfig mainConfig = configService.load();
-
         MutableText payDayInfoText = empty()
                 .append(of("PayDay").copy().formatted(GRAY))
                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                .append(of(valueOf(mainConfig.getMinutesSinceLastPayDay())))
+                .append(of(valueOf(configuration.getMinutesSinceLastPayDay())))
                 .append(of("/").copy().formatted(DARK_GRAY))
                 .append(of("60")).append(" ")
                 .append(of("Gehalt").copy().formatted(GRAY))
                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                .append(of(mainConfig.getPredictedPayDaySalary() + "$")).append(" ")
+                .append(of(configuration.getPredictedPayDaySalary() + "$")).append(" ")
                 .append(of("Exp").copy().formatted(GRAY))
                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                .append(of(valueOf(mainConfig.getPredictedPayDayExp())));
+                .append(of(valueOf(configuration.getPredictedPayDayExp())));
 
         return TextOverlay.builder()
                 .textSupplier(() -> payDayInfoText)

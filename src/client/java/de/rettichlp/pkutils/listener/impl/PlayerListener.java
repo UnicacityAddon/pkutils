@@ -10,7 +10,7 @@ import net.minecraft.text.Text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.time.Duration.ofMinutes;
@@ -47,7 +47,7 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
     @Override
     public void onTick() {
         if (player.age % 1200 == 0 && !storage.isAfk()) {
-            configService.edit(mainConfig -> mainConfig.addMinutesSinceLastPayDay(1));
+            configuration.addMinutesSinceLastPayDay(1);
         }
     }
 }

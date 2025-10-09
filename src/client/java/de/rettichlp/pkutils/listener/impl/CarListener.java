@@ -23,7 +23,7 @@ import net.minecraft.text.Text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.renderService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
@@ -51,13 +51,13 @@ public class CarListener extends PKUtilsBase
 
         storage.setMinecartEntityToHighlight(null);
 
-        if (configService.load().getOptions().car().automatedStart()) {
+        if (configuration.getOptions().car().automatedStart()) {
             // start the car with a small delay to ensure the player is fully in the vehicle
             delayedAction(() -> sendCommand("car start"), 500);
         }
 
         // lock the car after 1 second and the small delay if not already locked
-        if (!storage.isCarLocked() && configService.load().getOptions().car().automatedLock()) {
+        if (!storage.isCarLocked() && configuration.getOptions().car().automatedLock()) {
             delayedAction(() -> sendCommand("car lock"), 1500);
         }
     }
@@ -68,7 +68,7 @@ public class CarListener extends PKUtilsBase
         VertexConsumerProvider vertexConsumers = context.consumers();
         ClientWorld world = MinecraftClient.getInstance().world;
 
-        if (nonNull(matrices) && nonNull(vertexConsumers) && nonNull(world) && configService.load().getOptions().car().highlight()) {
+        if (nonNull(matrices) && nonNull(vertexConsumers) && nonNull(world) && configuration.getOptions().car().highlight()) {
             ofNullable(storage.getMinecartEntityToHighlight())
                     .map(minecartEntity -> world.getEntityById(minecartEntity.getId()))
                     .ifPresent(minecartEntity -> renderService.renderTextAboveEntity(matrices, vertexConsumers, minecartEntity, Text.of("🚗").copy().formatted(AQUA), 0.05F));
@@ -102,7 +102,7 @@ public class CarListener extends PKUtilsBase
     public void onScreenOpen(Screen screen, int scaledWidth, int scaledHeight) {
         ClientPlayerInteractionManager interactionManager = MinecraftClient.getInstance().interactionManager;
 
-        if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen && genericContainerScreen.getTitle().getString().equals("CarControl") && configService.load().getOptions().car().fastLock()) {
+        if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen && genericContainerScreen.getTitle().getString().equals("CarControl") && configuration.getOptions().car().fastLock()) {
             interactionManager.clickSlot(genericContainerScreen.getScreenHandler().syncId, 0, 0, PICKUP, player);
         }
     }
