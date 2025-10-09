@@ -24,9 +24,9 @@ import static java.time.LocalDateTime.now;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
+import static net.minecraft.util.Formatting.GOLD;
 import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.GREEN;
-import static net.minecraft.util.Formatting.RED;
 
 @PKUtilsListener
 public class HudListener extends PKUtilsBase implements IHudRenderListener {
@@ -100,11 +100,11 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
         boolean minimalistic = true; // TODO
 
         Text text = minimalistic
-                ? (storage.isCarLocked() ? of("🔒") : of("🔓"))
+                ? (storage.isCarLocked() ? of("🔒").copy().formatted(GREEN) : of("🔓").copy().formatted(GOLD))
                 : empty()
                 .append(of("Fahrzeug").copy().formatted(GRAY))
                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                .append(storage.isCarLocked() ? of("zu").copy().formatted(GREEN) : of("offen").copy().formatted(RED));
+                .append(storage.isCarLocked() ? of("zu").copy().formatted(GREEN) : of("offen").copy().formatted(GOLD));
 
         return TextOverlay.builder()
                 .textSupplier(() -> text)
