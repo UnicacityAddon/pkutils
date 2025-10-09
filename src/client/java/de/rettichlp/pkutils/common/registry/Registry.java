@@ -39,7 +39,7 @@ import de.rettichlp.pkutils.listener.callback.PlayerEnterVehicleCallback;
 import de.rettichlp.pkutils.listener.impl.CarListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
 import de.rettichlp.pkutils.listener.impl.EconomyService;
-import de.rettichlp.pkutils.listener.impl.HudListener;
+import de.rettichlp.pkutils.listener.impl.RenderListener;
 import de.rettichlp.pkutils.listener.impl.PlayerListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
@@ -117,10 +117,10 @@ public class Registry {
             FisherListener.class,
             GarbageManListener.class,
             HousebanListener.class,
-            HudListener.class,
             JobListener.class,
             PersonalUseCommand.class,
             PlayerListener.class,
+            RenderListener.class,
             ReviveListener.class,
             ServiceListener.class,
             SyncListener.class,

@@ -30,7 +30,7 @@ import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.GREEN;
 
 @PKUtilsListener
-public class HudListener extends PKUtilsBase implements IHudRenderListener {
+public class RenderListener extends PKUtilsBase implements IHudRenderListener {
 
     private final AlignVerticalOverlay notificationOverlay = new AlignVerticalOverlay();
     private final AlignVerticalOverlay statsOverlay = new AlignVerticalOverlay();
