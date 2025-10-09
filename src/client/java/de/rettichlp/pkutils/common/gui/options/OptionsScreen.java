@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.gui.options;
 
+import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
 import de.rettichlp.pkutils.common.gui.options.components.ItemButtonWidget;
 import de.rettichlp.pkutils.common.gui.options.components.ToggleButtonWidget;
 import de.rettichlp.pkutils.common.models.config.Options;
@@ -110,18 +111,19 @@ public abstract class OptionsScreen extends Screen {
         widget.add(buttonWidget);
     }
 
-    public <E> void addCyclingButton(@NotNull DirectionalLayoutWidget widget,
-                                     String key,
-                                     E[] values,
-                                     Function<E, Text> displayNameFunction,
-                                     BiConsumer<Options, E> onValueChange,
-                                     @NotNull Function<Options, E> currentValue,
-                                     int width) {
+    public <E extends CyclingButtonEntry> void addCyclingButton(@NotNull DirectionalLayoutWidget widget,
+                                                                String key,
+                                                                E[] values,
+                                                                Function<E, Text> displayNameFunction,
+                                                                BiConsumer<Options, E> onValueChange,
+                                                                @NotNull Function<Options, E> currentValue,
+                                                                int width) {
         MutableText translatable = translatable(key);
 
         CyclingButtonWidget<E> cyclingButton = CyclingButtonWidget.builder(displayNameFunction)
                 .values(values)
                 .initially(currentValue.apply(configuration.getOptions()))
+                .tooltip(CyclingButtonEntry::getTooltip)
                 .build(translatable, (button, value) -> onValueChange.accept(configuration.getOptions(), value));
 
         cyclingButton.setWidth(width);

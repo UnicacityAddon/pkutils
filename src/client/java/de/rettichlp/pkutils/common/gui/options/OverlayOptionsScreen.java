@@ -39,7 +39,7 @@ public class OverlayOptionsScreen extends OptionsScreen {
 
         DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(horizontal().spacing(8));
         addToggleButton(directionalLayoutWidget2, "pkutils.options.overlay.car.locked", (options, value) -> options.overlay().carLocked(value), options -> options.nameTag().factionInformation(), 150);
-        addCyclingButton(directionalLayoutWidget2, "pkutils.options.overlay.car.locked.style", OverlayOptions.CarLockedStyle.values(), OverlayOptions.CarLockedStyle::getDisplayName, (options, carLockedStyle) -> options.overlay().carLockedStyle(carLockedStyle), options -> options.overlay().carLockedStyle(), 150);
+        addCyclingButton(directionalLayoutWidget2, "pkutils.options.overlay.car.locked.style.name", OverlayOptions.CarLockedStyle.values(), OverlayOptions.CarLockedStyle::getDisplayName, (options, carLockedStyle) -> options.overlay().carLockedStyle(carLockedStyle), options -> options.overlay().carLockedStyle(), 150);
 
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
     }
