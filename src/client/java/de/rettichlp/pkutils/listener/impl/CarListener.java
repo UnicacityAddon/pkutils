@@ -4,7 +4,6 @@ import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
 import de.rettichlp.pkutils.listener.IEntityRenderListener;
-import de.rettichlp.pkutils.listener.IEntityRightClickListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
@@ -19,9 +18,6 @@ import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.world.World;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,11 +35,11 @@ import static net.minecraft.util.Formatting.AQUA;
 
 @PKUtilsListener
 public class CarListener extends PKUtilsBase
-        implements IEnterVehicleListener, IEntityRenderListener, IEntityRightClickListener, IMessageReceiveListener,
-                   IScreenOpenListener {
+        implements IEnterVehicleListener, IEntityRenderListener, IMessageReceiveListener, IScreenOpenListener {
 
     private static final Pattern CAR_UNLOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ aufgeschlossen\\.$");
     private static final Pattern CAR_LOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ abgeschlossen\\.$");
+    private static final Pattern CAR_LOCKED_OWN_PATTERN = compile("^\\[Car] Dein Fahrzeug ist abgeschlossen\\.$");
 
     private boolean carLocked = true;
 
@@ -80,16 +76,6 @@ public class CarListener extends PKUtilsBase
     }
 
     @Override
-    public void onEntityRightClick(World world, Hand hand, Entity entity, EntityHitResult hitResult) {
-        if (entity instanceof MinecartEntity minecartEntity) {
-            MinecartEntity minecartEntityToHighlight = storage.getMinecartEntityToHighlight();
-            if (nonNull(minecartEntityToHighlight) && minecartEntityToHighlight.equals(minecartEntity)) {
-                sendCommand("car lock");
-            }
-        }
-    }
-
-    @Override
     public boolean onMessageReceive(Text text, String message) {
         Matcher carUnlockMatcher = CAR_UNLOCK_PATTERN.matcher(message);
         if (carUnlockMatcher.find()) {
@@ -100,6 +86,12 @@ public class CarListener extends PKUtilsBase
         Matcher carLockMatcher = CAR_LOCK_PATTERN.matcher(message);
         if (carLockMatcher.find()) {
             this.carLocked = true;
+            return true;
+        }
+
+        Matcher carLockedOwnMatcher = CAR_LOCKED_OWN_PATTERN.matcher(message);
+        if (carLockedOwnMatcher.find()) {
+            sendCommand("car lock");
             return true;
         }
 
