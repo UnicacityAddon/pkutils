@@ -17,6 +17,7 @@ import static com.mojang.text2speech.Narrator.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
+import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.lang.Boolean.getBoolean;
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -40,6 +41,15 @@ public abstract class PKUtilsBase {
     public void sendCommand(String command) {
         LOGGER.info("PKUtils executing command: {}", command);
         networkHandler.sendChatCommand(command);
+    }
+
+    public void sendCommandWithAfkCheck(String command) {
+        boolean isAfk = storage.isAfk();
+        LOGGER.info("PKUtils executing command with AFK check (is AFK: {}): {}", isAfk, command);
+
+        if (!isAfk) {
+            networkHandler.sendChatCommand(command);
+        }
     }
 
     public void sendCommands(List<String> commandStrings) {
