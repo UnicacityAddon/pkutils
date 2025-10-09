@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.scoreboard.Scoreboard;
@@ -39,17 +40,18 @@ public class CarListener extends PKUtilsBase
 
     private static final Pattern CAR_UNLOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ aufgeschlossen\\.$");
     private static final Pattern CAR_LOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ abgeschlossen\\.$");
+    private static final Pattern CAR_LOCKED_OWN_PATTERN = compile("^\\[Car] Dein Fahrzeug ist abgeschlossen\\.$");
 
     private boolean carLocked = true;
 
     @Override
     public void onEnterVehicle(Entity vehicle) {
-        storage.setMinecartEntityToHighlight(null);
-
         // the entity is a car
         if (!isCar(vehicle)) {
             return;
         }
+
+        storage.setMinecartEntityToHighlight(null);
 
         if (configService.load().getOptions().car().automatedStart()) {
             // start the car with a small delay to ensure the player is fully in the vehicle
@@ -66,11 +68,12 @@ public class CarListener extends PKUtilsBase
     public void onEntityRender(WorldRenderContext context) {
         MatrixStack matrices = context.matrixStack();
         VertexConsumerProvider vertexConsumers = context.consumers();
+        ClientWorld world = MinecraftClient.getInstance().world;
 
-        if (nonNull(matrices) && nonNull(vertexConsumers) && configService.load().getOptions().car().highlight()) {
-            ofNullable(storage.getMinecartEntityToHighlight()).ifPresent(minecartEntity -> {
-                renderService.renderTextAboveEntity(matrices, vertexConsumers, minecartEntity, Text.of("🚗").copy().formatted(AQUA), 0.05F);
-            });
+        if (nonNull(matrices) && nonNull(vertexConsumers) && nonNull(world) && configService.load().getOptions().car().highlight()) {
+            ofNullable(storage.getMinecartEntityToHighlight())
+                    .map(minecartEntity -> world.getEntityById(minecartEntity.getId()))
+                    .ifPresent(minecartEntity -> renderService.renderTextAboveEntity(matrices, vertexConsumers, minecartEntity, Text.of("🚗").copy().formatted(AQUA), 0.05F));
         }
     }
 
@@ -85,6 +88,12 @@ public class CarListener extends PKUtilsBase
         Matcher carLockMatcher = CAR_LOCK_PATTERN.matcher(message);
         if (carLockMatcher.find()) {
             this.carLocked = true;
+            return true;
+        }
+
+        Matcher carLockedOwnMatcher = CAR_LOCKED_OWN_PATTERN.matcher(message);
+        if (carLockedOwnMatcher.find()) {
+            sendCommand("car lock");
             return true;
         }
 
