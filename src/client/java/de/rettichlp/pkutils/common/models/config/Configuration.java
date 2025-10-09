@@ -27,6 +27,18 @@ public class Configuration {
     private int predictedPayDaySalary = 0;
     private int predictedPayDayExp = 0;
 
+    public void addMinutesSinceLastPayDay(int minutes) {
+        this.minutesSinceLastPayDay += minutes;
+    }
+
+    public void addPredictedPayDaySalary(int salary) {
+        this.predictedPayDaySalary += salary;
+    }
+
+    public void addPredictedPayDayExp(int exp) {
+        this.predictedPayDayExp += exp;
+    }
+
     public Configuration loadFromFile() {
         File file = CONFIG_PATH.toFile();
 
@@ -55,20 +67,9 @@ public class Configuration {
     public void saveToFile() {
         try (Writer writer = newBufferedWriter(CONFIG_PATH)) {
             api.getGson().toJson(this, writer);
+            LOGGER.info("Saved config to {}", CONFIG_PATH);
         } catch (IOException e) {
             LOGGER.error("Failed to save config to {}", CONFIG_PATH, e);
         }
-    }
-
-    public void addMinutesSinceLastPayDay(int minutes) {
-        this.minutesSinceLastPayDay += minutes;
-    }
-
-    public void addPredictedPayDaySalary(int salary) {
-        this.predictedPayDaySalary += salary;
-    }
-
-    public void addPredictedPayDayExp(int exp) {
-        this.predictedPayDayExp += exp;
     }
 }

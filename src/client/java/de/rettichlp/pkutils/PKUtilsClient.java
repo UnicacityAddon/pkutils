@@ -18,7 +18,7 @@ public class PKUtilsClient implements ClientModInitializer {
 
     public static final Api api = new Api();
     public static final Storage storage = new Storage();
-    public static final Configuration configuration = new Configuration();
+    public static final Configuration configuration = new Configuration().loadFromFile();
 
     public static ClientPlayerEntity player;
     public static ClientPlayNetworkHandler networkHandler;
