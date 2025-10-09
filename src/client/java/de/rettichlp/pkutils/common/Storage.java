@@ -63,6 +63,10 @@ public class Storage {
 
     @Getter
     @Setter
+    private boolean afk = false;
+
+    @Getter
+    @Setter
     @Nullable
     private Job currentJob;
 

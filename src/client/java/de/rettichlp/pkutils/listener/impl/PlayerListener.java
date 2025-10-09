@@ -22,8 +22,6 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
     private static final Pattern AFK_START_PATTERN = compile("^Du bist nun im AFK-Modus\\.$");
     private static final Pattern AFK_END_PATTERN = compile("^Du bist nun nicht mehr im AFK-Modus\\.$");
 
-    private boolean isAfk = false;
-
     @Override
     public void onAbsorptionGet() {
         storage.getCountdowns().add(new Countdown("Absorption", ofMinutes(3)));
@@ -33,13 +31,13 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
     public boolean onMessageReceive(Text text, String message) {
         Matcher afkStartMatcher = AFK_START_PATTERN.matcher(message);
         if (afkStartMatcher.find()) {
-            this.isAfk = true;
+            storage.setAfk(true);
             return true;
         }
 
         Matcher afkEndMatcher = AFK_END_PATTERN.matcher(message);
         if (afkEndMatcher.find()) {
-            this.isAfk = false;
+            storage.setAfk(false);
             return true;
         }
 
@@ -48,7 +46,7 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
 
     @Override
     public void onTick() {
-        if (player.age % 1200 == 0 && !this.isAfk) {
+        if (player.age % 1200 == 0 && !storage.isAfk()) {
             configService.edit(mainConfig -> mainConfig.addMinutesSinceLastPayDay(1));
         }
     }
