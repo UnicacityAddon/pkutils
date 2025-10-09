@@ -1,11 +1,15 @@
 package de.rettichlp.pkutils.common.models.config;
 
+import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
 import de.rettichlp.pkutils.common.models.PersonalUseEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +30,7 @@ public class Options {
     private final NameTagOptions nameTag = new NameTagOptions();
     private final List<PersonalUseEntry> personalUse = new ArrayList<>();
     private final CarOptions car = new CarOptions();
+    private final OverlayOptions overlay = new OverlayOptions();
 
     private ReinforcementType reinforcementType = UNICACITYADDON;
     private boolean customSounds = true;
@@ -33,7 +38,7 @@ public class Options {
     @Getter
     @AllArgsConstructor
     @Accessors(fluent = false)
-    public enum ReinforcementType {
+    public enum ReinforcementType implements CyclingButtonEntry {
 
         UCUTILS(empty()
                 .append(of("UC").copy().formatted(DARK_AQUA))
@@ -47,5 +52,11 @@ public class Options {
                 .append(of("ddon")));
 
         private final Text displayName;
+
+        @Contract(value = " -> new", pure = true)
+        @Override
+        public @NotNull Tooltip getTooltip() {
+            return Tooltip.of(this.displayName);
+        }
     }
 }

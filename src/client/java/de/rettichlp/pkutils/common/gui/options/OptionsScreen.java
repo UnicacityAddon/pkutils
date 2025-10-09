@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.gui.options;
 
+import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
 import de.rettichlp.pkutils.common.gui.options.components.ItemButtonWidget;
 import de.rettichlp.pkutils.common.gui.options.components.ToggleButtonWidget;
 import de.rettichlp.pkutils.common.models.config.Options;
@@ -50,6 +51,7 @@ public abstract class OptionsScreen extends Screen {
 
     private final Screen parent;
     private final Text subTitle;
+    private final boolean renderBackground;
 
     public OptionsScreen(Screen parent) {
         super(empty()
@@ -57,6 +59,7 @@ public abstract class OptionsScreen extends Screen {
                 .append(translatable("options.title")));
         this.parent = parent;
         this.subTitle = of("v" + getVersion());
+        this.renderBackground = true;
     }
 
     public OptionsScreen(Screen parent, String subTitelKey) {
@@ -65,15 +68,31 @@ public abstract class OptionsScreen extends Screen {
                 .append(translatable("options.title")));
         this.parent = parent;
         this.subTitle = translatable(subTitelKey);
+        this.renderBackground = true;
+    }
+
+    public OptionsScreen(Screen parent, String subTitelKey, boolean renderBackground) {
+        super(empty()
+                .append("PKUtils").append(" ")
+                .append(translatable("options.title")));
+        this.parent = parent;
+        this.subTitle = translatable(subTitelKey);
+        this.renderBackground = renderBackground;
     }
 
     public abstract void initBody();
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        drawMenuListBackground(context);
+        if (this.renderBackground) {
+            drawMenuListBackground(context);
+        }
+
         super.render(context, mouseX, mouseY, delta);
-        drawHeaderAndFooterSeparators(context);
+
+        if (this.renderBackground) {
+            drawHeaderAndFooterSeparators(context);
+        }
     }
 
     @Override
@@ -110,18 +129,19 @@ public abstract class OptionsScreen extends Screen {
         widget.add(buttonWidget);
     }
 
-    public <E> void addCyclingButton(@NotNull DirectionalLayoutWidget widget,
-                                     String key,
-                                     E[] values,
-                                     Function<E, Text> displayNameFunction,
-                                     BiConsumer<Options, E> onValueChange,
-                                     @NotNull Function<Options, E> currentValue,
-                                     int width) {
+    public <E extends CyclingButtonEntry> void addCyclingButton(@NotNull DirectionalLayoutWidget widget,
+                                                                String key,
+                                                                E[] values,
+                                                                Function<E, Text> displayNameFunction,
+                                                                BiConsumer<Options, E> onValueChange,
+                                                                @NotNull Function<Options, E> currentValue,
+                                                                int width) {
         MutableText translatable = translatable(key);
 
         CyclingButtonWidget<E> cyclingButton = CyclingButtonWidget.builder(displayNameFunction)
                 .values(values)
                 .initially(currentValue.apply(configuration.getOptions()))
+                .tooltip(CyclingButtonEntry::getTooltip)
                 .build(translatable, (button, value) -> onValueChange.accept(configuration.getOptions(), value));
 
         cyclingButton.setWidth(width);

@@ -15,7 +15,7 @@ public enum Job {
 
     WASTE_COLLECTOR("Müllmann", compile("^\\[Müllmann] Entleere bis zu \\d Mülltonnen an den Türen der Häuser und entlade hier alles\\.$")),
     LUMBERJACK("Holzfäller", ofMinutes(20), compile("^\\[Holzfäller] Fälle \\d+ Bäume und bringe sie zu den Sägen zur Weiterverarbeitung!$")),
-    MINER("Bergarbeiter", compile("^\\[Steinbruch] Mit dem Zünder kannst du an Erzadern eine Sprengung vornehmen\\. Glück auf!$")),
+    MINER("Bergarbeiter", ofMinutes(20), compile("^\\[Steinbruch] Mit dem Zünder kannst du an Erzadern eine Sprengung vornehmen\\. Glück auf!$")),
     URANIUM_TRANSPORT("URAN-Transport", ofMinutes(20), compile("^\\[URAN] Suche Uran-Erz \\(Emerald-Erz\\) und bau es ab\\. Danach musst du es zum Atomkraftwerk bringen\\. \\(/dropuran\\)$")),
     BEVERAGE_SUPPLIER("Getränkelieferant", ofMinutes(10), compile("^\\[Lieferant] Bringe bitte die Bierflaschen zur Bar! \\(/dropdrink\\)$")),
     SUPPLIER("Lieferant", compile("^\\[Transport] Liefere (die Kisten|die Waffenkisten|das Weizen) (zu einem Geschäft deiner Wahl|zu einem Waffenladen deiner Wahl|zur Bäckerei), benutze dazu /droptransport$")),
