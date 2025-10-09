@@ -2,8 +2,8 @@ package de.rettichlp.pkutils;
 
 import de.rettichlp.pkutils.common.Storage;
 import de.rettichlp.pkutils.common.api.Api;
+import de.rettichlp.pkutils.common.models.config.Configuration;
 import de.rettichlp.pkutils.common.registry.Registry;
-import de.rettichlp.pkutils.common.services.ConfigService;
 import de.rettichlp.pkutils.common.services.FactionService;
 import de.rettichlp.pkutils.common.services.NotificationService;
 import de.rettichlp.pkutils.common.services.RenderService;
@@ -18,11 +18,11 @@ public class PKUtilsClient implements ClientModInitializer {
 
     public static final Api api = new Api();
     public static final Storage storage = new Storage();
+    public static final Configuration configuration = new Configuration();
 
     public static ClientPlayerEntity player;
     public static ClientPlayNetworkHandler networkHandler;
 
-    public static ConfigService configService = new ConfigService();
     public static FactionService factionService = new FactionService();
     public static NotificationService notificationService = new NotificationService();
     public static RenderService renderService = new RenderService();
