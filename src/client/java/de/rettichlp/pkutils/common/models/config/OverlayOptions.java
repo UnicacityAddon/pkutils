@@ -24,6 +24,7 @@ public class OverlayOptions {
     private boolean payDayExperience = true;
     private boolean carLocked = true;
     private CarLockedStyle carLockedStyle = DEFAULT;
+    private boolean money = true;
 
     @Getter
     @AllArgsConstructor

@@ -49,6 +49,8 @@
     "pkutils.options.overlay.title": "Widgets",
     "pkutils.options.overlay.datetime.name": "Datum & Uhrzeit",
     "pkutils.options.overlay.datetime.description": "Zeigt das aktuelle Datum und die aktuelle Uhrzeit",
+    "pkutils.options.overlay.money.name": "Geld",
+    "pkutils.options.overlay.money.description": "Zeigt das Bargeld und Geld auf der Bank an",
     "pkutils.options.overlay.payday.name": "PayDay",
     "pkutils.options.overlay.payday.description": "Zeigt Informationen über den PayDay an",
     "pkutils.options.overlay.payday.salary.name": "Gehalt",
