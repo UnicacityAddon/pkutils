@@ -1,6 +1,5 @@
 package de.rettichlp.pkutils.common;
 
-import de.rettichlp.pkutils.PKUtils;
 import de.rettichlp.pkutils.common.models.BlackMarket;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
