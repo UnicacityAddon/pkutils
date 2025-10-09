@@ -29,6 +29,10 @@ public class Configuration {
 
     public void addMinutesSinceLastPayDay(int minutes) {
         this.minutesSinceLastPayDay += minutes;
+
+        if (this.minutesSinceLastPayDay % 10 == 0) {
+            new Thread(this::saveToFile).start(); // save asynchronously every active 10 minutes
+        }
     }
 
     public void addPredictedPayDaySalary(int salary) {

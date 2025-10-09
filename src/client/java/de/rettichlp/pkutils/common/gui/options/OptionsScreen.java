@@ -79,6 +79,7 @@ public abstract class OptionsScreen extends Screen {
     @Override
     public void close() {
         this.client.setScreen(null);
+        configuration.saveToFile();
     }
 
     @Override
@@ -97,6 +98,7 @@ public abstract class OptionsScreen extends Screen {
 
     public void back() {
         this.client.setScreen(this.parent);
+        configuration.saveToFile();
     }
 
     public void addButton(@NotNull DirectionalLayoutWidget widget, String key, ButtonWidget.PressAction onPress, int width) {
