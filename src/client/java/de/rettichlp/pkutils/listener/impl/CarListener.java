@@ -42,8 +42,6 @@ public class CarListener extends PKUtilsBase
     private static final Pattern CAR_LOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ abgeschlossen\\.$");
     private static final Pattern CAR_LOCKED_OWN_PATTERN = compile("^\\[Car] Dein Fahrzeug ist abgeschlossen\\.$");
 
-    private boolean carLocked = true;
-
     @Override
     public void onEnterVehicle(Entity vehicle) {
         // the entity is a car
@@ -59,7 +57,7 @@ public class CarListener extends PKUtilsBase
         }
 
         // lock the car after 1 second and the small delay if not already locked
-        if (!this.carLocked && configService.load().getOptions().car().automatedLock()) {
+        if (!storage.isCarLocked() && configService.load().getOptions().car().automatedLock()) {
             delayedAction(() -> sendCommand("car lock"), 1500);
         }
     }
@@ -81,13 +79,13 @@ public class CarListener extends PKUtilsBase
     public boolean onMessageReceive(Text text, String message) {
         Matcher carUnlockMatcher = CAR_UNLOCK_PATTERN.matcher(message);
         if (carUnlockMatcher.find()) {
-            this.carLocked = false;
+            storage.setCarLocked(false);
             return true;
         }
 
         Matcher carLockMatcher = CAR_LOCK_PATTERN.matcher(message);
         if (carLockMatcher.find()) {
-            this.carLocked = true;
+            storage.setCarLocked(true);
             return true;
         }
 

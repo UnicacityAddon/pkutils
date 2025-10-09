@@ -67,6 +67,10 @@ public class Storage {
 
     @Getter
     @Setter
+    private boolean carLocked = true;
+
+    @Getter
+    @Setter
     @Nullable
     private Job currentJob;
 
