@@ -35,17 +35,19 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
     private static final Pattern BUSINESS_CASH_PATTERN = compile("^Kasse: (\\d+)\\$$");
     private static final Pattern EXP_PATTERN = compile("(?<amount>[+-]\\d+) Exp!( \\(x(?<multiplier>\\d)\\))?");
 
-    private static final Pattern BANK_TRANSFER_TO_PATTERN = compile("^Du hast (?:\\[PK])*(?<player>\\w+) (?<money>\\d+)\\$ überwiesen!$");
-    private static final Pattern BANK_TRANSFER_GET_PATTERN = compile("^(?:\\[PK])*(?<player>\\w+) hat dir (?<money>\\d+)\\$ überwiesen!$");
-    private static final Pattern BANK_STATS_PATTERN = Pattern.compile("^Neuer Betrag: (\\d+)\\$ \\([+-]\\d+\\$\\)$"); //TODO: create matcher // Weiß nicht wofür dieses Pattern genutzt wird
-    private static final Pattern CASH_GIVE_PATTERN = compile("^Du hast (?:\\[PK])*(?<player>\\w+) (?<money>\\d+)\\$ gegeben!$");
-    private static final Pattern CASH_GET_PATTERN = compile("^(?:\\[PK])*(?<player>\\w+) hat dir (?<money>\\d+)\\$ gegeben!$");
-    private static final Pattern CASH_TO_FBANK_PATTERN = compile("^\\[F-Bank] (?:\\[PK])*(?<player>\\w+) hat (?<money>\\d+)\\$ in die F-Bank eingezahlt\\.$");
-    private static final Pattern CASH_FROM_FBANK_PATTERN = compile("^\\[F-Bank] (?:\\[PK])*(?<player>\\w+) hat (?<money>\\d+)\\$ aus der F-Bank genommen\\.$");
-    private static final Pattern CASH_TO_BANK_PATTERN = compile("^Eingezahlt: \\+(?<money>\\d+)\\$$");
+    private static final Pattern BANK_TRANSFER_TO_PATTERN = compile("^Du hast (?:\\[PK])?(?<player>\\w+) (?<money>([+])\\d+)\\$ überwiesen.$");
+    private static final Pattern BANK_TRANSFER_GET_PATTERN = compile("^(?:\\[PK])?(?<player>\\w+) hat dir (?<money>([+])\\d+)\\$ überwiesen.$");
+    private static final Pattern BANK_PAYDAY_PATTERN = Pattern.compile("^Neuer Betrag: (?<money>\\d+)\\$ \\([+-]\\d+\\$\\)$");
+    private static final Pattern CASH_GIVE_PATTERN = compile("^\\Du hast (?:\\[PK])?(?<player>\\w+) (?<money>([+-])\\d+)\\$ gegeben.$");
+    private static final Pattern CASH_GET_PATTERN = compile("^(?:\\[PK])?(?<player>\\w+) hat dir (?<money>([+-])\\d+)\\$ gegeben.$");
+    private static final Pattern CASH_TO_FBANK_PATTERN = compile("^\\[F-Bank] (?:\\[PK])*(?<player>\\w+) hat (?<money>([+])\\d+)\\$ in die F-Bank eingezahlt\\.$");
+    private static final Pattern CASH_FROM_FBANK_PATTERN = compile("^\\[F-Bank] (?:\\[PK])*(?<player>\\w+) hat (?<money>([+])\\d+)\\$ aus der F-Bank genommen\\.$");
+    private static final Pattern CASH_TO_BANK_PATTERN = compile("^Einzahlung: (?<money>([+])\\d+)\\$$");
     private static final Pattern CASH_FROM_BANK_PATTERN = compile("^Auszahlung: -(?<money>\\d+)\\$$");
-    private static final Pattern LOTTO_WIN = Pattern.compile("^\\[Lotto] Du hast im Lotto gewonnen! \\((?<money>\\d+)\\$\\)$"); //TODO: create matcher // Weiß nicht, ob es auf die Hand oder Bank geht.
-
+    private static final Pattern CASH_ADD_PATTERN = compile("^(?<money>([+-])\\d+)\\$$");
+    private static final Pattern CASH_REMOVE_PATTERN = compile("^(?<money>([+-])\\d+)\\$$");
+    private static final Pattern LOTTO_WIN = Pattern.compile("^\\[Lotto] Du hast im Lotto gewonnen! \\((?<money>\\d+)\\$\\)$"); //TODO: fix matcher // Weiß nicht, ob es auf die Hand oder Bank geht.
+    //TODO: VOTE REWARD PATTERN
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
@@ -56,6 +58,30 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
             configuration.setPredictedPayDayExp(0);
         }
 
+        Matcher cashAddMatcher = CASH_ADD_PATTERN.matcher(message);
+        if (cashAddMatcher.find()) {
+            int money = parseInt(cashAddMatcher.group("money"));
+            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() + money);
+            return true;
+        }
+        Matcher cashRemoveMatcher = CASH_REMOVE_PATTERN.matcher(message);
+        if (cashRemoveMatcher.find()) {
+            int money = parseInt(cashRemoveMatcher.group("money"));
+            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() - money);
+            return true;
+        }
+        Matcher lottoWinMatcher = LOTTO_WIN.matcher(message);
+        if (lottoWinMatcher.find()) {
+            int money = parseInt(lottoWinMatcher.group("money"));
+            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() + money);
+            return true;
+        }
+        Matcher bankPaydayMatcher = BANK_PAYDAY_PATTERN.matcher(message);
+        if (bankPaydayMatcher.find()) {
+            int money = parseInt(bankPaydayMatcher.group("money"));
+            configuration.setMoneyBankAmount(money);
+            return true;
+        }
         Matcher bankTransferToMatcher = BANK_TRANSFER_TO_PATTERN.matcher(message);
         if (bankTransferToMatcher.find()) {
             int money = parseInt(bankTransferToMatcher.group("money"));
@@ -106,8 +132,6 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
             configuration.setMoneyBankAmount(configuration.getMoneyBankAmount() - money);
             return true;
         }
-
-
 
 
         Matcher paydayTimeMatcher = PAYDAY_TIME_PATTERN.matcher(message);
