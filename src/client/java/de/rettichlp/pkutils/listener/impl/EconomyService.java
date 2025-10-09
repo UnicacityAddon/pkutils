@@ -11,9 +11,7 @@ import net.minecraft.text.Text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.configuration;
-import static de.rettichlp.pkutils.PKUtilsClient.player;
-import static de.rettichlp.pkutils.PKUtilsClient.storage;
+import static de.rettichlp.pkutils.PKUtilsClient.*;
 import static java.lang.Integer.parseInt;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
@@ -32,9 +30,22 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
     private static final Pattern PAYDAY_SALARY_PATTERN = compile("^\\[PayDay] Du bekommst dein Gehalt von (?<money>\\d+)\\$ am PayDay ausgezahlt\\.$");
 
     private static final Pattern PLAYER_MONEY_BANK_AMOUNT = compile("^Ihr Bankguthaben beträgt: (?<moneyBankAmount>([+-])\\d+)\\$$");
+    private static final Pattern PLAYER_MONEY_CASH_AMOUNT = compile("^ - Geld: (?<moneyCashAmount>\\d+)\\$$");
     private static final Pattern MONEY_ATM_AMOUNT = compile("ATM \\d+: (?<moneyAtmAmount>\\d+)/100000\\$");
     private static final Pattern BUSINESS_CASH_PATTERN = compile("^Kasse: (\\d+)\\$$");
     private static final Pattern EXP_PATTERN = compile("(?<amount>[+-]\\d+) Exp!( \\(x(?<multiplier>\\d)\\))?");
+
+    private static final Pattern BANK_TRANSFER_TO_PATTERN = compile("^Du hast (?:\\[PK])*(?<player>\\w+) (?<money>\\d+)\\$ überwiesen!$");
+    private static final Pattern BANK_TRANSFER_GET_PATTERN = compile("^(?:\\[PK])*(?<player>\\w+) hat dir (?<money>\\d+)\\$ überwiesen!$");
+    private static final Pattern BANK_STATS_PATTERN = Pattern.compile("^Neuer Betrag: (\\d+)\\$ \\([+-]\\d+\\$\\)$"); //TODO: create matcher // Weiß nicht wofür dieses Pattern genutzt wird
+    private static final Pattern CASH_GIVE_PATTERN = compile("^Du hast (?:\\[PK])*(?<player>\\w+) (?<money>\\d+)\\$ gegeben!$");
+    private static final Pattern CASH_GET_PATTERN = compile("^(?:\\[PK])*(?<player>\\w+) hat dir (?<money>\\d+)\\$ gegeben!$");
+    private static final Pattern CASH_TO_FBANK_PATTERN = compile("^\\[F-Bank] (?:\\[PK])*(?<player>\\w+) hat (?<money>\\d+)\\$ in die F-Bank eingezahlt\\.$");
+    private static final Pattern CASH_FROM_FBANK_PATTERN = compile("^\\[F-Bank] (?:\\[PK])*(?<player>\\w+) hat (?<money>\\d+)\\$ aus der F-Bank genommen\\.$");
+    private static final Pattern CASH_TO_BANK_PATTERN = compile("^Eingezahlt: \\+(?<money>\\d+)\\$$");
+    private static final Pattern CASH_FROM_BANK_PATTERN = compile("^Auszahlung: -(?<money>\\d+)\\$$");
+    private static final Pattern LOTTO_WIN = Pattern.compile("^\\[Lotto] Du hast im Lotto gewonnen! \\((?<money>\\d+)\\$\\)$"); //TODO: create matcher // Weiß nicht, ob es auf die Hand oder Bank geht.
+
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
@@ -44,6 +55,60 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
             configuration.setPredictedPayDaySalary(0);
             configuration.setPredictedPayDayExp(0);
         }
+
+        Matcher bankTransferToMatcher = BANK_TRANSFER_TO_PATTERN.matcher(message);
+        if (bankTransferToMatcher.find()) {
+            int money = parseInt(bankTransferToMatcher.group("money"));
+            configuration.setMoneyBankAmount(configuration.getMoneyBankAmount() - money);
+            return true;
+        }
+        Matcher bankTransferGetMatcher = BANK_TRANSFER_GET_PATTERN.matcher(message);
+        if (bankTransferGetMatcher.find()) {
+            int money = parseInt(bankTransferGetMatcher.group("money"));
+            configuration.setMoneyBankAmount(configuration.getMoneyBankAmount() + money);
+            return true;
+        }
+        Matcher cashGiveMatcher = CASH_GIVE_PATTERN.matcher(message);
+        if (cashGiveMatcher.find()) {
+            int money = parseInt(cashGiveMatcher.group("money"));
+            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() - money);
+            return true;
+        }
+        Matcher cashGetMatcher = CASH_GET_PATTERN.matcher(message);
+        if (cashGetMatcher.find()) {
+            int money = parseInt(cashGetMatcher.group("money"));
+            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() + money);
+            return true;
+        }
+        Matcher cashToFbankMatcher = CASH_TO_FBANK_PATTERN.matcher(message);
+        if (cashToFbankMatcher.find()) {
+            int money = parseInt(cashToFbankMatcher.group("money"));
+            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() - money);
+            return true;
+        }
+        Matcher cashFromFbankMatcher = CASH_FROM_FBANK_PATTERN.matcher(message);
+        if (cashFromFbankMatcher.find()) {
+            int money = parseInt(cashFromFbankMatcher.group("money"));
+            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() + money);
+            return true;
+        }
+        Matcher cashToBankMatcher = CASH_TO_BANK_PATTERN.matcher(message);
+        if (cashToBankMatcher.find()) {
+            int money = parseInt(cashToBankMatcher.group("money"));
+            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() - money);
+            configuration.setMoneyBankAmount(configuration.getMoneyBankAmount() + money);
+            return true;
+        }
+        Matcher cashFromBankMatcher = CASH_FROM_BANK_PATTERN.matcher(message);
+        if (cashFromBankMatcher.find()) {
+            int money = parseInt(cashFromBankMatcher.group("money"));
+            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() + money);
+            configuration.setMoneyBankAmount(configuration.getMoneyBankAmount() - money);
+            return true;
+        }
+
+
+
 
         Matcher paydayTimeMatcher = PAYDAY_TIME_PATTERN.matcher(message);
         if (paydayTimeMatcher.find()) {
@@ -63,7 +128,14 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
         Matcher playerMoneyBankAmountMatcher = PLAYER_MONEY_BANK_AMOUNT.matcher(message);
         if (playerMoneyBankAmountMatcher.find()) {
             int moneyBankAmount = parseInt(playerMoneyBankAmountMatcher.group("moneyBankAmount"));
-            storage.setMoneyBankAmount(moneyBankAmount);
+            configuration.setMoneyBankAmount(moneyBankAmount);
+            return true;
+        }
+
+        Matcher playerMoneyCashAmountMatcher = PLAYER_MONEY_CASH_AMOUNT.matcher(message);
+        if (playerMoneyCashAmountMatcher.find()) {
+            int moneyCashAmount = parseInt(playerMoneyCashAmountMatcher.group("moneyCashAmount"));
+            configuration.setMoneyCashAmount(moneyCashAmount);
             return true;
         }
 

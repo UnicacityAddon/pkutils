@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common;
 
+import de.rettichlp.pkutils.PKUtils;
 import de.rettichlp.pkutils.common.models.BlackMarket;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
@@ -84,10 +85,6 @@ public class Storage {
 
     @Getter
     @Setter
-    private int moneyBankAmount = 0;
-
-    @Getter
-    @Setter
     private ToggledChat toggledChat = NONE;
 
     {
@@ -123,8 +120,6 @@ public class Storage {
         LOGGER.info("minecartEntityToHighlight: {}", this.minecartEntityToHighlight);
         // moneyAtmAmount
         LOGGER.info("moneyAtmAmount: {}", this.moneyAtmAmount);
-        // moneyBankAmount
-        LOGGER.info("moneyBankAmount: {}", this.moneyBankAmount);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
     }

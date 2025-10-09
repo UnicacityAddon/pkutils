@@ -63,8 +63,11 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
         alignHorizontalOverlay.add(getPayDayTextOverlay());
         alignHorizontalOverlay.add(getCarLockedOverlay());
 
-        this.statsOverlay.add(alignHorizontalOverlay.disableMargin());
+        AlignHorizontalOverlay alignHorizontalOverlay2row = new AlignHorizontalOverlay(); //TODO: create 2. row / fix 2. row
+        alignHorizontalOverlay.add(getStatsTextOverlay());
 
+        this.statsOverlay.add(alignHorizontalOverlay.disableMargin());
+        this.statsOverlay.add(alignHorizontalOverlay2row.disableMargin());
         this.statsOverlay.draw(drawContext, TOP_LEFT);
     }
 
@@ -74,6 +77,19 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
                 .build();
     }
 
+    private TextOverlay getStatsTextOverlay() {
+        MutableText moneyInfoText = empty()
+                .append(of("Geld").copy().formatted(GRAY))
+                .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                .append(of(configuration.getMoneyCashAmount() + "$")).append(" ")
+                .append(of("Bank").copy().formatted(GRAY))
+                .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                .append(of(configuration.getMoneyBankAmount() + "$")).append(" ");
+
+        return TextOverlay.builder()
+                .textSupplier(() -> moneyInfoText)
+                .build();
+    }
     private TextOverlay getPayDayTextOverlay() {
         MutableText payDayInfoText = empty()
                 .append(of("PayDay").copy().formatted(GRAY))

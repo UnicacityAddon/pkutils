@@ -23,6 +23,8 @@ public class Configuration {
 
     private List<TodoEntry> todos = new ArrayList<>();
     private Options options = new Options();
+    private int moneyBankAmount = 0;
+    private int moneyCashAmount = 0;
     private int minutesSinceLastPayDay = 0;
     private int predictedPayDaySalary = 0;
     private int predictedPayDayExp = 0;
