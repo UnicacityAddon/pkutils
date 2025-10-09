@@ -1,7 +1,9 @@
 package de.rettichlp.pkutils.common.models;
 
+import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
 
 import static net.minecraft.text.Text.translatable;
@@ -12,7 +14,7 @@ import static net.minecraft.util.Formatting.YELLOW;
 
 @Getter
 @AllArgsConstructor
-public enum Purity {
+public enum Purity implements CyclingButtonEntry {
 
     BEST(translatable("pkutils.purity.best").formatted(DARK_GREEN)),
     GOOD(translatable("pkutils.purity.good").formatted(GREEN)),
@@ -20,4 +22,9 @@ public enum Purity {
     BAD(translatable("pkutils.purity.bad").formatted(RED));
 
     private final Text displayName;
+
+    @Override
+    public Tooltip getTooltip() {
+        return Tooltip.of(this.displayName);
+    }
 }
