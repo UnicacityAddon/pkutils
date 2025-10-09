@@ -4,6 +4,7 @@ import de.rettichlp.pkutils.common.gui.overlay.AlignHorizontalOverlay;
 import de.rettichlp.pkutils.common.gui.overlay.AlignVerticalOverlay;
 import de.rettichlp.pkutils.common.gui.overlay.TextOverlay;
 import de.rettichlp.pkutils.common.models.Countdown;
+import de.rettichlp.pkutils.common.models.config.OverlayOptions;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.common.services.NotificationService;
@@ -18,6 +19,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.TOP_LEFT;
 import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.TOP_RIGHT;
+import static de.rettichlp.pkutils.common.models.config.OverlayOptions.CarLockedStyle.MINIMALISTIC;
 import static java.lang.String.valueOf;
 import static java.time.LocalDateTime.now;
 import static net.minecraft.text.Text.empty;
@@ -55,13 +57,23 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
     }
 
     private void renderStatsOverlay(DrawContext drawContext) {
+        OverlayOptions overlayOptions = configuration.getOptions().overlay();
         this.statsOverlay.clear();
 
         // first row
         AlignHorizontalOverlay alignHorizontalOverlay = new AlignHorizontalOverlay();
-        alignHorizontalOverlay.add(getDateTimeTextOverlay());
-        alignHorizontalOverlay.add(getPayDayTextOverlay());
-        alignHorizontalOverlay.add(getCarLockedOverlay());
+
+        if (overlayOptions.dateTime()) {
+            alignHorizontalOverlay.add(getDateTimeTextOverlay());
+        }
+
+        if (overlayOptions.payDay()) {
+            alignHorizontalOverlay.add(getPayDayTextOverlay());
+        }
+
+        if (overlayOptions.carLocked()) {
+            alignHorizontalOverlay.add(getCarLockedOverlay());
+        }
 
         this.statsOverlay.add(alignHorizontalOverlay.disableMargin());
 
@@ -75,18 +87,28 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
     }
 
     private TextOverlay getPayDayTextOverlay() {
+        OverlayOptions overlayOptions = configuration.getOptions().overlay();
+
         MutableText payDayInfoText = empty()
                 .append(of("PayDay").copy().formatted(GRAY))
                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                 .append(of(valueOf(configuration.getMinutesSinceLastPayDay())))
                 .append(of("/").copy().formatted(DARK_GRAY))
-                .append(of("60")).append(" ")
-                .append(of("Gehalt").copy().formatted(GRAY))
-                .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                .append(of(configuration.getPredictedPayDaySalary() + "$")).append(" ")
-                .append(of("Exp").copy().formatted(GRAY))
-                .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                .append(of(valueOf(configuration.getPredictedPayDayExp())));
+                .append(of("60"));
+
+        if (overlayOptions.payDaySalary()) {
+            payDayInfoText.append(" ")
+                    .append(of("Gehalt").copy().formatted(GRAY))
+                    .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                    .append(of(configuration.getPredictedPayDaySalary() + "$"));
+        }
+
+        if (overlayOptions.payDayExperience()) {
+            payDayInfoText.append(" ")
+                    .append(of("Exp").copy().formatted(GRAY))
+                    .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                    .append(of(valueOf(configuration.getPredictedPayDayExp())));
+        }
 
         return TextOverlay.builder()
                 .textSupplier(() -> payDayInfoText)
@@ -94,7 +116,7 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
     }
 
     private TextOverlay getCarLockedOverlay() {
-        boolean minimalistic = true; // TODO
+        boolean minimalistic = configuration.getOptions().overlay().carLockedStyle() == MINIMALISTIC;
 
         Text text = minimalistic
                 ? (storage.isCarLocked() ? of("🔒").copy().formatted(GREEN) : of("🔓").copy().formatted(GOLD))
