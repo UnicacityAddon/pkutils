@@ -57,15 +57,16 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
         Matcher fisherCatchSuccessMatcher = FISHER_CATCH_SUCCESS.matcher(message);
         Matcher fisherCatchFailureMatcher = FISHER_CATCH_FAILURE.matcher(message);
         if (fisherCatchSuccessMatcher.find() || fisherCatchFailureMatcher.find()) {
+            if (this.currentFisherJobSpots.size() == getNetAmount()) {
+                sendCommand("navi -504 63 197");
+                return true;
+            }
+
             // get nearest
             Optional<FisherJobSpot> nearestFisherJobSpot = getNearestFisherJobSpot(getNotVisitedFisherJobSpots());
-
-            nearestFisherJobSpot.ifPresentOrElse(fisherJobSpot -> {
+            nearestFisherJobSpot.ifPresent(fisherJobSpot -> {
                 String naviCommand = fisherJobSpot.getNaviCommand();
                 sendCommand(naviCommand);
-            }, () -> {
-                // all spots visited, go to harbor
-                sendCommand("navi -504 63 197");
             });
 
             return true;

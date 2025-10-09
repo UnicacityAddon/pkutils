@@ -214,7 +214,13 @@ public class Registry {
                 if (listenerInstance instanceof IMessageReceiveListener iMessageReceiveListener) {
                     ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> {
                         String rawMessage = message.getString();
-                        return iMessageReceiveListener.onMessageReceive(message, rawMessage);
+                        boolean showMessage = iMessageReceiveListener.onMessageReceive(message, rawMessage);
+
+                        if (!showMessage) {
+                            LOGGER.info("Hide message ({}): {}", listenerClass.getSimpleName(), rawMessage);
+                        }
+
+                        return showMessage;
                     });
                 }
 
