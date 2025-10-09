@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static net.minecraft.client.sound.PositionedSoundInstance.master;
 
 @Getter
@@ -35,14 +35,14 @@ public enum Sound {
     }
 
     public void play() {
-        if (configService.load().getOptions().customSounds()) {
+        if (configuration.getOptions().customSounds()) {
             PositionedSoundInstance positionedSoundInstance = master(getSoundEvent(), 1.0F, 1.0F);
             MinecraftClient.getInstance().getSoundManager().play(positionedSoundInstance);
         }
     }
 
     public void play(float pitch, float volume) {
-        if (configService.load().getOptions().customSounds()) {
+        if (configuration.getOptions().customSounds()) {
             PositionedSoundInstance positionedSoundInstance = master(getSoundEvent(), pitch, volume);
             MinecraftClient.getInstance().getSoundManager().play(positionedSoundInstance);
         }

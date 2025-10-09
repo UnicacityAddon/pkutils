@@ -63,6 +63,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,9 +71,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
-import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static java.util.Objects.isNull;
+import static java.util.Optional.ofNullable;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.entity.effect.StatusEffects.ABSORPTION;
 import static net.minecraft.registry.Registries.SOUND_EVENT;
@@ -160,9 +161,9 @@ public class Registry {
     }
 
     public void registerListeners() {
-        // ignore messages until the player is initialized
-        if (player == null || networkHandler == null || this.initialized) {
-            throw new IllegalStateException("Tried to register listeners too early");
+        if (this.initialized) {
+            LOGGER.warn("Listeners already registered");
+            return;
         }
 
         for (Class<?> listenerClass : this.listeners /*ClassIndex.getAnnotated(PKUtilsListener.class)*/) {
@@ -171,7 +172,9 @@ public class Registry {
 
                 if (listenerInstance instanceof IAbsorptionGetListener iAbsorptionGetListener) {
                     ClientTickEvents.END_CLIENT_TICK.register((server) -> {
-                        boolean hasAbsorption = player.hasStatusEffect(ABSORPTION);
+                        boolean hasAbsorption = ofNullable(player)
+                                .map(clientPlayerEntity -> clientPlayerEntity.hasStatusEffect(ABSORPTION))
+                                .orElse(false);
 
                         if (!this.lastAbsorptionState && hasAbsorption) {
                             iAbsorptionGetListener.onAbsorptionGet();
@@ -229,13 +232,14 @@ public class Registry {
                 }
 
                 if (listenerInstance instanceof IMoveListener iMoveListener) {
-                    ClientTickEvents.END_CLIENT_TICK.register((server) -> {
-                        BlockPos blockPos = player.getBlockPos();
-                        if (isNull(this.lastPlayerPos) || !this.lastPlayerPos.equals(blockPos)) {
-                            this.lastPlayerPos = blockPos;
-                            iMoveListener.onMove(blockPos);
-                        }
-                    });
+                    ClientTickEvents.END_CLIENT_TICK.register((server) -> ofNullable(player)
+                            .map(Entity::getBlockPos)
+                            .ifPresent(blockPos -> {
+                                if (isNull(this.lastPlayerPos) || !this.lastPlayerPos.equals(blockPos)) {
+                                    this.lastPlayerPos = blockPos;
+                                    iMoveListener.onMove(blockPos);
+                                }
+                            }));
                 }
 
                 if (listenerInstance instanceof INaviSpotReachedListener iNaviSpotReachedListener) {

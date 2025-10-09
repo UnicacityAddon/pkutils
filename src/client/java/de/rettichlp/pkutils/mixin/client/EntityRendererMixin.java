@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import java.util.Optional;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
-import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static de.rettichlp.pkutils.PKUtilsClient.factionService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static de.rettichlp.pkutils.common.models.Color.WHITE;
@@ -63,7 +63,7 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
 
     @Unique
     private MutableText getFormattedTargetDisplayName(@NotNull Text targetDisplayName, String targetName) {
-        NameTagOptions nameTagOptions = configService.load().getOptions().nameTag();
+        NameTagOptions nameTagOptions = configuration.getOptions().nameTag();
         Faction targetFaction = storage.getFaction(targetName);
 
         Text newTargetDisplayNamePrefix = empty();

@@ -11,7 +11,7 @@ import net.minecraft.text.Text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.lang.Integer.parseInt;
@@ -40,24 +40,22 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
     public boolean onMessageReceive(Text text, String message) {
         Matcher paydayMatcher = PAYDAY_PATTERN.matcher(message);
         if (paydayMatcher.find()) {
-            configService.edit(mainConfig -> {
-                mainConfig.setMinutesSinceLastPayDay(0);
-                mainConfig.setPredictedPayDaySalary(0);
-                mainConfig.setPredictedPayDayExp(0);
-            });
+            configuration.setMinutesSinceLastPayDay(0);
+            configuration.setPredictedPayDaySalary(0);
+            configuration.setPredictedPayDayExp(0);
         }
 
         Matcher paydayTimeMatcher = PAYDAY_TIME_PATTERN.matcher(message);
         if (paydayTimeMatcher.find()) {
             int minutesSinceLastPayDay = parseInt(paydayTimeMatcher.group("minutes"));
-            configService.edit(mainConfig -> mainConfig.setMinutesSinceLastPayDay(minutesSinceLastPayDay));
+            configuration.setMinutesSinceLastPayDay(minutesSinceLastPayDay);
             return true;
         }
 
         Matcher paydaySalaryMatcher = PAYDAY_SALARY_PATTERN.matcher(message);
         if (paydaySalaryMatcher.find()) {
             int money = parseInt(paydaySalaryMatcher.group("money"));
-            configService.edit(mainConfig -> mainConfig.addPredictedPayDaySalary(money));
+            configuration.addPredictedPayDaySalary(money);
             storage.setCurrentJob(null);
             return true;
         }
@@ -82,7 +80,7 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
             String multiplierString = expMatcher.group("multiplier");
             int multiplier = ofNullable(multiplierString).map(Integer::parseInt).orElse(1);
 
-            configService.edit(mainConfig -> mainConfig.addPredictedPayDayExp(amount * multiplier));
+            configuration.addPredictedPayDayExp(amount * multiplier);
             return true;
         }
 

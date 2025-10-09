@@ -10,7 +10,7 @@ import net.minecraft.client.gui.widget.Positioner;
 import net.minecraft.client.gui.widget.TextWidget;
 import org.jetbrains.annotations.NotNull;
 
-import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static de.rettichlp.pkutils.common.models.Color.WHITE;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.util.Arrays.stream;
@@ -58,8 +58,8 @@ public class NameTagOptionsScreen extends OptionsScreen {
                 .filter(faction -> faction != NULL)
                 .map(faction -> new CyclingButtonWidget.Builder<>(Color::getDisplayName)
                         .values(Color.values())
-                        .initially(configService.load().getOptions().nameTag().highlightFactions().getOrDefault(faction, WHITE))
-                        .build(of(faction.getDisplayName()), (button, value) -> configService.edit(mainConfig -> mainConfig.getOptions().nameTag().highlightFactions().put(faction, value))))
+                        .initially(configuration.getOptions().nameTag().highlightFactions().getOrDefault(faction, WHITE))
+                        .build(of(faction.getDisplayName()), (button, value) -> configuration.getOptions().nameTag().highlightFactions().put(faction, value)))
                 .forEach(adder::add);
 
         return gridWidget;

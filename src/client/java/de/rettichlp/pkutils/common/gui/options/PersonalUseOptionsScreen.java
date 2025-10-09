@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
-import static de.rettichlp.pkutils.PKUtilsClient.configService;
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.stream;
@@ -55,7 +55,7 @@ public class PersonalUseOptionsScreen extends OptionsScreen {
     }
 
     private @NotNull DirectionalLayoutWidget personalUseRow(@NotNull InventoryItem inventoryItem) {
-        PersonalUseEntry personalUseEntry = configService.load().getOptions().personalUse().stream()
+        PersonalUseEntry personalUseEntry = configuration.getOptions().personalUse().stream()
                 .filter(oue -> oue.getInventoryItem() == inventoryItem)
                 .findFirst()
                 .orElseGet(() -> new PersonalUseEntry(inventoryItem));
@@ -99,11 +99,9 @@ public class PersonalUseOptionsScreen extends OptionsScreen {
 
     private void updatePersonalUseEntry(@NotNull PersonalUseEntry personalUseEntry, Purity newPurity) {
         personalUseEntry.setPurity(newPurity);
-        configService.edit(mainConfig -> {
-            List<PersonalUseEntry> personalUseEntries = mainConfig.getOptions().personalUse();
-            personalUseEntries.removeIf(pue -> pue.getInventoryItem() == personalUseEntry.getInventoryItem());
-            personalUseEntries.add(personalUseEntry);
-        });
+        List<PersonalUseEntry> personalUseEntries = configuration.getOptions().personalUse();
+        personalUseEntries.removeIf(pue -> pue.getInventoryItem() == personalUseEntry.getInventoryItem());
+        personalUseEntries.add(personalUseEntry);
     }
 
     private void updatePersonalUseEntry(@NotNull PersonalUseEntry personalUseEntry, String newAmount) {
@@ -123,10 +121,8 @@ public class PersonalUseOptionsScreen extends OptionsScreen {
         }
 
         personalUseEntry.setAmount(parsedInt);
-        configService.edit(mainConfig -> {
-            List<PersonalUseEntry> personalUseEntries = mainConfig.getOptions().personalUse();
-            personalUseEntries.removeIf(pue -> pue.getInventoryItem() == personalUseEntry.getInventoryItem());
-            personalUseEntries.add(personalUseEntry);
-        });
+        List<PersonalUseEntry> personalUseEntries = configuration.getOptions().personalUse();
+        personalUseEntries.removeIf(pue -> pue.getInventoryItem() == personalUseEntry.getInventoryItem());
+        personalUseEntries.add(personalUseEntry);
     }
 }
