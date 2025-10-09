@@ -12,6 +12,7 @@ import de.rettichlp.pkutils.listener.IHudRenderListener;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 
 import static de.rettichlp.pkutils.PKUtilsClient.configService;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
@@ -23,7 +24,9 @@ import static java.time.LocalDateTime.now;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
+import static net.minecraft.util.Formatting.GOLD;
 import static net.minecraft.util.Formatting.GRAY;
+import static net.minecraft.util.Formatting.GREEN;
 
 @PKUtilsListener
 public class HudListener extends PKUtilsBase implements IHudRenderListener {
@@ -59,6 +62,7 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
         AlignHorizontalOverlay alignHorizontalOverlay = new AlignHorizontalOverlay();
         alignHorizontalOverlay.add(getDateTimeTextOverlay());
         alignHorizontalOverlay.add(getPayDayTextOverlay());
+        alignHorizontalOverlay.add(getCarLockedOverlay());
 
         this.statsOverlay.add(alignHorizontalOverlay.disableMargin());
 
@@ -89,6 +93,21 @@ public class HudListener extends PKUtilsBase implements IHudRenderListener {
 
         return TextOverlay.builder()
                 .textSupplier(() -> payDayInfoText)
+                .build();
+    }
+
+    private TextOverlay getCarLockedOverlay() {
+        boolean minimalistic = true; // TODO
+
+        Text text = minimalistic
+                ? (storage.isCarLocked() ? of("🔒").copy().formatted(GREEN) : of("🔓").copy().formatted(GOLD))
+                : empty()
+                .append(of("Fahrzeug").copy().formatted(GRAY))
+                .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                .append(storage.isCarLocked() ? of("zu").copy().formatted(GREEN) : of("offen").copy().formatted(GOLD));
+
+        return TextOverlay.builder()
+                .textSupplier(() -> text)
                 .build();
     }
 }
