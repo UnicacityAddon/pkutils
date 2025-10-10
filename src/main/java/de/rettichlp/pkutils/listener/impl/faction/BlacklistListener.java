@@ -50,7 +50,7 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
         Matcher blacklistEntryAddMatcher = BLACKLIST_ENTRY_ADD.matcher(message);
         if (blacklistEntryAddMatcher.find()) {
             // show all entries to sync
-            delayedAction(() -> sendCommand("blacklist"), 1000);
+            delayedAction(() -> sendCommandWithAfkCheck("blacklist"), 1000);
             return true;
         }
 
