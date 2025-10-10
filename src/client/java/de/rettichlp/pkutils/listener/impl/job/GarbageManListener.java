@@ -31,7 +31,7 @@ import static net.minecraft.scoreboard.ScoreboardDisplaySlot.SIDEBAR;
 @PKUtilsListener
 public class GarbageManListener extends PKUtilsBase implements IMessageReceiveListener, ITickListener {
 
-    private static final Pattern GARBAGE_MAN_DROP_START = compile("^\\[Müllmann] Hier kannst du auf den Haufen mit /dropwaste dein Müll sortieren!$");
+    private static final Pattern GARBAGE_MAN_DROP_START = compile("^\\[Müllmann] Du hast genug Mülltonnen entleert\\.$");
     private static final Pattern GARBAGE_MAN_FINISHED = compile("^\\[Müllmann] Du hast den Job beendet\\.$");
 
     private boolean isDropStep = false;
