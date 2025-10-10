@@ -84,6 +84,10 @@ public abstract class PlayerListHudMixin {
 
     @Inject(method = "getPlayerName", at = @At("RETURN"), cancellable = true)
     private void onGetPlayerName(PlayerListEntry playerListEntry, @NotNull CallbackInfoReturnable<Text> cir) {
+        if (!storage.isPunicaKitty()) {
+            return;
+        }
+
         String playerName = playerListEntry.getProfile().getName();
         Text originText = cir.getReturnValue();
 
@@ -105,6 +109,10 @@ public abstract class PlayerListHudMixin {
 
     @Inject(method = "collectPlayerEntries", at = @At("RETURN"), cancellable = true)
     private void onCollectPlayerEntries(@NotNull CallbackInfoReturnable<List<PlayerListEntry>> cir) {
+        if (!storage.isPunicaKitty()) {
+            return;
+        }
+
         // get current player list entries
         Collection<PlayerListEntry> playerListEntries = networkHandler.getListedPlayerListEntries();
 

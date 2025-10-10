@@ -45,6 +45,10 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
             argsOnly = true
     )
     private Text renderLabelIfPresent(Text original, EntityRenderState state) {
+        if (!storage.isPunicaKitty()) {
+            return original;
+        }
+
         if (state instanceof PlayerEntityRenderState playerEntityRenderState && nonNull(playerEntityRenderState.displayName)) {
             Text targetDisplayName = playerEntityRenderState.displayName;
             String targetName = playerEntityRenderState.name;

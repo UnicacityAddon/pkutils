@@ -33,7 +33,7 @@ public abstract class EntityMixin {
     @Inject(method = "stopRiding", at = @At("HEAD"))
     private void onStopRiding(CallbackInfo ci) {
         Entity self = (Entity) (Object) this;
-        if (self instanceof ClientPlayerEntity && self.hasVehicle() && self.getVehicle() instanceof MinecartEntity minecartEntity) {
+        if (self instanceof ClientPlayerEntity && self.hasVehicle() && self.getVehicle() instanceof MinecartEntity minecartEntity && storage.isPunicaKitty()) {
             storage.setMinecartEntityToHighlight(minecartEntity);
         }
     }

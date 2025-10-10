@@ -13,6 +13,7 @@ import java.util.List;
 import static com.mojang.text2speech.Narrator.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.networkHandler;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
+import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static net.minecraft.item.Items.GLASS_BOTTLE;
 
 @Mixin(ClientPlayerEntity.class)
@@ -39,7 +40,7 @@ public abstract class ClientPlayerEntityMixin {
     @Unique
     private boolean isNearShop() {
         BlockPos playerPos = player.getBlockPos();
-        return SHOP_LOCATIONS.stream()
+        return storage.isPunicaKitty() && SHOP_LOCATIONS.stream()
                 .anyMatch(blockPos -> playerPos.isWithinDistance(blockPos, 10));
     }
 }
