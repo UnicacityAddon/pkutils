@@ -24,8 +24,6 @@ import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.EquipEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import lombok.Getter;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -44,7 +42,6 @@ import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.notificationService;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.lang.Integer.MIN_VALUE;
-import static java.util.Objects.isNull;
 
 @SuppressWarnings("unchecked")
 public class Api {
@@ -143,18 +140,7 @@ public class Api {
     }
 
     public void trackActivity(ActivityEntry.Type activityType) {
-        MinecraftClient client = MinecraftClient.getInstance();
-
-        ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
-        if (isNull(networkHandler)) {
-            LOGGER.warn("Tried to track activity, but no server info found");
-            return;
-        }
-
-        String addressString = networkHandler.getConnection().getAddress().toString(); // tcp.punicakitty.de./50.114.4.xxx:25565
-        // for LabyMod players, there is no dot at the end of the domain
-        if (!addressString.matches("tcp\\.punicakitty\\.de\\.?/50\\.114\\.4\\.\\d+:25565")) {
-            LOGGER.warn("Tried to track activity, but not on supported server ({})", addressString);
+        if (!storage.isPunicaKitty()) {
             return;
         }
 

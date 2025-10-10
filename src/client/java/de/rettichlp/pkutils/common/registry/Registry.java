@@ -39,8 +39,8 @@ import de.rettichlp.pkutils.listener.callback.PlayerEnterVehicleCallback;
 import de.rettichlp.pkutils.listener.impl.CarListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
 import de.rettichlp.pkutils.listener.impl.EconomyService;
-import de.rettichlp.pkutils.listener.impl.RenderListener;
 import de.rettichlp.pkutils.listener.impl.PlayerListener;
+import de.rettichlp.pkutils.listener.impl.RenderListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
 import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
 import de.rettichlp.pkutils.listener.impl.faction.BombListener;
@@ -72,6 +72,7 @@ import java.util.Set;
 
 import static com.mojang.text2speech.Narrator.LOGGER;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
+import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
@@ -172,50 +173,74 @@ public class Registry {
 
                 if (listenerInstance instanceof IAbsorptionGetListener iAbsorptionGetListener) {
                     ClientTickEvents.END_CLIENT_TICK.register((server) -> {
-                        boolean hasAbsorption = ofNullable(player)
-                                .map(clientPlayerEntity -> clientPlayerEntity.hasStatusEffect(ABSORPTION))
-                                .orElse(false);
+                        if (storage.isPunicaKitty()) {
+                            boolean hasAbsorption = ofNullable(player)
+                                    .map(clientPlayerEntity -> clientPlayerEntity.hasStatusEffect(ABSORPTION))
+                                    .orElse(false);
 
-                        if (!this.lastAbsorptionState && hasAbsorption) {
-                            iAbsorptionGetListener.onAbsorptionGet();
+                            if (!this.lastAbsorptionState && hasAbsorption) {
+                                iAbsorptionGetListener.onAbsorptionGet();
+                            }
+
+                            this.lastAbsorptionState = hasAbsorption;
                         }
-
-                        this.lastAbsorptionState = hasAbsorption;
                     });
                 }
 
                 if (listenerInstance instanceof IBlockRightClickListener iBlockRightClickListener) {
                     UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-                        iBlockRightClickListener.onBlockRightClick(world, hand, hitResult);
+                        if (storage.isPunicaKitty()) {
+                            iBlockRightClickListener.onBlockRightClick(world, hand, hitResult);
+                        }
+
                         return PASS;
                     });
                 }
 
                 if (listenerInstance instanceof ICommandSendListener iCommandSendListener) {
-                    ClientSendMessageEvents.ALLOW_COMMAND.register(iCommandSendListener::onCommandSend);
+                    ClientSendMessageEvents.ALLOW_COMMAND.register(s -> !storage.isPunicaKitty() || iCommandSendListener.onCommandSend(s));
                 }
 
                 if (listenerInstance instanceof IEnterVehicleListener iEnterVehicleListener) {
-                    PlayerEnterVehicleCallback.EVENT.register(iEnterVehicleListener::onEnterVehicle);
+                    PlayerEnterVehicleCallback.EVENT.register(vehicle -> {
+                        if (storage.isPunicaKitty()) {
+                            iEnterVehicleListener.onEnterVehicle(vehicle);
+                        }
+                    });
                 }
 
                 if (listenerInstance instanceof IEntityRenderListener iEntityRenderListener) {
-                    WorldRenderEvents.AFTER_ENTITIES.register(iEntityRenderListener::onEntityRender);
+                    WorldRenderEvents.AFTER_ENTITIES.register(context -> {
+                        if (storage.isPunicaKitty()) {
+                            iEntityRenderListener.onEntityRender(context);
+                        }
+                    });
                 }
 
                 if (listenerInstance instanceof IEntityRightClickListener iEntityRightClickListener) {
                     UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-                        iEntityRightClickListener.onEntityRightClick(world, hand, entity, hitResult);
+                        if (storage.isPunicaKitty()) {
+                            iEntityRightClickListener.onEntityRightClick(world, hand, entity, hitResult);
+                        }
+
                         return PASS;
                     });
                 }
 
                 if (listenerInstance instanceof IHudRenderListener iHudRenderListener) {
-                    HudRenderCallback.EVENT.register(iHudRenderListener::onHudRender);
+                    HudRenderCallback.EVENT.register((drawContext, tickCounter) -> {
+                        if (storage.isPunicaKitty()) {
+                            iHudRenderListener.onHudRender(drawContext, tickCounter);
+                        }
+                    });
                 }
 
                 if (listenerInstance instanceof IMessageReceiveListener iMessageReceiveListener) {
                     ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> {
+                        if (!storage.isPunicaKitty()) {
+                            return true;
+                        }
+
                         String rawMessage = message.getString();
                         boolean showMessage = iMessageReceiveListener.onMessageReceive(message, rawMessage);
 
@@ -228,11 +253,12 @@ public class Registry {
                 }
 
                 if (listenerInstance instanceof IMessageSendListener iMessageSendListener) {
-                    ClientSendMessageEvents.ALLOW_CHAT.register(iMessageSendListener::onMessageSend);
+                    ClientSendMessageEvents.ALLOW_CHAT.register(s -> !storage.isPunicaKitty() || iMessageSendListener.onMessageSend(s));
                 }
 
                 if (listenerInstance instanceof IMoveListener iMoveListener) {
                     ClientTickEvents.END_CLIENT_TICK.register((server) -> ofNullable(player)
+                            .filter(clientPlayerEntity -> storage.isPunicaKitty())
                             .map(Entity::getBlockPos)
                             .ifPresent(blockPos -> {
                                 if (isNull(this.lastPlayerPos) || !this.lastPlayerPos.equals(blockPos)) {
@@ -244,9 +270,11 @@ public class Registry {
 
                 if (listenerInstance instanceof INaviSpotReachedListener iNaviSpotReachedListener) {
                     ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> {
-                        String rawMessage = message.getString();
-                        if (rawMessage.equals("Du hast dein Ziel erreicht!")) {
-                            iNaviSpotReachedListener.onNaviSpotReached();
+                        if (storage.isPunicaKitty()) {
+                            String rawMessage = message.getString();
+                            if (rawMessage.equals("Du hast dein Ziel erreicht!")) {
+                                iNaviSpotReachedListener.onNaviSpotReached();
+                            }
                         }
 
                         return true;
@@ -254,12 +282,18 @@ public class Registry {
                 }
 
                 if (listenerInstance instanceof IScreenOpenListener iScreenOpenListener) {
-                    ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> iScreenOpenListener.onScreenOpen(screen, scaledWidth, scaledHeight));
+                    ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
+                        if (storage.isPunicaKitty()) {
+                            iScreenOpenListener.onScreenOpen(screen, scaledWidth, scaledHeight);
+                        }
+                    });
                 }
 
                 if (listenerInstance instanceof ITickListener iTickListener) {
                     ClientTickEvents.END_CLIENT_TICK.register((server) -> {
-                        iTickListener.onTick();
+                        if (storage.isPunicaKitty()) {
+                            iTickListener.onTick();
+                        }
                     });
                 }
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {

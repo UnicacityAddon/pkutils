@@ -88,6 +88,10 @@ public class Storage {
 
     @Getter
     @Setter
+    private boolean punicaKitty = false;
+
+    @Getter
+    @Setter
     private ToggledChat toggledChat = NONE;
 
     {
