@@ -18,16 +18,10 @@ repositories {
     // for more information about repositories.
 }
 
-loom {
-    splitEnvironmentSourceSets()
-
-    mods {
-        "pkutils" {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.client
-        }
+fabricApi {
+    configureDataGeneration {
+        client = true
     }
-
 }
 
 dependencies {
@@ -40,14 +34,11 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
-    compileOnly("org.projectlombok:lombok:1.18.38")
-    annotationProcessor("org.projectlombok:lombok:1.18.38")
+    compileOnly("org.projectlombok:lombok:1.18.42")
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
 
-    testCompileOnly("org.projectlombok:lombok:1.18.38")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
-
-    // https://mvnrepository.com/artifact/org.atteo.classindex/classindex
-    modImplementation("org.atteo.classindex:classindex:3.13")
+    testCompileOnly("org.projectlombok:lombok:1.18.42")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
 }
 
 processResources {
