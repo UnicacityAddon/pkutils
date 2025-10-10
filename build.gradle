@@ -18,16 +18,10 @@ repositories {
     // for more information about repositories.
 }
 
-loom {
-    splitEnvironmentSourceSets()
-
-    mods {
-        "pkutils" {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.client
-        }
+fabricApi {
+    configureDataGeneration {
+        client = true
     }
-
 }
 
 dependencies {
@@ -45,9 +39,6 @@ dependencies {
 
     testCompileOnly("org.projectlombok:lombok:1.18.42")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
-
-    // https://mvnrepository.com/artifact/org.atteo.classindex/classindex
-    modImplementation("org.atteo.classindex:classindex:3.13")
 }
 
 processResources {
