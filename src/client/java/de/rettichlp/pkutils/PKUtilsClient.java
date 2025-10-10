@@ -12,8 +12,12 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
+
+import static de.rettichlp.pkutils.PKUtils.LOGGER;
+import static java.util.Objects.isNull;
 
 public class PKUtilsClient implements ClientModInitializer {
 
@@ -48,6 +52,7 @@ public class PKUtilsClient implements ClientModInitializer {
             player = client.player;
             networkHandler = handler;
 
+            storage.setPunicaKitty(isPunicaKitty());
             client.execute(this.registry::registerListeners);
         });
 
@@ -56,5 +61,24 @@ public class PKUtilsClient implements ClientModInitializer {
         });
 
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> configuration.saveToFile());
+    }
+
+    private boolean isPunicaKitty() {
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
+        if (isNull(networkHandler)) {
+            LOGGER.warn("Not connected to PunicaKitty: Network handler is null");
+            return false;
+        }
+
+        String addressString = networkHandler.getConnection().getAddress().toString(); // tcp.punicakitty.de./50.114.4.xxx:25565
+        // for LabyMod players, there is no dot at the end of the domain
+        if (!addressString.matches("tcp\\.punicakitty\\.de\\.?/50\\.114\\.4\\.\\d+:25565")) {
+            LOGGER.warn("Not connected to PunicaKitty: {}", addressString);
+            return false;
+        }
+
+        return true;
     }
 }
