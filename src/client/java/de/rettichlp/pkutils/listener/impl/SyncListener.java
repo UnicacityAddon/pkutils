@@ -23,8 +23,6 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
 
     private static final Pattern SERVER_PASSWORD_MISSING_PATTERN = compile("^» Schütze deinen Account mit /passwort new \\[Passwort]$");
     private static final Pattern SERVER_PASSWORD_ACCEPTED_PATTERN = compile("^Du hast deinen Account freigeschaltet\\.$");
-    private static final Pattern MEDIC_BANDAGE_PATTERN = compile("^(?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat dich bandagiert\\.$");
-    private static final Pattern MEDIC_PILL_PATTERN = compile("^\\[Medic] Doktor (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat dir Schmerzpillen verabreicht\\.$");
 
     @Override
     public boolean onCommandSend(@NotNull String command) {
@@ -51,20 +49,6 @@ public class SyncListener extends PKUtilsBase implements ICommandSendListener, I
         Matcher serverPasswordAcceptedMatcher = SERVER_PASSWORD_ACCEPTED_PATTERN.matcher(message);
         if (serverPasswordAcceptedMatcher.find()) {
             syncService.syncIngameData();
-            return true;
-        }
-
-        // OTHER
-
-        Matcher medicBandageMatcher = MEDIC_BANDAGE_PATTERN.matcher(message);
-        if (medicBandageMatcher.find()) {
-            storage.getCountdowns().add(new Countdown("Bandage", ofMinutes(4)));
-            return true;
-        }
-
-        Matcher medicPillMatcher = MEDIC_PILL_PATTERN.matcher(message);
-        if (medicPillMatcher.find()) {
-            storage.getCountdowns().add(new Countdown("Schmerzpille", ofMinutes(2)));
             return true;
         }
 

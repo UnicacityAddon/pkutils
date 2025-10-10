@@ -19,6 +19,7 @@ import de.rettichlp.pkutils.command.faction.MinusPointsCommand;
 import de.rettichlp.pkutils.command.faction.PersonalUseCommand;
 import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
+import de.rettichlp.pkutils.command.mobile.ReplyCommand;
 import de.rettichlp.pkutils.command.money.DepositCommand;
 import de.rettichlp.pkutils.command.money.RichTaxesCommand;
 import de.rettichlp.pkutils.common.models.Sound;
@@ -98,6 +99,7 @@ public class Registry {
             MinusPointsCommand.class,
             ModCommand.class,
             PersonalUseCommand.class,
+            ReplyCommand.class,
             RichTaxesCommand.class,
             SyncCommand.class,
             TodoCommand.class,
@@ -120,6 +122,7 @@ public class Registry {
             GarbageManListener.class,
             HousebanListener.class,
             JobListener.class,
+            MedicListener.class,
             MobileListener.class,
             PersonalUseCommand.class,
             PlayerListener.class,
