@@ -76,6 +76,10 @@ public class Storage {
 
     @Getter
     @Setter
+    private int lastReceivedSmsNumber = -1;
+
+    @Getter
+    @Setter
     private MinecartEntity minecartEntityToHighlight;
 
     @Getter

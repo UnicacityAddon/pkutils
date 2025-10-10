@@ -19,6 +19,7 @@ import de.rettichlp.pkutils.command.faction.MinusPointsCommand;
 import de.rettichlp.pkutils.command.faction.PersonalUseCommand;
 import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
+import de.rettichlp.pkutils.command.mobile.ReplyCommand;
 import de.rettichlp.pkutils.command.money.DepositCommand;
 import de.rettichlp.pkutils.command.money.RichTaxesCommand;
 import de.rettichlp.pkutils.common.models.Sound;
@@ -39,6 +40,7 @@ import de.rettichlp.pkutils.listener.callback.PlayerEnterVehicleCallback;
 import de.rettichlp.pkutils.listener.impl.CarListener;
 import de.rettichlp.pkutils.listener.impl.CommandSendListener;
 import de.rettichlp.pkutils.listener.impl.EconomyService;
+import de.rettichlp.pkutils.listener.impl.MobileListener;
 import de.rettichlp.pkutils.listener.impl.PlayerListener;
 import de.rettichlp.pkutils.listener.impl.RenderListener;
 import de.rettichlp.pkutils.listener.impl.SyncListener;
@@ -47,8 +49,7 @@ import de.rettichlp.pkutils.listener.impl.faction.BombListener;
 import de.rettichlp.pkutils.listener.impl.faction.ContractListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionDoorListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionListener;
-import de.rettichlp.pkutils.listener.impl.faction.HousebanListener;
-import de.rettichlp.pkutils.listener.impl.faction.ReviveListener;
+import de.rettichlp.pkutils.listener.impl.faction.MedicListener;
 import de.rettichlp.pkutils.listener.impl.faction.ServiceListener;
 import de.rettichlp.pkutils.listener.impl.faction.WantedListener;
 import de.rettichlp.pkutils.listener.impl.job.FisherListener;
@@ -97,6 +98,7 @@ public class Registry {
             MinusPointsCommand.class,
             ModCommand.class,
             PersonalUseCommand.class,
+            ReplyCommand.class,
             RichTaxesCommand.class,
             SyncCommand.class,
             TodoCommand.class,
@@ -117,12 +119,12 @@ public class Registry {
             FactionListener.class,
             FisherListener.class,
             GarbageManListener.class,
-            HousebanListener.class,
             JobListener.class,
+            MedicListener.class,
+            MobileListener.class,
             PersonalUseCommand.class,
             PlayerListener.class,
             RenderListener.class,
-            ReviveListener.class,
             ServiceListener.class,
             SyncListener.class,
             WantedListener.class
