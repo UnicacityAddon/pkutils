@@ -8,7 +8,7 @@ import de.rettichlp.pkutils.common.services.FactionService;
 import de.rettichlp.pkutils.common.services.NotificationService;
 import de.rettichlp.pkutils.common.services.RenderService;
 import de.rettichlp.pkutils.common.services.SyncService;
-import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Objects.isNull;
 
-public class PKUtils implements ClientModInitializer {
+public class PKUtils implements ModInitializer {
 
     public static final String MOD_ID = "pkutils";
 
@@ -44,7 +44,7 @@ public class PKUtils implements ClientModInitializer {
     private final Registry registry = new Registry();
 
     @Override
-    public void onInitializeClient() {
+    public void onInitialize() {
         // This entrypoint is suitable for setting up client-specific logic, such as rendering.
 
         this.registry.registerSounds();
