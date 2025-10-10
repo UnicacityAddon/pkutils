@@ -75,8 +75,15 @@ public class RenderListener extends PKUtilsBase implements IHudRenderListener {
             alignHorizontalOverlay.add(getCarLockedOverlay());
         }
 
-        this.statsOverlay.add(alignHorizontalOverlay.disableMargin());
+        // second row
+        AlignHorizontalOverlay alignHorizontalOverlay1 = new AlignHorizontalOverlay();
 
+        if (overlayOptions.money()) {
+            alignHorizontalOverlay1.add(getMoneyTextOverlay());
+        }
+
+        this.statsOverlay.add(alignHorizontalOverlay.disableMargin());
+        this.statsOverlay.add(alignHorizontalOverlay1.disableMargin());
         this.statsOverlay.draw(drawContext, TOP_LEFT);
     }
 
@@ -127,6 +134,20 @@ public class RenderListener extends PKUtilsBase implements IHudRenderListener {
 
         return TextOverlay.builder()
                 .textSupplier(() -> text)
+                .build();
+    }
+
+    private TextOverlay getMoneyTextOverlay() {
+        MutableText moneyInfoText = empty()
+                .append(of("Geld").copy().formatted(GRAY))
+                .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                .append(of(configuration.getMoneyCashAmount() + "$")).append(" ")
+                .append(of("Bank").copy().formatted(GRAY))
+                .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                .append(of(configuration.getMoneyBankAmount() + "$")).append(" ");
+
+        return TextOverlay.builder()
+                .textSupplier(() -> moneyInfoText)
                 .build();
     }
 }

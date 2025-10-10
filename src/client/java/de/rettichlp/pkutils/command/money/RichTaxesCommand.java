@@ -7,6 +7,7 @@ import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.jetbrains.annotations.NotNull;
 
+import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 
 @PKUtilsCommand(label = "reichensteuer")
@@ -28,7 +29,7 @@ public class RichTaxesCommand extends CommandBase {
                     // handle money withdraw
                     delayedAction(() -> {
                         int moneyAtmAmount = storage.getMoneyAtmAmount();
-                        int moneyBankAmount = storage.getMoneyBankAmount();
+                        int moneyBankAmount = configuration.getMoneyBankAmount();
 
                         // check atm has money
                         if (moneyAtmAmount <= 0) {

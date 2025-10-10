@@ -84,10 +84,6 @@ public class Storage {
 
     @Getter
     @Setter
-    private int moneyBankAmount = 0;
-
-    @Getter
-    @Setter
     private boolean punicaKitty = false;
 
     @Getter
@@ -127,8 +123,8 @@ public class Storage {
         LOGGER.info("minecartEntityToHighlight: {}", this.minecartEntityToHighlight);
         // moneyAtmAmount
         LOGGER.info("moneyAtmAmount: {}", this.moneyAtmAmount);
-        // moneyBankAmount
-        LOGGER.info("moneyBankAmount: {}", this.moneyBankAmount);
+        // punicaKitty
+        LOGGER.info("punicaKitty: {}", this.punicaKitty);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
     }
