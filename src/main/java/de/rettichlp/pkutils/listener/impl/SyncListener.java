@@ -1,6 +1,5 @@
 package de.rettichlp.pkutils.listener.impl;
 
-import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
@@ -12,10 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.notificationService;
-import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
-import static java.lang.Integer.parseInt;
-import static java.time.Duration.ofMinutes;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener

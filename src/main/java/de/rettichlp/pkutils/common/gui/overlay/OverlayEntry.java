@@ -7,7 +7,8 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
 
-import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.Alignment.*;
+import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.Alignment.CENTER;
+import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.Alignment.LEFT;
 import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.Alignment.RIGHT;
 import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_MARGIN;
 

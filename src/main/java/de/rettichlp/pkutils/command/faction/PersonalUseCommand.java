@@ -56,6 +56,15 @@ public class PersonalUseCommand extends CommandBase implements IMessageReceiveLi
                 });
     }
 
+    @Override
+    public boolean onMessageReceive(Text text, String message) {
+        if (DEAL_ACCEPTED.matcher(message).find() || DEAL_DECLINED.matcher(message).find()) {
+            removeAndExecuteFirst();
+        }
+
+        return true;
+    }
+
     private @NotNull List<String> createCommands(String commandTemplate) {
         List<String> commandStrings = configuration.getOptions().personalUse().stream()
                 .filter(personalUseEntry -> personalUseEntry.getAmount() > 0)
@@ -70,15 +79,6 @@ public class PersonalUseCommand extends CommandBase implements IMessageReceiveLi
         }
 
         return commandStrings;
-    }
-
-    @Override
-    public boolean onMessageReceive(Text text, String message) {
-        if (DEAL_ACCEPTED.matcher(message).find() || DEAL_DECLINED.matcher(message).find()) {
-            removeAndExecuteFirst();
-        }
-
-        return true;
     }
 
     private void removeAndExecuteFirst() {
