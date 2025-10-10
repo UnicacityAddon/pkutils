@@ -49,8 +49,7 @@ import de.rettichlp.pkutils.listener.impl.faction.BombListener;
 import de.rettichlp.pkutils.listener.impl.faction.ContractListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionDoorListener;
 import de.rettichlp.pkutils.listener.impl.faction.FactionListener;
-import de.rettichlp.pkutils.listener.impl.faction.HousebanListener;
-import de.rettichlp.pkutils.listener.impl.faction.ReviveListener;
+import de.rettichlp.pkutils.listener.impl.faction.MedicListener;
 import de.rettichlp.pkutils.listener.impl.faction.ServiceListener;
 import de.rettichlp.pkutils.listener.impl.faction.WantedListener;
 import de.rettichlp.pkutils.listener.impl.job.FisherListener;
@@ -120,14 +119,12 @@ public class Registry {
             FactionListener.class,
             FisherListener.class,
             GarbageManListener.class,
-            HousebanListener.class,
             JobListener.class,
             MedicListener.class,
             MobileListener.class,
             PersonalUseCommand.class,
             PlayerListener.class,
             RenderListener.class,
-            ReviveListener.class,
             ServiceListener.class,
             SyncListener.class,
             WantedListener.class
