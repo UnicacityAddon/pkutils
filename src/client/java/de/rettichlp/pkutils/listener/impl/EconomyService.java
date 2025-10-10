@@ -15,6 +15,7 @@ import static de.rettichlp.pkutils.PKUtilsClient.configuration;
 import static de.rettichlp.pkutils.PKUtilsClient.player;
 import static de.rettichlp.pkutils.PKUtilsClient.storage;
 import static java.lang.Integer.parseInt;
+import static java.lang.Math.max;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.text.ClickEvent.Action.RUN_COMMAND;
@@ -48,10 +49,12 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
     private static final Pattern PAYDAY_SALARY_PATTERN = compile("^\\[PayDay] Du bekommst dein Gehalt von (?<money>\\d+)\\$ am PayDay ausgezahlt\\.$");
 
     // other
-    private static final Pattern ATM_MONEY_AMOUNT = compile("ATM \\d+: (?<moneyAtmAmount>\\d+)/100000\\$");
+    private static final Pattern ATM_MONEY_AMOUNT_PATTERN = compile("ATM \\d+: (?<moneyAtmAmount>\\d+)/100000\\$");
     private static final Pattern BUSINESS_CASH_PATTERN = compile("^Kasse: (\\d+)\\$$");
     private static final Pattern EXP_PATTERN = compile("(?<amount>[+-]\\d+) Exp!( \\(x(?<multiplier>\\d)\\))?");
-    private static final Pattern LOTTO_WIN = compile("^\\[Lotto] Du hast im Lotto gewonnen! \\((?<amount>\\d+)\\$\\)$");
+    private static final Pattern LOTTO_WIN_PATTERN = compile("^\\[Lotto] Du hast im Lotto gewonnen! \\((?<amount>\\d+)\\$\\)$");
+    private static final Pattern MEDIC_DESPAWNED_PATTERN = compile("^Verdammt\\.\\.\\. mein Kopf dröhnt so\\.\\.\\.$");
+    private static final Pattern MEDIC_REVIVE_PATTERN = compile("^Du wirst von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) wiederbelebt\\.$");
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
@@ -166,7 +169,7 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
             return true;
         }
 
-        Matcher moneyAtmAmountMatcher = ATM_MONEY_AMOUNT.matcher(message);
+        Matcher moneyAtmAmountMatcher = ATM_MONEY_AMOUNT_PATTERN.matcher(message);
         if (moneyAtmAmountMatcher.find()) {
             int moneyAtmAmount = parseInt(moneyAtmAmountMatcher.group("moneyAtmAmount"));
             storage.setMoneyAtmAmount(moneyAtmAmount);
@@ -198,10 +201,22 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
             return true;
         }
 
-        Matcher lottoWinMatcher = LOTTO_WIN.matcher(message);
+        Matcher lottoWinMatcher = LOTTO_WIN_PATTERN.matcher(message);
         if (lottoWinMatcher.find()) {
             int amount = parseInt(lottoWinMatcher.group("amount"));
             configuration.setMoneyBankAmount(configuration.getMoneyBankAmount() + amount);
+            return true;
+        }
+
+        Matcher medicDespawnedMatcher = MEDIC_DESPAWNED_PATTERN.matcher(message);
+        if (medicDespawnedMatcher.find()) {
+            configuration.setMoneyCashAmount(0);
+            return true;
+        }
+
+        Matcher medicReviveMatcher = MEDIC_REVIVE_PATTERN.matcher(message);
+        if (medicReviveMatcher.find()) {
+            configuration.setMoneyBankAmount(max(0, configuration.getMoneyBankAmount() - 50));
             return true;
         }
 
