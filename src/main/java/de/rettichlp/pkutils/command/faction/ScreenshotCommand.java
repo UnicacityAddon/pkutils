@@ -62,7 +62,7 @@ public class ScreenshotCommand extends CommandBase {
                                 .append(of(screenshotType.getDisplayName()).copy().formatted(GRAY))
                                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                                 .append(of(valueOf(fileCount)))
-                                .append(fileCount <= 0 ? empty() : of(" ↗").copy().styled(style -> style
+                                .append(of(" ↗").copy().styled(style -> style
                                         .withColor(AQUA)
                                         .withBold(true)
                                         .withHoverEvent(new HoverEvent(SHOW_TEXT, of("Ordner öffnen").copy().formatted(DARK_AQUA)))
