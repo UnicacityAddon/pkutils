@@ -83,7 +83,7 @@ public class SyncService extends PKUtilsBase {
         delayedAction(() -> {
             this.gameSyncProcessActive = false;
             notificationService.sendSuccessNotification("PKUtils synchronisiert");
-        }, 1200);
+        }, 2000);
     }
 
     public void executeSync() {
