@@ -10,6 +10,7 @@ import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionEntry;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.models.Job;
+import de.rettichlp.pkutils.common.models.PlantEntry;
 import de.rettichlp.pkutils.common.models.Reinforcement;
 import de.rettichlp.pkutils.common.models.ShutdownReason;
 import de.rettichlp.pkutils.common.models.WantedEntry;
@@ -42,10 +43,10 @@ public class Storage {
     private final List<BlacklistEntry> blacklistEntries = new ArrayList<>();
 
     @Getter
-    private final List<BlackMarket> blackMarkets = new ArrayList<>();
+    private final Map<Faction, List<BlacklistReason>> blacklistReasons = new HashMap<>();
 
     @Getter
-    private final Map<Faction, List<BlacklistReason>> blacklistReasons = new HashMap<>();
+    private final List<BlackMarket> blackMarkets = new ArrayList<>();
 
     @Getter
     private final List<CommandResponseRetriever> commandResponseRetrievers = new ArrayList<>();
@@ -61,6 +62,9 @@ public class Storage {
 
     @Getter
     private final List<HousebanEntry> housebanEntries = new ArrayList<>();
+
+    @Getter
+    private final List<PlantEntry> plantEntries = new ArrayList<>();
 
     @Getter
     private final Map<String, Faction> playerFactionCache = new HashMap<>();
