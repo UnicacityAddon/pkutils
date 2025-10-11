@@ -38,7 +38,7 @@ public class MinusPointsCommand extends CommandBase {
                 .then(literal("player")
                         .then(argument("player", word())
                                 .requires(fabricClientCommandSource -> {
-                                    String playerName = player.getName().getString();
+                                    String playerName = player.getGameProfile().getName();
                                     Faction faction = storage.getFaction(playerName);
                                     // rank 4 or higher in own faction
                                     return isSuperUser() || storage.getFactionMembers(faction).stream()
@@ -48,7 +48,7 @@ public class MinusPointsCommand extends CommandBase {
                                             .orElse(false);
                                 })
                                 .suggests((context, builder) -> {
-                                    String playerName = player.getName().getString();
+                                    String playerName = player.getGameProfile().getName();
                                     Faction faction = storage.getFaction(playerName);
 
                                     return faction != NULL ? suggestMatching(faction.getMembers().stream()
@@ -57,7 +57,7 @@ public class MinusPointsCommand extends CommandBase {
                                 .then(literal("modify")
                                         .then(argument("amount", integer())
                                                 .executes(context -> {
-                                                    String playerName = player.getName().getString();
+                                                    String playerName = player.getGameProfile().getName();
                                                     Faction faction = storage.getFaction(playerName);
 
                                                     String targetName = getString(context, "player");
@@ -76,7 +76,7 @@ public class MinusPointsCommand extends CommandBase {
                                                     return 1;
                                                 })))
                                 .executes(context -> {
-                                    String playerName = player.getName().getString();
+                                    String playerName = player.getGameProfile().getName();
                                     Faction faction = storage.getFaction(playerName);
 
                                     String targetName = getString(context, "player");

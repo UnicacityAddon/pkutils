@@ -34,7 +34,7 @@ public class FactionDoorListener extends PKUtilsBase implements IBlockRightClick
             return;
         }
 
-        Faction faction = storage.getFaction(player.getName().getString());
+        Faction faction = storage.getFaction(player.getGameProfile().getName());
         Set<BlockPos> factionDoorPositions = FACTION_DOOR_POSITIONS.getOrDefault(faction, emptySet());
 
         factionDoorPositions.stream()

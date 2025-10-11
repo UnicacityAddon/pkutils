@@ -105,15 +105,25 @@ public class EconomyService extends PKUtilsBase implements IMessageReceiveListen
 
         Matcher cashToFbankMatcher = CASH_TO_FBANK_PATTERN.matcher(message);
         if (cashToFbankMatcher.find()) {
-            int amount = parseInt(cashToFbankMatcher.group("amount"));
-            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() - amount);
+            String playerName = cashToFbankMatcher.group("playerName");
+
+            if (playerName.equals(player.getGameProfile().getName())) {
+                int amount = parseInt(cashToFbankMatcher.group("amount"));
+                configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() - amount);
+            }
+
             return true;
         }
 
         Matcher cashFromFbankMatcher = CASH_FROM_FBANK_PATTERN.matcher(message);
         if (cashFromFbankMatcher.find()) {
-            int amount = parseInt(cashFromFbankMatcher.group("amount"));
-            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() + amount);
+            String playerName = cashFromFbankMatcher.group("playerName");
+
+            if (playerName.equals(player.getGameProfile().getName())) {
+                int amount = parseInt(cashFromFbankMatcher.group("amount"));
+                configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() + amount);
+            }
+
             return true;
         }
 
