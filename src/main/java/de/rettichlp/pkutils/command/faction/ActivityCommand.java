@@ -54,7 +54,7 @@ public class ActivityCommand extends CommandBase {
                 .then(literal("player")
                         .then(argument("player", word())
                                 .requires(fabricClientCommandSource -> {
-                                    String playerName = player.getName().getString();
+                                    String playerName = player.getGameProfile().getName();
                                     Faction faction = storage.getFaction(playerName);
                                     // rank 4 or higher in own faction
                                     return isSuperUser() || storage.getFactionMembers(faction).stream()
@@ -64,7 +64,7 @@ public class ActivityCommand extends CommandBase {
                                             .orElse(false);
                                 })
                                 .suggests((context, builder) -> {
-                                    String playerName = player.getName().getString();
+                                    String playerName = player.getGameProfile().getName();
                                     Faction faction = storage.getFaction(playerName);
 
                                     return faction != NULL ? suggestMatching(faction.getMembers().stream()
@@ -73,7 +73,7 @@ public class ActivityCommand extends CommandBase {
                                 .then(argument("weeksAgo", integer(MIN_VALUE, 0))
                                         .suggests((context, builder) -> suggestMatching(List.of("0", "-1", "-2", "-3", "-4", "-5"), builder))
                                         .executes(context -> {
-                                            String playerName = player.getName().getString();
+                                            String playerName = player.getGameProfile().getName();
                                             Faction faction = storage.getFaction(playerName);
 
                                             String targetName = getString(context, "player");
@@ -92,7 +92,7 @@ public class ActivityCommand extends CommandBase {
                                             return 1;
                                         }))
                                 .executes(context -> {
-                                    String playerName = player.getName().getString();
+                                    String playerName = player.getGameProfile().getName();
                                     Faction faction = storage.getFaction(playerName);
 
                                     String targetName = getString(context, "player");

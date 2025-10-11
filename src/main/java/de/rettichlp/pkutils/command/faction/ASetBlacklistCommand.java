@@ -41,7 +41,7 @@ public class ASetBlacklistCommand extends CommandBase {
         return node
                 .then(argument("reason", string())
                         .suggests((context, builder) -> {
-                            Faction faction = storage.getFaction(player.getName().getString());
+                            Faction faction = storage.getFaction(player.getGameProfile().getName());
                             List<String> blacklistReasonStrings = storage.getBlacklistReasons().getOrDefault(faction, new ArrayList<>()).stream()
                                     .map(BlacklistReason::getReason)
                                     .map(reasonString -> reasonString.replace(" ", "_"))
@@ -100,7 +100,7 @@ public class ASetBlacklistCommand extends CommandBase {
             return 1;
         }
 
-        Faction faction = storage.getFaction(player.getName().getString());
+        Faction faction = storage.getFaction(player.getGameProfile().getName());
         Optional<BlacklistReason> optionalBlacklistReason = storage.getBlacklistReasons().getOrDefault(faction, new ArrayList<>()).stream()
                 .filter(blacklistReason -> blacklistReason.getReason().equalsIgnoreCase(reasonString))
                 .findFirst();

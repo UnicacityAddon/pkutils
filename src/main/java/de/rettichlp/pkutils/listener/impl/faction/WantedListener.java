@@ -61,7 +61,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
-        String clientPlayerName = player.getName().getString();
+        String clientPlayerName = player.getGameProfile().getName();
 
         Matcher wantedGivenPointsMatcher = WANTED_GIVEN_POINTS_PATTERN.matcher(message);
         if (wantedGivenPointsMatcher.find()) {

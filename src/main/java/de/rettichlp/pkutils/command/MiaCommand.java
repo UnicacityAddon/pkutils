@@ -37,7 +37,7 @@ public class MiaCommand extends CommandBase {
                         })
                 )
                 .executes(context -> {
-                    String playerName = player.getName().getString();
+                    String playerName = player.getGameProfile().getName();
                     Faction faction = storage.getFaction(playerName);
                     sendCommand("memberinfoall " + faction.getMemberInfoCommandName());
                     return 1;
