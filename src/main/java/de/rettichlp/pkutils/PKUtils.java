@@ -18,6 +18,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.Boolean.getBoolean;
 import static java.util.Objects.isNull;
 
 public class PKUtils implements ModInitializer {
@@ -72,6 +73,10 @@ public class PKUtils implements ModInitializer {
     }
 
     private boolean isPunicaKitty() {
+        if (getBoolean("fabric.development")) {
+            return true;
+        }
+
         MinecraftClient client = MinecraftClient.getInstance();
 
         ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
