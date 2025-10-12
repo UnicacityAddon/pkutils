@@ -43,13 +43,15 @@ public abstract class PKUtilsBase {
         networkHandler.sendChatCommand(command);
     }
 
-    public void sendCommandWithAfkCheck(String command) {
+    public boolean sendCommandWithAfkCheck(String command) {
         boolean isAfk = storage.isAfk();
         LOGGER.info("PKUtils executing command with AFK check (is AFK: {}): {}", isAfk, command);
 
         if (!isAfk) {
             networkHandler.sendChatCommand(command);
         }
+
+        return !isAfk;
     }
 
     public void sendCommands(List<String> commandStrings) {

@@ -3,6 +3,7 @@ package de.rettichlp.pkutils.common;
 import de.rettichlp.pkutils.common.models.BlackMarket;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
+import de.rettichlp.pkutils.common.models.CommandResponseRetriever;
 import de.rettichlp.pkutils.common.models.ContractEntry;
 import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.models.Faction;
@@ -30,6 +31,9 @@ import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.util.Arrays.stream;
 
 public class Storage {
+
+    @Getter
+    private final List<CommandResponseRetriever> commandResponseRetrievers = new ArrayList<>();
 
     @Getter
     private final Map<Faction, Set<FactionMember>> factionMembers = new HashMap<>();
