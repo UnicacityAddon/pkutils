@@ -37,7 +37,9 @@ import static java.util.Objects.nonNull;
 import static net.minecraft.block.Blocks.FERN;
 import static net.minecraft.block.Blocks.PODZOL;
 import static net.minecraft.item.Items.BONE_MEAL;
+import static net.minecraft.item.Items.PUMPKIN_SEEDS;
 import static net.minecraft.item.Items.WATER_BUCKET;
+import static net.minecraft.item.Items.WHEAT_SEEDS;
 import static net.minecraft.screen.slot.SlotActionType.PICKUP;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
@@ -65,9 +67,22 @@ public class PlantListener extends PKUtilsBase
         }
 
         BlockPos blockPos = hitResult.getBlockPos();
-        boolean isPlant = player.getWorld().getBlockState(blockPos).getBlock().equals(FERN) && player.getWorld().getBlockState(blockPos.down()).getBlock().equals(PODZOL);
 
-        if (!isPlant) {
+        boolean targetBlockIsPlant = player.getWorld().getBlockState(blockPos).getBlock().equals(FERN) && player.getWorld().getBlockState(blockPos.down()).getBlock().equals(PODZOL);
+        if (!targetBlockIsPlant) {
+            // check for plant placing
+            ItemStack mainHandStack = player.getInventory().getMainHandStack();
+
+            if (player.isSneaking() && (mainHandStack.isOf(PUMPKIN_SEEDS) || mainHandStack.isOf(WHEAT_SEEDS))) {
+                sendCommand("plant plant");
+            }
+
+            return;
+        }
+
+        boolean isStandingOnPlant = player.getBlockPos().equals(blockPos);
+        if (!isStandingOnPlant) {
+            sendModMessage("Du musst auf der Plantage stehen, um sie via PKUtils zu verwalten.", false);
             return;
         }
 
