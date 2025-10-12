@@ -39,7 +39,7 @@ import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import de.rettichlp.pkutils.listener.ITickListener;
 import de.rettichlp.pkutils.listener.callback.PlayerEnterVehicleCallback;
 import de.rettichlp.pkutils.listener.impl.CarListener;
-import de.rettichlp.pkutils.listener.impl.CommandSendListener;
+import de.rettichlp.pkutils.listener.impl.CommandListener;
 import de.rettichlp.pkutils.listener.impl.EconomyService;
 import de.rettichlp.pkutils.listener.impl.MobileListener;
 import de.rettichlp.pkutils.listener.impl.PlayerListener;
@@ -113,7 +113,7 @@ public class Registry {
             BlacklistListener.class,
             BombListener.class,
             CarListener.class,
-            CommandSendListener.class,
+            CommandListener.class,
             ContractListener.class,
             DepositCommand.class,
             EconomyService.class,

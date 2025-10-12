@@ -1,16 +1,20 @@
 package de.rettichlp.pkutils.listener.impl;
 
+import de.rettichlp.pkutils.common.models.CommandResponseRetriever;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
+import de.rettichlp.pkutils.listener.IMessageReceiveListener;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.StringJoiner;
 
+import static de.rettichlp.pkutils.PKUtils.storage;
 import static java.lang.Character.isUpperCase;
 
 @PKUtilsListener
-public class CommandSendListener extends PKUtilsBase implements ICommandSendListener {
+public class CommandListener extends PKUtilsBase implements ICommandSendListener, IMessageReceiveListener {
 
     @Override
     public boolean onCommandSend(@NotNull String command) {
@@ -32,6 +36,13 @@ public class CommandSendListener extends PKUtilsBase implements ICommandSendList
         }
 
         return true;
+    }
+
+    @Override
+    public boolean onMessageReceive(Text text, String message) {
+        return storage.getCommandResponseRetrievers().stream()
+                .filter(CommandResponseRetriever::isActive)
+                .noneMatch(commandResponseRetriever -> commandResponseRetriever.addAsResultIfMatch(message));
     }
 
     private boolean containsUppercase(@NotNull String input) {
