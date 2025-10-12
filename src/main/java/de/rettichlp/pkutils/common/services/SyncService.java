@@ -3,18 +3,22 @@ package de.rettichlp.pkutils.common.services;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import de.rettichlp.pkutils.common.models.CommandResponseRetriever;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
@@ -31,28 +35,38 @@ import static java.util.Optional.ofNullable;
 @Setter
 public class SyncService extends PKUtilsBase {
 
+    private static final Pattern FACTION_MEMBER_ALL_ENTRY = compile("^\\s*-\\s*(?<rank>\\d)\\s*\\|\\s*(?<playerNames>.+)$");
+
     private LocalDateTime lastSyncTimestamp = MIN;
     private boolean gameSyncProcessActive = false;
 
-    public void syncBlacklistReasonData() {
+    public void syncFactionMembersWithApi() {
+        api.getFactionEntries().thenAccept(factionEntries -> {
+            factionEntries.forEach(factionEntry -> storage.getFactionMembers().put(factionEntry.faction(), new HashSet<>(factionEntry.members())));
+            LOGGER.info("Faction members synced with API");
+        });
+    }
+
+    public void syncFactionMembersWithCommandResponse() {
+        List<CommandResponseRetriever> commandResponseRetrievers = stream(Faction.values())
+                .filter(faction -> faction != NULL && faction != TRIADEN)
+                .map(this::syncFactionMembersWithCommandResponse)
+                .toList();
+
+        for (int i = 0; i < commandResponseRetrievers.size(); i++) {
+            CommandResponseRetriever commandResponseRetriever = commandResponseRetrievers.get(i);
+            delayedAction(commandResponseRetriever::execute, i * 1000L);
+        }
+    }
+
+    public void syncBlacklistReasonsFromApi() {
         api.getBlacklistReasonData().thenAccept(factionListMap -> {
             storage.getBlacklistReasons().clear();
             storage.getBlacklistReasons().putAll(factionListMap);
         }).thenAccept(unused -> LOGGER.info("Blacklist reason data synced"));
     }
 
-    public void syncFactionData() {
-        api.getFactionEntries().thenAccept(factionEntries -> {
-            factionEntries.forEach(factionEntry -> storage.getFactionMembers().put(factionEntry.faction(), new HashSet<>(factionEntry.members())));
-            LOGGER.info("Faction member data synced");
-        });
-    }
-
-    public void syncPKUtilsData() {
-        api.registerUser(getVersion());
-    }
-
-    public void syncIngameData() {
+    public void syncFactionSpecificData() {
         this.gameSyncProcessActive = true;
         this.lastSyncTimestamp = now();
 
@@ -79,16 +93,6 @@ public class SyncService extends PKUtilsBase {
         }, 2000);
     }
 
-    public void executeSync() {
-        syncBlacklistReasonData();
-        syncFactionData();
-        syncPKUtilsData();
-
-        if (nonNull(player)) {
-            syncIngameData();
-        }
-    }
-
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
         sendCommand("nummer " + playerName);
 
@@ -99,7 +103,7 @@ public class SyncService extends PKUtilsBase {
         }, 1000);
     }
 
-    private @NotNull CompletableFuture<Void> syncFactionData(Faction faction) {
+    private @NotNull CompletableFuture<Void> syncFactionMembersWithApi(Faction faction) {
         return api.getFactionMemberData(faction).thenAccept(objectMap -> {
             Gson gson = api.getGson();
 
@@ -114,6 +118,28 @@ public class SyncService extends PKUtilsBase {
                     .toList();
 
             storage.getFactionMembers().put(faction, new HashSet<>(factionMembers));
+            LOGGER.info("Retrieved {} members for faction {} from api", factionMembers.size(), faction.name());
+        });
+    }
+
+    @Contract("_ -> new")
+    private @NotNull CommandResponseRetriever syncFactionMembersWithCommandResponse(@NotNull Faction faction) {
+        String commandToExecute = "memberinfoall " + faction.getMemberInfoCommandName();
+        return new CommandResponseRetriever(commandToExecute, FACTION_MEMBER_ALL_ENTRY, matchers -> {
+            Set<FactionMember> factionMembers = new HashSet<>();
+
+            matchers.forEach(matcher -> {
+                int rank = parseInt(matcher.group("rank"));
+                String[] playerNames = matcher.group("playerNames").split(", ");
+
+                for (String playerName : playerNames) {
+                    FactionMember factionMember = new FactionMember(playerName, rank);
+                    factionMembers.add(factionMember);
+                }
+            });
+
+            storage.getFactionMembers().put(faction, factionMembers);
+            LOGGER.info("Retrieved {} members for faction {} from command", factionMembers.size(), faction.name());
         });
     }
 }

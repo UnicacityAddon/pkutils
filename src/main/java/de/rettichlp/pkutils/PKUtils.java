@@ -3,6 +3,7 @@ package de.rettichlp.pkutils;
 import de.rettichlp.pkutils.common.Storage;
 import de.rettichlp.pkutils.common.api.Api;
 import de.rettichlp.pkutils.common.models.config.Configuration;
+import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.Registry;
 import de.rettichlp.pkutils.common.services.FactionService;
 import de.rettichlp.pkutils.common.services.NotificationService;
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import static java.lang.Boolean.getBoolean;
 import static java.util.Objects.isNull;
 
-public class PKUtils implements ModInitializer {
+public class PKUtils extends PKUtilsBase implements ModInitializer {
 
     public static final String MOD_ID = "pkutils";
 
@@ -50,12 +51,13 @@ public class PKUtils implements ModInitializer {
 
         this.registry.registerSounds();
 
-        // parse blacklist reasons from GitHub Gist
-        syncService.syncBlacklistReasonData();
-        // parse faction data
-        syncService.syncFactionData();
+        // sync faction members
+        syncService.syncFactionMembersWithApi();
+        // sync blacklist reasons
+        syncService.syncBlacklistReasonsFromApi();
+
         // login to PKUtils API
-        syncService.syncPKUtilsData();
+        api.registerUser(getVersion());
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             player = client.player;
