@@ -9,6 +9,7 @@ import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.models.Job;
+import de.rettichlp.pkutils.common.models.PlantEntry;
 import de.rettichlp.pkutils.common.models.Reinforcement;
 import de.rettichlp.pkutils.common.models.WantedEntry;
 import lombok.AllArgsConstructor;
@@ -41,6 +42,9 @@ public class Storage {
     private final Map<Faction, List<BlacklistReason>> blacklistReasons = new HashMap<>();
 
     @Getter
+    private final List<BlackMarket> blackMarkets = new ArrayList<>();
+
+    @Getter
     private final List<ContractEntry> contractEntries = new ArrayList<>();
 
     @Getter
@@ -50,13 +54,13 @@ public class Storage {
     private final List<HousebanEntry> housebanEntries = new ArrayList<>();
 
     @Getter
+    private final List<PlantEntry> plantEntries = new ArrayList<>();
+
+    @Getter
     private final List<Reinforcement> reinforcements = new ArrayList<>();
 
     @Getter
     private final Map<String, Integer> retrievedNumbers = new HashMap<>();
-
-    @Getter
-    private final List<BlackMarket> blackMarkets = new ArrayList<>();
 
     @Getter
     private final List<WantedEntry> wantedEntries = new ArrayList<>();

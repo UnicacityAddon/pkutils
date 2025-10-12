@@ -15,6 +15,7 @@ import net.minecraft.world.entity.EntityLike;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
+import static net.minecraft.client.font.TextRenderer.TextLayerType.SEE_THROUGH;
 import static net.minecraft.client.render.RenderLayer.getLines;
 import static net.minecraft.util.math.RotationAxis.POSITIVE_Y;
 
@@ -75,6 +76,18 @@ public class RenderService extends PKUtilsBase {
         drawLine(consumer, matrix, minX, minY, maxZ, minX, maxY, maxZ);
     }
 
+    public void drawLine(@NotNull VertexConsumer consumer,
+                         Matrix4f matrix,
+                         float x1,
+                         float y1,
+                         float z1,
+                         float x2,
+                         float y2,
+                         float z2) {
+        consumer.vertex(matrix, x1, y1, z1).color(1f, 1f, 0f, 0.6f).normal(0, 1, 0);
+        consumer.vertex(matrix, x2, y2, z2).color(1f, 1f, 0f, 0.6f).normal(0, 1, 0);
+    }
+
     public void renderTextAboveEntity(@NotNull MatrixStack matrices,
                                       VertexConsumerProvider vertexConsumers,
                                       @NotNull Entity entity,
@@ -87,6 +100,16 @@ public class RenderService extends PKUtilsBase {
                                       @NotNull Entity entity,
                                       Text text,
                                       float scale) {
+        renderTextAt(matrices, vertexConsumers, entity.getX(), entity.getY() + 1.35, entity.getZ(), text, scale);
+    }
+
+    public void renderTextAt(@NotNull MatrixStack matrices,
+                             VertexConsumerProvider vertexConsumers,
+                             double x,
+                             double y,
+                             double z,
+                             Text text,
+                             float scale) {
         // save the current matrix state
         matrices.push();
 
@@ -95,7 +118,7 @@ public class RenderService extends PKUtilsBase {
         double camY = camera.getPos().y;
         double camZ = camera.getPos().z;
 
-        matrices.translate(entity.getX() - camX, entity.getY() - camY + 1.35, entity.getZ() - camZ);
+        matrices.translate(x - camX, y - camY, z - camZ);
 
         // make the text face the camera
         matrices.multiply(camera.getRotation());
@@ -110,21 +133,9 @@ public class RenderService extends PKUtilsBase {
         float textWidth = -textRenderer.getWidth(text) / 2.0F;
 
         // render the text
-        textRenderer.draw(text, textWidth, 0.0F, 0xFFFFFFFF, false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.SEE_THROUGH, 0x55000000, 0xF000F0);
+        textRenderer.draw(text, textWidth, 0.0F, 0xFFFFFFFF, false, matrices.peek().getPositionMatrix(), vertexConsumers, SEE_THROUGH, 0x55000000, 0xF000F0);
 
         // restore the previous matrix state
         matrices.pop();
-    }
-
-    public void drawLine(@NotNull VertexConsumer consumer,
-                         Matrix4f matrix,
-                         float x1,
-                         float y1,
-                         float z1,
-                         float x2,
-                         float y2,
-                         float z2) {
-        consumer.vertex(matrix, x1, y1, z1).color(1f, 1f, 0f, 0.6f).normal(0, 1, 0);
-        consumer.vertex(matrix, x2, y2, z2).color(1f, 1f, 0f, 0.6f).normal(0, 1, 0);
     }
 }
