@@ -19,18 +19,18 @@ import static net.minecraft.util.Util.getFormattedCurrentTime;
 @AllArgsConstructor
 public enum ScreenshotType {
 
-    ARREST("verhaftung"),
-    BLACKLIST("blacklist"),
-    CORRUPTION("korruption"),
-    DRUG("drogeneinnahme"),
-    EMERGENCY_SERVICE("notruf"),
-    EQUIP("equip"),
-    KILLS("kills"),
-    MAJOR_EVENT("großeinsatz"),
-    OTHER("andere"),
-    REINFORCEMENT("reinforcement"),
-    ROLEPLAY("roleplay"),
-    TICKET("ticket");
+    ARREST("Verhaftung"),
+    BLACKLIST("Blacklist"),
+    CORRUPTION("Korruption"),
+    DRUG("Drogeneinnahme"),
+    EMERGENCY_SERVICE("Notruf"),
+    EQUIP("Equip"),
+    KILLS("Kills"),
+    MAJOR_EVENT("Großeinsatz"),
+    OTHER("Andere"),
+    REINFORCEMENT("Reinforcement"),
+    ROLEPLAY("Roleplay"),
+    TICKET("Ticket");
 
     private static final File RUN_DIRECTORY = MinecraftClient.getInstance().runDirectory;
 
@@ -49,7 +49,7 @@ public enum ScreenshotType {
     }
 
     public @NotNull File getScreenshotDirectory() {
-        File file = new File(RUN_DIRECTORY, "pkutils/screenshots/" + this.displayName);
+        File file = new File(RUN_DIRECTORY, "pkutils/screenshots/" + this.displayName.toLowerCase());
         file.mkdirs();
         return file;
     }
@@ -60,7 +60,7 @@ public enum ScreenshotType {
         int i = 1;
 
         while (true) {
-            File file = new File(screenshotDirectory, this.displayName + "_" + formattedCurrentTime + (i == 1 ? "" : "_" + i) + ".png");
+            File file = new File(screenshotDirectory, this.displayName.toLowerCase() + "_" + formattedCurrentTime + (i == 1 ? "" : "_" + i) + ".png");
             if (!file.exists()) {
                 return file;
             }
@@ -71,7 +71,7 @@ public enum ScreenshotType {
 
     public static @NotNull Optional<ScreenshotType> fromDisplayName(String displayName) {
         return stream(values())
-                .filter(screenshotType -> displayName.contains(screenshotType.getDisplayName()))
+                .filter(screenshotType -> displayName.equalsIgnoreCase(screenshotType.getDisplayName()))
                 .findFirst();
     }
 }
