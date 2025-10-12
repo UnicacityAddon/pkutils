@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
+import de.rettichlp.pkutils.common.models.PlantEntry;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.listener.IBlockRightClickListener;
 import de.rettichlp.pkutils.listener.IEntityRenderListener;
@@ -34,6 +35,7 @@ import static de.rettichlp.pkutils.PKUtils.storage;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
+import static java.util.regex.Pattern.compile;
 import static net.minecraft.block.Blocks.FERN;
 import static net.minecraft.block.Blocks.PODZOL;
 import static net.minecraft.item.Items.BONE_MEAL;
@@ -54,8 +56,9 @@ import static net.minecraft.util.Hand.OFF_HAND;
 public class PlantListener extends PKUtilsBase
         implements IBlockRightClickListener, IEntityRenderListener, IMessageReceiveListener, IScreenOpenListener {
 
-    private static final Pattern PLANT_WATER_PATTERN = Pattern.compile("^\\[Plantage] Eine (Kräuter|Pulver)-Plantage wurde von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) gewässert\\.$");
-    private static final Pattern PLANT_FERTILIZE_PATTERN = Pattern.compile("^\\[Plantage] Eine (Kräuter|Pulver)-Plantage wurde von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) gedüngt\\.$");
+    private static final Pattern PLANT_PLANT_PATTERN = compile("^\\[Plantage] (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat eine (Kräuter|Pulver)-Plantage gesetzt\\. \\[\\d+/10]$");
+    private static final Pattern PLANT_WATER_PATTERN = compile("^\\[Plantage] Eine (Kräuter|Pulver)-Plantage wurde von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) gewässert\\.$");
+    private static final Pattern PLANT_FERTILIZE_PATTERN = compile("^\\[Plantage] Eine (Kräuter|Pulver)-Plantage wurde von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) gedüngt\\.$");
 
     private static final int PLANT_WATERING_INTERVAL_MINUTES = 40;
     private static final int PLANT_FERTILIZING_INTERVAL_MINUTES = 45;
@@ -144,6 +147,16 @@ public class PlantListener extends PKUtilsBase
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
+        Matcher plantPlantMatcher = PLANT_PLANT_PATTERN.matcher(message);
+        if (plantPlantMatcher.find() && player.getGameProfile().getName().equals(plantPlantMatcher.group("playerName"))) {
+            BlockPos blockPos = player.getBlockPos();
+
+            PlantEntry plantEntry = new PlantEntry(blockPos, now());
+            storage.getPlantEntries().add(plantEntry);
+
+            return true;
+        }
+
         Matcher plantFertilizeMatcher = PLANT_FERTILIZE_PATTERN.matcher(message);
         if (plantFertilizeMatcher.find()) {
             BlockPos blockPos = player.getBlockPos();
