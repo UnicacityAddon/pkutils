@@ -17,6 +17,7 @@ import de.rettichlp.pkutils.command.faction.BlackMarketCommand;
 import de.rettichlp.pkutils.command.faction.EquippedCommand;
 import de.rettichlp.pkutils.command.faction.MinusPointsCommand;
 import de.rettichlp.pkutils.command.faction.PersonalUseCommand;
+import de.rettichlp.pkutils.command.faction.ScreenshotCommand;
 import de.rettichlp.pkutils.command.mobile.ACallCommand;
 import de.rettichlp.pkutils.command.mobile.ASMSCommand;
 import de.rettichlp.pkutils.command.mobile.ReplyCommand;
@@ -100,6 +101,7 @@ public class Registry {
             PersonalUseCommand.class,
             ReplyCommand.class,
             RichTaxesCommand.class,
+            ScreenshotCommand.class,
             SyncCommand.class,
             TodoCommand.class,
             ToggleDChatCommand.class,
