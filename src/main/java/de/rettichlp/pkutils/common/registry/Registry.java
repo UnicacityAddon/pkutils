@@ -7,7 +7,6 @@ import de.rettichlp.pkutils.command.MiCommand;
 import de.rettichlp.pkutils.command.MiaCommand;
 import de.rettichlp.pkutils.command.ModCommand;
 import de.rettichlp.pkutils.command.ShutdownCommand;
-import de.rettichlp.pkutils.command.SyncCommand;
 import de.rettichlp.pkutils.command.TodoCommand;
 import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
 import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
@@ -104,7 +103,6 @@ public class Registry {
             RichTaxesCommand.class,
             ScreenshotCommand.class,
             ShutdownCommand.class,
-            SyncCommand.class,
             TodoCommand.class,
             ToggleDChatCommand.class,
             ToggleFChatCommand.class,

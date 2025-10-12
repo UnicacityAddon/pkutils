@@ -96,6 +96,19 @@ public class ModCommand extends CommandBase {
 
                                     return 1;
                                 })))
+                .then(literal("sync")
+                        .then(literal("faction")
+                                .executes(context -> {
+                                    syncService.syncFactionMembersWithCommandResponse();
+                                    return 1;
+                                }))
+                        .executes(context -> {
+                            syncService.syncFactionMembersWithApi();
+                            syncService.syncBlacklistReasonsFromApi();
+                            syncService.syncFactionSpecificData();
+
+                            return 1;
+                        }))
                 .executes(context -> {
                     String version = getVersion();
                     String authors = getAuthors();
