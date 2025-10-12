@@ -19,13 +19,13 @@ public abstract class ChatScreenMixin {
     @Inject(method = "sendMessage", at = @At("HEAD"))
     private void keepChatOpenAfterCommand(String message, boolean addToHistory, CallbackInfo ci) {
         String[] messageParts = message.split(" ");
-        if (messageParts.length >= 3 && message.startsWith("/screenshot type ")) {
-            String screenshotTypeString = messageParts[2].toLowerCase();
+        if (messageParts.length >= 2 && message.startsWith("/screenshot ")) {
+            String screenshotTypeString = messageParts[1].toLowerCase();
             ScreenshotType screenshotType = fromDisplayName(screenshotTypeString).orElse(OTHER);
             screenshotType.take(file -> notificationService.sendInfoNotification("Screenshot gespeichert: '" + file.getName() + "'"));
 
             try {
-                sleep(30);
+                sleep(5);
             } catch (InterruptedException e) {
                 LOGGER.warn("Interrupted while trying to keep chat open", e);
             }

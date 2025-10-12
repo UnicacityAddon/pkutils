@@ -20,7 +20,6 @@ import static java.lang.String.valueOf;
 import static java.nio.file.Files.list;
 import static java.util.Arrays.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.command.CommandSource.suggestMatching;
 import static net.minecraft.text.ClickEvent.Action.OPEN_FILE;
 import static net.minecraft.text.HoverEvent.Action.SHOW_TEXT;
@@ -37,13 +36,12 @@ public class ScreenshotCommand extends CommandBase {
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
-                .then(literal("type")
-                        .then(argument("screenshotType", greedyString())
-                                .suggests((context, builder) -> suggestMatching(stream(ScreenshotType.values()).map(ScreenshotType::getDisplayName).toList(), builder))
-                                .executes(context -> {
-                                    // placeholder method: implemented as mixin in ChatScreenMixin
-                                    return 1;
-                                })))
+                .then(argument("screenshotType", greedyString())
+                        .suggests((context, builder) -> suggestMatching(stream(ScreenshotType.values()).map(ScreenshotType::getDisplayName).toList(), builder))
+                        .executes(context -> {
+                            // placeholder method: implemented as mixin in ChatScreenMixin
+                            return 1;
+                        }))
                 .executes(context -> {
                     player.sendMessage(empty(), false);
                     sendModMessage("Screenshots:", false);
