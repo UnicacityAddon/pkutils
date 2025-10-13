@@ -13,6 +13,7 @@ import de.rettichlp.pkutils.common.api.request.BlacklistReasonDataGetRequest;
 import de.rettichlp.pkutils.common.api.request.EquipAddRequest;
 import de.rettichlp.pkutils.common.api.request.EquipGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.EquipGetRequest;
+import de.rettichlp.pkutils.common.api.request.FactionGetRequest;
 import de.rettichlp.pkutils.common.api.request.FactionMemberDataGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
@@ -23,6 +24,7 @@ import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.EquipEntry;
 import de.rettichlp.pkutils.common.models.Faction;
+import de.rettichlp.pkutils.common.models.FactionEntry;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -220,6 +222,26 @@ public class Api {
             }
 
             return null;
+        });
+    }
+
+    public CompletableFuture<List<FactionEntry>> getFactionEntries() {
+        Request<FactionGetRequest> request = Request.<FactionGetRequest>builder()
+                .method("GET")
+                .requestData(new FactionGetRequest())
+                .build();
+
+        return request.send().thenApply(httpResponse -> {
+            Type type = getParameterized(List.class, FactionEntry.class).getType();
+            return (List<FactionEntry>) validateAndParse(httpResponse, type);
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while fetching faction entries", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return new ArrayList<>();
         });
     }
 
