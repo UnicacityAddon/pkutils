@@ -21,15 +21,11 @@ import static de.rettichlp.pkutils.PKUtils.api;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.common.models.Faction.NULL;
-import static de.rettichlp.pkutils.common.models.Faction.TRIADEN;
 import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
-import static java.util.Arrays.stream;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
-import static java.util.concurrent.CompletableFuture.allOf;
 
 @Getter
 @Setter
@@ -46,13 +42,10 @@ public class SyncService extends PKUtilsBase {
     }
 
     public void syncFactionData() {
-        CompletableFuture<?>[] syncFactionMembersFutures = stream(Faction.values())
-                .filter(faction -> faction != NULL && faction != TRIADEN)
-                .map(this::syncFactionData)
-                .toArray(CompletableFuture[]::new);
-
-        CompletableFuture<Void> completableFuture = allOf(syncFactionMembersFutures);
-        completableFuture.thenAccept(unused -> LOGGER.info("Faction member data synced"));
+        api.getFactionEntries().thenAccept(factionEntries -> {
+            factionEntries.forEach(factionEntry -> storage.getFactionMembers().put(factionEntry.faction(), new HashSet<>(factionEntry.members())));
+            LOGGER.info("Faction member data synced");
+        });
     }
 
     public void syncPKUtilsData() {
