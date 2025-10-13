@@ -4,9 +4,20 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.scoreboard.ReadableScoreboardScore;
+import net.minecraft.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static de.rettichlp.pkutils.PKUtils.configuration;
+import static de.rettichlp.pkutils.PKUtils.player;
+import static java.lang.Math.min;
+import static java.util.Optional.ofNullable;
+import static net.minecraft.scoreboard.ScoreHolder.fromName;
+import static net.minecraft.scoreboard.ScoreboardDisplaySlot.SIDEBAR;
 
 @PKUtilsCommand(label = "adropmoney")
 public class ADropMoneyCommand extends CommandBase {
@@ -15,7 +26,31 @@ public class ADropMoneyCommand extends CommandBase {
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
                 .executes(context -> {
-                    sendCommands(List.of("bank abbuchen 16000", "dropmoney", "bank einzahlen 16000"));
+                    Scoreboard scoreboard = player.getScoreboard();
+
+                    Optional<ReadableScoreboardScore> optionalReadableScoreboardScore = ofNullable(scoreboard.getObjectiveForSlot(SIDEBAR))
+                            .map(scoreboardObjective -> scoreboard.getScore(fromName("§9Geld§8:"), scoreboardObjective));
+
+                    if (optionalReadableScoreboardScore.isEmpty()) {
+                        sendModMessage("Der Geldtransport-Job wird nicht ausgeführt.", false);
+                        return 1;
+                    }
+
+                    ReadableScoreboardScore readableScoreboardScore = optionalReadableScoreboardScore.get();
+                    int moneyToDrop = readableScoreboardScore.getScore();
+
+                    List<String> scheduledCommands = new ArrayList<>();
+
+                    while (moneyToDrop > 0) {
+                        int moneyCanDrop = min(moneyToDrop, configuration.getMoneyBankAmount());
+                        scheduledCommands.add("bank abbuchen " + moneyCanDrop);
+                        scheduledCommands.add("dropmoney");
+                        scheduledCommands.add("bank einzahlen " + moneyCanDrop);
+                        moneyToDrop -= moneyCanDrop;
+                    }
+
+                    sendCommands(scheduledCommands);
+
                     return 1;
                 });
     }
