@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.mojang.text2speech.Narrator.LOGGER;
+import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.player;
