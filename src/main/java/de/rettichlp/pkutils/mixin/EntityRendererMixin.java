@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.Optional;
 
-import static com.mojang.text2speech.Narrator.LOGGER;
+import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.factionService;
 import static de.rettichlp.pkutils.PKUtils.storage;
