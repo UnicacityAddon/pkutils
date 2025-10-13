@@ -30,6 +30,13 @@ public class CommandResponseRetriever extends PKUtilsBase {
     private boolean hideMessage = false;
     private LocalDateTime startedAt;
 
+    public CommandResponseRetriever(String commandToExecute, Pattern pattern, Consumer<List<Matcher>> consumer, boolean hideMessage) {
+        this.commandToExecute = commandToExecute;
+        this.pattern = pattern;
+        this.consumer = consumer;
+        this.hideMessage = hideMessage;
+    }
+
     public void execute() {
         storage.getCommandResponseRetrievers().add(this);
 

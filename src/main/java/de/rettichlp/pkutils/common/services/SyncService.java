@@ -140,6 +140,6 @@ public class SyncService extends PKUtilsBase {
 
             storage.getFactionMembers().put(faction, factionMembers);
             LOGGER.info("Retrieved {} members for faction {} from command", factionMembers.size(), faction.name());
-        });
+        }, true);
     }
 }
