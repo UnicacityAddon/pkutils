@@ -1,17 +1,13 @@
 package de.rettichlp.pkutils.common.api.request;
 
 import de.rettichlp.pkutils.common.api.IRequest;
-import de.rettichlp.pkutils.common.models.Faction;
-import de.rettichlp.pkutils.common.models.FactionMember;
 
 import java.net.URI;
-import java.util.Map;
-import java.util.Set;
 
 import static de.rettichlp.pkutils.PKUtils.api;
 import static java.net.URI.create;
 
-public record UserRegisterRequest(Map<Faction, Set<FactionMember>> factionMembers) implements IRequest {
+public record UserRegisterRequest() implements IRequest {
 
     @Override
     public URI getUrl() {

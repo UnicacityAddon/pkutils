@@ -63,7 +63,7 @@ public class Api {
     public CompletableFuture<Void> registerUser(String version) {
         Request<UserRegisterRequest> request = Request.<UserRegisterRequest>builder()
                 .method("POST")
-                .requestData(new UserRegisterRequest(storage.getFactionMembers()))
+                .requestData(new UserRegisterRequest())
                 .headers(Map.of("X-PKU-Version", version))
                 .build();
 
