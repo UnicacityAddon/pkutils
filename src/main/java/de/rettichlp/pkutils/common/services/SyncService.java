@@ -25,11 +25,15 @@ import static de.rettichlp.pkutils.PKUtils.api;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static de.rettichlp.pkutils.common.models.Faction.NULL;
+import static de.rettichlp.pkutils.common.models.Faction.TRIADEN;
+import static java.lang.Integer.parseInt;
 import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
-import static java.util.Objects.nonNull;
+import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
+import static java.util.regex.Pattern.compile;
 
 @Getter
 @Setter
