@@ -98,10 +98,6 @@ public class Storage {
     @Setter
     private ToggledChat toggledChat = NONE;
 
-    @Getter
-    @Setter
-    private boolean activeService = false;
-
     {
         this.blackMarkets.addAll(stream(BlackMarket.Type.values())
                 .map(type -> new BlackMarket(type, null, false))
@@ -139,8 +135,6 @@ public class Storage {
         LOGGER.info("punicaKitty: {}", this.punicaKitty);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
-        // activeService
-        LOGGER.info("activeService: {}", this.activeService);
     }
 
     public Set<FactionMember> getFactionMembers(Faction faction) {
