@@ -23,6 +23,9 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
     private static final Pattern AFK_START_PATTERN = compile("^Du bist nun im AFK-Modus\\.$");
     private static final Pattern AFK_END_PATTERN = compile("^Du bist nun nicht mehr im AFK-Modus\\.$");
 
+    // dead
+    private static final Pattern DEAD_PATTERN = compile("^Du bist nun für (?<minutes>\\d+) Minuten auf dem Friedhof\\.$");
+
     // jail
     private static final Pattern JAIL_PATTERN = compile("^\\[Gefängnis] Du bist nun für (?<minutes>\\d+) Minuten im Gefängnis\\.$");
 
@@ -42,6 +45,13 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
         Matcher afkEndMatcher = AFK_END_PATTERN.matcher(message);
         if (afkEndMatcher.find()) {
             storage.setAfk(false);
+            return true;
+        }
+
+        Matcher deadMatcher = DEAD_PATTERN.matcher(message);
+        if (deadMatcher.find()) {
+            int minutes = parseInt(deadMatcher.group("minutes"));
+            storage.getCountdowns().add(new Countdown("Friedhof", ofMinutes(minutes)));
             return true;
         }
 
