@@ -61,6 +61,8 @@ public class SyncService extends PKUtilsBase {
             CommandResponseRetriever commandResponseRetriever = commandResponseRetrievers.get(i);
             delayedAction(commandResponseRetriever::execute, i * 1000L);
         }
+
+        delayedAction(api::postFactionEntries, commandResponseRetrievers.size() * 1000L + 1200);
     }
 
     public void syncBlacklistReasonsFromApi() {
