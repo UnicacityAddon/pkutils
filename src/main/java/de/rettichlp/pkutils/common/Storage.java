@@ -11,6 +11,7 @@ import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.models.Job;
 import de.rettichlp.pkutils.common.models.Reinforcement;
+import de.rettichlp.pkutils.common.models.ShutdownReason;
 import de.rettichlp.pkutils.common.models.WantedEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,6 +32,9 @@ import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.util.Arrays.stream;
 
 public class Storage {
+
+    @Getter
+    private final List<ShutdownReason> activeShutdowns = new ArrayList<>();
 
     @Getter
     private final List<CommandResponseRetriever> commandResponseRetrievers = new ArrayList<>();
