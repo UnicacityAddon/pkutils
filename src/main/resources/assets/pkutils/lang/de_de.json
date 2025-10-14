@@ -76,5 +76,7 @@
     "pkutils.purity.best": "Höchste",
     "pkutils.purity.good": "Gute",
     "pkutils.purity.medium": "Mittlere",
-    "pkutils.purity.bad": "Schlechte"
+    "pkutils.purity.bad": "Schlechte",
+    "pkutils.screen.button.shutdown.abort.name": "Herunterfahren abbrechen",
+    "pkutils.screen.button.shutdown.abort.description": "Bricht das geplante Herunterfahren ab"
 }

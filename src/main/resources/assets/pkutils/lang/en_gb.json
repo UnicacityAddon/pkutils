@@ -76,5 +76,7 @@
     "pkutils.purity.best": "Best",
     "pkutils.purity.good": "Good",
     "pkutils.purity.medium": "Medium",
-    "pkutils.purity.bad": "Bad"
+    "pkutils.purity.bad": "Bad",
+    "pkutils.screen.button.shutdown.abort.name": "Abort shutdown",
+    "pkutils.screen.button.shutdown.abort.description": "Aborts the planned shutdown"
 }
