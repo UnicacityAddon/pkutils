@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.gui.options;
+package de.rettichlp.pkutils.common.gui;
 
 import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
 import de.rettichlp.pkutils.common.gui.options.components.ItemButtonWidget;
@@ -23,64 +23,55 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
 import static de.rettichlp.pkutils.PKUtils.configuration;
-import static net.minecraft.client.gui.screen.ConfirmLinkScreen.opening;
+import static java.util.Objects.nonNull;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
 import static net.minecraft.item.Items.COMPARATOR;
-import static net.minecraft.screen.ScreenTexts.BACK;
-import static net.minecraft.screen.ScreenTexts.DONE;
-import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.text.Text.translatable;
 
-public abstract class OptionsScreen extends Screen {
+public abstract class PKUtilsScreen extends Screen {
 
     public final ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this);
 
-    private static final URI DISCORD_INVITE = URI.create("https://discord.gg/mZGAAwhPHu");
-    private static final int DISCORD_COLOR = 0x5865F2;
-    private static final URI MODRINTH = URI.create("https://modrinth.com/mod/pkutils");
-    private static final int MODRINTH_COLOR = 0x1BD96B;
-
     private final Screen parent;
-    private final Text subTitle;
-    private final boolean renderBackground;
 
-    public OptionsScreen(Screen parent) {
-        super(empty()
-                .append("PKUtils").append(" ")
-                .append(translatable("options.title")));
+    private Text subTitle = of("v" + getVersion());
+    private boolean renderBackground = true;
+
+    public PKUtilsScreen(Text title, Screen parent) {
+        super(title);
         this.parent = parent;
-        this.subTitle = of("v" + getVersion());
-        this.renderBackground = true;
     }
 
-    public OptionsScreen(Screen parent, String subTitelKey) {
-        super(empty()
-                .append("PKUtils").append(" ")
-                .append(translatable("options.title")));
-        this.parent = parent;
-        this.subTitle = translatable(subTitelKey);
-        this.renderBackground = true;
+    public PKUtilsScreen(Text title, Text subTitle) {
+        super(title);
+        this.parent = null;
+        this.subTitle = subTitle;
     }
 
-    public OptionsScreen(Screen parent, String subTitelKey, boolean renderBackground) {
-        super(empty()
-                .append("PKUtils").append(" ")
-                .append(translatable("options.title")));
+    public PKUtilsScreen(Text title, Text subTitle, Screen parent) {
+        super(title);
         this.parent = parent;
-        this.subTitle = translatable(subTitelKey);
+        this.subTitle = subTitle;
+    }
+
+    public PKUtilsScreen(Text title, Text subTitle, Screen parent, boolean renderBackground) {
+        super(title);
+        this.parent = parent;
+        this.subTitle = subTitle;
         this.renderBackground = renderBackground;
     }
 
     public abstract void initBody();
+
+    public abstract void doOnClose();
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
@@ -98,7 +89,7 @@ public abstract class OptionsScreen extends Screen {
     @Override
     public void close() {
         this.client.setScreen(null);
-        configuration.saveToFile();
+        doOnClose();
     }
 
     @Override
@@ -116,8 +107,12 @@ public abstract class OptionsScreen extends Screen {
     }
 
     public void back() {
-        this.client.setScreen(this.parent);
-        configuration.saveToFile();
+        if (nonNull(this.parent)) {
+            this.client.setScreen(this.parent);
+            doOnClose();
+        } else {
+            close();
+        }
     }
 
     public void addButton(@NotNull DirectionalLayoutWidget widget, String key, ButtonWidget.PressAction onPress, int width) {
@@ -196,6 +191,15 @@ public abstract class OptionsScreen extends Screen {
         widget.add(button);
     }
 
+    protected void initHeader() {
+        DirectionalLayoutWidget directionalLayoutWidget = this.layout.addHeader(vertical().spacing(4));
+        directionalLayoutWidget.getMainPositioner().alignHorizontalCenter();
+        directionalLayoutWidget.add(new TextWidget(this.title, this.textRenderer));
+        directionalLayoutWidget.add(new TextWidget(this.subTitle, this.textRenderer));
+    }
+
+    protected void initFooter() {}
+
     /**
      * @see EntryListWidget#drawHeaderAndFooterSeparators(DrawContext)
      */
@@ -210,21 +214,6 @@ public abstract class OptionsScreen extends Screen {
     private void drawMenuListBackground(@NotNull DrawContext context) {
         Identifier identifier = Identifier.ofVanilla("textures/gui/inworld_menu_list_background.png");
         context.drawTexture(RenderLayer::getGuiTextured, identifier, this.layout.getX(), this.layout.getHeaderHeight(), 0.0F, 0.0F, this.layout.getWidth(), this.layout.getContentHeight(), 32, 32);
-    }
-
-    private void initHeader() {
-        DirectionalLayoutWidget directionalLayoutWidget = this.layout.addHeader(vertical().spacing(4));
-        directionalLayoutWidget.getMainPositioner().alignHorizontalCenter();
-        directionalLayoutWidget.add(new TextWidget(this.title, this.textRenderer));
-        directionalLayoutWidget.add(new TextWidget(this.subTitle, this.textRenderer));
-    }
-
-    private void initFooter() {
-        DirectionalLayoutWidget directionalLayoutWidget = this.layout.addFooter(horizontal().spacing(8));
-        directionalLayoutWidget.add(ButtonWidget.builder(BACK, button -> back()).width(120).build());
-        directionalLayoutWidget.add(ButtonWidget.builder(DONE, button -> close()).width(200).build());
-        directionalLayoutWidget.add(ButtonWidget.builder(of("Discord").copy().withColor(DISCORD_COLOR), opening(this, DISCORD_INVITE)).width(56).build());
-        directionalLayoutWidget.add(ButtonWidget.builder(of("Modrinth").copy().withColor(MODRINTH_COLOR), opening(this, MODRINTH)).width(56).build());
     }
 
     private String getVersion() {

@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.gui.options;
 
+import de.rettichlp.pkutils.common.gui.OptionsScreen;
 import de.rettichlp.pkutils.common.models.Color;
 import de.rettichlp.pkutils.common.models.Faction;
 import net.minecraft.client.gui.screen.Screen;
