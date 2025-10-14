@@ -16,7 +16,7 @@ import static de.rettichlp.pkutils.common.models.Sound.SERVICE;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class ServiceListener extends PKUtilsBase implements IMessageReceiveListener, INaviSpotReachedListener {
+public class EmergencyServiceListener extends PKUtilsBase implements IMessageReceiveListener, INaviSpotReachedListener {
 
     private static final Pattern SERVICE_PATTERN = compile("Ein Notruf von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) \\((?<message>.+)\\)\\.");
     private static final Pattern SERVICE_DONE_PATTERN = compile("^Du hast den Service von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) als 'Erledigt' markiert\\.$");
