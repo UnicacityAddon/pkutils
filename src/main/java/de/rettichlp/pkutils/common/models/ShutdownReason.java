@@ -14,11 +14,12 @@ import static de.rettichlp.pkutils.PKUtils.storage;
 @AllArgsConstructor
 public enum ShutdownReason {
 
-    CEMETERY(1, "Friedhof"),
-    JAIL(2, "Gefängnis");
+    CEMETERY(1, "Friedhof", "Du despawnest."),
+    JAIL(2, "Gefängnis", "Du wirst aus dem Gefängnis entlassen.");
 
     private final int priority;
     private final String displayName;
+    private final String conditionString;
 
     public void activate() {
         storage.getActiveShutdowns().add(this);
