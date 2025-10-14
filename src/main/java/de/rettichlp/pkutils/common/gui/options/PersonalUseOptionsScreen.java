@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.gui.options;
 
+import de.rettichlp.pkutils.common.gui.OptionsScreen;
 import de.rettichlp.pkutils.common.models.InventoryItem;
 import de.rettichlp.pkutils.common.models.PersonalUseEntry;
 import de.rettichlp.pkutils.common.models.Purity;

@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.gui.options;
 
+import de.rettichlp.pkutils.common.gui.OptionsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.Positioner;
