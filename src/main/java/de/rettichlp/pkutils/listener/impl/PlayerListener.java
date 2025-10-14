@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static java.lang.Integer.parseInt;
 import static java.time.Duration.ofMinutes;
 import static java.util.regex.Pattern.compile;
 
@@ -21,6 +22,9 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
     // afk
     private static final Pattern AFK_START_PATTERN = compile("^Du bist nun im AFK-Modus\\.$");
     private static final Pattern AFK_END_PATTERN = compile("^Du bist nun nicht mehr im AFK-Modus\\.$");
+
+    // jail
+    private static final Pattern JAIL_PATTERN = compile("^\\[Gefängnis] Du bist nun für (?<minutes>\\d+) Minuten im Gefängnis\\.$");
 
     @Override
     public void onAbsorptionGet() {
@@ -38,6 +42,13 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
         Matcher afkEndMatcher = AFK_END_PATTERN.matcher(message);
         if (afkEndMatcher.find()) {
             storage.setAfk(false);
+            return true;
+        }
+
+        Matcher jailMatcher = JAIL_PATTERN.matcher(message);
+        if (jailMatcher.find()) {
+            int minutes = parseInt(jailMatcher.group("minutes"));
+            storage.getCountdowns().add(new Countdown("Gefängnis", ofMinutes(minutes)));
             return true;
         }
 
