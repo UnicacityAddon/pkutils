@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static java.time.LocalDateTime.now;
 import static java.time.temporal.ChronoUnit.MILLIS;
+import static java.util.Objects.nonNull;
 
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -66,6 +67,6 @@ public class CommandResponseRetriever extends PKUtilsBase {
     }
 
     public boolean isActive() {
-        return now().isBefore(this.startedAt.plus(this.timeoutMillis, MILLIS));
+        return nonNull(this.startedAt) && now().isBefore(this.startedAt.plus(this.timeoutMillis, MILLIS));
     }
 }
