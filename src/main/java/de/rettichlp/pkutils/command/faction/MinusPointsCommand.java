@@ -41,7 +41,7 @@ public class MinusPointsCommand extends CommandBase {
                                     String playerName = player.getGameProfile().getName();
                                     Faction faction = storage.getFaction(playerName);
                                     // rank 4 or higher in own faction
-                                    return isSuperUser() || storage.getFactionMembers(faction).stream()
+                                    return isSuperUser() || faction.getMembers().stream()
                                             .filter(factionMember -> factionMember.playerName().equals(playerName))
                                             .findFirst()
                                             .map(factionMember -> factionMember.rank() >= 4)
