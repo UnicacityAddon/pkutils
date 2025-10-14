@@ -35,10 +35,10 @@ public class ShutdownScreen extends PKUtilsScreen {
         directionalLayoutWidget.add(new TextWidget(of(this.shutdownReason.getConditionString()).copy().formatted(GOLD), this.textRenderer));
 
         directionalLayoutWidget.add(new TextWidget(empty()
-                .append(of("Sollte dieser Screen geschlossen werden,").copy().formatted(GRAY)), this.textRenderer), positioner -> positioner.marginTop(16));
+                .append(of("Wenn du dieses Fenster schließt,").copy().formatted(GRAY)), this.textRenderer), positioner -> positioner.marginTop(16));
 
         directionalLayoutWidget.add(new TextWidget(empty()
-                .append(of("wird das automatische Herunterfahren abgebrochen.").copy().formatted(GRAY)), this.textRenderer), positioner -> positioner.marginBottom(16));
+                .append(of("wird das automatische Herunterfahren gestoppt.").copy().formatted(GRAY)), this.textRenderer), positioner -> positioner.marginBottom(16));
 
         addButton(directionalLayoutWidget, "pkutils.screen.button.shutdown.abort.name", button -> storage.getActiveShutdowns().clear(), 150);
 
@@ -47,6 +47,6 @@ public class ShutdownScreen extends PKUtilsScreen {
 
     @Override
     public void doOnClose() {
-        storage.getActiveShutdowns().remove(this.shutdownReason);
+        storage.getActiveShutdowns().removeIf(sr -> sr == this.shutdownReason);
     }
 }

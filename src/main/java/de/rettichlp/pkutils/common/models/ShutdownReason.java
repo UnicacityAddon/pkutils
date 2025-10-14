@@ -14,7 +14,7 @@ import static de.rettichlp.pkutils.PKUtils.storage;
 @AllArgsConstructor
 public enum ShutdownReason {
 
-    CEMETERY(1, "Friedhof", "Du despawnest."),
+    CEMETERY(1, "Friedhof", "Du wirst nicht rechtzeitig wiederbelebt und despawnst."),
     JAIL(2, "Gefängnis", "Du wirst aus dem Gefängnis entlassen.");
 
     private final int priority;
