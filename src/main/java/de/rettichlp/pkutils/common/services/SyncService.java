@@ -1,58 +1,75 @@
 package de.rettichlp.pkutils.common.services;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import de.rettichlp.pkutils.common.models.CommandResponseRetriever;
 import de.rettichlp.pkutils.common.models.Faction;
+import de.rettichlp.pkutils.common.models.FactionEntry;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static de.rettichlp.pkutils.common.models.Faction.NULL;
+import static java.lang.Integer.parseInt;
 import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
-import static java.util.Objects.nonNull;
+import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
+import static java.util.regex.Pattern.compile;
 
 @Getter
 @Setter
 public class SyncService extends PKUtilsBase {
 
+    private static final Pattern FACTION_MEMBER_ALL_ENTRY = compile("^\\s*-\\s*(?<rank>\\d)\\s*\\|\\s*(?<playerNames>.+)$");
+
     private LocalDateTime lastSyncTimestamp = MIN;
     private boolean gameSyncProcessActive = false;
 
-    public void syncBlacklistReasonData() {
+    public void syncFactionMembersWithApi() {
+        api.getFactionEntries().thenAccept(factionEntries -> {
+            storage.getFactionEntries().clear();
+            storage.getFactionEntries().addAll(factionEntries);
+            LOGGER.info("Faction members synced with API");
+        });
+    }
+
+    public void syncFactionMembersWithCommandResponse() {
+        List<CommandResponseRetriever> commandResponseRetrievers = stream(Faction.values())
+                .filter(faction -> faction != NULL)
+                .map(this::syncFactionMembersWithCommandResponse)
+                .toList();
+
+        for (int i = 0; i < commandResponseRetrievers.size(); i++) {
+            CommandResponseRetriever commandResponseRetriever = commandResponseRetrievers.get(i);
+            delayedAction(commandResponseRetriever::execute, i * 1000L);
+        }
+
+        delayedAction(api::postFactionEntries, commandResponseRetrievers.size() * 1000L + 1200);
+    }
+
+    public void syncBlacklistReasonsFromApi() {
         api.getBlacklistReasonData().thenAccept(factionListMap -> {
             storage.getBlacklistReasons().clear();
             storage.getBlacklistReasons().putAll(factionListMap);
         }).thenAccept(unused -> LOGGER.info("Blacklist reason data synced"));
     }
 
-    public void syncFactionData() {
-        api.getFactionEntries().thenAccept(factionEntries -> {
-            factionEntries.forEach(factionEntry -> storage.getFactionMembers().put(factionEntry.faction(), new HashSet<>(factionEntry.members())));
-            LOGGER.info("Faction member data synced");
-        });
-    }
-
-    public void syncPKUtilsData() {
-        api.registerUser(getVersion());
-    }
-
-    public void syncIngameData() {
+    public void syncFactionSpecificData() {
         this.gameSyncProcessActive = true;
         this.lastSyncTimestamp = now();
 
@@ -79,16 +96,6 @@ public class SyncService extends PKUtilsBase {
         }, 2000);
     }
 
-    public void executeSync() {
-        syncBlacklistReasonData();
-        syncFactionData();
-        syncPKUtilsData();
-
-        if (nonNull(player)) {
-            syncIngameData();
-        }
-    }
-
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
         sendCommand("nummer " + playerName);
 
@@ -99,21 +106,26 @@ public class SyncService extends PKUtilsBase {
         }, 1000);
     }
 
-    private @NotNull CompletableFuture<Void> syncFactionData(Faction faction) {
-        return api.getFactionMemberData(faction).thenAccept(objectMap -> {
-            Gson gson = api.getGson();
+    @Contract("_ -> new")
+    private @NotNull CommandResponseRetriever syncFactionMembersWithCommandResponse(@NotNull Faction faction) {
+        String commandToExecute = "memberinfoall " + faction.getMemberInfoCommandName();
+        return new CommandResponseRetriever(commandToExecute, FACTION_MEMBER_ALL_ENTRY, matchers -> {
+            Set<FactionMember> factionMembers = new HashSet<>();
 
-            JsonArray members = gson.toJsonTree(objectMap.get("members")).getAsJsonArray();
-            List<FactionMember> factionMembers = members.asList().stream()
-                    .map(jsonElement -> {
-                        JsonObject jsonObject = jsonElement.getAsJsonObject();
-                        String username = jsonObject.get("username").getAsString();
-                        int rank = jsonObject.get("rank").getAsInt();
-                        return new FactionMember(username, rank);
-                    })
-                    .toList();
+            matchers.forEach(matcher -> {
+                int rank = parseInt(matcher.group("rank"));
+                String[] playerNames = matcher.group("playerNames").split(", ");
 
-            storage.getFactionMembers().put(faction, new HashSet<>(factionMembers));
-        });
+                for (String playerName : playerNames) {
+                    FactionMember factionMember = new FactionMember(playerName, rank);
+                    factionMembers.add(factionMember);
+                }
+            });
+
+            FactionEntry factionEntry = new FactionEntry(faction, factionMembers);
+            storage.getFactionEntries().removeIf(fe -> fe.faction() == faction);
+            storage.getFactionEntries().add(factionEntry);
+            LOGGER.info("Retrieved {} members for faction {} from command", factionMembers.size(), faction.name());
+        }, true);
     }
 }

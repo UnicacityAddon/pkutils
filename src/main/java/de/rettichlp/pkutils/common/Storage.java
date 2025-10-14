@@ -7,6 +7,7 @@ import de.rettichlp.pkutils.common.models.CommandResponseRetriever;
 import de.rettichlp.pkutils.common.models.ContractEntry;
 import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.models.Faction;
+import de.rettichlp.pkutils.common.models.FactionEntry;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.models.Job;
@@ -30,6 +31,7 @@ import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptySet;
 
 public class Storage {
 
@@ -38,9 +40,6 @@ public class Storage {
 
     @Getter
     private final List<CommandResponseRetriever> commandResponseRetrievers = new ArrayList<>();
-
-    @Getter
-    private final Map<Faction, Set<FactionMember>> factionMembers = new HashMap<>();
 
     @Getter
     private final List<BlacklistEntry> blacklistEntries = new ArrayList<>();
@@ -53,6 +52,9 @@ public class Storage {
 
     @Getter
     private final List<Countdown> countdowns = new ArrayList<>();
+
+    @Getter
+    private final Set<FactionEntry> factionEntries = new HashSet<>();
 
     @Getter
     private final List<HousebanEntry> housebanEntries = new ArrayList<>();
@@ -109,8 +111,8 @@ public class Storage {
     }
 
     public void print() {
-        // factionMembers
-        this.factionMembers.forEach((faction, factionMembers) -> LOGGER.info("factionMembers[{}:{}]: {}", faction, factionMembers.size(), factionMembers));
+        // factionEntries
+        this.factionEntries.forEach(factionEntry -> LOGGER.info("factionEntries[{}:{}]: {}", factionEntry.faction(), factionEntry.members().size(), factionEntry.members()));
         // blacklistEntries
         LOGGER.info("blacklistEntries[{}]: {}", this.blacklistEntries.size(), this.blacklistEntries);
         // blacklistReasons
@@ -141,16 +143,20 @@ public class Storage {
         LOGGER.info("toggledChat: {}", this.toggledChat);
     }
 
-    public Set<FactionMember> getFactionMembers(Faction faction) {
-        return this.factionMembers.getOrDefault(faction, new HashSet<>());
+    public Set<FactionMember> getFactionEntries(Faction faction) {
+        return this.factionEntries.stream()
+                .filter(factionEntry -> factionEntry.faction() == faction)
+                .findFirst()
+                .map(FactionEntry::members)
+                .orElse(emptySet());
     }
 
     public Faction getFaction(String playerName) {
-        return this.factionMembers.entrySet().stream()
-                .filter(entry -> entry.getValue().stream()
-                        .anyMatch(factionMember -> factionMember.playerName().equals(playerName)))
-                .map(Map.Entry::getKey)
+        return this.factionEntries.stream()
+                .filter(factionEntry -> factionEntry.members().stream()
+                        .anyMatch(factionMember -> factionMember.playerName().equalsIgnoreCase(playerName)))
                 .findFirst()
+                .map(FactionEntry::faction)
                 .orElse(NULL);
     }
 

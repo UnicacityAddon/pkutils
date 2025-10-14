@@ -72,7 +72,7 @@ public enum Faction {
     }
 
     public Set<FactionMember> getMembers() {
-        return storage.getFactionMembers(this);
+        return storage.getFactionEntries(this);
     }
 
     public static @NotNull Optional<Faction> fromDisplayName(String displayName) {

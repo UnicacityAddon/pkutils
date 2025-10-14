@@ -13,7 +13,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
-import static de.rettichlp.pkutils.PKUtils.api;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 @Builder
@@ -54,6 +53,6 @@ public class Request<T extends IRequest> {
     }
 
     private String getJsonBody() {
-        return api.getGson().toJson(this.requestData);
+        return this.requestData.bodyMapper();
     }
 }

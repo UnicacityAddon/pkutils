@@ -15,6 +15,7 @@ import de.rettichlp.pkutils.common.api.request.EquipGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.EquipGetRequest;
 import de.rettichlp.pkutils.common.api.request.FactionGetRequest;
 import de.rettichlp.pkutils.common.api.request.FactionMemberDataGetRequest;
+import de.rettichlp.pkutils.common.api.request.FactionPostRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
 import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
@@ -63,7 +64,7 @@ public class Api {
     public CompletableFuture<Void> registerUser(String version) {
         Request<UserRegisterRequest> request = Request.<UserRegisterRequest>builder()
                 .method("POST")
-                .requestData(new UserRegisterRequest(storage.getFactionMembers()))
+                .requestData(new UserRegisterRequest())
                 .headers(Map.of("X-PKU-Version", version))
                 .build();
 
@@ -242,6 +243,26 @@ public class Api {
             }
 
             return new ArrayList<>();
+        });
+    }
+
+    public void postFactionEntries() {
+        Request<FactionPostRequest> request = Request.<FactionPostRequest>builder()
+                .method("POST")
+                .requestData(new FactionPostRequest(storage.getFactionEntries()))
+                .build();
+
+        request.send().thenAccept(httpResponse -> {
+            validate(httpResponse);
+            LOGGER.info("Faction entries successfully pushed to PKUtils API");
+        }).exceptionally(throwable -> {
+            LOGGER.error("Error while pushing faction entries", throwable);
+
+            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
+                pkUtilsApiException.sendNotification();
+            }
+
+            return null;
         });
     }
 
