@@ -17,6 +17,7 @@ import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.ShutdownReason.CEMETERY;
+import static de.rettichlp.pkutils.common.models.ShutdownReason.JAIL;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
@@ -43,6 +44,7 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
 
     // jail
     private static final Pattern JAIL_PATTERN = compile("^\\[Gefängnis] Du bist nun für (?<minutes>\\d+) Minuten im Gefängnis\\.$");
+    private static final Pattern JAIL_UNJAIL_PATTERN = compile("^\\[Gefängnis] Du bist nun wieder frei!$");
 
     @Override
     public void onAbsorptionGet() {
@@ -80,6 +82,17 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
         Matcher deadDespawnMatcher = DEAD_DESPAWN_PATTERN.matcher(message);
         if (deadDespawnMatcher.find()) {
             boolean shutdown = storage.getActiveShutdowns().removeIf(shutdownReason -> shutdownReason == CEMETERY);
+
+            if (shutdown) {
+                shutdownPC();
+            }
+
+            return true;
+        }
+
+        Matcher jailUnjailMatcher = JAIL_UNJAIL_PATTERN.matcher(message);
+        if (jailUnjailMatcher.find()) {
+            boolean shutdown = storage.getActiveShutdowns().removeIf(shutdownReason -> shutdownReason == JAIL);
 
             if (shutdown) {
                 shutdownPC();
