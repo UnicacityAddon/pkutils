@@ -1,10 +1,8 @@
 package de.rettichlp.pkutils.common.services;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import de.rettichlp.pkutils.common.models.CommandResponseRetriever;
 import de.rettichlp.pkutils.common.models.Faction;
+import de.rettichlp.pkutils.common.models.FactionEntry;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
@@ -16,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -26,7 +23,6 @@ import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
-import static de.rettichlp.pkutils.common.models.Faction.TRIADEN;
 import static java.lang.Integer.parseInt;
 import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
@@ -46,14 +42,15 @@ public class SyncService extends PKUtilsBase {
 
     public void syncFactionMembersWithApi() {
         api.getFactionEntries().thenAccept(factionEntries -> {
-            factionEntries.forEach(factionEntry -> storage.getFactionMembers().put(factionEntry.faction(), new HashSet<>(factionEntry.members())));
+            storage.getFactionEntries().clear();
+            storage.getFactionEntries().addAll(factionEntries);
             LOGGER.info("Faction members synced with API");
         });
     }
 
     public void syncFactionMembersWithCommandResponse() {
         List<CommandResponseRetriever> commandResponseRetrievers = stream(Faction.values())
-                .filter(faction -> faction != NULL && faction != TRIADEN)
+                .filter(faction -> faction != NULL)
                 .map(this::syncFactionMembersWithCommandResponse)
                 .toList();
 
@@ -109,25 +106,6 @@ public class SyncService extends PKUtilsBase {
         }, 1000);
     }
 
-    private @NotNull CompletableFuture<Void> syncFactionMembersWithApi(Faction faction) {
-        return api.getFactionMemberData(faction).thenAccept(objectMap -> {
-            Gson gson = api.getGson();
-
-            JsonArray members = gson.toJsonTree(objectMap.get("members")).getAsJsonArray();
-            List<FactionMember> factionMembers = members.asList().stream()
-                    .map(jsonElement -> {
-                        JsonObject jsonObject = jsonElement.getAsJsonObject();
-                        String username = jsonObject.get("username").getAsString();
-                        int rank = jsonObject.get("rank").getAsInt();
-                        return new FactionMember(username, rank);
-                    })
-                    .toList();
-
-            storage.getFactionMembers().put(faction, new HashSet<>(factionMembers));
-            LOGGER.info("Retrieved {} members for faction {} from api", factionMembers.size(), faction.name());
-        });
-    }
-
     @Contract("_ -> new")
     private @NotNull CommandResponseRetriever syncFactionMembersWithCommandResponse(@NotNull Faction faction) {
         String commandToExecute = "memberinfoall " + faction.getMemberInfoCommandName();
@@ -144,7 +122,9 @@ public class SyncService extends PKUtilsBase {
                 }
             });
 
-            storage.getFactionMembers().put(faction, factionMembers);
+            FactionEntry factionEntry = new FactionEntry(faction, factionMembers);
+            storage.getFactionEntries().removeIf(fe -> fe.faction() == faction);
+            storage.getFactionEntries().add(factionEntry);
             LOGGER.info("Retrieved {} members for faction {} from command", factionMembers.size(), faction.name());
         }, true);
     }

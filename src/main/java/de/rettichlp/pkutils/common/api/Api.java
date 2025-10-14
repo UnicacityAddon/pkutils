@@ -249,7 +249,7 @@ public class Api {
     public void postFactionEntries() {
         Request<FactionPostRequest> request = Request.<FactionPostRequest>builder()
                 .method("POST")
-                .requestData(new FactionPostRequest(storage.getFactionMembers()))
+                .requestData(new FactionPostRequest(storage.getFactionEntries()))
                 .build();
 
         request.send().thenAccept(httpResponse -> {
