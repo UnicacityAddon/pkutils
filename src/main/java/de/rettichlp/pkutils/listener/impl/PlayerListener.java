@@ -18,10 +18,9 @@ import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.ShutdownReason.CEMETERY;
 import static de.rettichlp.pkutils.common.models.ShutdownReason.JAIL;
+import static java.lang.Integer.parseInt;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.getProperty;
-import static java.lang.System.out;
-import static java.lang.Integer.parseInt;
 import static java.time.Duration.ofMinutes;
 import static java.util.Objects.nonNull;
 import static java.util.regex.Pattern.compile;
@@ -113,7 +112,6 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
 
     private void shutdownPC() {
         String os = getProperty("os.name").toLowerCase();
-        out.println(os);
         String[] command = new String[0];
 
         if (os.contains("windows")) {
