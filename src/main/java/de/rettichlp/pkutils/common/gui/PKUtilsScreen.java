@@ -45,14 +45,15 @@ public abstract class PKUtilsScreen extends Screen {
     private Text subTitle = of("v" + getVersion());
     private boolean renderBackground = true;
 
-    public PKUtilsScreen(Text title) {
-        super(title);
-        this.parent = null;
-    }
-
     public PKUtilsScreen(Text title, Screen parent) {
         super(title);
         this.parent = parent;
+    }
+
+    public PKUtilsScreen(Text title, Text subTitle) {
+        super(title);
+        this.parent = null;
+        this.subTitle = subTitle;
     }
 
     public PKUtilsScreen(Text title, Text subTitle, Screen parent) {

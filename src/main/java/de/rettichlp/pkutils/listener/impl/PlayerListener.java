@@ -5,19 +5,33 @@ import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.ITickListener;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.text.Text;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static de.rettichlp.pkutils.common.models.ShutdownReason.CEMETERY;
+import static java.lang.Runtime.getRuntime;
+import static java.lang.System.getProperty;
+import static java.lang.System.out;
 import static java.lang.Integer.parseInt;
 import static java.time.Duration.ofMinutes;
+import static java.util.Objects.nonNull;
 import static java.util.regex.Pattern.compile;
+import static net.minecraft.text.Text.empty;
+import static net.minecraft.text.Text.of;
+import static net.minecraft.util.Formatting.GRAY;
+import static net.minecraft.util.Formatting.RED;
 
 public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListener, IMessageReceiveListener, ITickListener {
+
+    private static final String SHUTDOWN_TIMEOUT = "5";
 
     // afk
     private static final Pattern AFK_START_PATTERN = compile("^Du bist nun im AFK-Modus\\.$");
@@ -25,6 +39,7 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
 
     // dead
     private static final Pattern DEAD_PATTERN = compile("^Du bist nun für (?<minutes>\\d+) Minuten auf dem Friedhof\\.$");
+    private static final Pattern DEAD_DESPAWN_PATTERN = compile("^Verdammt\\.{3} mein Kopf dröhnt so\\.{3}$");
 
     // jail
     private static final Pattern JAIL_PATTERN = compile("^\\[Gefängnis] Du bist nun für (?<minutes>\\d+) Minuten im Gefängnis\\.$");
@@ -62,6 +77,17 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
             return true;
         }
 
+        Matcher deadDespawnMatcher = DEAD_DESPAWN_PATTERN.matcher(message);
+        if (deadDespawnMatcher.find()) {
+            boolean shutdown = storage.getActiveShutdowns().removeIf(shutdownReason -> shutdownReason == CEMETERY);
+
+            if (shutdown) {
+                shutdownPC();
+            }
+
+            return true;
+        }
+
         return true;
     }
 
@@ -69,6 +95,37 @@ public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListene
     public void onTick() {
         if (player.age % 1200 == 0 && !storage.isAfk()) {
             configuration.addMinutesSinceLastPayDay(1);
+        }
+    }
+
+    private void shutdownPC() {
+        String os = getProperty("os.name").toLowerCase();
+        out.println(os);
+        String[] command = new String[0];
+
+        if (os.contains("windows")) {
+            command = new String[]{ "shutdown", "/s", "/t", SHUTDOWN_TIMEOUT };
+        } else if (os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) {
+            command = new String[]{ "shutdown", "-h", "+" + SHUTDOWN_TIMEOUT }; // will fail potentially without sudo
+        }
+
+        ClientConnection connection = player.networkHandler.getConnection();
+        if (nonNull(connection)) {
+            connection.disconnect(empty()
+                    .append(of("Der PC wird in").copy().formatted(GRAY)).append(" ")
+                    .append(of(SHUTDOWN_TIMEOUT + " Sekunden").copy().formatted(RED)).append(" ")
+                    .append(of("durch PKUtils heruntergefahren...").copy().formatted(GRAY)));
+        }
+
+        if (command.length == 0) {
+            LOGGER.warn("Unknown operating system {} - shutdown aborted", os);
+            return;
+        }
+
+        try {
+            getRuntime().exec(command);
+        } catch (IOException e) {
+            LOGGER.error("Error while executing shutdown command: {}", command, e);
         }
     }
 }
