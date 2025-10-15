@@ -1,53 +1,57 @@
 package de.rettichlp.pkutils.common.api;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
-import de.rettichlp.pkutils.common.api.request.ActivityAddRequest;
-import de.rettichlp.pkutils.common.api.request.ActivityGetPlayerRequest;
-import de.rettichlp.pkutils.common.api.request.ActivityGetRequest;
-import de.rettichlp.pkutils.common.api.request.BlacklistReasonDataGetRequest;
-import de.rettichlp.pkutils.common.api.request.EquipAddRequest;
-import de.rettichlp.pkutils.common.api.request.EquipGetPlayerRequest;
-import de.rettichlp.pkutils.common.api.request.EquipGetRequest;
-import de.rettichlp.pkutils.common.api.request.FactionGetRequest;
-import de.rettichlp.pkutils.common.api.request.FactionMemberDataGetRequest;
-import de.rettichlp.pkutils.common.api.request.FactionPostRequest;
-import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetPlayerRequest;
-import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsGetRequest;
-import de.rettichlp.pkutils.common.api.request.PoliceMinusPointsModifyRequest;
-import de.rettichlp.pkutils.common.api.request.UserInfoRequest;
-import de.rettichlp.pkutils.common.api.request.UserRegisterRequest;
+import com.google.gson.reflect.TypeToken;
+import de.rettichlp.pkutils.common.api.response.ErrorResponse;
+import de.rettichlp.pkutils.common.api.response.GetUserInfoResponse;
 import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.EquipEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionEntry;
+import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.session.Session;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Type;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
+import java.util.function.Consumer;
 
-import static com.google.gson.reflect.TypeToken.getParameterized;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static java.lang.Integer.MIN_VALUE;
+import static java.lang.String.valueOf;
+import static java.net.URI.create;
+import static java.net.http.HttpRequest.BodyPublishers.ofString;
+import static java.net.http.HttpResponse.BodyHandlers.ofString;
+import static java.util.Optional.ofNullable;
 
-@SuppressWarnings("unchecked")
-public class Api {
+public class Api extends PKUtilsBase {
+
+    private static final String SESSION_TOKEN = ofNullable(MinecraftClient.getInstance())
+            .map(MinecraftClient::getSession)
+            .map(Session::getAccessToken)
+            .orElse("");
+
+    private final HttpClient httpClient = HttpClient.newBuilder().build();
+    private final String baseUrl = "https://pkutils.rettichlp.de/v1"; //http://localhost:6010/pkutils/v1
+    private final HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+            .header("Accept", "application/json")
+            .header("Content-Type", "application/json")
+            .header("X-Minecraft-Session-Token", SESSION_TOKEN)
+            .header("X-PKU-Version", valueOf(getVersion()));
 
     @Getter
     private final Gson gson = new GsonBuilder()
@@ -58,319 +62,129 @@ public class Api {
             .registerTypeAdapter(LocalDateTime.class, (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
             .create();
 
-    @Getter
-    private final String baseUrl = "https://pkutils.rettichlp.de/v1"; // http://localhost:6010/pkutils/v1
-
-    public void registerUser(String version) {
-        Request<UserRegisterRequest> request = Request.<UserRegisterRequest>builder()
-                .method("POST")
-                .requestData(new UserRegisterRequest())
-                .headers(Map.of("X-PKU-Version", version))
-                .build();
-
-        request.send().thenAccept(httpResponse -> {
-            validate(httpResponse);
-            LOGGER.info("User successfully registered on PKUtils API");
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while registering user", throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return null;
-        });
+    public void postUserRegister() {
+        post("/user/register", new Object(), () -> LOGGER.info("Successfully registered user"));
     }
 
-    public CompletableFuture<Map<String, Object>> getUserInfo(String playerName) {
-        Request<UserInfoRequest> request = Request.<UserInfoRequest>builder()
-                .method("GET")
-                .requestData(new UserInfoRequest(playerName))
-                .build();
-
-        return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(Map.class, String.class, Object.class).getType();
-            return (Map<String, Object>) validateAndParse(httpResponse, type);
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching user info", throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return new HashMap<>();
-        });
+    public void getUserInfo(String playerName, Consumer<GetUserInfoResponse> callback) {
+        get("/user/info?playerName=" + playerName, new TypeToken<GetUserInfoResponse>() {}, callback);
     }
 
-    public CompletableFuture<List<ActivityEntry>> getActivityEntries(Instant from, Instant to) {
-        Request<ActivityGetRequest> request = Request.<ActivityGetRequest>builder()
-                .method("GET")
-                .requestData(new ActivityGetRequest(from, to))
-                .build();
-
-        return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(List.class, ActivityEntry.class).getType();
-            return (List<ActivityEntry>) validateAndParse(httpResponse, type);
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching activity entries", throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return new ArrayList<>();
-        });
+    public void getActivity(Instant from, Instant to, Consumer<List<ActivityEntry>> callback) {
+        get("/activity?from=" + from + "&to=" + to, new TypeToken<List<ActivityEntry>>() {}, callback);
     }
 
-    public CompletableFuture<List<ActivityEntry>> getActivityEntriesForPlayer(String playerName, Instant from, Instant to) {
-        Request<ActivityGetPlayerRequest> request = Request.<ActivityGetPlayerRequest>builder()
-                .method("GET")
-                .requestData(new ActivityGetPlayerRequest(playerName, from, to))
-                .build();
-
-        return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(List.class, ActivityEntry.class).getType();
-            return (List<ActivityEntry>) validateAndParse(httpResponse, type);
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching activity entries for player {}", playerName, throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return new ArrayList<>();
-        });
+    public void getActivityPlayer(Instant from, Instant to, String playerName, Consumer<List<ActivityEntry>> callback) {
+        get("/activity/player/" + playerName + "?from=" + from + "&to=" + to, new TypeToken<List<ActivityEntry>>() {}, callback);
     }
 
-    public void trackActivity(ActivityEntry.Type activityType) {
+    public void postActivityAdd(ActivityEntry.Type activityType) {
         if (!storage.isPunicaKitty()) {
             return;
         }
 
-        Request<ActivityAddRequest> request = Request.<ActivityAddRequest>builder()
-                .method("POST")
-                .requestData(new ActivityAddRequest(activityType))
-                .build();
-
-        request.send().thenAccept(httpResponse -> {
-            validate(httpResponse);
-            notificationService.sendInfoNotification(activityType.getSuccessMessage());
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while tracking activity {}", activityType, throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return null;
-        });
+        post("/activity/add", Map.of("activityType", activityType), () -> notificationService.sendInfoNotification(activityType.getSuccessMessage()));
     }
 
-    public CompletableFuture<List<EquipEntry>> getEquipEntries(Instant from, Instant to) {
-        Request<EquipGetRequest> request = Request.<EquipGetRequest>builder()
-                .method("GET")
-                .requestData(new EquipGetRequest(from, to))
-                .build();
-
-        return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(List.class, EquipEntry.class).getType();
-            return (List<EquipEntry>) validateAndParse(httpResponse, type);
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching equip entries", throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return new ArrayList<>();
-        });
+    public void getEquip(Instant from, Instant to, Consumer<List<EquipEntry>> callback) {
+        get("/equip?from=" + from + "&to=" + to, new TypeToken<List<EquipEntry>>() {}, callback);
     }
 
-    public CompletableFuture<List<EquipEntry>> getEquipEntriesForPlayer(String playerName, Instant from, Instant to) {
-        Request<EquipGetPlayerRequest> request = Request.<EquipGetPlayerRequest>builder()
-                .method("GET")
-                .requestData(new EquipGetPlayerRequest(playerName, from, to))
-                .build();
-
-        return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(List.class, EquipEntry.class).getType();
-            return (List<EquipEntry>) validateAndParse(httpResponse, type);
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching equip entries for player {}", playerName, throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return new ArrayList<>();
-        });
+    public void getEquipPlayer(Instant from, Instant to, String playerName, Consumer<List<EquipEntry>> callback) {
+        get("/equip/" + playerName + "?from=" + from + "&to=" + to, new TypeToken<List<EquipEntry>>() {}, callback);
     }
 
-    public void trackEquip(EquipEntry.Type equipType) {
-        Request<EquipAddRequest> request = Request.<EquipAddRequest>builder()
-                .method("POST")
-                .requestData(new EquipAddRequest(equipType))
-                .build();
+    public void postEquipAdd(EquipEntry.Type equipType) {
+        if (!storage.isPunicaKitty()) {
+            return;
+        }
 
-        request.send().thenAccept(httpResponse -> {
-            validate(httpResponse);
-            notificationService.sendInfoNotification(equipType.getSuccessMessage());
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while tracking equip {}", equipType, throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return null;
-        });
+        post("/equip/add", Map.of("equipType", equipType), () -> notificationService.sendInfoNotification(equipType.getSuccessMessage()));
     }
 
-    public CompletableFuture<List<FactionEntry>> getFactionEntries() {
-        Request<FactionGetRequest> request = Request.<FactionGetRequest>builder()
-                .method("GET")
-                .requestData(new FactionGetRequest())
-                .build();
-
-        return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(List.class, FactionEntry.class).getType();
-            return (List<FactionEntry>) validateAndParse(httpResponse, type);
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching faction entries", throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return new ArrayList<>();
-        });
+    public void getFactions(Consumer<List<FactionEntry>> callback) {
+        get("/factions", new TypeToken<List<FactionEntry>>() {}, callback);
     }
 
-    public void postFactionEntries() {
-        Request<FactionPostRequest> request = Request.<FactionPostRequest>builder()
-                .method("POST")
-                .requestData(new FactionPostRequest(storage.getFactionEntries()))
-                .build();
-
-        request.send().thenAccept(httpResponse -> {
-            validate(httpResponse);
-            LOGGER.info("Faction entries successfully pushed to PKUtils API");
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while pushing faction entries", throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return null;
-        });
+    public void postFactions() {
+        post("/factions", storage.getFactionEntries(), () -> {});
     }
 
-    public CompletableFuture<Integer> getMinusPoints() {
-        Request<PoliceMinusPointsGetRequest> request = Request.<PoliceMinusPointsGetRequest>builder()
-                .method("GET")
-                .requestData(new PoliceMinusPointsGetRequest())
-                .build();
-
-        return request.send().thenApply(httpResponse -> (Integer) validateAndParse(httpResponse, Integer.class)).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching activities", throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return MIN_VALUE;
-        });
+    public void getMinusPoints(Consumer<Integer> callback) {
+        get("/police/minuspoints", new TypeToken<Integer>() {}, callback);
     }
 
-    public CompletableFuture<Integer> getMinusPointsForPlayer(String playerName) {
-        Request<PoliceMinusPointsGetPlayerRequest> request = Request.<PoliceMinusPointsGetPlayerRequest>builder()
-                .method("GET")
-                .requestData(new PoliceMinusPointsGetPlayerRequest(playerName))
-                .build();
-
-        return request.send().thenApply(httpResponse -> (Integer) validateAndParse(httpResponse, Integer.class)).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching activities for player {}", playerName, throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return MIN_VALUE;
-        });
+    public void getMinusPointsPlayer(String playerName, Consumer<Integer> callback) {
+        get("/police/minuspoints/" + playerName, new TypeToken<Integer>() {}, callback);
     }
 
-    public CompletableFuture<Integer> modifyMinusPoints(String playerName, int amount) {
-        Request<PoliceMinusPointsModifyRequest> request = Request.<PoliceMinusPointsModifyRequest>builder()
-                .method("POST")
-                .requestData(new PoliceMinusPointsModifyRequest(playerName, amount))
-                .build();
+    public void postMinusPointsModify(String playerName, int amount) {
+        if (!storage.isPunicaKitty()) {
+            return;
+        }
 
-        return request.send().thenApply(httpResponse -> (Integer) validateAndParse(httpResponse, Integer.class)).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching activities", throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return MIN_VALUE;
-        });
+        // FIXME
+        post("/police/minuspoints/" + playerName + "/modify?amount=" + amount, amount, () -> notificationService.sendInfoNotification("Punkte erfolgreich angepasst"));
     }
 
-    public CompletableFuture<Map<Faction, List<BlacklistReason>>> getBlacklistReasonData() {
-        Request<BlacklistReasonDataGetRequest> request = Request.<BlacklistReasonDataGetRequest>builder()
-                .method("GET")
-                .requestData(new BlacklistReasonDataGetRequest())
-                .build();
-
-        return request.send().thenApply(httpResponse -> {
-            Type type = new TypeToken<Map<Faction, List<BlacklistReason>>>() {}.getType();
-            return (Map<Faction, List<BlacklistReason>>) validateAndParse(httpResponse, type);
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching faction data", throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return null;
-        });
+    public void getBlacklistReasonData(Consumer<Map<Faction, List<BlacklistReason>>> callback) {
+        get("https://gist.githubusercontent.com/rettichlp/54e97f4dbb3988bf22554c01d62af666/raw/pkutils-blacklistreasons.json", new TypeToken<Map<Faction, List<BlacklistReason>>>() {}, callback);
     }
 
-    public CompletableFuture<Map<String, Object>> getFactionMemberData(Faction faction) {
-        Request<FactionMemberDataGetRequest> request = Request.<FactionMemberDataGetRequest>builder()
-                .method("GET")
-                .requestData(new FactionMemberDataGetRequest(faction))
+    private <T> void get(@NotNull String uri, TypeToken<T> typeToken, Consumer<T> callback) {
+        HttpRequest httpRequest = this.requestBuilder.copy()
+                .uri(uri.startsWith("https://") ? create(uri) : create(this.baseUrl + uri))
+                .GET()
                 .build();
 
-        return request.send().thenApply(httpResponse -> {
-            Type type = getParameterized(Map.class, String.class, Object.class).getType();
-            return (Map<String, Object>) validateAndParse(httpResponse, type);
-        }).exceptionally(throwable -> {
-            LOGGER.error("Error while fetching faction data", throwable);
-
-            if (throwable instanceof CompletionException completionException && completionException.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-                pkUtilsApiException.sendNotification();
-            }
-
-            return new HashMap<>();
-        });
+        sendRequest(httpRequest, typeToken, callback);
     }
 
-    private void validate(@NotNull HttpResponse<String> httpResponse) {
-        int statusCode = httpResponse.statusCode();
-        if (statusCode < 200 || statusCode >= 300) {
-            ErrorResponse errorResponse = this.gson.fromJson(httpResponse.body(), ErrorResponse.class);
+    private void post(String uri, Object bodyObject, Runnable runnable) {
+        String jsonString = this.gson.toJson(bodyObject);
+        HttpRequest.BodyPublisher body = ofString(jsonString);
+
+        HttpRequest httpRequest = this.requestBuilder.copy()
+                .uri(create(this.baseUrl + uri))
+                .POST(body)
+                .build();
+
+        sendRequest(httpRequest, null, object -> runnable.run());
+    }
+
+    private <T> void sendRequest(HttpRequest httpRequest, TypeToken<T> typeToken, Consumer<T> callback) {
+        this.httpClient.sendAsync(httpRequest, ofString())
+                .thenApply(this::catchDefaultApiError)
+                .thenApply(response -> ofNullable(typeToken)
+                        .map(tt -> this.gson.fromJson(response.body(), tt))
+                        .orElse(null))
+                .thenAccept(responseObject -> {
+                    LOGGER.info("Successfully sent request [{}] {}", httpRequest.method(), httpRequest.uri().toString());
+                    callback.accept(responseObject);
+                })
+                .exceptionally(throwable -> {
+                    handleError(throwable);
+                    return null;
+                });
+    }
+
+    @Contract("_ -> param1")
+    private @NotNull HttpResponse<String> catchDefaultApiError(@NotNull HttpResponse<String> response) {
+        // check if the status code is 2xx and throw an exception if not
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            ErrorResponse errorResponse = getGson().fromJson(response.body(), ErrorResponse.class);
             throw new PKUtilsApiException(errorResponse);
         }
+
+        return response;
     }
 
-    private <T> T validateAndParse(@NotNull HttpResponse<String> httpResponse, Type type) {
-        validate(httpResponse);
-        return this.gson.fromJson(httpResponse.body(), type);
-    }
-
-    public record ErrorResponse(int httpStatusCode, String httpStatus, String info) {
-
+    private void handleError(Throwable throwable) {
+        if (throwable instanceof PKUtilsApiException pkUtilsApiException) {
+            pkUtilsApiException.sendNotification();
+            pkUtilsApiException.getErrorResponse().log();
+        } else {
+            LOGGER.error("Error while sending API request", throwable);
+        }
     }
 }

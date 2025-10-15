@@ -168,7 +168,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             // track activity if the killer player is within 60 blocks
             boolean killerIsWithin60Blocks = !player.getWorld().getEntitiesByType(instanceOf(PlayerEntity.class), player.getBoundingBox().expand(50), playerEntity -> playerEntity.getGameProfile().getName().equals(playerName)).isEmpty();
             if (killerIsWithin60Blocks) {
-                api.trackActivity(ARREST_KILL);
+                api.postActivityAdd(ARREST_KILL);
             }
 
             return false;
@@ -193,7 +193,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             player.sendMessage(modifiedMessage, false);
 
             if (clientPlayerName.equals(playerName)) {
-                api.trackActivity(ARREST);
+                api.postActivityAdd(ARREST);
             }
 
             return false;
@@ -220,7 +220,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             player.sendMessage(modifiedMessage, false);
 
             if (clientPlayerName.equals(officerName)) {
-                api.trackActivity(PARK_TICKET);
+                api.postActivityAdd(PARK_TICKET);
             }
 
             return false;

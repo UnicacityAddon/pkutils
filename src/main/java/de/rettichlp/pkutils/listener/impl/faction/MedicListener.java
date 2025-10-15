@@ -99,7 +99,7 @@ public class MedicListener extends PKUtilsBase implements IMessageReceiveListene
 
         long seconds = between(this.lastReviveStartetAt, now()).toSeconds();
         if (seconds > 6 && seconds < 10) {
-            api.trackActivity(REVIVE);
+            api.postActivityAdd(REVIVE);
         }
 
         return true;

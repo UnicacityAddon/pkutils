@@ -185,7 +185,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
         Matcher equipMatcher = EQUIP_PATTERN.matcher(message);
         if (equipMatcher.find()) {
             String type = equipMatcher.group("type");
-            fromDisplayName(type).ifPresent(api::trackEquip);
+            fromDisplayName(type).ifPresent(api::postEquipAdd);
             return true;
         }
 
@@ -215,7 +215,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
                 .filter(reinforcement -> !reinforcement.isAddedAsActivity())
                 .forEach(reinforcement -> {
                     reinforcement.setAddedAsActivity(true);
-                    api.trackActivity(ActivityEntry.Type.REINFORCEMENT);
+                    api.postActivityAdd(ActivityEntry.Type.REINFORCEMENT);
                     LOGGER.info("Reinforcement reached, tracked activity");
                 });
 

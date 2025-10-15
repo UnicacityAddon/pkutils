@@ -57,7 +57,7 @@ public class PKUtils extends PKUtilsBase implements ModInitializer {
         syncService.syncBlacklistReasonsFromApi();
 
         // login to PKUtils API
-        api.registerUser(getVersion());
+        api.postUserRegister();
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             player = client.player;

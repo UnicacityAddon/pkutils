@@ -99,9 +99,7 @@ public class MinusPointsCommand extends CommandBase {
     }
 
     private void fetchAndShowMinusPointsFor() {
-        CompletableFuture<Integer> minusPoints = api.getMinusPoints();
-
-        minusPoints.thenAccept(amount -> {
+        api.getMinusPoints(amount -> {
             player.sendMessage(Text.empty(), false);
             sendModMessage(Text.empty()
                     .append(of("Minuspunkte").copy().formatted(GRAY))
@@ -112,9 +110,7 @@ public class MinusPointsCommand extends CommandBase {
     }
 
     private void fetchAndShowMinusPointsFor(String playerName) {
-        CompletableFuture<Integer> minusPoints = api.getMinusPointsForPlayer(playerName);
-
-        minusPoints.thenAccept(amount -> {
+        api.getMinusPointsPlayer(playerName, amount -> {
             player.sendMessage(Text.empty(), false);
             sendModMessage(Text.empty()
                     .append(of("Minuspunkte für " + playerName).copy().formatted(GRAY))

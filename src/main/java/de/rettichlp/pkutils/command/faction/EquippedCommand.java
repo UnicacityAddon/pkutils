@@ -116,9 +116,7 @@ public class EquippedCommand extends CommandBase {
 
     private void fetchAndShowEntriesFor(int relativeWeekIndex) {
         Range range = getRange(relativeWeekIndex);
-        CompletableFuture<List<EquipEntry>> entriesFuture = api.getEquipEntries(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
-
-        entriesFuture.thenAccept(entries -> {
+        api.getEquip(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant(), entries -> {
             // summarize by type
             Map<EquipEntry.Type, Long> amountPerType = entries.stream()
                     .collect(groupingBy(EquipEntry::type, counting()));
@@ -135,9 +133,7 @@ public class EquippedCommand extends CommandBase {
 
     private void fetchAndShowEntriesFor(String playerName, int relativeWeekIndex) {
         Range range = getRange(relativeWeekIndex);
-        CompletableFuture<List<EquipEntry>> entryFuture = api.getEquipEntriesForPlayer(playerName, range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
-
-        entryFuture.thenAccept(entries -> {
+        api.getEquipPlayer(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant(), playerName, entries -> {
             // summarize by type
             Map<EquipEntry.Type, Long> activityAmountPerType = entries.stream()
                     .collect(groupingBy(EquipEntry::type, counting()));
