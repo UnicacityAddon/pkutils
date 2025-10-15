@@ -123,7 +123,6 @@ public class Api extends PKUtilsBase {
             return;
         }
 
-        // FIXME
         post("/police/minuspoints/" + playerName + "/modify?amount=" + amount, amount, () -> notificationService.sendInfoNotification("Punkte erfolgreich angepasst"));
     }
 
