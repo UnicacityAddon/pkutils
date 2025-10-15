@@ -45,7 +45,7 @@ public class EmergencyServiceListener extends PKUtilsBase implements IMessageRec
 
         Matcher serviceDoneMatcher = SERVICE_DONE_PATTERN.matcher(message);
         if (serviceDoneMatcher.find()) {
-            api.trackActivity(EMERGENCY_SERVICE);
+            api.postActivityAdd(EMERGENCY_SERVICE);
             this.activeService = false;
             return true;
         }

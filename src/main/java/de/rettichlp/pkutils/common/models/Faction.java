@@ -11,6 +11,7 @@ import java.util.Set;
 
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptySet;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.util.Formatting.AQUA;
 import static net.minecraft.util.Formatting.BLUE;
@@ -72,7 +73,11 @@ public enum Faction {
     }
 
     public Set<FactionMember> getMembers() {
-        return storage.getFactionEntries(this);
+        return storage.getFactionEntries().stream()
+                .filter(factionEntry -> factionEntry.faction() == this)
+                .findFirst()
+                .map(FactionEntry::members)
+                .orElse(emptySet());
     }
 
     public static @NotNull Optional<Faction> fromDisplayName(String displayName) {

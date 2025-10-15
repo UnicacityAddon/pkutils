@@ -24,7 +24,6 @@ import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
-import static java.lang.String.valueOf;
 import static java.time.LocalDateTime.MIN;
 import static java.util.Arrays.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
@@ -56,7 +55,7 @@ public class ModCommand extends CommandBase {
                                     stream(ActivityEntry.Type.values())
                                             .filter(activityType -> activityType.name().equals(activityTypeString.toUpperCase()))
                                             .findFirst()
-                                            .ifPresent(api::trackActivity);
+                                            .ifPresent(api::postActivityAdd);
 
                                     return 1;
                                 })))
@@ -72,8 +71,7 @@ public class ModCommand extends CommandBase {
                                 })
                                 .executes(context -> {
                                     String playerName = context.getArgument("player", String.class);
-                                    api.getUserInfo(playerName).thenAccept(objectMap -> {
-                                        String version = valueOf(objectMap.getOrDefault("version", "n/A"));
+                                    api.getUserInfo(playerName, response -> {
 
                                         player.sendMessage(empty(), false);
 
@@ -82,7 +80,7 @@ public class ModCommand extends CommandBase {
                                         sendModMessage(empty()
                                                 .append(of("Version").copy().formatted(GRAY))
                                                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                                                .append(of(version).copy().formatted(WHITE)), false);
+                                                .append(of(response.getVersion()).copy().formatted(WHITE)), false);
 
                                         sendModMessage(empty()
                                                 .append(of("Aktivitäten").copy().formatted(GRAY))

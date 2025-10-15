@@ -9,14 +9,11 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
-
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static com.mojang.brigadier.suggestion.Suggestions.empty;
 import static de.rettichlp.pkutils.PKUtils.api;
-import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
@@ -71,7 +68,7 @@ public class MinusPointsCommand extends CommandBase {
                                                         return 1;
                                                     }
 
-                                                    api.modifyMinusPoints(targetName, amount).thenAccept(integer -> notificationService.sendInfoNotification("Minuspunkte für " + targetName + " auf " + integer + " gesetzt."));
+                                                    api.postMinusPointsModify(playerName, amount);
 
                                                     return 1;
                                                 })))
@@ -99,9 +96,7 @@ public class MinusPointsCommand extends CommandBase {
     }
 
     private void fetchAndShowMinusPointsFor() {
-        CompletableFuture<Integer> minusPoints = api.getMinusPoints();
-
-        minusPoints.thenAccept(amount -> {
+        api.getMinusPoints(amount -> {
             player.sendMessage(Text.empty(), false);
             sendModMessage(Text.empty()
                     .append(of("Minuspunkte").copy().formatted(GRAY))
@@ -112,9 +107,7 @@ public class MinusPointsCommand extends CommandBase {
     }
 
     private void fetchAndShowMinusPointsFor(String playerName) {
-        CompletableFuture<Integer> minusPoints = api.getMinusPointsForPlayer(playerName);
-
-        minusPoints.thenAccept(amount -> {
+        api.getMinusPointsPlayer(playerName, amount -> {
             player.sendMessage(Text.empty(), false);
             sendModMessage(Text.empty()
                     .append(of("Minuspunkte für " + playerName).copy().formatted(GRAY))

@@ -116,9 +116,8 @@ public class ActivityCommand extends CommandBase {
 
     private void fetchAndShowEntriesFor(int relativeWeekIndex) {
         Range range = getRange(relativeWeekIndex);
-        CompletableFuture<List<ActivityEntry>> entriesFuture = api.getActivityEntries(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
 
-        entriesFuture.thenAccept(entries -> {
+        api.getActivity(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant(), entries -> {
             // summarize by type
             Map<ActivityEntry.Type, Long> amountPerType = entries.stream()
                     .collect(groupingBy(ActivityEntry::type, counting()));
@@ -135,9 +134,7 @@ public class ActivityCommand extends CommandBase {
 
     private void fetchAndShowEntriesFor(String playerName, int relativeWeekIndex) {
         Range range = getRange(relativeWeekIndex);
-        CompletableFuture<List<ActivityEntry>> entryFuture = api.getActivityEntriesForPlayer(playerName, range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant());
-
-        entryFuture.thenAccept(entries -> {
+        api.getActivityPlayer(range.fromZonedDateTime().toInstant(), range.toZonedDateTime.toInstant(), playerName, entries -> {
             // summarize by type
             Map<ActivityEntry.Type, Long> activityAmountPerType = entries.stream()
                     .collect(groupingBy(ActivityEntry::type, counting()));

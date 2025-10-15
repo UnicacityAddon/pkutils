@@ -8,7 +8,6 @@ import de.rettichlp.pkutils.common.models.ContractEntry;
 import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionEntry;
-import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.models.Job;
 import de.rettichlp.pkutils.common.models.Reinforcement;
@@ -28,10 +27,11 @@ import java.util.Map;
 import java.util.Set;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
+import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.util.Arrays.stream;
-import static java.util.Collections.emptySet;
+import static java.util.Optional.ofNullable;
 
 public class Storage {
 
@@ -58,6 +58,9 @@ public class Storage {
 
     @Getter
     private final List<HousebanEntry> housebanEntries = new ArrayList<>();
+
+    @Getter
+    private final Map<String, Faction> playerFactionCache = new HashMap<>();
 
     @Getter
     private final List<Reinforcement> reinforcements = new ArrayList<>();
@@ -123,6 +126,8 @@ public class Storage {
         LOGGER.info("countdowns[{}]: {}", this.countdowns.size(), this.countdowns);
         // housebanEntries
         LOGGER.info("housebanEntries[{}]: {}", this.housebanEntries.size(), this.housebanEntries);
+        // playerFactionCache
+        LOGGER.info("playerFactionCache[{}]: {}", this.playerFactionCache.size(), this.playerFactionCache);
         // reinforcements
         LOGGER.info("reinforcements[{}]: {}", this.reinforcements.size(), this.reinforcements);
         // retrievedNumbers
@@ -143,21 +148,20 @@ public class Storage {
         LOGGER.info("toggledChat: {}", this.toggledChat);
     }
 
-    public Set<FactionMember> getFactionEntries(Faction faction) {
-        return this.factionEntries.stream()
-                .filter(factionEntry -> factionEntry.faction() == faction)
-                .findFirst()
-                .map(FactionEntry::members)
-                .orElse(emptySet());
+    public Faction getCachedFaction(String playerName) {
+        return ofNullable(this.playerFactionCache.get(playerName)).orElseGet(() -> storage.getFaction(playerName));
     }
 
     public Faction getFaction(String playerName) {
-        return this.factionEntries.stream()
+        Faction faction = this.factionEntries.stream()
                 .filter(factionEntry -> factionEntry.members().stream()
                         .anyMatch(factionMember -> factionMember.playerName().equalsIgnoreCase(playerName)))
                 .findFirst()
                 .map(FactionEntry::faction)
                 .orElse(NULL);
+
+        this.playerFactionCache.put(playerName, faction);
+        return faction;
     }
 
     public void trackReinforcement(Reinforcement reinforcement) {
