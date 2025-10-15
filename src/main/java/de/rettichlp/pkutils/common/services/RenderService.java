@@ -15,6 +15,8 @@ import net.minecraft.world.entity.EntityLike;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
+import java.awt.Color;
+
 import static net.minecraft.client.render.RenderLayer.getLines;
 import static net.minecraft.util.math.RotationAxis.POSITIVE_Y;
 
@@ -126,5 +128,9 @@ public class RenderService extends PKUtilsBase {
                          float z2) {
         consumer.vertex(matrix, x1, y1, z1).color(1f, 1f, 0f, 0.6f).normal(0, 1, 0);
         consumer.vertex(matrix, x2, y2, z2).color(1f, 1f, 0f, 0.6f).normal(0, 1, 0);
+    }
+
+    public Color getSecondaryColor(@NotNull Color color) {
+        return new Color(color.getRed() / 2, color.getGreen() / 2, color.getBlue() / 2, 100);
     }
 }
