@@ -30,7 +30,7 @@ import static java.util.regex.Pattern.compile;
 public class JobListener extends PKUtilsBase
         implements ICommandSendListener, IMessageReceiveListener, IMoveListener, INaviSpotReachedListener {
 
-    private static final Pattern TRANSPORT_DELIVER_PATTERN = compile("^\\[Transport] Du hast (eine Kiste|eine Waffenkiste|ein Weizen Paket|eine Schwarzpulverkiste) abgeliefert\\.$");
+    private static final Pattern TRANSPORT_DELIVER_PATTERN = compile("^\\[Transport] Du hast (eine Holz Lieferung|eine Kiste|eine Waffenkiste|ein Weizen Paket|eine Schwarzpulverkiste) abgeliefert\\.$");
     private static final Pattern DRINK_TRANSPORT_DELIVER_PATTERN = compile("^\\[Bar] Du hast eine Flasche abgegeben!$");
     private static final Pattern PIZZA_JOB_TRANSPORT_GET_PIZZA_PATTERN = compile("^\\[Pizzalieferant] Sobald du 10 Pizzen dabei hast, wird dir deine erste Route angezeigt\\.$");
 
