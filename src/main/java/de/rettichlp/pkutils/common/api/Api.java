@@ -67,15 +67,15 @@ public class Api extends PKUtilsBase {
     }
 
     public void getUserInfo(String playerName, Consumer<GetUserInfoResponse> callback) {
-        get("/user/info?playerName=" + playerName, new TypeToken<GetUserInfoResponse>() {}, callback);
+        get("/user/info?playerName=" + playerName, new TypeToken<>() {}, callback);
     }
 
     public void getActivity(Instant from, Instant to, Consumer<List<ActivityEntry>> callback) {
-        get("/activity?from=" + from + "&to=" + to, new TypeToken<List<ActivityEntry>>() {}, callback);
+        get("/activity?from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
     }
 
     public void getActivityPlayer(Instant from, Instant to, String playerName, Consumer<List<ActivityEntry>> callback) {
-        get("/activity/player/" + playerName + "?from=" + from + "&to=" + to, new TypeToken<List<ActivityEntry>>() {}, callback);
+        get("/activity/player/" + playerName + "?from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
     }
 
     public void postActivityAdd(ActivityEntry.Type activityType) {
@@ -87,11 +87,11 @@ public class Api extends PKUtilsBase {
     }
 
     public void getEquip(Instant from, Instant to, Consumer<List<EquipEntry>> callback) {
-        get("/equip?from=" + from + "&to=" + to, new TypeToken<List<EquipEntry>>() {}, callback);
+        get("/equip?from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
     }
 
     public void getEquipPlayer(Instant from, Instant to, String playerName, Consumer<List<EquipEntry>> callback) {
-        get("/equip/" + playerName + "?from=" + from + "&to=" + to, new TypeToken<List<EquipEntry>>() {}, callback);
+        get("/equip/" + playerName + "?from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
     }
 
     public void postEquipAdd(EquipEntry.Type equipType) {
@@ -103,7 +103,7 @@ public class Api extends PKUtilsBase {
     }
 
     public void getFactions(Consumer<List<FactionEntry>> callback) {
-        get("/factions", new TypeToken<List<FactionEntry>>() {}, callback);
+        get("/factions", new TypeToken<>() {}, callback);
     }
 
     public void postFactions() {
@@ -111,11 +111,11 @@ public class Api extends PKUtilsBase {
     }
 
     public void getMinusPoints(Consumer<Integer> callback) {
-        get("/police/minuspoints", new TypeToken<Integer>() {}, callback);
+        get("/police/minuspoints", new TypeToken<>() {}, callback);
     }
 
     public void getMinusPointsPlayer(String playerName, Consumer<Integer> callback) {
-        get("/police/minuspoints/" + playerName, new TypeToken<Integer>() {}, callback);
+        get("/police/minuspoints/" + playerName, new TypeToken<>() {}, callback);
     }
 
     public void postMinusPointsModify(String playerName, int amount) {
@@ -127,7 +127,7 @@ public class Api extends PKUtilsBase {
     }
 
     public void getBlacklistReasonData(Consumer<Map<Faction, List<BlacklistReason>>> callback) {
-        get("https://gist.githubusercontent.com/rettichlp/54e97f4dbb3988bf22554c01d62af666/raw/pkutils-blacklistreasons.json", new TypeToken<Map<Faction, List<BlacklistReason>>>() {}, callback);
+        get("https://gist.githubusercontent.com/rettichlp/54e97f4dbb3988bf22554c01d62af666/raw/pkutils-blacklistreasons.json", new TypeToken<>() {}, callback);
     }
 
     private <T> void get(@NotNull String uri, TypeToken<T> typeToken, Consumer<T> callback) {
@@ -158,7 +158,7 @@ public class Api extends PKUtilsBase {
                         .map(tt -> this.gson.fromJson(response.body(), tt))
                         .orElse(null))
                 .thenAccept(responseObject -> {
-                    LOGGER.info("Successfully sent request [{}] {}", httpRequest.method(), httpRequest.uri().toString());
+                    LOGGER.info("Successfully sent API request [{}] {}", httpRequest.method(), httpRequest.uri().toString());
                     callback.accept(responseObject);
                 })
                 .exceptionally(throwable -> {
