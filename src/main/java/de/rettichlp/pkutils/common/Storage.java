@@ -76,6 +76,10 @@ public class Storage {
 
     @Getter
     @Setter
+    private int activeServices = 0;
+
+    @Getter
+    @Setter
     private boolean afk = false;
 
     @Getter
@@ -136,6 +140,8 @@ public class Storage {
         LOGGER.info("blackMarkets[{}]: {}", this.blackMarkets.size(), this.blackMarkets);
         // wantedEntries
         LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
+        // activeServices
+        LOGGER.info("activeServices: {}", this.activeServices);
         // currentJob
         LOGGER.info("currentJob: {}", this.currentJob);
         // minecartEntityToHighlight
