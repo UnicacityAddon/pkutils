@@ -2,6 +2,7 @@ package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
+import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IBlockRightClickListener;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -20,6 +21,7 @@ import static java.util.Collections.emptySet;
 import static net.minecraft.util.Hand.MAIN_HAND;
 import static net.minecraft.util.Hand.OFF_HAND;
 
+@PKUtilsListener
 public class FactionDoorListener extends PKUtilsBase implements IBlockRightClickListener {
 
     private static final Map<Faction, Set<BlockPos>> FACTION_DOOR_POSITIONS = Map.of(

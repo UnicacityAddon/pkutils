@@ -2,27 +2,6 @@ package de.rettichlp.pkutils.common.registry;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.command.ADropMoneyCommand;
-import de.rettichlp.pkutils.command.MiCommand;
-import de.rettichlp.pkutils.command.MiaCommand;
-import de.rettichlp.pkutils.command.ModCommand;
-import de.rettichlp.pkutils.command.ShutdownCommand;
-import de.rettichlp.pkutils.command.TodoCommand;
-import de.rettichlp.pkutils.command.chat.ToggleDChatCommand;
-import de.rettichlp.pkutils.command.chat.ToggleFChatCommand;
-import de.rettichlp.pkutils.command.chat.ToggleWChatCommand;
-import de.rettichlp.pkutils.command.faction.ASetBlacklistCommand;
-import de.rettichlp.pkutils.command.faction.ActivityCommand;
-import de.rettichlp.pkutils.command.faction.BlackMarketCommand;
-import de.rettichlp.pkutils.command.faction.EquippedCommand;
-import de.rettichlp.pkutils.command.faction.MinusPointsCommand;
-import de.rettichlp.pkutils.command.faction.PersonalUseCommand;
-import de.rettichlp.pkutils.command.faction.ScreenshotCommand;
-import de.rettichlp.pkutils.command.mobile.ACallCommand;
-import de.rettichlp.pkutils.command.mobile.ASMSCommand;
-import de.rettichlp.pkutils.command.mobile.ReplyCommand;
-import de.rettichlp.pkutils.command.money.DepositCommand;
-import de.rettichlp.pkutils.command.money.RichTaxesCommand;
 import de.rettichlp.pkutils.common.models.Sound;
 import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
 import de.rettichlp.pkutils.listener.IBlockRightClickListener;
@@ -38,24 +17,6 @@ import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
 import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import de.rettichlp.pkutils.listener.ITickListener;
 import de.rettichlp.pkutils.listener.callback.PlayerEnterVehicleCallback;
-import de.rettichlp.pkutils.listener.impl.CarListener;
-import de.rettichlp.pkutils.listener.impl.CommandListener;
-import de.rettichlp.pkutils.listener.impl.EconomyService;
-import de.rettichlp.pkutils.listener.impl.MobileListener;
-import de.rettichlp.pkutils.listener.impl.PlayerListener;
-import de.rettichlp.pkutils.listener.impl.RenderListener;
-import de.rettichlp.pkutils.listener.impl.SyncListener;
-import de.rettichlp.pkutils.listener.impl.faction.BlacklistListener;
-import de.rettichlp.pkutils.listener.impl.faction.BombListener;
-import de.rettichlp.pkutils.listener.impl.faction.ContractListener;
-import de.rettichlp.pkutils.listener.impl.faction.FactionDoorListener;
-import de.rettichlp.pkutils.listener.impl.faction.FactionListener;
-import de.rettichlp.pkutils.listener.impl.faction.MedicListener;
-import de.rettichlp.pkutils.listener.impl.faction.EmergencyServiceListener;
-import de.rettichlp.pkutils.listener.impl.faction.WantedListener;
-import de.rettichlp.pkutils.listener.impl.job.FisherListener;
-import de.rettichlp.pkutils.listener.impl.job.GarbageManListener;
-import de.rettichlp.pkutils.listener.impl.job.JobListener;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -70,7 +31,6 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Set;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.player;
@@ -82,55 +42,9 @@ import static net.minecraft.entity.effect.StatusEffects.ABSORPTION;
 import static net.minecraft.registry.Registries.SOUND_EVENT;
 import static net.minecraft.registry.Registry.register;
 import static net.minecraft.util.ActionResult.PASS;
+import static org.atteo.classindex.ClassIndex.getAnnotated;
 
 public class Registry {
-
-    private final Set<Class<?>> commands = Set.of(
-            ACallCommand.class,
-            ADropMoneyCommand.class,
-            ASMSCommand.class,
-            ASetBlacklistCommand.class,
-            ActivityCommand.class,
-            BlackMarketCommand.class,
-            DepositCommand.class,
-            EquippedCommand.class,
-            MiCommand.class,
-            MiaCommand.class,
-            MinusPointsCommand.class,
-            ModCommand.class,
-            PersonalUseCommand.class,
-            ReplyCommand.class,
-            RichTaxesCommand.class,
-            ScreenshotCommand.class,
-            ShutdownCommand.class,
-            TodoCommand.class,
-            ToggleDChatCommand.class,
-            ToggleFChatCommand.class,
-            ToggleWChatCommand.class
-    );
-
-    private final Set<Class<?>> listeners = Set.of(
-            BlacklistListener.class,
-            BombListener.class,
-            CarListener.class,
-            CommandListener.class,
-            ContractListener.class,
-            DepositCommand.class,
-            EconomyService.class,
-            FactionDoorListener.class,
-            FactionListener.class,
-            FisherListener.class,
-            GarbageManListener.class,
-            JobListener.class,
-            MedicListener.class,
-            MobileListener.class,
-            PersonalUseCommand.class,
-            PlayerListener.class,
-            RenderListener.class,
-            EmergencyServiceListener.class,
-            SyncListener.class,
-            WantedListener.class
-    );
 
     private BlockPos lastPlayerPos = null;
     private boolean lastAbsorptionState = false;
@@ -143,7 +57,7 @@ public class Registry {
     }
 
     public void registerCommands(@NotNull CommandDispatcher<FabricClientCommandSource> dispatcher) {
-        for (Class<?> commandClass : this.commands /*ClassIndex.getAnnotated(PKUtilsCommand.class)*/) {
+        for (Class<?> commandClass : getAnnotated(PKUtilsCommand.class)) {
             try {
                 PKUtilsCommand annotation = commandClass.getAnnotation(PKUtilsCommand.class);
                 String label = annotation.label();
@@ -171,7 +85,7 @@ public class Registry {
             return;
         }
 
-        for (Class<?> listenerClass : this.listeners /*ClassIndex.getAnnotated(PKUtilsListener.class)*/) {
+        for (Class<?> listenerClass : getAnnotated(PKUtilsListener.class)) {
             try {
                 PKUtilsBase listenerInstance = (PKUtilsBase) listenerClass.getConstructor().newInstance();
 

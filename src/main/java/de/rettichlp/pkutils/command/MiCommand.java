@@ -27,11 +27,8 @@ public class MiCommand extends CommandBase {
                                 .map(Faction::getDisplayName), builder))
                         .executes(context -> {
                             String input = getString(context, "faction");
-                            fromDisplayName(input).ifPresentOrElse(faction -> {
-                                sendCommand("memberinfo " + faction.getMemberInfoCommandName());
-                            }, () -> {
-                                sendModMessage("Die Fraktion " + input + " konnte nicht gefunden werden.", false);
-                            });
+                            fromDisplayName(input).ifPresentOrElse(faction -> sendCommand("memberinfo " + faction.getMemberInfoCommandName()),
+                                    () -> sendModMessage("Die Fraktion " + input + " konnte nicht gefunden werden.", false));
 
                             return 1;
                         })

@@ -7,6 +7,7 @@ import net.minecraft.text.Text;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
@@ -28,7 +29,9 @@ public class Countdown extends PKUtilsBase {
         this.title = title;
         this.duration = duration;
 
-        newSingleThreadScheduledExecutor().schedule(runAfter, this.duration.toMillis(), MILLISECONDS);
+        try (ScheduledExecutorService scheduledExecutorService = newSingleThreadScheduledExecutor()) {
+            scheduledExecutorService.schedule(runAfter, this.duration.toMillis(), MILLISECONDS);
+        }
     }
 
     public boolean isActive() {
