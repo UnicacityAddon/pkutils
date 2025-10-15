@@ -2,6 +2,7 @@ package de.rettichlp.pkutils.listener.impl;
 
 import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
+import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.ITickListener;
@@ -29,6 +30,7 @@ import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.RED;
 
+@PKUtilsListener
 public class PlayerListener extends PKUtilsBase implements IAbsorptionGetListener, IMessageReceiveListener, ITickListener {
 
     private static final String SHUTDOWN_TIMEOUT = "5";

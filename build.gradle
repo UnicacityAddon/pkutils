@@ -39,6 +39,11 @@ dependencies {
 
     testCompileOnly("org.projectlombok:lombok:1.18.42")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
+
+    // https://github.com/atteo/classindex
+    include("org.atteo.classindex:classindex:3.13")
+    implementation("org.atteo.classindex:classindex:3.13")
+    annotationProcessor('org.atteo.classindex:classindex:3.13')
 }
 
 processResources {
