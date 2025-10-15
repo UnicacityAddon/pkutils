@@ -4,10 +4,8 @@ import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
-import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
@@ -28,10 +26,11 @@ import static java.util.Collections.singletonList;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class MedicListener extends PKUtilsBase implements ICommandSendListener, IMessageReceiveListener {
+public class MedicListener extends PKUtilsBase implements IMessageReceiveListener {
 
     private static final Pattern MEDIC_BANDAGE_PATTERN = compile("^(?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat dich bandagiert\\.$");
     private static final Pattern MEDIC_PILL_PATTERN = compile("^\\[Medic] Doktor (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat dir Schmerzpillen verabreicht\\.$");
+    private static final Pattern MEDIC_REVIVE_START = compile("^Du beginnst mit der Wiederbelebung\\.$");
     private static final Pattern HOUSEBAN_HEADER_PATTERN = compile("^Hausverbote \\(Rettungsdienst\\):$");
     private static final Pattern HOUSEBAN_ENTRY_PATTERN = compile("^§[aec4](?<playerName>[a-zA-Z0-9_]+) \\| (?<issuerPlayerName>[a-zA-Z0-9_]+) \\| (?<reasons>.+) \\| (?<expireDateDay>\\d+)\\.(?<expireDateMonth>\\d+)\\.(?<expireDateYear>\\d+) (?<expireTimeHour>\\d+):(?<expireTimeMinute>\\d+) §8\\[§4Entfernen§8]$");
     private static final Pattern HOUSEBAN_ADD_PATTERN = compile("^(?<issuerPlayerName>[a-zA-Z0-9_]+) hat (?<playerName>[a-zA-Z0-9_]+) ein Hausverbot erteilt\\. \\((?<reason>.+) \\| Ende: (?<expireDateDay>\\d+)\\.(?<expireDateMonth>\\d+)\\.(?<expireDateYear>\\d+) (?<expireTimeHour>\\d+):(?<expireTimeMinute>\\d+)\\)$");
@@ -39,15 +38,6 @@ public class MedicListener extends PKUtilsBase implements ICommandSendListener, 
 
     private LocalDateTime lastReviveStartetAt = MIN;
     private long activeCheck = 0;
-
-    @Override
-    public boolean onCommandSend(@NotNull String command) {
-        if (command.startsWith("revive")) {
-            this.lastReviveStartetAt = now();
-        }
-
-        return true;
-    }
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
@@ -61,6 +51,12 @@ public class MedicListener extends PKUtilsBase implements ICommandSendListener, 
         if (medicPillMatcher.find()) {
             storage.getCountdowns().add(new Countdown("Schmerzpille", ofMinutes(2)));
             return true;
+        }
+
+        Matcher medicReviveStartMatcher = MEDIC_REVIVE_START.matcher(message);
+        if (medicReviveStartMatcher.find()) {
+            this.lastReviveStartetAt = now();
+            delayedAction(() -> sendCommand("dinfo"), 1000);
         }
 
         Matcher housebanHeaderMatcher = HOUSEBAN_HEADER_PATTERN.matcher(message);
