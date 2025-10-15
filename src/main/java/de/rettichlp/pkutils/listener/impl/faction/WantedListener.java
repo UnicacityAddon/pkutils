@@ -52,6 +52,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
     private static final Pattern LICENSE_GUN_TAKE_PATTERN = compile("^(Agent|Agentin|Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+)(?:'s)* Waffenschein abgenommen\\.$");
     private static final Pattern TAKE_GUNS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Waffen abgenommen\\.$");
     private static final Pattern TAKE_DRUGS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Drogen abgenommen.$");
+    private static final Pattern CAR_CHECK_PATTERN = compile("^Das Fahrzeug mit dem Kennzeichen [A-Z0-9-]+ gehört (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+)\\.$");
     private static final Pattern CAR_PARKTICKET_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel an das Fahrzeug \\[[A-Z0-9-]+] vergeben\\.$");
     private static final Pattern CAR_PARKTICKET_REMOVE_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel von dem Fahrzeug \\[(?<plate>[A-Z0-9-]+)] entfernt\\.$");
     private static final Pattern SEARCH_TRUNK_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat den Kofferraum vom Fahrzeug (?<plate>.+) durchsucht, over\\.$");
@@ -196,6 +197,12 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
             }
 
             return false;
+        }
+
+        Matcher carCheckMatcher = CAR_CHECK_PATTERN.matcher(message);
+        if (carCheckMatcher.find()) {
+            String playerName = carCheckMatcher.group("playerName");
+            delayedAction(() -> sendCommand("memberinfo " + playerName), 1000);
         }
 
         Matcher carParkticketMatcher = CAR_PARKTICKET_PATTERN.matcher(message);
