@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.common.models;
 
-import de.rettichlp.pkutils.common.gui.overlay.TextOverlay;
+import de.rettichlp.pkutils.common.gui.overlay.ProgressTextOverlay;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.text.Text;
@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.ScheduledExecutorService;
 
+import static de.rettichlp.pkutils.common.gui.overlay.ProgressTextOverlay.calculateProgress;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
@@ -42,7 +43,7 @@ public class Countdown extends PKUtilsBase {
         return between(now(), this.startTime.plus(this.duration));
     }
 
-    public TextOverlay toTextWidget() {
+    public ProgressTextOverlay toTextWidget() {
         String millisToFriendlyString = millisToFriendlyString(getRemainingDuration().toMillis());
 
         Text text = empty()
@@ -50,8 +51,9 @@ public class Countdown extends PKUtilsBase {
                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                 .append(of(millisToFriendlyString));
 
-        return TextOverlay.builder()
+        return ProgressTextOverlay.builder()
                 .textSupplier(() -> text)
+                .progress(calculateProgress(this.startTime, this.duration))
                 .build();
     }
 }
