@@ -6,6 +6,7 @@ import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
@@ -68,19 +69,7 @@ public class MedicListener extends PKUtilsBase implements IMessageReceiveListene
 
         Matcher housebanEntryMatcher = HOUSEBAN_ENTRY_PATTERN.matcher(message);
         if (housebanEntryMatcher.find() && currentTimeMillis() - this.activeCheck < 100) {
-            String playerName = housebanEntryMatcher.group("playerName");
-            String issuerPlayerName = housebanEntryMatcher.group("issuerPlayerName");
-            String reasonsRaw = housebanEntryMatcher.group("reasons");
-            int expireDateDay = parseInt(housebanEntryMatcher.group("expireDateDay"));
-            int expireDateMonth = parseInt(housebanEntryMatcher.group("expireDateMonth"));
-            int expireDateYear = parseInt(housebanEntryMatcher.group("expireDateYear"));
-            int expireTimeHour = parseInt(housebanEntryMatcher.group("expireTimeHour"));
-            int expireTimeMinute = parseInt(housebanEntryMatcher.group("expireTimeMinute"));
-
-            String[] reasons = reasonsRaw.split(" \\+ ");
-
-            LocalDateTime unbanDateTime = LocalDateTime.of(expireDateYear, expireDateMonth, expireDateDay, expireTimeHour, expireTimeMinute);
-            HousebanEntry housebanEntry = new HousebanEntry(playerName, issuerPlayerName, asList(reasons), unbanDateTime);
+            HousebanEntry housebanEntry = getHousebanEntry(housebanEntryMatcher);
             storage.getHousebanEntries().add(housebanEntry);
             return !syncService.isGameSyncProcessActive();
         }
@@ -114,5 +103,21 @@ public class MedicListener extends PKUtilsBase implements IMessageReceiveListene
         }
 
         return true;
+    }
+
+    private @NotNull HousebanEntry getHousebanEntry(@NotNull Matcher housebanEntryMatcher) {
+        String playerName = housebanEntryMatcher.group("playerName");
+        String issuerPlayerName = housebanEntryMatcher.group("issuerPlayerName");
+        String reasonsRaw = housebanEntryMatcher.group("reasons");
+        int expireDateDay = parseInt(housebanEntryMatcher.group("expireDateDay"));
+        int expireDateMonth = parseInt(housebanEntryMatcher.group("expireDateMonth"));
+        int expireDateYear = parseInt(housebanEntryMatcher.group("expireDateYear"));
+        int expireTimeHour = parseInt(housebanEntryMatcher.group("expireTimeHour"));
+        int expireTimeMinute = parseInt(housebanEntryMatcher.group("expireTimeMinute"));
+
+        String[] reasons = reasonsRaw.split(" \\+ ");
+
+        LocalDateTime unbanDateTime = LocalDateTime.of(expireDateYear, expireDateMonth, expireDateDay, expireTimeHour, expireTimeMinute);
+        return new HousebanEntry(playerName, issuerPlayerName, asList(reasons), unbanDateTime);
     }
 }

@@ -61,14 +61,14 @@ public class Api {
     @Getter
     private final String baseUrl = "https://pkutils.rettichlp.de/v1"; // http://localhost:6010/pkutils/v1
 
-    public CompletableFuture<Void> registerUser(String version) {
+    public void registerUser(String version) {
         Request<UserRegisterRequest> request = Request.<UserRegisterRequest>builder()
                 .method("POST")
                 .requestData(new UserRegisterRequest())
                 .headers(Map.of("X-PKU-Version", version))
                 .build();
 
-        return request.send().thenAccept(httpResponse -> {
+        request.send().thenAccept(httpResponse -> {
             validate(httpResponse);
             LOGGER.info("User successfully registered on PKUtils API");
         }).exceptionally(throwable -> {

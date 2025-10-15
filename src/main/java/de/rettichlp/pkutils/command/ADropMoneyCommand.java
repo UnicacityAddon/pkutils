@@ -36,22 +36,27 @@ public class ADropMoneyCommand extends CommandBase {
                         return 1;
                     }
 
-                    ReadableScoreboardScore readableScoreboardScore = optionalReadableScoreboardScore.get();
-                    int moneyToDrop = readableScoreboardScore.getScore();
-
-                    List<String> scheduledCommands = new ArrayList<>();
-
-                    while (moneyToDrop > 0) {
-                        int moneyCanDrop = min(moneyToDrop, configuration.getMoneyBankAmount());
-                        scheduledCommands.add("bank abbuchen " + moneyCanDrop);
-                        scheduledCommands.add("dropmoney");
-                        scheduledCommands.add("bank einzahlen " + moneyCanDrop);
-                        moneyToDrop -= moneyCanDrop;
-                    }
+                    List<String> scheduledCommands = getScheduledCommands(optionalReadableScoreboardScore);
 
                     sendCommands(scheduledCommands);
 
                     return 1;
                 });
+    }
+
+    private @NotNull List<String> getScheduledCommands(@NotNull Optional<ReadableScoreboardScore> optionalReadableScoreboardScore) {
+        ReadableScoreboardScore readableScoreboardScore = optionalReadableScoreboardScore.get();
+        int moneyToDrop = readableScoreboardScore.getScore();
+
+        List<String> scheduledCommands = new ArrayList<>();
+
+        while (moneyToDrop > 0) {
+            int moneyCanDrop = min(moneyToDrop, configuration.getMoneyBankAmount());
+            scheduledCommands.add("bank abbuchen " + moneyCanDrop);
+            scheduledCommands.add("dropmoney");
+            scheduledCommands.add("bank einzahlen " + moneyCanDrop);
+            moneyToDrop -= moneyCanDrop;
+        }
+        return scheduledCommands;
     }
 }

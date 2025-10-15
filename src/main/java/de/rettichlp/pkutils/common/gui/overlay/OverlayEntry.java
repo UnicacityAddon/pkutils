@@ -87,6 +87,6 @@ public abstract class OverlayEntry {
 
         LEFT,
         CENTER,
-        RIGHT;
+        RIGHT
     }
 }

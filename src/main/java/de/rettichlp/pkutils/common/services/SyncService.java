@@ -99,11 +99,8 @@ public class SyncService extends PKUtilsBase {
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
         sendCommand("nummer " + playerName);
 
-        delayedAction(() -> {
-            ofNullable(storage.getRetrievedNumbers().get(playerName)).ifPresentOrElse(runWithNumber, () -> {
-                sendModMessage("Die Nummer von " + playerName + " konnte nicht abgerufen werden.", false);
-            });
-        }, 1000);
+        delayedAction(() -> ofNullable(storage.getRetrievedNumbers().get(playerName))
+                .ifPresentOrElse(runWithNumber, () -> sendModMessage("Die Nummer von " + playerName + " konnte nicht abgerufen werden.", false)), 1000);
     }
 
     @Contract("_ -> new")

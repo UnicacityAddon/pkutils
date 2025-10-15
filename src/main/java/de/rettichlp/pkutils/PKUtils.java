@@ -35,13 +35,13 @@ public class PKUtils extends PKUtilsBase implements ModInitializer {
     public static final Storage storage = new Storage();
     public static final Configuration configuration = new Configuration().loadFromFile();
 
+    public static final FactionService factionService = new FactionService();
+    public static final NotificationService notificationService = new NotificationService();
+    public static final RenderService renderService = new RenderService();
+    public static final SyncService syncService = new SyncService();
+
     public static ClientPlayerEntity player;
     public static ClientPlayNetworkHandler networkHandler;
-
-    public static FactionService factionService = new FactionService();
-    public static NotificationService notificationService = new NotificationService();
-    public static RenderService renderService = new RenderService();
-    public static SyncService syncService = new SyncService();
 
     private final Registry registry = new Registry();
 
@@ -67,9 +67,7 @@ public class PKUtils extends PKUtilsBase implements ModInitializer {
             client.execute(this.registry::registerListeners);
         });
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-            this.registry.registerCommands(dispatcher);
-        });
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> this.registry.registerCommands(dispatcher));
 
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> configuration.saveToFile());
     }
