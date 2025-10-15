@@ -143,14 +143,6 @@ public class Storage {
         LOGGER.info("toggledChat: {}", this.toggledChat);
     }
 
-    public Set<FactionMember> getFactionEntries(Faction faction) {
-        return this.factionEntries.stream()
-                .filter(factionEntry -> factionEntry.faction() == faction)
-                .findFirst()
-                .map(FactionEntry::members)
-                .orElse(emptySet());
-    }
-
     public Faction getFaction(String playerName) {
         return this.factionEntries.stream()
                 .filter(factionEntry -> factionEntry.members().stream()
