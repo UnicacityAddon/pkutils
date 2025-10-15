@@ -68,7 +68,7 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
     @Unique
     private MutableText getFormattedTargetDisplayName(@NotNull Text targetDisplayName, String targetName) {
         NameTagOptions nameTagOptions = configuration.getOptions().nameTag();
-        Faction targetFaction = storage.getFaction(targetName);
+        Faction targetFaction = storage.getCachedFaction(targetName);
 
         Text newTargetDisplayNamePrefix = empty();
         Text newTargetDisplayName = targetDisplayName.copy();

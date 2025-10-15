@@ -41,7 +41,8 @@ public class SyncService extends PKUtilsBase {
     private boolean gameSyncProcessActive = false;
 
     public void syncFactionMembersWithApi() {
-        api.getFactionEntries().thenAccept(factionEntries -> {
+        api.getFactions(factionEntries -> {
+            storage.getPlayerFactionCache().clear();
             storage.getFactionEntries().clear();
             storage.getFactionEntries().addAll(factionEntries);
             LOGGER.info("Faction members synced with API");
@@ -59,14 +60,14 @@ public class SyncService extends PKUtilsBase {
             delayedAction(commandResponseRetriever::execute, i * 1000L);
         }
 
-        delayedAction(api::postFactionEntries, commandResponseRetrievers.size() * 1000L + 1200);
+        delayedAction(api::postFactions, commandResponseRetrievers.size() * 1000L + 1200);
     }
 
     public void syncBlacklistReasonsFromApi() {
-        api.getBlacklistReasonData().thenAccept(factionListMap -> {
+        api.getBlacklistReasonData(factionListMap -> {
             storage.getBlacklistReasons().clear();
             storage.getBlacklistReasons().putAll(factionListMap);
-        }).thenAccept(unused -> LOGGER.info("Blacklist reason data synced"));
+        });
     }
 
     public void syncFactionSpecificData() {
