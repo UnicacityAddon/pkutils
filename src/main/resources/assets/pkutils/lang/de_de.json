@@ -51,6 +51,8 @@
     "pkutils.options.overlay.datetime.description": "Zeigt das aktuelle Datum und die aktuelle Uhrzeit",
     "pkutils.options.overlay.money.name": "Geld",
     "pkutils.options.overlay.money.description": "Zeigt das Bargeld und Geld auf der Bank an",
+    "pkutils.options.overlay.service_count.name": "Notrufe",
+    "pkutils.options.overlay.service_count.description": "Zeigt an wie viele Notrufe gerade offen sind",
     "pkutils.options.overlay.payday.name": "PayDay",
     "pkutils.options.overlay.payday.description": "Zeigt Informationen über den PayDay an",
     "pkutils.options.overlay.payday.salary.name": "Gehalt",

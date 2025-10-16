@@ -19,12 +19,13 @@ import static net.minecraft.text.Text.translatable;
 public class OverlayOptions {
 
     private boolean dateTime = true;
+    private boolean money = true;
+    private boolean serviceCount = true;
     private boolean payDay = true;
     private boolean payDaySalary = true;
     private boolean payDayExperience = true;
     private boolean carLocked = true;
     private CarLockedStyle carLockedStyle = DEFAULT;
-    private boolean money = true;
 
     @Getter
     @AllArgsConstructor

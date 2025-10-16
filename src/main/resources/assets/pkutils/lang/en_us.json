@@ -51,6 +51,8 @@
     "pkutils.options.overlay.datetime.description": "Shows the current date and time",
     "pkutils.options.overlay.money.name": "Money",
     "pkutils.options.overlay.money.description": "Shows your current money on the hand and in the bank",
+    "pkutils.options.overlay.service_count.name": "Service count",
+    "pkutils.options.overlay.service_count.description": "Shows the number of active services",
     "pkutils.options.overlay.payday.name": "PayDay",
     "pkutils.options.overlay.payday.description": "Shows information about the next PayDay",
     "pkutils.options.overlay.payday.salary.name": "Salary",

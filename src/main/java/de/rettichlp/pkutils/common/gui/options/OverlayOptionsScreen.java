@@ -29,21 +29,24 @@ public class OverlayOptionsScreen extends OptionsScreen {
         addToggleButton(directionalLayoutWidget1, "pkutils.options.overlay.datetime", (options, value) -> options.overlay().dateTime(value), options -> options.overlay().dateTime(), 150);
         addToggleButton(directionalLayoutWidget1, "pkutils.options.overlay.money", (options, value) -> options.overlay().money(value), options -> options.overlay().money(), 150);
 
+        DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(horizontal().spacing(8));
+        addToggleButton(directionalLayoutWidget2, "pkutils.options.overlay.service_count", (options, value) -> options.overlay().serviceCount(value), options -> options.overlay().serviceCount(), 150);
+
         // payday
         directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.payday"), this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
 
         addToggleButton(directionalLayoutWidget, "pkutils.options.overlay.payday", (options, value) -> options.overlay().payDay(value), options -> options.overlay().payDay(), 308);
 
-        DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(horizontal().spacing(8));
-        addToggleButton(directionalLayoutWidget2, "pkutils.options.overlay.payday.salary", (options, value) -> options.overlay().payDaySalary(value), options -> options.overlay().payDaySalary(), 150);
-        addToggleButton(directionalLayoutWidget2, "pkutils.options.overlay.payday.experience", (options, value) -> options.overlay().payDayExperience(value), options -> options.overlay().payDayExperience(), 150);
+        DirectionalLayoutWidget directionalLayoutWidget3 = directionalLayoutWidget.add(horizontal().spacing(8));
+        addToggleButton(directionalLayoutWidget3, "pkutils.options.overlay.payday.salary", (options, value) -> options.overlay().payDaySalary(value), options -> options.overlay().payDaySalary(), 150);
+        addToggleButton(directionalLayoutWidget3, "pkutils.options.overlay.payday.experience", (options, value) -> options.overlay().payDayExperience(value), options -> options.overlay().payDayExperience(), 150);
 
         // car
         directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.car"), this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
 
-        DirectionalLayoutWidget directionalLayoutWidget3 = directionalLayoutWidget.add(horizontal().spacing(8));
-        addToggleButton(directionalLayoutWidget3, "pkutils.options.overlay.car.locked", (options, value) -> options.overlay().carLocked(value), options -> options.nameTag().factionInformation(), 150);
-        addCyclingButton(directionalLayoutWidget3, "pkutils.options.overlay.car.locked.style.name", OverlayOptions.CarLockedStyle.values(), OverlayOptions.CarLockedStyle::getDisplayName, (options, carLockedStyle) -> options.overlay().carLockedStyle(carLockedStyle), options -> options.overlay().carLockedStyle(), 150);
+        DirectionalLayoutWidget directionalLayoutWidget4 = directionalLayoutWidget.add(horizontal().spacing(8));
+        addToggleButton(directionalLayoutWidget4, "pkutils.options.overlay.car.locked", (options, value) -> options.overlay().carLocked(value), options -> options.nameTag().factionInformation(), 150);
+        addCyclingButton(directionalLayoutWidget4, "pkutils.options.overlay.car.locked.style.name", OverlayOptions.CarLockedStyle.values(), OverlayOptions.CarLockedStyle::getDisplayName, (options, carLockedStyle) -> options.overlay().carLockedStyle(carLockedStyle), options -> options.overlay().carLockedStyle(), 150);
 
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
     }
