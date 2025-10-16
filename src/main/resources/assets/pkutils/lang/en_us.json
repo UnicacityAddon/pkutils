@@ -23,6 +23,8 @@
     "pkutils.options.text.payday": "PayDay",
     "pkutils.options.text.options": "Options",
     "pkutils.options.car.title": "Car",
+    "pkutils.options.car.fast_find.name": "Fast find",
+    "pkutils.options.car.fast_find.description": "Finds your car immediately when execution '/car find'",
     "pkutils.options.car.fast_lock.name": "Fast lock",
     "pkutils.options.car.fast_lock.description": "Locks the car immediately when execution '/car lock'",
     "pkutils.options.car.highlight.name": "Highlight",
