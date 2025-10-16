@@ -7,7 +7,6 @@ import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,6 +34,9 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.regex.Pattern.compile;
+import static net.minecraft.text.Text.empty;
+import static net.minecraft.text.Text.of;
+import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.GREEN;
 import static net.minecraft.util.Formatting.RED;
@@ -118,11 +120,12 @@ public class SyncService extends PKUtilsBase {
 
             String currentVersion = getVersion();
             if (nonNull(latestVersion) && !currentVersion.equals(latestVersion)) {
-                notificationService.sendNotification(() -> Text.empty()
-                        .append(Text.of("Neue PKUtils Version verfügbar:").copy().formatted(GRAY)).append(" ")
-                        .append(Text.of(currentVersion).copy().formatted(RED)).append(" ")
-                        .append(Text.of("→").copy().formatted(GRAY)).append(" ")
-                        .append(Text.of(latestVersion).copy().formatted(GREEN)), MAGENTA, MINUTES.toMillis(5));
+                notificationService.sendNotification(() -> empty()
+                        .append(of("Neue PKUtils Version verfügbar").copy().formatted(GRAY))
+                        .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                        .append(of(currentVersion).copy().formatted(RED)).append(" ")
+                        .append(of("→").copy().formatted(GRAY)).append(" ")
+                        .append(of(latestVersion).copy().formatted(GREEN)), MAGENTA, MINUTES.toMillis(5));
             }
         });
     }
