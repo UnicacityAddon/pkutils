@@ -58,6 +58,8 @@ public class SyncService extends PKUtilsBase {
     }
 
     public void syncFactionMembersWithCommandResponse() {
+        storage.getPlayerFactionCache().clear();
+
         List<CommandResponseRetriever> commandResponseRetrievers = stream(Faction.values())
                 .filter(faction -> faction != NULL)
                 .map(this::syncFactionMembersWithCommandResponse)
