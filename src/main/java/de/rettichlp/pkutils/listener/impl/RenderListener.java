@@ -16,10 +16,12 @@ import net.minecraft.text.Text;
 
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
+import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.TOP_LEFT;
 import static de.rettichlp.pkutils.common.gui.overlay.OverlayEntry.DrawPosition.TOP_RIGHT;
 import static de.rettichlp.pkutils.common.models.config.OverlayOptions.CarLockedStyle.MINIMALISTIC;
+import static java.awt.Color.RED;
 import static java.lang.String.valueOf;
 import static java.time.LocalDateTime.now;
 import static net.minecraft.text.Text.empty;
@@ -82,8 +84,16 @@ public class RenderListener extends PKUtilsBase implements IHudRenderListener {
             alignHorizontalOverlay1.add(getMoneyTextOverlay());
         }
 
+        // third row
+        AlignHorizontalOverlay alignHorizontalOverlay2 = new AlignHorizontalOverlay();
+
+        if (overlayOptions.serviceCount() && storage.getActiveServices() > 0) {
+            alignHorizontalOverlay2.add(getServiceCountTextOverlay());
+        }
+
         this.statsOverlay.add(alignHorizontalOverlay.disableMargin());
         this.statsOverlay.add(alignHorizontalOverlay1.disableMargin());
+        this.statsOverlay.add(alignHorizontalOverlay2.disableMargin());
         this.statsOverlay.draw(drawContext, TOP_LEFT);
     }
 
@@ -148,6 +158,19 @@ public class RenderListener extends PKUtilsBase implements IHudRenderListener {
 
         return TextOverlay.builder()
                 .textSupplier(() -> moneyInfoText)
+                .build();
+    }
+
+    private TextOverlay getServiceCountTextOverlay() {
+        MutableText serviceCountText = empty()
+                .append(of("Services").copy().formatted(GRAY))
+                .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                .append(of(valueOf(storage.getActiveServices())));
+
+        return TextOverlay.builder()
+                .textSupplier(() -> serviceCountText)
+                .backgroundColor(renderService.getSecondaryColor(RED))
+                .borderColor(RED)
                 .build();
     }
 }

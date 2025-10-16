@@ -16,10 +16,12 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static de.rettichlp.pkutils.PKUtils.renderService;
 import static java.awt.Color.CYAN;
 import static java.awt.Color.GREEN;
 import static java.awt.Color.ORANGE;
 import static java.awt.Color.RED;
+import static java.awt.Color.WHITE;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.hash;
 import static java.util.Objects.nonNull;
@@ -53,7 +55,7 @@ public class NotificationService extends PKUtilsBase {
     public void sendNotification(@NotNull Supplier<Text> messageSupplier, Color color, long durationInMillis) {
         Notification notification = new Notification(messageSupplier, durationInMillis);
         notification.setBorderColor(color);
-        notification.setBackgroundColor(new Color(color.getRed() / 2, color.getGreen() / 2, color.getBlue() / 2, 100));
+        notification.setBackgroundColor(renderService.getSecondaryColor(color));
         this.notifications.add(notification);
     }
 
@@ -71,8 +73,8 @@ public class NotificationService extends PKUtilsBase {
         private final Supplier<Text> textSupplier;
         private final long durationInMillis;
         private final LocalDateTime timestamp = now();
-        private Color borderColor = new Color(255, 255, 255, 255);
-        private Color backgroundColor = new Color(127, 127, 127, 100);
+        private Color borderColor = WHITE;
+        private Color backgroundColor = renderService.getSecondaryColor(WHITE);
 
         @Override
         public int hashCode() {

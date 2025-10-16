@@ -39,13 +39,16 @@ public class Storage {
     private final List<ShutdownReason> activeShutdowns = new ArrayList<>();
 
     @Getter
-    private final List<CommandResponseRetriever> commandResponseRetrievers = new ArrayList<>();
-
-    @Getter
     private final List<BlacklistEntry> blacklistEntries = new ArrayList<>();
 
     @Getter
+    private final List<BlackMarket> blackMarkets = new ArrayList<>();
+
+    @Getter
     private final Map<Faction, List<BlacklistReason>> blacklistReasons = new HashMap<>();
+
+    @Getter
+    private final List<CommandResponseRetriever> commandResponseRetrievers = new ArrayList<>();
 
     @Getter
     private final List<ContractEntry> contractEntries = new ArrayList<>();
@@ -69,10 +72,11 @@ public class Storage {
     private final Map<String, Integer> retrievedNumbers = new HashMap<>();
 
     @Getter
-    private final List<BlackMarket> blackMarkets = new ArrayList<>();
+    private final List<WantedEntry> wantedEntries = new ArrayList<>();
 
     @Getter
-    private final List<WantedEntry> wantedEntries = new ArrayList<>();
+    @Setter
+    private int activeServices = 0;
 
     @Getter
     @Setter
@@ -114,16 +118,22 @@ public class Storage {
     }
 
     public void print() {
-        // factionEntries
-        this.factionEntries.forEach(factionEntry -> LOGGER.info("factionEntries[{}:{}]: {}", factionEntry.faction(), factionEntry.members().size(), factionEntry.members()));
+        //activeShutdowns
+        LOGGER.info("activeShutdowns[{}]: {}", this.activeShutdowns.size(), this.activeShutdowns);
         // blacklistEntries
         LOGGER.info("blacklistEntries[{}]: {}", this.blacklistEntries.size(), this.blacklistEntries);
+        // blackMarkets
+        LOGGER.info("blackMarkets[{}]: {}", this.blackMarkets.size(), this.blackMarkets);
         // blacklistReasons
         this.blacklistReasons.forEach((faction, blacklistReasons) -> LOGGER.info("blacklistReasons[{}:{}]: {}", faction, blacklistReasons.size(), blacklistReasons));
+        // commandResponseRetrievers
+        LOGGER.info("commandResponseRetrievers[{}]: {}", this.commandResponseRetrievers.size(), this.commandResponseRetrievers);
         // contractEntries
         LOGGER.info("contractEntries[{}]: {}", this.contractEntries.size(), this.contractEntries);
         // countdowns
         LOGGER.info("countdowns[{}]: {}", this.countdowns.size(), this.countdowns);
+        // factionEntries
+        this.factionEntries.forEach(factionEntry -> LOGGER.info("factionEntries[{}:{}]: {}", factionEntry.faction(), factionEntry.members().size(), factionEntry.members()));
         // housebanEntries
         LOGGER.info("housebanEntries[{}]: {}", this.housebanEntries.size(), this.housebanEntries);
         // playerFactionCache
@@ -132,12 +142,18 @@ public class Storage {
         LOGGER.info("reinforcements[{}]: {}", this.reinforcements.size(), this.reinforcements);
         // retrievedNumbers
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
-        // visitedBlackMarkets
-        LOGGER.info("blackMarkets[{}]: {}", this.blackMarkets.size(), this.blackMarkets);
         // wantedEntries
         LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
+        // activeServices
+        LOGGER.info("activeServices: {}", this.activeServices);
+        // afk
+        LOGGER.info("afk: {}", this.afk);
+        // carLocked
+        LOGGER.info("carLocked: {}", this.carLocked);
         // currentJob
         LOGGER.info("currentJob: {}", this.currentJob);
+        // lastReceivedSmsNumber
+        LOGGER.info("lastReceivedSmsNumber: {}", this.lastReceivedSmsNumber);
         // minecartEntityToHighlight
         LOGGER.info("minecartEntityToHighlight: {}", this.minecartEntityToHighlight);
         // moneyAtmAmount

@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_MARGIN;
 import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_PADDING;
+import static java.awt.Color.WHITE;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.time.Duration.between;
@@ -25,10 +26,10 @@ public class ProgressTextOverlay extends OverlayEntry {
     private double progress;
 
     @Builder.Default
-    private Color backgroundColor = new Color(127, 127, 127, 100);
+    private Color backgroundColor = renderService.getSecondaryColor(WHITE);
 
     @Builder.Default
-    private Color borderColor = new Color(255, 255, 255, 255);
+    private Color borderColor = WHITE;
 
     @Override
     public int getWidth() {
