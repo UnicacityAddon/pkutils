@@ -6,7 +6,6 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
-import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.util.function.Supplier;
 
@@ -49,8 +48,13 @@ public class ProgressTextOverlay extends OverlayEntry {
 
         drawContext.fill(innerX, innerY, innerX + getContentWidth(), innerY + getContentHeight(), this.backgroundColor.getRGB());
         drawContext.drawBorder(innerX, innerY, getContentWidth(), getContentHeight(), this.borderColor.getRGB());
-        drawContext.drawHorizontalLine(innerX + 2, (int) (innerX + ((getContentWidth() - 4) * this.progress)), innerY + getContentHeight() - 3, this.borderColor.getRGB());
-        drawContext.drawTextWithShadow(this.textRenderer, this.textSupplier.get(), innerX + TEXT_BOX_PADDING, innerY + TEXT_BOX_PADDING, 0xFFFFFF);
+        drawContext.drawText(this.textRenderer, this.textSupplier.get(), innerX + TEXT_BOX_PADDING, innerY + TEXT_BOX_PADDING, 0xFFFFFF, false);
+
+        int maxProgressWidth = getContentWidth() - TEXT_BOX_PADDING * 2;
+        int xProgressStart = (int) (innerX + TEXT_BOX_PADDING + maxProgressWidth * this.progress);
+        int xProgressEnd = innerX + getContentWidth() - TEXT_BOX_PADDING;
+
+        drawContext.drawHorizontalLine(xProgressStart, xProgressEnd, innerY + getContentHeight() - 3, this.borderColor.getRGB());
 
         // debug: draw outline
         if (renderService.isDebugEnabled()) {
