@@ -9,12 +9,17 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static java.lang.Character.isUpperCase;
+import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
 public class CommandListener extends PKUtilsBase implements ICommandSendListener, IMessageReceiveListener {
+
+    private static final Pattern COMMAND_NAVI_HOUSE_NUMBER_PATTERN = compile("^navi (?<number>\\d+)$");
 
     @Override
     public boolean onCommandSend(@NotNull String command) {
@@ -32,6 +37,13 @@ public class CommandListener extends PKUtilsBase implements ICommandSendListener
             }
 
             sendCommand(stringJoiner.toString());
+            return false;
+        }
+
+        Matcher commandNaviHouseNumberMatcher = COMMAND_NAVI_HOUSE_NUMBER_PATTERN.matcher(command);
+        if (commandNaviHouseNumberMatcher.find()) {
+            String number = commandNaviHouseNumberMatcher.group("number");
+            sendCommand("navi Haus:" + number);
             return false;
         }
 
