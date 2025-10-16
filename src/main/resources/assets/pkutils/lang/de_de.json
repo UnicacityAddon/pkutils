@@ -23,6 +23,8 @@
     "pkutils.options.text.payday": "PayDay",
     "pkutils.options.text.options": "Optionen",
     "pkutils.options.car.title": "Auto",
+    "pkutils.options.car.fast_find.name": "Instant finden",
+    "pkutils.options.car.fast_find.description": "Findet das Auto sofort, wenn '/car find' ausgeführt wird",
     "pkutils.options.car.fast_lock.name": "Instant abschließen",
     "pkutils.options.car.fast_lock.description": "Schließt das Auto sofort ab, wenn '/car lock' ausgeführt wird",
     "pkutils.options.car.highlight.name": "Markierung",
