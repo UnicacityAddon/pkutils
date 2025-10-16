@@ -157,16 +157,40 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
             // mark all reinforcements of the sender (and not self) within the last 30 seconds as on-the-way
             String playerName = player.getGameProfile().getName();
             storage.getReinforcements().stream()
-                    .filter(reinforcement -> playerName.equals(senderPlayerName)) // the client is on the way
-                    .filter(reinforcement -> !playerName.equals(target)) // don't accept your own reinforcement
-                    .filter(reinforcement -> reinforcement.getSenderPlayerName().equals(target)) // find all reinforcements of the target
-                    .filter(reinforcement -> !reinforcement.getAcceptedPlayerNames().contains(senderPlayerName)) // not already accepted by the player
-                    .filter(reinforcement -> reinforcement.getCreatedAt().isAfter(now().minusSeconds(30))) // only recent ones
-                    .filter(reinforcement -> switch (reinforcement.getType()) { // reinforcement types that should be accepted
-                        case "Medic benötigt" ->
-                                storage.getFaction(senderPlayerName) == RETTUNGSDIENST; // only medics accept medic calls
-                        case "Drogenabnahme" -> storage.getFaction(senderPlayerName) == FBI; // only FBI accept drug bust calls
-                        default -> true; // all others accept all calls
+                    .filter(reinforcement -> {
+                        boolean equals = playerName.equals(senderPlayerName);
+                        LOGGER.debug("Comparing sender player names for reinforcement acceptance: {} == {} -> {}", playerName, senderPlayerName, equals);
+                        return equals;
+                    }) // the client is on the way
+                    .filter(reinforcement -> {
+                        boolean b = !playerName.equals(target);
+                        LOGGER.debug("Comparing own player names for reinforcement acceptance: {} != {} -> {}", playerName, target, b);
+                        return b;
+                    }) // don't accept your own reinforcement
+                    .filter(reinforcement -> {
+                        boolean equals = reinforcement.getSenderPlayerName().equals(target);
+                        LOGGER.debug("Comparing target player names for reinforcement acceptance: {} == {} -> {}", reinforcement.getSenderPlayerName(), target, equals);
+                        return equals;
+                    }) // find all reinforcements of the target
+                    .filter(reinforcement -> {
+                        boolean b = !reinforcement.getAcceptedPlayerNames().contains(senderPlayerName);
+                        LOGGER.debug("Checking if reinforcement was already accepted by the player: {} contains {} -> {}", reinforcement.getAcceptedPlayerNames(), senderPlayerName, !b);
+                        return b;
+                    }) // not already accepted by the player
+                    .filter(reinforcement -> {
+                        boolean after = reinforcement.getCreatedAt().isAfter(now().minusSeconds(30));
+                        LOGGER.debug("Checking if reinforcement was created within the last 30 seconds: {} after {} -> {}", reinforcement.getCreatedAt(), now().minusSeconds(30), after);
+                        return after;
+                    }) // only recent ones
+                    .filter(reinforcement -> {
+                        boolean b = switch (reinforcement.getType()) { // reinforcement types that should be accepted
+                            case "Medic benötigt" ->
+                                    storage.getFaction(senderPlayerName) == RETTUNGSDIENST; // only medics accept medic calls
+                            case "Drogenabnahme" -> storage.getFaction(senderPlayerName) == FBI; // only FBI accept drug bust calls
+                            default -> true; // all others accept all calls
+                        };
+                        LOGGER.debug("Checking if reinforcement type {} should be accepted by the player in faction {}: -> {}", reinforcement.getType(), storage.getFaction(senderPlayerName), b);
+                        return b;
                     })
                     .forEach(reinforcement -> {
                         reinforcement.getAcceptedPlayerNames().add(senderPlayerName);
@@ -209,10 +233,26 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
 
         // for all reinforcements within 60 blocks that were not from yourself and were accepted
         storage.getReinforcements().stream()
-                .filter(reinforcement -> nonNull(reinforcement.getBlockPos())) // check if the block position was set
-                .filter(reinforcement -> reinforcement.getBlockPos().isWithinDistance(player.getBlockPos(), 60))
-                .filter(reinforcement -> reinforcement.getAcceptedPlayerNames().contains(playerName))
-                .filter(reinforcement -> !reinforcement.isAddedAsActivity())
+                .filter(reinforcement -> {
+                    boolean b = nonNull(reinforcement.getBlockPos());
+                    LOGGER.debug("Checking if reinforcement has a block position set: {} -> {}", reinforcement, b);
+                    return b;
+                }) // check if the block position was set
+                .filter(reinforcement -> {
+                    boolean withinDistance = reinforcement.getBlockPos().isWithinDistance(player.getBlockPos(), 60);
+                    LOGGER.debug("Checking if reinforcement is within 60 blocks: {} -> {}", reinforcement, withinDistance);
+                    return withinDistance;
+                })
+                .filter(reinforcement -> {
+                    boolean contains = reinforcement.getAcceptedPlayerNames().contains(playerName);
+                    LOGGER.debug("Checking if reinforcement was accepted by the player: {} contains {} -> {}", reinforcement.getAcceptedPlayerNames(), playerName, contains);
+                    return contains;
+                })
+                .filter(reinforcement -> {
+                    boolean b = !reinforcement.isAddedAsActivity();
+                    LOGGER.debug("Checking if reinforcement was already added as activity: {} -> {}", reinforcement, !b);
+                    return b;
+                })
                 .forEach(reinforcement -> {
                     reinforcement.setAddedAsActivity(true);
                     api.postActivityAdd(ActivityEntry.Type.REINFORCEMENT);
