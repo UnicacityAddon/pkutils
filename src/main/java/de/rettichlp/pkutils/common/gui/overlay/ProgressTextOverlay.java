@@ -58,9 +58,9 @@ public class ProgressTextOverlay extends OverlayEntry {
         }
     }
 
-    public static double calculateProgress(Temporal startTime, @NotNull Duration duration) {
+    public static double calculateProgress(Temporal startTime, long duration) {
         long elapsedMillis = between(startTime, now()).toMillis();
-        double progress = (double) elapsedMillis / duration.toMillis();
+        double progress = (double) elapsedMillis / duration;
         return min(1.0, max(0.0, progress));
     }
 }

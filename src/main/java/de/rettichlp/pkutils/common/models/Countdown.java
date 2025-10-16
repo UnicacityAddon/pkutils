@@ -53,7 +53,7 @@ public class Countdown extends PKUtilsBase {
 
         return ProgressTextOverlay.builder()
                 .textSupplier(() -> text)
-                .progress(calculateProgress(this.startTime, this.duration))
+                .progress(calculateProgress(this.startTime, this.duration.toMillis()))
                 .build();
     }
 }
