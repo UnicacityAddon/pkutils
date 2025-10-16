@@ -102,8 +102,21 @@ public class CarListener extends PKUtilsBase
     public void onScreenOpen(Screen screen, int scaledWidth, int scaledHeight) {
         ClientPlayerInteractionManager interactionManager = MinecraftClient.getInstance().interactionManager;
 
-        if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen && genericContainerScreen.getTitle().getString().equals("CarControl") && configuration.getOptions().car().fastLock()) {
-            interactionManager.clickSlot(genericContainerScreen.getScreenHandler().syncId, 0, 0, PICKUP, player);
+        if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen) {
+            String titleString = genericContainerScreen.getTitle().getString();
+
+            switch (titleString) {
+                case "CarControl" -> {
+                    if (configuration.getOptions().car().fastLock()) {
+                        interactionManager.clickSlot(genericContainerScreen.getScreenHandler().syncId, 0, 0, PICKUP, player);
+                    }
+                }
+                case "Fahrzeuge" -> {
+                    if (configuration.getOptions().car().fastFind()) {
+                        interactionManager.clickSlot(genericContainerScreen.getScreenHandler().syncId, 0, 0, PICKUP, player);
+                    }
+                }
+            }
         }
     }
 
