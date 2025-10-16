@@ -121,7 +121,7 @@ public class SyncService extends PKUtilsBase {
                 notificationService.sendNotification(() -> Text.empty()
                         .append(Text.of("Neue PKUtils Version verfügbar:").copy().formatted(GRAY)).append(" ")
                         .append(Text.of(currentVersion).copy().formatted(RED)).append(" ")
-                        .append(Text.of("⇾").copy().formatted(GRAY)).append(" ")
+                        .append(Text.of("→").copy().formatted(GRAY)).append(" ")
                         .append(Text.of(latestVersion).copy().formatted(GREEN)), MAGENTA, MINUTES.toMillis(5));
             }
         });

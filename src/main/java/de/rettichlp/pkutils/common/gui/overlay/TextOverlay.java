@@ -42,7 +42,7 @@ public class TextOverlay extends OverlayEntry {
 
         drawContext.fill(innerX, innerY, innerX + getContentWidth(), innerY + getContentHeight(), this.backgroundColor.getRGB());
         drawContext.drawBorder(innerX, innerY, getContentWidth(), getContentHeight(), this.borderColor.getRGB());
-        drawContext.drawTextWithShadow(this.textRenderer, this.textSupplier.get(), innerX + TEXT_BOX_PADDING, innerY + TEXT_BOX_PADDING, 0xFFFFFF);
+        drawContext.drawText(this.textRenderer, this.textSupplier.get(), innerX + TEXT_BOX_PADDING, innerY + TEXT_BOX_PADDING, 0xFFFFFF, false);
 
         // debug: draw outline
         if (renderService.isDebugEnabled()) {
