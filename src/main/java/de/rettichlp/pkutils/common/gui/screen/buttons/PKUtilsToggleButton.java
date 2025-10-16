@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.gui.options.components;
+package de.rettichlp.pkutils.common.gui.screen.buttons;
 
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
@@ -13,13 +13,13 @@ import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.GREEN;
 import static net.minecraft.util.Formatting.RED;
 
-public class ToggleButtonWidget extends ButtonWidget {
+public class PKUtilsToggleButton extends ButtonWidget {
 
     private final Text text;
     private final Consumer<Boolean> changeListener;
     private boolean state;
 
-    public ToggleButtonWidget(Text text, Consumer<Boolean> changeListener, boolean defaultState) {
+    public PKUtilsToggleButton(Text text, Consumer<Boolean> changeListener, boolean defaultState) {
         super(0, 0, 150, 20, empty(), button -> {}, DEFAULT_NARRATION_SUPPLIER);
         this.text = text;
         this.changeListener = changeListener;

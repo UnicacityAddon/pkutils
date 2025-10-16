@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.common.models.config;
 
-import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
+import de.rettichlp.pkutils.common.gui.screen.buttons.IButtonEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +30,7 @@ public class OverlayOptions {
     @Getter
     @AllArgsConstructor
     @Accessors(fluent = false)
-    public enum CarLockedStyle implements CyclingButtonEntry {
+    public enum CarLockedStyle implements IButtonEntry {
 
         DEFAULT("pkutils.options.overlay.car.locked.style.value.default"),
         MINIMALISTIC("pkutils.options.overlay.car.locked.style.value.minimalistic");

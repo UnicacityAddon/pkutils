@@ -1,6 +1,5 @@
-package de.rettichlp.pkutils.common.gui.options;
+package de.rettichlp.pkutils.common.gui.screen.options;
 
-import de.rettichlp.pkutils.common.gui.OptionsScreen;
 import de.rettichlp.pkutils.common.models.config.OverlayOptions;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;

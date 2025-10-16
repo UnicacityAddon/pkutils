@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.common.models.config;
 
-import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
+import de.rettichlp.pkutils.common.gui.screen.buttons.IButtonEntry;
 import de.rettichlp.pkutils.common.models.PersonalUseEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,7 +38,7 @@ public class Options {
     @Getter
     @AllArgsConstructor
     @Accessors(fluent = false)
-    public enum ReinforcementType implements CyclingButtonEntry {
+    public enum ReinforcementType implements IButtonEntry {
 
         UCUTILS(empty()
                 .append(of("UC").copy().formatted(DARK_AQUA))

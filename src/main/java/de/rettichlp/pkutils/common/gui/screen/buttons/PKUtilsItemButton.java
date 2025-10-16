@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.gui.options.components;
+package de.rettichlp.pkutils.common.gui.screen.buttons;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -9,11 +9,11 @@ import net.minecraft.text.Text;
 
 import static net.minecraft.text.Text.translatable;
 
-public class ItemButtonWidget extends ButtonWidget {
+public class PKUtilsItemButton extends ButtonWidget {
 
     private final Item item;
 
-    public ItemButtonWidget(String key, Item item, PressAction onPress) {
+    public PKUtilsItemButton(String key, Item item, PressAction onPress) {
         super(0, 0, 20, 20, Text.empty(), onPress, DEFAULT_NARRATION_SUPPLIER);
         this.item = item;
         setTooltip(Tooltip.of(translatable(key)));

@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.common.models;
 
-import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
+import de.rettichlp.pkutils.common.gui.screen.buttons.IButtonEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -14,7 +14,7 @@ import static net.minecraft.util.Formatting.YELLOW;
 
 @Getter
 @AllArgsConstructor
-public enum Purity implements CyclingButtonEntry {
+public enum Purity implements IButtonEntry {
 
     BEST(translatable("pkutils.purity.best").formatted(DARK_GREEN)),
     GOOD(translatable("pkutils.purity.good").formatted(GREEN)),

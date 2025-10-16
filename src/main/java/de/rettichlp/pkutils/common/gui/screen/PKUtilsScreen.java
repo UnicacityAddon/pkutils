@@ -1,8 +1,8 @@
-package de.rettichlp.pkutils.common.gui;
+package de.rettichlp.pkutils.common.gui.screen;
 
-import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
-import de.rettichlp.pkutils.common.gui.options.components.ItemButtonWidget;
-import de.rettichlp.pkutils.common.gui.options.components.ToggleButtonWidget;
+import de.rettichlp.pkutils.common.gui.screen.buttons.IButtonEntry;
+import de.rettichlp.pkutils.common.gui.screen.buttons.PKUtilsItemButton;
+import de.rettichlp.pkutils.common.gui.screen.buttons.PKUtilsToggleButton;
 import de.rettichlp.pkutils.common.models.config.Options;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
@@ -124,19 +124,19 @@ public abstract class PKUtilsScreen extends Screen {
         widget.add(buttonWidget);
     }
 
-    public <E extends CyclingButtonEntry> void addCyclingButton(@NotNull DirectionalLayoutWidget widget,
-                                                                String key,
-                                                                E[] values,
-                                                                Function<E, Text> displayNameFunction,
-                                                                BiConsumer<Options, E> onValueChange,
-                                                                @NotNull Function<Options, E> currentValue,
-                                                                int width) {
+    public <E extends IButtonEntry> void addCyclingButton(@NotNull DirectionalLayoutWidget widget,
+                                                          String key,
+                                                          E[] values,
+                                                          Function<E, Text> displayNameFunction,
+                                                          BiConsumer<Options, E> onValueChange,
+                                                          @NotNull Function<Options, E> currentValue,
+                                                          int width) {
         MutableText translatable = translatable(key);
 
         CyclingButtonWidget<E> cyclingButton = CyclingButtonWidget.builder(displayNameFunction)
                 .values(values)
                 .initially(currentValue.apply(configuration.getOptions()))
-                .tooltip(CyclingButtonEntry::getTooltip)
+                .tooltip(IButtonEntry::getTooltip)
                 .build(translatable, (button, value) -> onValueChange.accept(configuration.getOptions(), value));
 
         cyclingButton.setWidth(width);
@@ -164,7 +164,7 @@ public abstract class PKUtilsScreen extends Screen {
         Text nameText = translatable(nameKey);
         Text tooltipText = translatable(tooltipKey);
 
-        ToggleButtonWidget toggleButton = new ToggleButtonWidget(nameText, value -> {
+        PKUtilsToggleButton toggleButton = new PKUtilsToggleButton(nameText, value -> {
             LOGGER.debug("Set option '{}' to '{}'", key, value);
             onPress.accept(configuration.getOptions(), value);
         }, currentValue.apply(configuration.getOptions()));
@@ -187,7 +187,7 @@ public abstract class PKUtilsScreen extends Screen {
     }
 
     public void addItemButton(@NotNull DirectionalLayoutWidget widget, String key, Item item, ButtonWidget.PressAction onPress) {
-        ItemButtonWidget button = new ItemButtonWidget(key, item, onPress);
+        PKUtilsItemButton button = new PKUtilsItemButton(key, item, onPress);
         widget.add(button);
     }
 
