@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.common.services;
 
-import de.rettichlp.pkutils.common.gui.overlay.TextOverlay;
+import de.rettichlp.pkutils.common.gui.overlay.ProgressTextOverlay;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Data;
 import net.minecraft.text.Text;
@@ -17,6 +17,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import static de.rettichlp.pkutils.PKUtils.renderService;
+import static de.rettichlp.pkutils.common.gui.overlay.ProgressTextOverlay.calculateProgress;
 import static java.awt.Color.CYAN;
 import static java.awt.Color.GREEN;
 import static java.awt.Color.ORANGE;
@@ -86,9 +87,10 @@ public class NotificationService extends PKUtilsBase {
             return nonNull(o) && o instanceof Notification that && Objects.equals(this.id, that.id);
         }
 
-        public TextOverlay toTextOverlay() {
-            return TextOverlay.builder()
+        public ProgressTextOverlay toProgressTextOverlay() {
+            return ProgressTextOverlay.builder()
                     .textSupplier(this.textSupplier)
+                    .progress(calculateProgress(this.timestamp, this.durationInMillis))
                     .backgroundColor(this.backgroundColor)
                     .borderColor(this.borderColor)
                     .build();

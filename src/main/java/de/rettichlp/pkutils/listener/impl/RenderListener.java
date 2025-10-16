@@ -52,7 +52,7 @@ public class RenderListener extends PKUtilsBase implements IHudRenderListener {
                 .forEach(this.notificationOverlay::add);
 
         notificationService.getActiveNotifications().stream()
-                .map(NotificationService.Notification::toTextOverlay)
+                .map(NotificationService.Notification::toProgressTextOverlay)
                 .forEach(this.notificationOverlay::add);
 
         this.notificationOverlay.draw(drawContext, TOP_RIGHT);

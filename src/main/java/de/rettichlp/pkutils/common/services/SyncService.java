@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -23,13 +24,22 @@ import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
+import static java.awt.Color.MAGENTA;
 import static java.lang.Integer.parseInt;
 import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.regex.Pattern.compile;
+import static net.minecraft.text.Text.empty;
+import static net.minecraft.text.Text.of;
+import static net.minecraft.util.Formatting.DARK_GRAY;
+import static net.minecraft.util.Formatting.GRAY;
+import static net.minecraft.util.Formatting.GREEN;
+import static net.minecraft.util.Formatting.RED;
 
 @Getter
 @Setter
@@ -50,6 +60,8 @@ public class SyncService extends PKUtilsBase {
     }
 
     public void syncFactionMembersWithCommandResponse() {
+        storage.getPlayerFactionCache().clear();
+
         List<CommandResponseRetriever> commandResponseRetrievers = stream(Faction.values())
                 .filter(faction -> faction != NULL)
                 .map(this::syncFactionMembersWithCommandResponse)
@@ -95,6 +107,27 @@ public class SyncService extends PKUtilsBase {
             this.gameSyncProcessActive = false;
             notificationService.sendSuccessNotification("PKUtils synchronisiert");
         }, 2000);
+    }
+
+    public void checkForUpdates() {
+        api.getModrinthVersions(maps -> {
+            if (maps.isEmpty()) {
+                return;
+            }
+
+            Map<String, Object> latestRelease = maps.getFirst();
+            String latestVersion = (String) latestRelease.get("version_number");
+
+            String currentVersion = getVersion();
+            if (nonNull(latestVersion) && !currentVersion.equals(latestVersion)) {
+                notificationService.sendNotification(() -> empty()
+                        .append(of("Neue PKUtils Version verfügbar").copy().formatted(GRAY))
+                        .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
+                        .append(of(currentVersion).copy().formatted(RED)).append(" ")
+                        .append(of("→").copy().formatted(GRAY)).append(" ")
+                        .append(of(latestVersion).copy().formatted(GREEN)), MAGENTA, MINUTES.toMillis(5));
+            }
+        });
     }
 
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
