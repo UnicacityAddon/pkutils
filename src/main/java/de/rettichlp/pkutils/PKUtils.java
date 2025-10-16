@@ -55,6 +55,8 @@ public class PKUtils extends PKUtilsBase implements ModInitializer {
         syncService.syncFactionMembersWithApi();
         // sync blacklist reasons
         syncService.syncBlacklistReasonsFromApi();
+        // check for updates
+        syncService.checkForUpdates();
 
         // login to PKUtils API
         api.postUserRegister();

@@ -130,6 +130,10 @@ public class Api extends PKUtilsBase {
         get("https://gist.githubusercontent.com/rettichlp/54e97f4dbb3988bf22554c01d62af666/raw/pkutils-blacklistreasons.json", new TypeToken<>() {}, callback);
     }
 
+    public void getModrinthVersions(Consumer<List<Map<String, Object>>> callback) {
+        get("https://api.modrinth.com/v2/project/pkutils/version", new TypeToken<>() {}, callback);
+    }
+
     private <T> void get(@NotNull String uri, TypeToken<T> typeToken, Consumer<T> callback) {
         HttpRequest httpRequest = this.requestBuilder.copy()
                 .uri(uri.startsWith("https://") ? create(uri) : create(this.baseUrl + uri))
