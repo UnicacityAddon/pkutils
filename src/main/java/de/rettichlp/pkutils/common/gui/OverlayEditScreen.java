@@ -74,7 +74,7 @@ public class OverlayEditScreen extends PKUtilsScreen {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        boolean b = super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        boolean mouseDragged = super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
 
         this.widgetLocationText = "";
 
@@ -83,13 +83,18 @@ public class OverlayEditScreen extends PKUtilsScreen {
                 .findFirst()
                 .ifPresent(abstractPKUtilsWidget -> {
                     PKUtilsWidgetConfiguration widgetConfiguration = abstractPKUtilsWidget.getWidgetConfiguration();
-                    widgetConfiguration.setX(widgetConfiguration.getX() + (int) deltaX);
-                    widgetConfiguration.setY(widgetConfiguration.getY() + (int) deltaY);
+
+                    double speedFactor = 1.2; // it's a bit too slow without the factor
+                    int newX = widgetConfiguration.getX() + (int) (deltaX * speedFactor);
+                    int newY = widgetConfiguration.getY() + (int) (deltaY * speedFactor);
+
+                    widgetConfiguration.setX(newX);
+                    widgetConfiguration.setY(newY);
                     abstractPKUtilsWidget.saveConfiguration();
 
                     this.widgetLocationText = "X: " + newX + " Y: " + newY;
                 });
 
-        return b;
+        return mouseDragged;
     }
 }
