@@ -4,15 +4,20 @@ import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
+import net.minecraft.text.Text;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.renderService;
+import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_PADDING;
+import static java.awt.Color.BLACK;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.text.Text.empty;
 
 public class OverlayEditScreen extends PKUtilsScreen {
+
+    private String widgetLocationText = "";
 
     public OverlayEditScreen(Screen parent) {
         super(empty(), empty(), parent, false);
@@ -49,6 +54,20 @@ public class OverlayEditScreen extends PKUtilsScreen {
         configuration.saveToFile();
     }
 
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+
+        if (!this.widgetLocationText.isBlank()) {
+            int textX = mouseX + 10;
+            int textY = mouseY + 10;
+
+            Text widgetLocationText = Text.of(this.widgetLocationText);
+            context.fill(textX - TEXT_BOX_PADDING, textY - TEXT_BOX_PADDING, textX + this.textRenderer.getWidth(widgetLocationText) + TEXT_BOX_PADDING, textY + this.textRenderer.fontHeight + TEXT_BOX_PADDING, renderService.getSecondaryColor(BLACK).getRGB());
+            context.drawText(this.textRenderer, widgetLocationText, textX, textY, 0xFFFFFF, false);
+        }
+    }
+
     // disable background rendering to see overlay better
     @Override
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {}
@@ -56,6 +75,8 @@ public class OverlayEditScreen extends PKUtilsScreen {
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         boolean b = super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+
+        this.widgetLocationText = "";
 
         renderService.getWidgets().stream()
                 .filter(abstractPKUtilsWidget -> abstractPKUtilsWidget.isMouseOver(mouseX, mouseY))
@@ -65,6 +86,8 @@ public class OverlayEditScreen extends PKUtilsScreen {
                     widgetConfiguration.setX(widgetConfiguration.getX() + (int) deltaX);
                     widgetConfiguration.setY(widgetConfiguration.getY() + (int) deltaY);
                     abstractPKUtilsWidget.saveConfiguration();
+
+                    this.widgetLocationText = "X: " + newX + " Y: " + newY;
                 });
 
         return b;
