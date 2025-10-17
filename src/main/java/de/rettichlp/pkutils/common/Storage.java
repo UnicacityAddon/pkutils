@@ -111,6 +111,9 @@ public class Storage {
     @Setter
     private ToggledChat toggledChat = NONE;
 
+    @Getter
+    @Setter
+    private int aBuyAmount = 0;
     {
         this.blackMarkets.addAll(stream(BlackMarket.Type.values())
                 .map(type -> new BlackMarket(type, null, false))
@@ -162,6 +165,8 @@ public class Storage {
         LOGGER.info("punicaKitty: {}", this.punicaKitty);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
+        // abuyamount
+        LOGGER.info("aBuyAmount: {}", this.aBuyAmount);
     }
 
     public Faction getCachedFaction(String playerName) {
