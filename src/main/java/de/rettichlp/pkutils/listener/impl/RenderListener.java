@@ -1,8 +1,6 @@
 package de.rettichlp.pkutils.listener.impl;
 
 import de.rettichlp.pkutils.common.gui.widgets.alignment.AlignVerticalWidget;
-import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
-import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;
 import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
@@ -12,13 +10,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 
-import java.util.Objects;
-
 import static de.rettichlp.pkutils.PKUtils.notificationService;
+import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.RIGHT;
-import static java.util.stream.StreamSupport.stream;
-import static org.atteo.classindex.ClassIndex.getAnnotated;
 
 @PKUtilsListener
 public class RenderListener extends PKUtilsBase implements IHudRenderListener {
@@ -47,15 +42,6 @@ public class RenderListener extends PKUtilsBase implements IHudRenderListener {
     }
 
     private void renderWidgets(DrawContext drawContext) {
-        stream(getAnnotated(PKUtilsWidget.class).spliterator(), false)
-                .map(pkUtilsWidgetClass -> {
-                    try {
-                        return (AbstractPKUtilsWidget<?>) pkUtilsWidgetClass.getConstructor().newInstance();
-                    } catch (Exception e) {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .forEach(pkUtilsWidgetInstance -> pkUtilsWidgetInstance.draw(drawContext));
+        renderService.getWidgets().forEach(pkUtilsWidgetInstance -> pkUtilsWidgetInstance.draw(drawContext));
     }
 }
