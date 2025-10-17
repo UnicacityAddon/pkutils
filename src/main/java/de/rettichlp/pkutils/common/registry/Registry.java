@@ -40,6 +40,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 import static net.minecraft.entity.effect.StatusEffects.ABSORPTION;
 import static net.minecraft.registry.Registries.SOUND_EVENT;
@@ -185,7 +186,7 @@ public class Registry {
     }
 
     private @NotNull Set<PKUtilsBase> getListenerInstances() {
-        return getAnnotated(PKUtilsListener.class).stream()
+        return stream(getAnnotated(PKUtilsListener.class).spliterator(), false)
                 .map(listenerClass -> {
                     try {
                         return (PKUtilsBase) listenerClass.getConstructor().newInstance();
