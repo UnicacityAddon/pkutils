@@ -1,5 +1,6 @@
-package de.rettichlp.pkutils.common.gui;
+package de.rettichlp.pkutils.common.gui.options;
 
+import de.rettichlp.pkutils.common.gui.PKUtilsScreen;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -15,11 +16,11 @@ import static java.awt.Color.BLACK;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.text.Text.empty;
 
-public class OverlayEditScreen extends PKUtilsScreen {
+public class WidgetOptionsPositionScreen extends PKUtilsScreen {
 
     private String widgetLocationText = "";
 
-    public OverlayEditScreen(Screen parent) {
+    public WidgetOptionsPositionScreen(Screen parent) {
         super(empty(), empty(), parent, false);
     }
 

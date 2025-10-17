@@ -29,7 +29,7 @@ public class MainOptionsScreen extends OptionsScreen {
         addToggleButton(directionalLayoutWidget2, "pkutils.options.custom_sounds", Options::customSounds, Options::customSounds, 150);
 
         DirectionalLayoutWidget directionalLayoutWidget3 = directionalLayoutWidget.add(horizontal().spacing(8));
-        addButton(directionalLayoutWidget3, "pkutils.options.overlay.title", button -> this.client.setScreen(new OverlayOptionsScreen(this)), 150);
+        addButton(directionalLayoutWidget3, "pkutils.options.overlay.title", button -> this.client.setScreen(new WidgetOptionsScreen(this)), 150);
 
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
     }
