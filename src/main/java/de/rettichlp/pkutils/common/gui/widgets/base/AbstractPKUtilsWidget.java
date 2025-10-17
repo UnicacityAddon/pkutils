@@ -64,7 +64,7 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         return getHeight() - TEXT_BOX_MARGIN * 2;
     }
 
-    public boolean isMouseOver(int mouseX, int mouseY) {
+    public boolean isMouseOver(double mouseX, double mouseY) {
         int x = this.widgetConfiguration.getX();
         int y = this.widgetConfiguration.getY();
         boolean mouseOverX = mouseX >= x && mouseX <= x + getWidth();

@@ -58,7 +58,7 @@ public class OverlayEditScreen extends PKUtilsScreen {
         boolean b = super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
 
         renderService.getWidgets().stream()
-                .filter(abstractPKUtilsWidget -> abstractPKUtilsWidget.isMouseOver((int) mouseX, (int) mouseY))
+                .filter(abstractPKUtilsWidget -> abstractPKUtilsWidget.isMouseOver(mouseX, mouseY))
                 .findFirst()
                 .ifPresent(abstractPKUtilsWidget -> {
                     PKUtilsWidgetConfiguration widgetConfiguration = abstractPKUtilsWidget.getWidgetConfiguration();
