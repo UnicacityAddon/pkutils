@@ -95,7 +95,6 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         }
 
         String widgetConfigurationJson = api.getGson().toJson(widgetConfigurationObject);
-        System.out.println(getWidgetConfiguration().getClass() + " -> " + widgetConfigurationClass); // TODO remove
 
         this.widgetConfiguration = api.getGson().fromJson(widgetConfigurationJson, widgetConfigurationClass);
     }
