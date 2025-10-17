@@ -86,7 +86,8 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         }
 
         Class<C> widgetConfigurationClass = getConfigurationClass();
-        Object widgetConfigurationObject = configuration.getWidgets().get(registryName);
+        // load file configuration
+        Object widgetConfigurationObject = configuration.loadFromFile().getWidgets().get(registryName);
 
         if (isNull(widgetConfigurationObject)) {
             LOGGER.debug("No configuration found for widget {}, using default configuration", registryName);
