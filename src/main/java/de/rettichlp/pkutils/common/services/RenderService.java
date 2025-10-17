@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
 import java.awt.Color;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,7 +35,7 @@ public class RenderService extends PKUtilsBase {
     public static final int TEXT_BOX_MARGIN = 2;
 
     @Getter
-    private final Set<AbstractPKUtilsWidget<?>> widgets = initializeWidgets();
+    private Set<AbstractPKUtilsWidget<?>> widgets = new HashSet<>();
 
     public int getTextBoxSizeX(StringVisitable text) {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
@@ -145,8 +146,8 @@ public class RenderService extends PKUtilsBase {
         return new Color(color.getRed() / 2, color.getGreen() / 2, color.getBlue() / 2, 100);
     }
 
-    private Set<AbstractPKUtilsWidget<?>> initializeWidgets() {
-        return stream(getAnnotated(PKUtilsWidget.class).spliterator(), false)
+    public void initializeWidgets() {
+        this.widgets = stream(getAnnotated(PKUtilsWidget.class).spliterator(), false)
                 .map(pkUtilsWidgetClass -> {
                     try {
                         return (AbstractPKUtilsWidget<?>) pkUtilsWidgetClass.getConstructor().newInstance();
@@ -155,6 +156,7 @@ public class RenderService extends PKUtilsBase {
                     }
                 })
                 .filter(Objects::nonNull)
+                .peek(AbstractPKUtilsWidget::init)
                 .collect(toSet());
     }
 }

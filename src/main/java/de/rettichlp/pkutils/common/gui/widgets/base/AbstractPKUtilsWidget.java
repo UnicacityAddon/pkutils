@@ -20,14 +20,23 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
 
     protected final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
-    private int x;
-    private int y;
+    private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+
+    private C widgetConfiguration;
 
     public abstract int getWidth();
 
     public abstract int getHeight();
 
     public abstract void draw(@NotNull DrawContext drawContext, int x, int y, Alignment alignment);
+
+    public void init() {
+        try {
+            loadConfiguration();
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            LOGGER.error("Could not load configuration for widget {}", this.getClass().getName(), e);
+        }
+    }
 
     public void draw(@NotNull DrawContext drawContext) {
         if (!isVisible()) {
@@ -58,8 +67,62 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         return true;
     }
 
-    public C getConfiguration() {
-        return null; // TODO
+    public void loadConfiguration() throws NoSuchMethodException, InvocationTargetException, InstantiationException,
+                                           IllegalAccessException {
+        String registryName = getRegistryName();
+
+        if (isNull(registryName)) {
+            LOGGER.warn("Widget {} is missing registry name and therefore has no configuration", this.getClass().getName());
+            return;
+        }
+
+        Class<C> widgetConfigurationClass = getConfigurationClass();
+        Object widgetConfigurationObject = configuration.getWidgets().get(registryName);
+
+        if (isNull(widgetConfigurationObject)) {
+            LOGGER.debug("No configuration found for widget {}, using default configuration", registryName);
+            this.widgetConfiguration = widgetConfigurationClass.getConstructor().newInstance();
+            return;
+        }
+
+        String widgetConfigurationJson = api.getGson().toJson(widgetConfigurationObject);
+        System.out.println(getWidgetConfiguration().getClass() + " -> " + widgetConfigurationClass); // TODO remove
+
+        this.widgetConfiguration = api.getGson().fromJson(widgetConfigurationJson, widgetConfigurationClass);
+    }
+
+    public void saveConfiguration() {
+        String registryName = getRegistryName();
+
+        if (isNull(registryName)) {
+            LOGGER.warn("Widget {} is missing registry name and therefore has no configuration", this.getClass().getName());
+            return;
+        }
+
+        String widgetConfigurationJson = api.getGson().toJson(getWidgetConfiguration());
+        Map<String, Object> widgetConfigurationMap = api.getGson().fromJson(widgetConfigurationJson, MAP_TYPE);
+        configuration.getWidgets().put(registryName, widgetConfigurationMap);
+    }
+
+    @Nullable
+    private String getRegistryName() {
+        return ofNullable(this.getClass().getAnnotation(PKUtilsWidget.class))
+                .map(PKUtilsWidget::registryName)
+                .orElse(null);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<C> getConfigurationClass() {
+        Type type = getClass().getGenericSuperclass();
+
+        if (type instanceof ParameterizedType) {
+            Type[] typeArgs = ((ParameterizedType) type).getActualTypeArguments();
+            if (typeArgs.length > 0 && typeArgs[0] instanceof Class) {
+                return (Class<C>) typeArgs[0];
+            }
+        }
+
+        throw new IllegalStateException("Widget class must be generic: AbstractPKUtilsWidget<C>");
     }
 
     private Alignment getAlignment() {

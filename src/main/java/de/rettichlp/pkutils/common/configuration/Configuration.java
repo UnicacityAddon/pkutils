@@ -1,6 +1,7 @@
 package de.rettichlp.pkutils.common.configuration;
 
 import de.rettichlp.pkutils.common.configuration.options.Options;
+import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
 import de.rettichlp.pkutils.common.models.TodoEntry;
 import lombok.Data;
 import net.fabricmc.loader.api.FabricLoader;
@@ -11,10 +12,13 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
+import static de.rettichlp.pkutils.PKUtils.renderService;
 import static java.nio.file.Files.newBufferedReader;
 import static java.nio.file.Files.newBufferedWriter;
 
@@ -23,6 +27,7 @@ public class Configuration {
 
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("pkutils.json");
 
+    private Map<String, Object> widgets = new HashMap<>();
     private List<TodoEntry> todos = new ArrayList<>();
     private Options options = new Options();
     private int moneyBankAmount = 0;
@@ -30,6 +35,10 @@ public class Configuration {
     private int minutesSinceLastPayDay = 0;
     private int predictedPayDaySalary = 0;
     private int predictedPayDayExp = 0;
+
+    public void updateWidgetConfigurations() {
+        renderService.getWidgets().forEach(AbstractPKUtilsWidget::saveConfiguration);
+    }
 
     public void addMinutesSinceLastPayDay(int minutes) {
         this.minutesSinceLastPayDay += minutes;

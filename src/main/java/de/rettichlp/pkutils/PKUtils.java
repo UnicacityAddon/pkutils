@@ -66,7 +66,10 @@ public class PKUtils extends PKUtilsBase implements ModInitializer {
             networkHandler = handler;
 
             storage.setPunicaKitty(isPunicaKitty());
-            client.execute(this.registry::registerListeners);
+            client.execute(() -> {
+                this.registry.registerListeners();
+                renderService.initializeWidgets();
+            });
         });
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> this.registry.registerCommands(dispatcher));
