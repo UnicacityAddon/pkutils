@@ -3,7 +3,7 @@ package de.rettichlp.pkutils.common.gui.widgets;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsTextWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
-import de.rettichlp.pkutils.common.models.config.OverlayOptions;
+import de.rettichlp.pkutils.common.configuration.options.OverlayOptions;
 import lombok.AllArgsConstructor;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;

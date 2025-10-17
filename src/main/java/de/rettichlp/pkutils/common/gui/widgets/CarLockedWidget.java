@@ -7,7 +7,7 @@ import net.minecraft.text.Text;
 
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.common.models.config.OverlayOptions.CarLockedStyle.MINIMALISTIC;
+import static de.rettichlp.pkutils.common.configuration.options.OverlayOptions.CarLockedStyle.MINIMALISTIC;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;

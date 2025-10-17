@@ -2,7 +2,7 @@ package de.rettichlp.pkutils.common.gui.options;
 
 import de.rettichlp.pkutils.common.gui.OptionsScreen;
 import de.rettichlp.pkutils.common.gui.OverlayEditScreen;
-import de.rettichlp.pkutils.common.models.config.OverlayOptions;
+import de.rettichlp.pkutils.common.configuration.options.OverlayOptions;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;

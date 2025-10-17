@@ -1,5 +1,7 @@
-package de.rettichlp.pkutils.common.models.config;
+package de.rettichlp.pkutils.common.configuration;
 
+import de.rettichlp.pkutils.common.configuration.options.Options;
+import de.rettichlp.pkutils.common.models.TodoEntry;
 import lombok.Data;
 import net.fabricmc.loader.api.FabricLoader;
 
