@@ -1,6 +1,9 @@
 package de.rettichlp.pkutils.common.services;
 
+import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
+import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
+import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.Camera;
@@ -16,25 +19,22 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
 import java.awt.Color;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
 import static net.minecraft.client.render.RenderLayer.getLines;
 import static net.minecraft.util.math.RotationAxis.POSITIVE_Y;
+import static org.atteo.classindex.ClassIndex.getAnnotated;
 
 public class RenderService extends PKUtilsBase {
 
     public static final int TEXT_BOX_PADDING = 3;
-    public static final int TEXT_BOX_MARGIN = 2;
 
-    public int getTextBoxSizeX(StringVisitable text) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        int fontWidth = textRenderer.getWidth(text);
-        return fontWidth + 2 * TEXT_BOX_PADDING + 2 * TEXT_BOX_MARGIN;
-    }
-
-    public int getTextBoxSizeY() {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        return textRenderer.fontHeight + 2 * TEXT_BOX_PADDING + 2 * TEXT_BOX_MARGIN;
-    }
+    @Getter
+    private Set<AbstractPKUtilsWidget<?>> widgets = new HashSet<>();
 
     public boolean isDebugEnabled() {
         return false;
@@ -132,5 +132,19 @@ public class RenderService extends PKUtilsBase {
 
     public Color getSecondaryColor(@NotNull Color color) {
         return new Color(color.getRed() / 2, color.getGreen() / 2, color.getBlue() / 2, 100);
+    }
+
+    public void initializeWidgets() {
+        this.widgets = stream(getAnnotated(PKUtilsWidget.class).spliterator(), false)
+                .map(pkUtilsWidgetClass -> {
+                    try {
+                        return (AbstractPKUtilsWidget<?>) pkUtilsWidgetClass.getConstructor().newInstance();
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .peek(AbstractPKUtilsWidget::init)
+                .collect(toSet());
     }
 }

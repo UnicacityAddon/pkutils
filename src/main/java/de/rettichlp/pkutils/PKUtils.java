@@ -2,7 +2,7 @@ package de.rettichlp.pkutils;
 
 import de.rettichlp.pkutils.common.Storage;
 import de.rettichlp.pkutils.common.api.Api;
-import de.rettichlp.pkutils.common.models.config.Configuration;
+import de.rettichlp.pkutils.common.configuration.Configuration;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.Registry;
 import de.rettichlp.pkutils.common.services.FactionService;
@@ -66,7 +66,10 @@ public class PKUtils extends PKUtilsBase implements ModInitializer {
             networkHandler = handler;
 
             storage.setPunicaKitty(isPunicaKitty());
-            client.execute(this.registry::registerListeners);
+            client.execute(() -> {
+                this.registry.registerListeners();
+                renderService.initializeWidgets();
+            });
         });
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> this.registry.registerCommands(dispatcher));

@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.models.config;
+package de.rettichlp.pkutils.common.configuration.options;
 
 import lombok.Getter;
 import lombok.Setter;

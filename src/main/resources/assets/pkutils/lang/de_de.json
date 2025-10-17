@@ -49,6 +49,7 @@
     "pkutils.options.nametag.additional.wanted.name": "Gesucht",
     "pkutils.options.nametag.additional.wanted.description": "Zeigt gesuchte Spieler an",
     "pkutils.options.overlay.title": "Widgets",
+    "pkutils.options.overlay.position.title": "Position",
     "pkutils.options.overlay.datetime.name": "Datum & Uhrzeit",
     "pkutils.options.overlay.datetime.description": "Zeigt das aktuelle Datum und die aktuelle Uhrzeit",
     "pkutils.options.overlay.money.name": "Geld",

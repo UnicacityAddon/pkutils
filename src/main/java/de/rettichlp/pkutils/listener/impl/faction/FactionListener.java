@@ -32,7 +32,7 @@ import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.models.EquipEntry.Type.fromDisplayName;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
-import static de.rettichlp.pkutils.common.models.config.Options.ReinforcementType.UNICACITYADDON;
+import static de.rettichlp.pkutils.common.configuration.options.Options.ReinforcementType.UNICACITYADDON;
 import static java.lang.Integer.parseInt;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;

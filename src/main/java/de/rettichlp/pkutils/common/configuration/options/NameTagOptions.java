@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.models.config;
+package de.rettichlp.pkutils.common.configuration.options;
 
 import de.rettichlp.pkutils.common.models.Color;
 import de.rettichlp.pkutils.common.models.Faction;

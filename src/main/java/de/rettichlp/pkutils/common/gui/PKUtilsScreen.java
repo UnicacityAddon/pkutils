@@ -3,7 +3,7 @@ package de.rettichlp.pkutils.common.gui;
 import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
 import de.rettichlp.pkutils.common.gui.options.components.ItemButtonWidget;
 import de.rettichlp.pkutils.common.gui.options.components.ToggleButtonWidget;
-import de.rettichlp.pkutils.common.models.config.Options;
+import de.rettichlp.pkutils.common.configuration.options.Options;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;

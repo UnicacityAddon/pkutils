@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.models.config;
+package de.rettichlp.pkutils.common.configuration.options;
 
 import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import static de.rettichlp.pkutils.common.models.config.OverlayOptions.CarLockedStyle.DEFAULT;
+import static de.rettichlp.pkutils.common.configuration.options.OverlayOptions.CarLockedStyle.DEFAULT;
 import static net.minecraft.text.Text.translatable;
 
 @Getter
