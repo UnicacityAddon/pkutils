@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.common.gui.widgets.base;
 
+import com.google.common.reflect.TypeToken;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,18 +8,27 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Random;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Map;
 
+import static de.rettichlp.pkutils.PKUtils.LOGGER;
+import static de.rettichlp.pkutils.PKUtils.api;
+import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.CENTER;
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.LEFT;
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.RIGHT;
 import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_MARGIN;
+import static java.util.Objects.isNull;
+import static java.util.Optional.ofNullable;
 
 @Getter
 public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration> extends PKUtilsBase {
 
-    protected final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    private static final Type MAP_TYPE = new TypeToken<Map<String, Object>>() {}.getType();
 
     private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
@@ -43,10 +53,7 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
             return;
         }
 
-        C configuration = getConfiguration();
-        this.x = new Random().nextInt(0, 500);// configuration.getX();
-        this.y = new Random().nextInt(0, 500);//configuration.getY();
-        draw(drawContext, this.x, this.y, getAlignment());
+        draw(drawContext, this.widgetConfiguration.getX(), this.widgetConfiguration.getY(), getAlignment());
     }
 
     public int getContentWidth() {
@@ -58,8 +65,10 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
     }
 
     public boolean isMouseOver(int mouseX, int mouseY) {
-        boolean mouseOverX = mouseX >= this.x && mouseX <= this.x + getWidth();
-        boolean mouseOverY = mouseY >= this.y && mouseY <= this.y + getHeight();
+        int x = this.widgetConfiguration.getX();
+        int y = this.widgetConfiguration.getY();
+        boolean mouseOverX = mouseX >= x && mouseX <= x + getWidth();
+        boolean mouseOverY = mouseY >= y && mouseY <= y + getHeight();
         return mouseOverX && mouseOverY;
     }
 
@@ -131,9 +140,10 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
 
         Alignment alignment;
 
-        if (this.x <= widthSegment) {
+        int x = this.widgetConfiguration.getX();
+        if (x <= widthSegment) {
             alignment = LEFT;
-        } else if (this.x <= widthSegment * 2) {
+        } else if (x <= widthSegment * 2) {
             alignment = CENTER;
         } else {
             alignment = RIGHT;

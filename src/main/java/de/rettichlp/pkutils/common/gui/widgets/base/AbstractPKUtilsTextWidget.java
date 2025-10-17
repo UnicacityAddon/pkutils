@@ -37,7 +37,7 @@ public abstract class AbstractPKUtilsTextWidget<C extends PKUtilsWidgetConfigura
 
         drawContext.fill(innerX, innerY, innerX + getContentWidth(), innerY + getContentHeight(), getBackgroundColor().getRGB());
         drawContext.drawBorder(innerX, innerY, getContentWidth(), getContentHeight(), getBorderColor().getRGB());
-        drawContext.drawText(this.textRenderer, text(), innerX + TEXT_BOX_PADDING, innerY + TEXT_BOX_PADDING, 0xFFFFFF, false);
+        drawContext.drawText(getTextRenderer(), text(), innerX + TEXT_BOX_PADDING, innerY + TEXT_BOX_PADDING, 0xFFFFFF, false);
 
         // debug: draw outline
         if (renderService.isDebugEnabled()) {
