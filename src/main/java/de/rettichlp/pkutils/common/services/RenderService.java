@@ -32,21 +32,9 @@ import static org.atteo.classindex.ClassIndex.getAnnotated;
 public class RenderService extends PKUtilsBase {
 
     public static final int TEXT_BOX_PADDING = 3;
-    public static final int TEXT_BOX_MARGIN = 2;
 
     @Getter
     private Set<AbstractPKUtilsWidget<?>> widgets = new HashSet<>();
-
-    public int getTextBoxSizeX(StringVisitable text) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        int fontWidth = textRenderer.getWidth(text);
-        return fontWidth + 2 * TEXT_BOX_PADDING + 2 * TEXT_BOX_MARGIN;
-    }
-
-    public int getTextBoxSizeY() {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        return textRenderer.fontHeight + 2 * TEXT_BOX_PADDING + 2 * TEXT_BOX_MARGIN;
-    }
 
     public boolean isDebugEnabled() {
         return false;

@@ -21,7 +21,6 @@ import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.CENTER;
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.LEFT;
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.RIGHT;
-import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_MARGIN;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 
@@ -54,14 +53,6 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         }
 
         draw(drawContext, this.widgetConfiguration.getX(), this.widgetConfiguration.getY(), getAlignment());
-    }
-
-    public int getContentWidth() {
-        return getWidth() - TEXT_BOX_MARGIN * 2;
-    }
-
-    public int getContentHeight() {
-        return getHeight() - TEXT_BOX_MARGIN * 2;
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
@@ -185,8 +176,8 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         public int getXWithMargin(int width) {
             int scaledWidth = MinecraftClient.getInstance().getWindow().getScaledWidth();
             return switch (this) {
-                case TOP_RIGHT, BOTTOM_RIGHT -> scaledWidth - (width + TEXT_BOX_MARGIN);
-                case TOP_LEFT, BOTTOM_LEFT -> TEXT_BOX_MARGIN;
+                case TOP_RIGHT, BOTTOM_RIGHT -> scaledWidth - width;
+                case TOP_LEFT, BOTTOM_LEFT -> 0;
                 case TOP_CENTER, BOTTOM_CENTER -> (scaledWidth - width) / 2;
             };
         }
@@ -194,8 +185,8 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         public int getYWithMargin(int height) {
             int scaledHeight = MinecraftClient.getInstance().getWindow().getScaledHeight();
             return switch (this) {
-                case TOP_RIGHT, TOP_LEFT, TOP_CENTER -> TEXT_BOX_MARGIN;
-                case BOTTOM_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER -> scaledHeight - height - TEXT_BOX_MARGIN;
+                case TOP_RIGHT, TOP_LEFT, TOP_CENTER -> 0;
+                case BOTTOM_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER -> scaledHeight - height;
             };
         }
     }

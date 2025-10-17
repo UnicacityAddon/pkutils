@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 
 import static de.rettichlp.pkutils.PKUtils.renderService;
-import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_MARGIN;
 import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_PADDING;
 import static java.awt.Color.WHITE;
 import static net.minecraft.text.Text.empty;
@@ -22,22 +21,20 @@ public abstract class AbstractPKUtilsTextWidget<C extends PKUtilsWidgetConfigura
 
     @Override
     public int getWidth() {
-        return renderService.getTextBoxSizeX(text());
+        int fontWidth = getTextRenderer().getWidth(text());
+        return fontWidth + 2 * TEXT_BOX_PADDING;
     }
 
     @Override
     public int getHeight() {
-        return renderService.getTextBoxSizeY();
+        return getTextRenderer().fontHeight + 2 * TEXT_BOX_PADDING;
     }
 
     @Override
     public void draw(@NotNull DrawContext drawContext, int x, int y, Alignment alignment) {
-        int innerX = x + TEXT_BOX_MARGIN;
-        int innerY = y + TEXT_BOX_MARGIN;
-
-        drawContext.fill(innerX, innerY, innerX + getContentWidth(), innerY + getContentHeight(), getBackgroundColor().getRGB());
-        drawContext.drawBorder(innerX, innerY, getContentWidth(), getContentHeight(), getBorderColor().getRGB());
-        drawContext.drawText(getTextRenderer(), text(), innerX + TEXT_BOX_PADDING, innerY + TEXT_BOX_PADDING, 0xFFFFFF, false);
+        drawContext.fill(x, y, x + getWidth(), y + getHeight(), getBackgroundColor().getRGB());
+        drawContext.drawBorder(x, y, getWidth(), getHeight(), getBorderColor().getRGB());
+        drawContext.drawText(getTextRenderer(), text(), x + TEXT_BOX_PADDING, y + TEXT_BOX_PADDING, 0xFFFFFF, false);
 
         // debug: draw outline
         if (renderService.isDebugEnabled()) {
