@@ -15,7 +15,7 @@ public class MoneyWidget extends AbstractPKUtilsTextWidget<MoneyWidget.Configura
     @Override
     public Text text() {
         return empty()
-                .append(keyValue("Geld", configuration.getMoneyCashAmount() + "$"))
+                .append(keyValue("Geld", configuration.getMoneyCashAmount() + "$")).append(" ")
                 .append(keyValue("Bank", configuration.getMoneyBankAmount() + "$"));
     }
 
