@@ -49,6 +49,7 @@
     "pkutils.options.nametag.additional.wanted.name": "Wanted",
     "pkutils.options.nametag.additional.wanted.description": "Highlights wanted players",
     "pkutils.options.overlay.title": "Widgets",
+    "pkutils.options.overlay.position.title": "Position",
     "pkutils.options.overlay.datetime.name": "Date & Time",
     "pkutils.options.overlay.datetime.description": "Shows the current date and time",
     "pkutils.options.overlay.money.name": "Money",

@@ -1,6 +1,7 @@
 package de.rettichlp.pkutils.common.gui.options;
 
 import de.rettichlp.pkutils.common.gui.OptionsScreen;
+import de.rettichlp.pkutils.common.gui.OverlayEditScreen;
 import de.rettichlp.pkutils.common.models.config.OverlayOptions;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -24,6 +25,8 @@ public class OverlayOptionsScreen extends OptionsScreen {
 
         // general
         directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.general"), this.textRenderer), Positioner::alignHorizontalCenter);
+
+        addButton(directionalLayoutWidget, "pkutils.options.overlay.position.title", button -> this.client.setScreen(new OverlayEditScreen(this)), 308);
 
         DirectionalLayoutWidget directionalLayoutWidget1 = directionalLayoutWidget.add(horizontal().spacing(8));
         addToggleButton(directionalLayoutWidget1, "pkutils.options.overlay.datetime", (options, value) -> options.overlay().dateTime(value), options -> options.overlay().dateTime(), 150);
