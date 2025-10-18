@@ -10,4 +10,8 @@ import java.lang.annotation.RetentionPolicy;
 public @interface PKUtilsWidget {
 
     String registryName();
+
+    double defaultX() default 0.0;
+
+    double defaultY() default 0.0;
 }

@@ -11,7 +11,7 @@ import static de.rettichlp.pkutils.PKUtils.storage;
 import static java.awt.Color.RED;
 import static java.lang.String.valueOf;
 
-@PKUtilsWidget(registryName = "service_count")
+@PKUtilsWidget(registryName = "service_count", defaultX = 4.0, defaultY = 42.0)
 public class ServiceCountWidget extends AbstractPKUtilsTextWidget<ServiceCountWidget.Configuration> {
 
     @Override

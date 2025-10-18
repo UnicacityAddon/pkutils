@@ -9,7 +9,7 @@ import net.minecraft.text.Text;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static net.minecraft.text.Text.empty;
 
-@PKUtilsWidget(registryName = "money")
+@PKUtilsWidget(registryName = "money", defaultX = 4.0, defaultY = 23.0)
 public class MoneyWidget extends AbstractPKUtilsTextWidget<MoneyWidget.Configuration> {
 
     @Override

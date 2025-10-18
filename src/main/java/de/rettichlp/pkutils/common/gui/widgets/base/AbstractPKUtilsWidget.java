@@ -84,7 +84,8 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         if (isNull(widgetConfigurationObject)) {
             LOGGER.debug("No configuration found for widget {}, using default configuration", registryName);
             this.widgetConfiguration = widgetConfigurationClass.getConstructor().newInstance();
-            return;
+            this.widgetConfiguration.setX(getDefaultX());
+            this.widgetConfiguration.setY(getDefaultY());
         }
 
         String widgetConfigurationJson = api.getGson().toJson(widgetConfigurationObject);
@@ -132,6 +133,18 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         return ofNullable(this.getClass().getAnnotation(PKUtilsWidget.class))
                 .map(PKUtilsWidget::registryName)
                 .orElse(null);
+    }
+
+    private double getDefaultX() {
+        return ofNullable(this.getClass().getAnnotation(PKUtilsWidget.class))
+                .map(PKUtilsWidget::defaultX)
+                .orElse(0.0);
+    }
+
+    private double getDefaultY() {
+        return ofNullable(this.getClass().getAnnotation(PKUtilsWidget.class))
+                .map(PKUtilsWidget::defaultY)
+                .orElse(0.0);
     }
 
     @SuppressWarnings("unchecked")

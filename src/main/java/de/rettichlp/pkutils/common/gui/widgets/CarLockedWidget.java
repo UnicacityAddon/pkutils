@@ -15,7 +15,7 @@ import static net.minecraft.util.Formatting.GOLD;
 import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.GREEN;
 
-@PKUtilsWidget(registryName = "car_locked")
+@PKUtilsWidget(registryName = "car_locked", defaultX = 110.0, defaultY = 4.0)
 public class CarLockedWidget extends AbstractPKUtilsTextWidget<CarLockedWidget.Configuration> {
 
     @Override

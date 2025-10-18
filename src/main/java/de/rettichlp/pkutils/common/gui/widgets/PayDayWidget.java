@@ -14,7 +14,7 @@ import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
 
-@PKUtilsWidget(registryName = "payday")
+@PKUtilsWidget(registryName = "payday", defaultX = 126.0, defaultY = 4.0)
 public class PayDayWidget extends AbstractPKUtilsTextWidget<PayDayWidget.Configuration> {
 
     @Override

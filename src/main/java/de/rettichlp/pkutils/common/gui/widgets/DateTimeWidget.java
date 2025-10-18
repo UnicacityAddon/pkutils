@@ -8,7 +8,7 @@ import net.minecraft.text.Text;
 import static java.time.LocalDateTime.now;
 import static net.minecraft.text.Text.of;
 
-@PKUtilsWidget(registryName = "date_time")
+@PKUtilsWidget(registryName = "date_time", defaultX = 4.0, defaultY = 4.0)
 public class DateTimeWidget extends AbstractPKUtilsTextWidget<DateTimeWidget.Configuration> {
 
     @Override
