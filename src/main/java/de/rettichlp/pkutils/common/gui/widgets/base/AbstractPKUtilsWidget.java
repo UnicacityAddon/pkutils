@@ -52,12 +52,14 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
             return;
         }
 
-        draw(drawContext, this.widgetConfiguration.getX(), this.widgetConfiguration.getY(), getAlignment());
+        int x = (int) this.widgetConfiguration.getX();
+        int y = (int) this.widgetConfiguration.getY();
+        draw(drawContext, x, y, getAlignment());
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
-        int x = this.widgetConfiguration.getX();
-        int y = this.widgetConfiguration.getY();
+        double x = this.widgetConfiguration.getX();
+        double y = this.widgetConfiguration.getY();
         boolean mouseOverX = mouseX >= x && mouseX <= x + getWidth();
         boolean mouseOverY = mouseY >= y && mouseY <= y + getHeight();
         return mouseOverX && mouseOverY;
@@ -99,7 +101,11 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
             return;
         }
 
-        String widgetConfigurationJson = api.getGson().toJson(getWidgetConfiguration());
+        C widgetConfiguration = getWidgetConfiguration();
+        widgetConfiguration.setX(roundToNearestHalf(widgetConfiguration.getX()));
+        widgetConfiguration.setY(roundToNearestHalf(widgetConfiguration.getY()));
+
+        String widgetConfigurationJson = api.getGson().toJson(widgetConfiguration);
         Map<String, Object> widgetConfigurationMap = api.getGson().fromJson(widgetConfigurationJson, MAP_TYPE);
         configuration.getWidgets().put(registryName, widgetConfigurationMap);
     }
@@ -131,7 +137,7 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
 
         Alignment alignment;
 
-        int x = this.widgetConfiguration.getX();
+        double x = this.widgetConfiguration.getX();
         if (x <= widthSegment) {
             alignment = LEFT;
         } else if (x <= widthSegment * 2) {
@@ -141,6 +147,10 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         }
 
         return alignment;
+    }
+
+    private double roundToNearestHalf(double value) {
+        return Math.round(value * 2) / 2.0;
     }
 
     @Getter

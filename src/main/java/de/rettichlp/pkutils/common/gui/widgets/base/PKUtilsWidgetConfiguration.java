@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class PKUtilsWidgetConfiguration {
 
-    private int x;
-    private int y;
+    private double x;
+    private double y;
 }
