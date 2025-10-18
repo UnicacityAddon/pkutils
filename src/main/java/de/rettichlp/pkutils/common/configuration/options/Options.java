@@ -30,7 +30,6 @@ public class Options {
     private final NameTagOptions nameTag = new NameTagOptions();
     private final List<PersonalUseEntry> personalUse = new ArrayList<>();
     private final CarOptions car = new CarOptions();
-    private final OverlayOptions overlay = new OverlayOptions();
 
     private ReinforcementType reinforcementType = UNICACITYADDON;
     private boolean customSounds = true;

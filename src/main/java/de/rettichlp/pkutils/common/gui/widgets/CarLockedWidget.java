@@ -1,15 +1,24 @@
 package de.rettichlp.pkutils.common.gui.widgets;
 
+import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsTextWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.common.configuration.options.OverlayOptions.CarLockedStyle.MINIMALISTIC;
+import static de.rettichlp.pkutils.common.gui.widgets.CarLockedWidget.Style.DEFAULT;
+import static de.rettichlp.pkutils.common.gui.widgets.CarLockedWidget.Style.MINIMALISTIC;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
+import static net.minecraft.text.Text.translatable;
 import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.GOLD;
 import static net.minecraft.util.Formatting.GRAY;
@@ -20,9 +29,7 @@ public class CarLockedWidget extends AbstractPKUtilsTextWidget<CarLockedWidget.C
 
     @Override
     public Text text() {
-        boolean minimalistic = configuration.getOptions().overlay().carLockedStyle() == MINIMALISTIC;
-
-        return minimalistic
+        return getWidgetConfiguration().getStyle() == MINIMALISTIC
                 ? (storage.isCarLocked() ? of("🔒").copy().formatted(GREEN) : of("🔓").copy().formatted(GOLD))
                 : empty()
                 .append(of("Fahrzeug").copy().formatted(GRAY))
@@ -30,5 +37,32 @@ public class CarLockedWidget extends AbstractPKUtilsTextWidget<CarLockedWidget.C
                 .append(storage.isCarLocked() ? of("zu").copy().formatted(GREEN) : of("offen").copy().formatted(GOLD));
     }
 
-    public static class Configuration extends PKUtilsWidgetConfiguration {}
+    @Getter
+    @AllArgsConstructor
+    public enum Style implements CyclingButtonEntry {
+
+        DEFAULT("pkutils.widget.car_locked.configuration.style.value.default"),
+        MINIMALISTIC("pkutils.widget.car_locked.configuration.style.value.minimalistic");
+
+        private final String translationKey;
+
+        @Contract(value = " -> new", pure = true)
+        @Override
+        public @NotNull Text getDisplayName() {
+            return translatable(this.translationKey + ".name");
+        }
+
+        @Contract(" -> new")
+        @Override
+        public @NotNull Tooltip getTooltip() {
+            return Tooltip.of(translatable(this.translationKey + ".description"));
+        }
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = false)
+    public static class Configuration extends PKUtilsWidgetConfiguration {
+
+        private Style style = DEFAULT;
+    }
 }

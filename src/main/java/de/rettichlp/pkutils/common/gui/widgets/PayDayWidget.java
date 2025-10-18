@@ -3,8 +3,8 @@ package de.rettichlp.pkutils.common.gui.widgets;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsTextWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
-import de.rettichlp.pkutils.common.configuration.options.OverlayOptions;
-import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
@@ -19,28 +19,27 @@ public class PayDayWidget extends AbstractPKUtilsTextWidget<PayDayWidget.Configu
 
     @Override
     public Text text() {
-        OverlayOptions overlayOptions = configuration.getOptions().overlay(); // TODO to configuration
-
         MutableText payDayInfoText = keyValue("PayDay", empty()
                 .append(of(valueOf(configuration.getMinutesSinceLastPayDay())))
                 .append(of("/").copy().formatted(DARK_GRAY))
                 .append(of("60")));
 
-        if (overlayOptions.payDaySalary()) {
+        if (getWidgetConfiguration().isShowSalary()) {
             payDayInfoText.append(" ").append(keyValue("Gehalt", configuration.getPredictedPayDaySalary() + "$"));
         }
 
-        if (overlayOptions.payDayExperience()) {
+        if (getWidgetConfiguration().isShowExperience()) {
             payDayInfoText.append(" ").append(keyValue("Exp", valueOf(configuration.getPredictedPayDayExp())));
         }
 
         return payDayInfoText;
     }
 
-    @AllArgsConstructor
+    @Data
+    @EqualsAndHashCode(callSuper = false)
     public static class Configuration extends PKUtilsWidgetConfiguration {
 
-        private final boolean showSalary = true;
-        private final boolean showExperience = true;
+        private boolean showSalary = true;
+        private boolean showExperience = true;
     }
 }
