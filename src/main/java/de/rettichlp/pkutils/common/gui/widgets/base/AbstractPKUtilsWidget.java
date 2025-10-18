@@ -9,7 +9,6 @@ import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -17,6 +16,7 @@ import java.util.Map;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
 import static de.rettichlp.pkutils.PKUtils.configuration;
+import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.CENTER;
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.LEFT;
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.RIGHT;
@@ -39,11 +39,7 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
     public abstract void draw(@NotNull DrawContext drawContext, int x, int y, Alignment alignment);
 
     public void init() {
-        try {
-            loadConfiguration();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            LOGGER.error("Could not load configuration for widget {}", this.getClass().getName(), e);
-        }
+        loadConfiguration();
     }
 
     public void draw(@NotNull DrawContext drawContext) {
@@ -68,8 +64,7 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         return true;
     }
 
-    public void loadConfiguration() throws NoSuchMethodException, InvocationTargetException, InstantiationException,
-                                           IllegalAccessException {
+    public void loadConfiguration() {
         String registryName = getRegistryName();
 
         if (isNull(registryName)) {
@@ -78,14 +73,22 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         }
 
         Class<C> widgetConfigurationClass = getConfigurationClass();
-        // load file configuration
+        // load configuration from file not from cache
         Object widgetConfigurationObject = configuration.loadFromFile().getWidgets().get(registryName);
 
         if (isNull(widgetConfigurationObject)) {
-            LOGGER.debug("No configuration found for widget {}, using default configuration", registryName);
-            this.widgetConfiguration = widgetConfigurationClass.getConstructor().newInstance();
-            this.widgetConfiguration.setX(getDefaultX());
-            this.widgetConfiguration.setY(getDefaultY());
+            LOGGER.info("No configuration found for widget {}, using default configuration", registryName);
+
+            try {
+                this.widgetConfiguration = widgetConfigurationClass.getConstructor().newInstance();
+                this.widgetConfiguration.setX(getDefaultX());
+                this.widgetConfiguration.setY(getDefaultY());
+            } catch (Exception e) {
+                notificationService.sendErrorNotification("Konfiguration konnte nicht geladen werden");
+                LOGGER.error("Could not load configuration for widget {}", registryName, e);
+            }
+
+            return;
         }
 
         String widgetConfigurationJson = api.getGson().toJson(widgetConfigurationObject);

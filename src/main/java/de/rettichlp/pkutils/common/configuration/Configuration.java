@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.common.configuration;
 
 import de.rettichlp.pkutils.common.configuration.options.Options;
-import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
 import de.rettichlp.pkutils.common.models.TodoEntry;
 import lombok.Data;
 import net.fabricmc.loader.api.FabricLoader;
@@ -18,7 +17,6 @@ import java.util.Map;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
-import static de.rettichlp.pkutils.PKUtils.renderService;
 import static java.nio.file.Files.newBufferedReader;
 import static java.nio.file.Files.newBufferedWriter;
 
@@ -35,10 +33,6 @@ public class Configuration {
     private int minutesSinceLastPayDay = 0;
     private int predictedPayDaySalary = 0;
     private int predictedPayDayExp = 0;
-
-    public void updateWidgetConfigurations() {
-        renderService.getWidgets().forEach(AbstractPKUtilsWidget::saveConfiguration);
-    }
 
     public void addMinutesSinceLastPayDay(int minutes) {
         this.minutesSinceLastPayDay += minutes;

@@ -36,21 +36,13 @@ public class WidgetOptionsPositionScreen extends PKUtilsScreen {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addBody(horizontal().spacing(8), positioner -> positioner.marginTop(this.client.getWindow().getScaledHeight() / 4));
 
         addButton(directionalLayoutWidget, "gui.done", button -> {
-            configuration.updateWidgetConfigurations();
+            renderService.getWidgets().forEach(AbstractPKUtilsWidget::saveConfiguration);
             back();
         }, 150);
 
         addButton(directionalLayoutWidget, "gui.cancel", button -> {
             // restore configurations from the configuration file
-            renderService.getWidgets().forEach(abstractPKUtilsWidget -> {
-                try {
-                    abstractPKUtilsWidget.loadConfiguration();
-                } catch (Exception e) {
-                    notificationService.sendErrorNotification("Konfiguration konnte nicht wiederhergestellt werden");
-                    LOGGER.error("Could not restore configuration for widget {}", abstractPKUtilsWidget.getClass().getName(), e);
-                }
-            });
-
+            renderService.getWidgets().forEach(AbstractPKUtilsWidget::loadConfiguration);
             back();
         }, 150);
 
@@ -102,13 +94,8 @@ public class WidgetOptionsPositionScreen extends PKUtilsScreen {
 
         if (nonNull(this.selectedWidget)) {
             PKUtilsWidgetConfiguration widgetConfiguration = this.selectedWidget.getWidgetConfiguration();
-
-            double newX = widgetConfiguration.getX() + deltaX;
-            double newY = widgetConfiguration.getY() + deltaY;
-
-            widgetConfiguration.setX(newX);
-            widgetConfiguration.setY(newY);
-            this.selectedWidget.saveConfiguration();
+            widgetConfiguration.setX(widgetConfiguration.getX() + deltaX);
+            widgetConfiguration.setY(widgetConfiguration.getY() + deltaY);
         }
     }
 
