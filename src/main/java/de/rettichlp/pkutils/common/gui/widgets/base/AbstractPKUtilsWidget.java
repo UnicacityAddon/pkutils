@@ -43,7 +43,7 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
     }
 
     public void draw(@NotNull DrawContext drawContext) {
-        if (!isVisible()) {
+        if (!isVisible() || !this.widgetConfiguration.isEnabled()) {
             return;
         }
 
