@@ -1,6 +1,7 @@
 package de.rettichlp.pkutils.common.gui.options;
 
 import de.rettichlp.pkutils.common.gui.PKUtilsScreen;
+import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -13,12 +14,18 @@ import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_PADDING;
 import static java.awt.Color.BLACK;
+import static java.awt.Color.GREEN;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.text.Text.empty;
+import static net.minecraft.text.Text.of;
 
 public class WidgetOptionsPositionScreen extends PKUtilsScreen {
 
-    private String widgetLocationText = "";
+    private AbstractPKUtilsWidget<?> selectedWidget;
+    private double oldMouseX;
+    private double oldMouseY;
 
     public WidgetOptionsPositionScreen(Screen parent) {
         super(empty(), empty(), parent, false);
@@ -59,14 +66,24 @@ public class WidgetOptionsPositionScreen extends PKUtilsScreen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
-        if (!this.widgetLocationText.isBlank()) {
-            int textX = mouseX + 10;
-            int textY = mouseY + 10;
-
-            Text widgetLocationText = Text.of(this.widgetLocationText);
-            context.fill(textX - TEXT_BOX_PADDING, textY - TEXT_BOX_PADDING, textX + this.textRenderer.getWidth(widgetLocationText) + TEXT_BOX_PADDING, textY + this.textRenderer.fontHeight + TEXT_BOX_PADDING, renderService.getSecondaryColor(BLACK).getRGB());
-            context.drawText(this.textRenderer, widgetLocationText, textX, textY, 0xFFFFFF, false);
+        if (isNull(this.selectedWidget)) {
+            return;
         }
+
+        int textX = mouseX + 10;
+        int textY = mouseY + 10;
+
+        PKUtilsWidgetConfiguration widgetConfiguration = this.selectedWidget.getWidgetConfiguration();
+
+        // draw border around the selected widget
+        double x = widgetConfiguration.getX();
+        double y = widgetConfiguration.getY();
+        context.drawBorder((int) x, (int) y, this.selectedWidget.getWidth(), this.selectedWidget.getHeight(), GREEN.getRGB());
+
+        // draw widget location text box
+        Text widgetLocationText = of("X: " + x + " Y: " + y + " (W: " + this.selectedWidget.getWidth() + " H: " + this.selectedWidget.getHeight() + ")");
+        context.fill(textX - TEXT_BOX_PADDING, textY - TEXT_BOX_PADDING, textX + this.textRenderer.getWidth(widgetLocationText) + TEXT_BOX_PADDING, textY + this.textRenderer.fontHeight + TEXT_BOX_PADDING, renderService.getSecondaryColor(BLACK).getRGB());
+        context.drawText(this.textRenderer, widgetLocationText, textX, textY, 0xFFFFFF, false);
     }
 
     // disable background rendering to see overlay better
@@ -74,28 +91,43 @@ public class WidgetOptionsPositionScreen extends PKUtilsScreen {
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {}
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        boolean mouseDragged = super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    public void mouseMoved(double mouseX, double mouseY) {
+        super.mouseMoved(mouseX, mouseY);
 
-        this.widgetLocationText = "";
+        double deltaX = mouseX - this.oldMouseX;
+        double deltaY = mouseY - this.oldMouseY;
+
+        this.oldMouseX = mouseX;
+        this.oldMouseY = mouseY;
+
+        if (nonNull(this.selectedWidget)) {
+            PKUtilsWidgetConfiguration widgetConfiguration = this.selectedWidget.getWidgetConfiguration();
+
+            double newX = widgetConfiguration.getX() + deltaX;
+            double newY = widgetConfiguration.getY() + deltaY;
+
+            widgetConfiguration.setX(newX);
+            widgetConfiguration.setY(newY);
+            this.selectedWidget.saveConfiguration();
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        boolean mouseClicked = super.mouseClicked(mouseX, mouseY, button);
 
         renderService.getWidgets().stream()
                 .filter(abstractPKUtilsWidget -> abstractPKUtilsWidget.isMouseOver(mouseX, mouseY))
                 .findFirst()
-                .ifPresent(abstractPKUtilsWidget -> {
-                    PKUtilsWidgetConfiguration widgetConfiguration = abstractPKUtilsWidget.getWidgetConfiguration();
+                .ifPresent(abstractPKUtilsWidget -> this.selectedWidget = abstractPKUtilsWidget);
 
-                    double speedFactor = 1.2; // it's a bit too slow without the factor
-                    int newX = widgetConfiguration.getX() + (int) (deltaX * speedFactor);
-                    int newY = widgetConfiguration.getY() + (int) (deltaY * speedFactor);
+        return mouseClicked;
+    }
 
-                    widgetConfiguration.setX(newX);
-                    widgetConfiguration.setY(newY);
-                    abstractPKUtilsWidget.saveConfiguration();
-
-                    this.widgetLocationText = "X: " + newX + " Y: " + newY;
-                });
-
-        return mouseDragged;
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        boolean mouseReleased = super.mouseReleased(mouseX, mouseY, button);
+        this.selectedWidget = null;
+        return mouseReleased;
     }
 }
