@@ -2,7 +2,6 @@ package de.rettichlp.pkutils.common.gui.widgets.base;
 
 import com.google.common.reflect.TypeToken;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -110,6 +109,24 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         configuration.getWidgets().put(registryName, widgetConfigurationMap);
     }
 
+    private Alignment getAlignment() {
+        int scaledWidth = MinecraftClient.getInstance().getWindow().getScaledWidth();
+        int widthSegment = scaledWidth / 3;
+
+        Alignment alignment;
+
+        double x = this.widgetConfiguration.getX();
+        if (x <= widthSegment) {
+            alignment = LEFT;
+        } else if (x <= widthSegment * 2) {
+            alignment = CENTER;
+        } else {
+            alignment = RIGHT;
+        }
+
+        return alignment;
+    }
+
     @Nullable
     private String getRegistryName() {
         return ofNullable(this.getClass().getAnnotation(PKUtilsWidget.class))
@@ -131,74 +148,8 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         throw new IllegalStateException("Widget class must be generic: AbstractPKUtilsWidget<C>");
     }
 
-    private Alignment getAlignment() {
-        int scaledWidth = MinecraftClient.getInstance().getWindow().getScaledWidth();
-        int widthSegment = scaledWidth / 3;
-
-        Alignment alignment;
-
-        double x = this.widgetConfiguration.getX();
-        if (x <= widthSegment) {
-            alignment = LEFT;
-        } else if (x <= widthSegment * 2) {
-            alignment = CENTER;
-        } else {
-            alignment = RIGHT;
-        }
-
-        return alignment;
-    }
-
     private double roundToNearestHalf(double value) {
         return Math.round(value * 2) / 2.0;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public enum DrawPosition {
-
-        TOP_LEFT(LEFT),
-        TOP_CENTER(CENTER),
-        TOP_RIGHT(RIGHT),
-        BOTTOM_LEFT(LEFT),
-        BOTTOM_CENTER(CENTER),
-        BOTTOM_RIGHT(RIGHT);
-
-        private final Alignment alignment;
-
-        public int getX(int width) {
-            int scaledWidth = MinecraftClient.getInstance().getWindow().getScaledWidth();
-            return switch (this) {
-                case TOP_RIGHT, BOTTOM_RIGHT -> scaledWidth - width;
-                case TOP_LEFT, BOTTOM_LEFT -> 0;
-                case TOP_CENTER, BOTTOM_CENTER -> (scaledWidth - width) / 2;
-            };
-        }
-
-        public int getY(int height) {
-            int scaledHeight = MinecraftClient.getInstance().getWindow().getScaledHeight();
-            return switch (this) {
-                case TOP_RIGHT, TOP_LEFT, TOP_CENTER -> 0;
-                case BOTTOM_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER -> scaledHeight - height;
-            };
-        }
-
-        public int getXWithMargin(int width) {
-            int scaledWidth = MinecraftClient.getInstance().getWindow().getScaledWidth();
-            return switch (this) {
-                case TOP_RIGHT, BOTTOM_RIGHT -> scaledWidth - width;
-                case TOP_LEFT, BOTTOM_LEFT -> 0;
-                case TOP_CENTER, BOTTOM_CENTER -> (scaledWidth - width) / 2;
-            };
-        }
-
-        public int getYWithMargin(int height) {
-            int scaledHeight = MinecraftClient.getInstance().getWindow().getScaledHeight();
-            return switch (this) {
-                case TOP_RIGHT, TOP_LEFT, TOP_CENTER -> 0;
-                case BOTTOM_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER -> scaledHeight - height;
-            };
-        }
     }
 
     public enum Alignment {
