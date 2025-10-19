@@ -1,6 +1,8 @@
 package de.rettichlp.pkutils.listener.impl;
 
-import de.rettichlp.pkutils.common.gui.widgets.alignment.AlignVerticalWidget;
+import de.rettichlp.pkutils.common.gui.widgets.CountdownWidget;
+import de.rettichlp.pkutils.common.gui.widgets.NotificationWidget;
+import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsProgressTextWidget;
 import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
@@ -9,6 +11,11 @@ import de.rettichlp.pkutils.listener.IHudRenderListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.renderService;
@@ -18,8 +25,6 @@ import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget
 @PKUtilsListener
 public class RenderListener extends PKUtilsBase implements IHudRenderListener {
 
-    private final AlignVerticalWidget notificationOverlay = new AlignVerticalWidget();
-
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
         renderNotifications(drawContext);
@@ -27,18 +32,29 @@ public class RenderListener extends PKUtilsBase implements IHudRenderListener {
     }
 
     private void renderNotifications(DrawContext drawContext) {
-        this.notificationOverlay.clear();
+        ArrayList<AbstractPKUtilsProgressTextWidget<?>> widgets = new ArrayList<>();
+        widgets.addAll(getCountdownWidgets());
+        widgets.addAll(getNotificationWidgets());
 
-        storage.getCountdowns().stream()
+        for (int i = 0; i < widgets.size(); i++) {
+            AbstractPKUtilsProgressTextWidget<?> abstractPKUtilsProgressTextWidget = widgets.get(i);
+            int x = MinecraftClient.getInstance().getWindow().getScaledWidth() - abstractPKUtilsProgressTextWidget.getWidth() - 4;
+            int y = 19 * i + 4;
+            abstractPKUtilsProgressTextWidget.draw(drawContext, x, y, RIGHT);
+        }
+    }
+
+    private @NotNull @Unmodifiable List<CountdownWidget> getCountdownWidgets() {
+        return storage.getCountdowns().stream()
                 .filter(Countdown::isActive)
                 .map(Countdown::toWidget)
-                .forEach(this.notificationOverlay::add);
+                .toList();
+    }
 
-        notificationService.getActiveNotifications().stream()
+    private @NotNull @Unmodifiable List<NotificationWidget> getNotificationWidgets() {
+        return notificationService.getActiveNotifications().stream()
                 .map(NotificationService.Notification::toWidget)
-                .forEach(this.notificationOverlay::add);
-
-        this.notificationOverlay.draw(drawContext, MinecraftClient.getInstance().getWindow().getScaledWidth() - this.notificationOverlay.getWidth(), 0, RIGHT);
+                .toList();
     }
 
     private void renderWidgets(DrawContext drawContext) {
