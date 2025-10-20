@@ -45,6 +45,7 @@ public class WidgetOptionsScreen extends OptionsScreen {
         renderService.getWidgets().forEach(abstractPKUtilsWidget -> {
             Text displayName = abstractPKUtilsWidget.getDisplayName();
             ToggleButtonWidget toggleButton = new ToggleButtonWidget(displayName, value -> abstractPKUtilsWidget.getWidgetConfiguration().setEnabled(value), abstractPKUtilsWidget.getWidgetConfiguration().isEnabled());
+            toggleButton.setTooltip(abstractPKUtilsWidget.getTooltip());
             gridWidgetAdder.add(toggleButton);
         });
 
