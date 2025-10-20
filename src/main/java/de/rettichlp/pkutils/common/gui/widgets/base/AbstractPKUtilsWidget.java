@@ -6,6 +6,7 @@ import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,6 +63,14 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
 
     public boolean isVisible() {
         return true;
+    }
+
+    @Nullable
+    public Text getDisplayName() {
+        return ofNullable(getRegistryName())
+                .map(registryName -> "pkutils.widgets." + registryName + ".name")
+                .map(Text::translatable)
+                .orElse(null);
     }
 
     public void loadConfiguration() {

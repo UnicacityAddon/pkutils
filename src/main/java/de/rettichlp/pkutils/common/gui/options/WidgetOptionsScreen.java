@@ -1,14 +1,17 @@
 package de.rettichlp.pkutils.common.gui.options;
 
 import de.rettichlp.pkutils.common.gui.OptionsScreen;
-import de.rettichlp.pkutils.common.configuration.options.OverlayOptions;
+import de.rettichlp.pkutils.common.gui.options.components.ToggleButtonWidget;
+import de.rettichlp.pkutils.common.gui.widgets.base.IOptionWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
+import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.Positioner;
 import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.text.Text;
 
-import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
+import static de.rettichlp.pkutils.PKUtils.renderService;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
 import static net.minecraft.text.Text.translatable;
 
@@ -25,30 +28,35 @@ public class WidgetOptionsScreen extends OptionsScreen {
         // general
         directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.general"), this.textRenderer), Positioner::alignHorizontalCenter);
 
-        addButton(directionalLayoutWidget, "pkutils.options.overlay.position.title", button -> this.client.setScreen(new WidgetOptionsPositionScreen(this)), 308);
+        renderService.addButton(directionalLayoutWidget, "pkutils.options.overlay.position.title", button -> this.client.setScreen(new WidgetOptionsPositionScreen(this)), 308);
 
-        DirectionalLayoutWidget directionalLayoutWidget1 = directionalLayoutWidget.add(horizontal().spacing(8));
-        addToggleButton(directionalLayoutWidget1, "pkutils.options.overlay.datetime", (options, value) -> options.overlay().dateTime(value), options -> options.overlay().dateTime(), 150);
-        addToggleButton(directionalLayoutWidget1, "pkutils.options.overlay.money", (options, value) -> options.overlay().money(value), options -> options.overlay().money(), 150);
+        // general - enable status
+        GridWidget gridWidget = directionalLayoutWidget.add(new GridWidget());
+        gridWidget.setColumnSpacing(8).setRowSpacing(4);
+        GridWidget.Adder gridWidgetAdder = gridWidget.createAdder(2);
 
-        DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(horizontal().spacing(8));
-        addToggleButton(directionalLayoutWidget2, "pkutils.options.overlay.service_count", (options, value) -> options.overlay().serviceCount(value), options -> options.overlay().serviceCount(), 150);
+        renderService.getWidgets().forEach(abstractPKUtilsWidget -> {
+            Text displayName = abstractPKUtilsWidget.getDisplayName();
+            ToggleButtonWidget toggleButton = new ToggleButtonWidget(displayName, value -> abstractPKUtilsWidget.getWidgetConfiguration().setEnabled(value), abstractPKUtilsWidget.getWidgetConfiguration().isEnabled());
+            gridWidgetAdder.add(toggleButton);
+        });
 
-        // payday
-        directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.payday"), this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
+        gridWidget.refreshPositions();
+        gridWidget.forEachChild(this::addDrawableChild);
 
-        addToggleButton(directionalLayoutWidget, "pkutils.options.overlay.payday", (options, value) -> options.overlay().payDay(value), options -> options.overlay().payDay(), 308);
+        // options section per widget
+        renderService.getWidgets().stream()
+                .filter(abstractPKUtilsWidget -> abstractPKUtilsWidget.getWidgetConfiguration() instanceof IOptionWidget)
+                .forEach(abstractPKUtilsWidget -> {
+                    IOptionWidget iOptionWidget = (IOptionWidget) abstractPKUtilsWidget.getWidgetConfiguration();
 
-        DirectionalLayoutWidget directionalLayoutWidget3 = directionalLayoutWidget.add(horizontal().spacing(8));
-        addToggleButton(directionalLayoutWidget3, "pkutils.options.overlay.payday.salary", (options, value) -> options.overlay().payDaySalary(value), options -> options.overlay().payDaySalary(), 150);
-        addToggleButton(directionalLayoutWidget3, "pkutils.options.overlay.payday.experience", (options, value) -> options.overlay().payDayExperience(value), options -> options.overlay().payDayExperience(), 150);
+                    // section title
+                    Text text = iOptionWidget.sectionTitle();
+                    directionalLayoutWidget.add(new TextWidget(text, this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
 
-        // car
-        directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.car"), this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
-
-        DirectionalLayoutWidget directionalLayoutWidget4 = directionalLayoutWidget.add(horizontal().spacing(8));
-        addToggleButton(directionalLayoutWidget4, "pkutils.options.overlay.car.locked", (options, value) -> options.overlay().carLocked(value), options -> options.nameTag().factionInformation(), 150);
-        addCyclingButton(directionalLayoutWidget4, "pkutils.options.overlay.car.locked.style.name", OverlayOptions.CarLockedStyle.values(), OverlayOptions.CarLockedStyle::getDisplayName, (options, carLockedStyle) -> options.overlay().carLockedStyle(carLockedStyle), options -> options.overlay().carLockedStyle(), 150);
+                    // options widget
+                    directionalLayoutWidget.add(iOptionWidget.optionsWidget(), Positioner::alignHorizontalCenter);
+                });
 
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
     }

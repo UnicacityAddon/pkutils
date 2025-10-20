@@ -2,6 +2,7 @@ package de.rettichlp.pkutils.common.gui.widgets;
 
 import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsTextWidget;
+import de.rettichlp.pkutils.common.gui.widgets.base.IOptionWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.CyclingButtonWidget;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -60,8 +63,22 @@ public class CarLockedWidget extends AbstractPKUtilsTextWidget<CarLockedWidget.C
 
     @Data
     @EqualsAndHashCode(callSuper = false)
-    public static class Configuration extends PKUtilsWidgetConfiguration {
+    public static class Configuration extends PKUtilsWidgetConfiguration implements IOptionWidget {
 
         private Style style = MINIMALISTIC;
+
+        @Override
+        public Text sectionTitle() {
+            return translatable("pkutils.options.overlay.car.locked.name");
+        }
+
+        @Override
+        public Widget optionsWidget() {
+            return CyclingButtonWidget.builder(Style::getDisplayName)
+                    .values(Style.values())
+                    .initially(this.style)
+                    .tooltip(Style::getTooltip)
+                    .build(of("text"), (button, style) -> this.style = style);
+        }
     }
 }
