@@ -30,15 +30,15 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
 import java.awt.Color;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.configuration;
-import static java.util.stream.Collectors.toSet;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.StreamSupport.stream;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.client.render.RenderLayer.getLines;
@@ -52,7 +52,7 @@ public class RenderService extends PKUtilsBase {
     public static final int TEXT_BOX_PADDING = 3;
 
     @Getter
-    private Set<AbstractPKUtilsWidget<?>> widgets = new HashSet<>();
+    private LinkedHashSet<AbstractPKUtilsWidget<?>> widgets = new LinkedHashSet<>();
 
     public boolean isDebugEnabled() {
         return false;
@@ -163,7 +163,8 @@ public class RenderService extends PKUtilsBase {
                 })
                 .filter(Objects::nonNull)
                 .peek(AbstractPKUtilsWidget::init)
-                .collect(toSet());
+                .sorted(comparing(AbstractPKUtilsWidget::getRegistryName))
+                .collect(toCollection(LinkedHashSet::new));
     }
 
     public void addButton(@NotNull DirectionalLayoutWidget widget, String key, ButtonWidget.PressAction onPress, int width) {

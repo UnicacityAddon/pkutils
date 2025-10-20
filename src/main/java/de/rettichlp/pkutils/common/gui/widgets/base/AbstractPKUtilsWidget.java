@@ -6,9 +6,9 @@ import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -23,6 +23,7 @@ import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.RIGHT;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
+import static net.minecraft.text.Text.translatable;
 
 @Getter
 public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration> extends PKUtilsBase {
@@ -65,12 +66,20 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         return true;
     }
 
-    @Nullable
+    public String getRegistryName() {
+        return ofNullable(this.getClass().getAnnotation(PKUtilsWidget.class))
+                .map(PKUtilsWidget::registryName)
+                .orElseThrow(() -> new IllegalStateException("Widget class " + this.getClass().getName() + " has no registry name"));
+    }
+
     public Text getDisplayName() {
-        return ofNullable(getRegistryName())
-                .map(registryName -> "pkutils.widgets." + registryName + ".name")
-                .map(Text::translatable)
-                .orElse(null);
+        String translationKey = "pkutils.widgets." + getRegistryName() + ".options.name";
+        return translatable(translationKey);
+    }
+
+    public Tooltip getTooltip() {
+        String translationKey = "pkutils.widgets." + getRegistryName() + ".options.tooltip";
+        return Tooltip.of(translatable(translationKey));
     }
 
     public void loadConfiguration() {
@@ -138,13 +147,6 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         }
 
         return alignment;
-    }
-
-    @Nullable
-    private String getRegistryName() {
-        return ofNullable(this.getClass().getAnnotation(PKUtilsWidget.class))
-                .map(PKUtilsWidget::registryName)
-                .orElse(null);
     }
 
     private double getDefaultX() {
