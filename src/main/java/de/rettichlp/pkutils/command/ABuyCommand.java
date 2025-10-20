@@ -18,7 +18,7 @@ public class ABuyCommand extends CommandBase {
     @Override
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
-                .then(ClientCommandManager.argument("amount", integer())
+                .then(ClientCommandManager.argument("amount", integer(1,300))
                         .executes(context -> {
                             int amount = context.getArgument("amount", Integer.class);
 

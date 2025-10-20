@@ -62,7 +62,7 @@ public class InventoryScreenMixin {
             for (int i = 1; i < amount; i++) {
                 PKUtils.api.delayedAction(() -> {
                     PKUtils.networkHandler.sendPacket(packet);
-                }, 150L * i); // Maybe change delay. | 150L * i no lag.
+                }, 150L * i); // Maybe change delay. | 150L * i no lag but a bit slow.
             }
             storage.setABuyAmount(0);
 
