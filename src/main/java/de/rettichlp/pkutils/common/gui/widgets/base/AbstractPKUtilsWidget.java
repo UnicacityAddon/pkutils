@@ -82,7 +82,7 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         }
 
         Class<C> widgetConfigurationClass = getConfigurationClass();
-        // load configuration from file not from cache
+        // load configuration from the configuration file - not from the cache
         Object widgetConfigurationObject = configuration.loadFromFile().getWidgets().get(registryName);
 
         if (isNull(widgetConfigurationObject)) {

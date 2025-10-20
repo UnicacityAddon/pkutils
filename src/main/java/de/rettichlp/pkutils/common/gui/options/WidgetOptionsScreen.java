@@ -2,6 +2,7 @@ package de.rettichlp.pkutils.common.gui.options;
 
 import de.rettichlp.pkutils.common.gui.OptionsScreen;
 import de.rettichlp.pkutils.common.gui.options.components.ToggleButtonWidget;
+import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.IOptionWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -19,6 +20,12 @@ public class WidgetOptionsScreen extends OptionsScreen {
 
     public WidgetOptionsScreen(Screen parent) {
         super(parent, "pkutils.options.overlay.title", false);
+    }
+
+    @Override
+    public void doOnClose() {
+        renderService.getWidgets().forEach(AbstractPKUtilsWidget::saveConfiguration);
+        super.doOnClose();
     }
 
     @Override
