@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.common.gui.widgets.CarLockedWidget.Style.DEFAULT;
 import static de.rettichlp.pkutils.common.gui.widgets.CarLockedWidget.Style.MINIMALISTIC;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
@@ -63,6 +62,6 @@ public class CarLockedWidget extends AbstractPKUtilsTextWidget<CarLockedWidget.C
     @EqualsAndHashCode(callSuper = false)
     public static class Configuration extends PKUtilsWidgetConfiguration {
 
-        private Style style = DEFAULT;
+        private Style style = MINIMALISTIC;
     }
 }
