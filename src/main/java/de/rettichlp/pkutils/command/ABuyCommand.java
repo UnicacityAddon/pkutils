@@ -27,6 +27,11 @@ public class ABuyCommand extends CommandBase {
                             return 1;
                         }))
                 .executes(context -> {
+                    if (storage.getABuyAmount() == 0){
+                        sendModMessage("/abuy <amount>", false);
+                        return 1;
+                    }
+
                     storage.setABuyAmount(0);
                     sendModMessage("ABuy wurde zurückgesetzt.", false);
                     return 1;
