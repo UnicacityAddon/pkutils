@@ -16,6 +16,7 @@ import java.util.List;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.configuration;
+import static de.rettichlp.pkutils.PKUtils.renderService;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.stream;
@@ -70,7 +71,7 @@ public class PersonalUseOptionsScreen extends OptionsScreen {
         directionalLayoutWidget.add(widget, Positioner::alignVerticalCenter);
 
         // purity input
-        addCyclingButton(directionalLayoutWidget, "pkutils.purity.title", Purity.values(), Purity::getDisplayName, (options, value) -> updatePersonalUseEntry(personalUseEntry, value), options -> personalUseEntry.getPurity(), 96);
+        renderService.addCyclingButton(directionalLayoutWidget, "pkutils.purity.title", Purity.values(), Purity::getDisplayName, (options, value) -> updatePersonalUseEntry(personalUseEntry, value), options -> personalUseEntry.getPurity(), 96);
 
         // amount input
         DirectionalLayoutWidget widget2 = personalUseInput(personalUseEntry);

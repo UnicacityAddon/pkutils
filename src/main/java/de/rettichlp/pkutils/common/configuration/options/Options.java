@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.models.config;
+package de.rettichlp.pkutils.common.configuration.options;
 
 import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
 import de.rettichlp.pkutils.common.models.PersonalUseEntry;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.rettichlp.pkutils.common.models.config.Options.ReinforcementType.UNICACITYADDON;
+import static de.rettichlp.pkutils.common.configuration.options.Options.ReinforcementType.UNICACITYADDON;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.AQUA;
@@ -30,7 +30,6 @@ public class Options {
     private final NameTagOptions nameTag = new NameTagOptions();
     private final List<PersonalUseEntry> personalUse = new ArrayList<>();
     private final CarOptions car = new CarOptions();
-    private final OverlayOptions overlay = new OverlayOptions();
 
     private ReinforcementType reinforcementType = UNICACITYADDON;
     private boolean customSounds = true;

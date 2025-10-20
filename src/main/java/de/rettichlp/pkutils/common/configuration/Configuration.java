@@ -1,5 +1,7 @@
-package de.rettichlp.pkutils.common.models.config;
+package de.rettichlp.pkutils.common.configuration;
 
+import de.rettichlp.pkutils.common.configuration.options.Options;
+import de.rettichlp.pkutils.common.models.TodoEntry;
 import lombok.Data;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -9,7 +11,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
@@ -21,6 +25,7 @@ public class Configuration {
 
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("pkutils.json");
 
+    private Map<String, Object> widgets = new HashMap<>();
     private List<TodoEntry> todos = new ArrayList<>();
     private Options options = new Options();
     private int moneyBankAmount = 0;

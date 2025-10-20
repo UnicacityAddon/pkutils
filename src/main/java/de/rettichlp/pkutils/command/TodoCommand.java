@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import de.rettichlp.pkutils.common.models.config.TodoEntry;
+import de.rettichlp.pkutils.common.models.TodoEntry;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
