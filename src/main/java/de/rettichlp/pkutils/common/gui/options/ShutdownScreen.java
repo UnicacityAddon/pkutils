@@ -5,6 +5,7 @@ import de.rettichlp.pkutils.common.models.ShutdownReason;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 
+import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
 import static net.minecraft.text.Text.empty;
@@ -40,7 +41,7 @@ public class ShutdownScreen extends PKUtilsScreen {
         directionalLayoutWidget.add(new TextWidget(empty()
                 .append(of("wird das automatische Herunterfahren gestoppt.").copy().formatted(GRAY)), this.textRenderer), positioner -> positioner.marginBottom(16));
 
-        addButton(directionalLayoutWidget, "pkutils.screen.button.shutdown.abort.name", button -> storage.getActiveShutdowns().clear(), 150);
+        renderService.addButton(directionalLayoutWidget, "pkutils.screen.button.shutdown.abort.name", button -> storage.getActiveShutdowns().clear(), 150);
 
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
     }

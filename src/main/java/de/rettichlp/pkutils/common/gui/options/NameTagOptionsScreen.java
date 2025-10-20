@@ -12,6 +12,7 @@ import net.minecraft.client.gui.widget.TextWidget;
 import org.jetbrains.annotations.NotNull;
 
 import static de.rettichlp.pkutils.PKUtils.configuration;
+import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.common.models.Color.WHITE;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.util.Arrays.stream;
@@ -32,7 +33,7 @@ public class NameTagOptionsScreen extends OptionsScreen {
 
         directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.faction"), this.textRenderer), Positioner::alignHorizontalCenter);
 
-        addToggleButton(directionalLayoutWidget, "pkutils.options.nametag.faction.information", (options, value) -> options.nameTag().factionInformation(value), options -> options.nameTag().factionInformation(), 308);
+        renderService.addToggleButton(directionalLayoutWidget, "pkutils.options.nametag.faction.information", (options, value) -> options.nameTag().factionInformation(value), options -> options.nameTag().factionInformation(), 308);
 
         directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.color"), this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
         directionalLayoutWidget.add(getFactionColorOptions());
@@ -40,12 +41,12 @@ public class NameTagOptionsScreen extends OptionsScreen {
         directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.additional"), this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
 
         DirectionalLayoutWidget directionalLayoutWidget3 = directionalLayoutWidget.add(horizontal().spacing(8));
-        addToggleButton(directionalLayoutWidget3, "pkutils.options.nametag.additional.blacklist", (options, value) -> options.nameTag().additionalBlacklist(value), options -> options.nameTag().additionalBlacklist(), 150);
-        addToggleButton(directionalLayoutWidget3, "pkutils.options.nametag.additional.contract", (options, value) -> options.nameTag().additionalContract(value), options -> options.nameTag().additionalContract(), 150);
+        renderService.addToggleButton(directionalLayoutWidget3, "pkutils.options.nametag.additional.blacklist", (options, value) -> options.nameTag().additionalBlacklist(value), options -> options.nameTag().additionalBlacklist(), 150);
+        renderService.addToggleButton(directionalLayoutWidget3, "pkutils.options.nametag.additional.contract", (options, value) -> options.nameTag().additionalContract(value), options -> options.nameTag().additionalContract(), 150);
 
         DirectionalLayoutWidget directionalLayoutWidget4 = directionalLayoutWidget.add(horizontal().spacing(8));
-        addToggleButton(directionalLayoutWidget4, "pkutils.options.nametag.additional.houseban", (options, value) -> options.nameTag().additionalHouseban(value), options -> options.nameTag().additionalHouseban(), 150);
-        addToggleButton(directionalLayoutWidget4, "pkutils.options.nametag.additional.wanted", (options, value) -> options.nameTag().additionalWanted(value), options -> options.nameTag().additionalWanted(), 150);
+        renderService.addToggleButton(directionalLayoutWidget4, "pkutils.options.nametag.additional.houseban", (options, value) -> options.nameTag().additionalHouseban(value), options -> options.nameTag().additionalHouseban(), 150);
+        renderService.addToggleButton(directionalLayoutWidget4, "pkutils.options.nametag.additional.wanted", (options, value) -> options.nameTag().additionalWanted(value), options -> options.nameTag().additionalWanted(), 150);
 
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
     }

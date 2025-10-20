@@ -35,12 +35,12 @@ public class WidgetOptionsPositionScreen extends PKUtilsScreen {
     public void initBody() {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addBody(horizontal().spacing(8), positioner -> positioner.marginTop(this.client.getWindow().getScaledHeight() / 4));
 
-        addButton(directionalLayoutWidget, "gui.done", button -> {
+        renderService.addButton(directionalLayoutWidget, "gui.done", button -> {
             renderService.getWidgets().forEach(AbstractPKUtilsWidget::saveConfiguration);
             back();
         }, 150);
 
-        addButton(directionalLayoutWidget, "gui.cancel", button -> {
+        renderService.addButton(directionalLayoutWidget, "gui.cancel", button -> {
             // restore configurations from the configuration file
             renderService.getWidgets().forEach(AbstractPKUtilsWidget::loadConfiguration);
             back();
