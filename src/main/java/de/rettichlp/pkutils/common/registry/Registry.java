@@ -80,7 +80,7 @@ public class Registry {
                     LiteralArgumentBuilder<FabricClientCommandSource> enrichedAliasNode = commandInstance.execute(aliasNode);
                     dispatcher.register(enrichedAliasNode);
                 }
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            } catch (Exception e) {
                 LOGGER.error("Error while registering command: {}", commandClass.getName(), e.getCause());
             }
         }
@@ -191,7 +191,7 @@ public class Registry {
                 .map(listenerClass -> {
                     try {
                         return (IPKUtilsListener) listenerClass.getConstructor().newInstance();
-                    } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+                    } catch (Exception e) {
                         LOGGER.error("Error while registering listener: {}", listenerClass.getName(), e.getCause());
                         return null;
                     }

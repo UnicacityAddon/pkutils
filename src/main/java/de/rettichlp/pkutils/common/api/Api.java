@@ -162,11 +162,11 @@ public class Api {
                         .map(tt -> this.gson.fromJson(response.body(), tt))
                         .orElse(null))
                 .thenAccept(responseObject -> {
-                    LOGGER.info("Successfully sent API request [{}] {}", httpRequest.method(), httpRequest.uri().toString());
+                    LOGGER.info("Successfully sent request: [{}] {}", httpRequest.method(), httpRequest.uri().toString());
                     callback.accept(responseObject);
                 })
                 .exceptionally(throwable -> {
-                    handleError(throwable);
+                    handleError(httpRequest, throwable);
                     return null;
                 });
     }
@@ -182,12 +182,12 @@ public class Api {
         return response;
     }
 
-    private void handleError(Throwable throwable) {
-        if (throwable instanceof PKUtilsApiException pkUtilsApiException) {
+    private void handleError(HttpRequest httpRequest, @NotNull Throwable throwable) {
+        if (throwable.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
             pkUtilsApiException.sendNotification();
             pkUtilsApiException.getErrorResponse().log();
         } else {
-            LOGGER.error("Error while sending API request", throwable);
+            LOGGER.warn("Error while sending request: [{}] {} ({})", httpRequest.method(), httpRequest.uri().toString(), throwable.getMessage());
         }
     }
 }
