@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.common.gui.widgets.base;
 
 import com.google.common.reflect.TypeToken;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -26,7 +25,7 @@ import static java.util.Optional.ofNullable;
 import static net.minecraft.text.Text.translatable;
 
 @Getter
-public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration> extends PKUtilsBase {
+public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration> {
 
     private static final Type MAP_TYPE = new TypeToken<Map<String, Object>>() {}.getType();
 

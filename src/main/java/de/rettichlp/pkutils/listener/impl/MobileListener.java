@@ -1,6 +1,5 @@
 package de.rettichlp.pkutils.listener.impl;
 
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.text.Text;
@@ -13,7 +12,7 @@ import static java.lang.Integer.parseInt;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class MobileListener extends PKUtilsBase implements IMessageReceiveListener {
+public class MobileListener implements IMessageReceiveListener {
 
     private static final Pattern MOBILE_NUMBER_PATTERN = compile("^(?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) gehört die Nummer (?<number>\\d+)\\.$");
     private static final Pattern MOBILE_SMS_RECEIVE_PATTERN = compile("^Dein Handy klingelt! Eine Nachricht von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) \\((?<number>\\d+)\\)\\.$");

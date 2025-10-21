@@ -4,9 +4,7 @@ import de.rettichlp.pkutils.common.models.CommandResponseRetriever;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionEntry;
 import de.rettichlp.pkutils.common.models.FactionMember;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
-import lombok.Setter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,9 +18,12 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
+import static de.rettichlp.pkutils.PKUtils.commandService;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.awt.Color.MAGENTA;
 import static java.lang.Integer.parseInt;
@@ -41,13 +42,13 @@ import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.GREEN;
 import static net.minecraft.util.Formatting.RED;
 
-@Getter
-@Setter
-public class SyncService extends PKUtilsBase {
+public class SyncService {
 
     private static final Pattern FACTION_MEMBER_ALL_ENTRY = compile("^\\s*-\\s*(?<rank>\\d)\\s*\\|\\s*(?<playerNames>.+)$");
 
+    @Getter
     private LocalDateTime lastSyncTimestamp = MIN;
+    @Getter
     private boolean gameSyncProcessActive = false;
 
     public void syncFactionMembersWithApi() {
@@ -69,10 +70,10 @@ public class SyncService extends PKUtilsBase {
 
         for (int i = 0; i < commandResponseRetrievers.size(); i++) {
             CommandResponseRetriever commandResponseRetriever = commandResponseRetrievers.get(i);
-            delayedAction(commandResponseRetriever::execute, i * 1000L);
+            utilsService.delayedAction(commandResponseRetriever::execute, i * 1000L);
         }
 
-        delayedAction(api::postFactions, commandResponseRetrievers.size() * 1000L + 1200);
+        utilsService.delayedAction(api::postFactions, commandResponseRetrievers.size() * 1000L + 1200);
     }
 
     public void syncBlacklistReasonsFromApi() {
@@ -89,21 +90,21 @@ public class SyncService extends PKUtilsBase {
         // parse from faction-related init commands after all faction members are synced
         notificationService.sendInfoNotification("Synchronisiere fraktionsabhängige Daten...");
 
-        delayedAction(() -> {
+        utilsService.delayedAction(() -> {
             Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
             switch (faction) {
-                case FBI, POLIZEI -> sendCommand("wanteds");
-                case HITMAN -> sendCommand("contractlist");
-                case RETTUNGSDIENST -> sendCommand("hausverbot list");
+                case FBI, POLIZEI -> commandService.sendCommand("wanteds");
+                case HITMAN -> commandService.sendCommand("contractlist");
+                case RETTUNGSDIENST -> commandService.sendCommand("hausverbot list");
                 default -> {
                     if (faction.isBadFaction()) {
-                        sendCommand("blacklist");
+                        commandService.sendCommand("blacklist");
                     }
                 }
             }
         }, 1000);
 
-        delayedAction(() -> {
+        utilsService.delayedAction(() -> {
             this.gameSyncProcessActive = false;
             notificationService.sendSuccessNotification("PKUtils synchronisiert");
         }, 2000);
@@ -118,7 +119,7 @@ public class SyncService extends PKUtilsBase {
             Map<String, Object> latestRelease = maps.getFirst();
             String latestVersion = (String) latestRelease.get("version_number");
 
-            String currentVersion = getVersion();
+            String currentVersion = utilsService.getVersion();
             if (nonNull(latestVersion) && !currentVersion.equals(latestVersion)) {
                 notificationService.sendNotification(() -> empty()
                         .append(of("Neue PKUtils Version verfügbar").copy().formatted(GRAY))
@@ -131,10 +132,10 @@ public class SyncService extends PKUtilsBase {
     }
 
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
-        sendCommand("nummer " + playerName);
+        commandService.sendCommand("nummer " + playerName);
 
-        delayedAction(() -> ofNullable(storage.getRetrievedNumbers().get(playerName))
-                .ifPresentOrElse(runWithNumber, () -> sendModMessage("Die Nummer von " + playerName + " konnte nicht abgerufen werden.", false)), 1000);
+        utilsService.delayedAction(() -> ofNullable(storage.getRetrievedNumbers().get(playerName))
+                .ifPresentOrElse(runWithNumber, () -> messageService.sendModMessage("Die Nummer von " + playerName + " konnte nicht abgerufen werden.", false)), 1000);
     }
 
     @Contract("_ -> new")

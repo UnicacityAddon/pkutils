@@ -13,6 +13,7 @@ import java.util.List;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
@@ -51,6 +52,6 @@ public class ASMSCommand extends CommandBase {
     }
 
     private void sms(int number, String message) {
-        sendCommand("sms " + number + " " + message);
+        commandService.sendCommand("sms " + number + " " + message);
     }
 }

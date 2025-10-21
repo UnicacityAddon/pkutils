@@ -5,6 +5,7 @@ import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
 import net.minecraft.text.Text;
 
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static java.time.LocalDateTime.now;
 import static net.minecraft.text.Text.of;
 
@@ -13,7 +14,7 @@ public class DateTimeWidget extends AbstractPKUtilsTextWidget<DateTimeWidget.Con
 
     @Override
     public Text text() {
-        return of(dateTimeToFriendlyString(now()));
+        return of(messageService.dateTimeToFriendlyString(now()));
     }
 
     public static class Configuration extends PKUtilsWidgetConfiguration {}

@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.listener;
 
-public interface IAbsorptionGetListener {
+public interface IAbsorptionGetListener extends IPKUtilsListener {
 
     void onAbsorptionGet();
 }

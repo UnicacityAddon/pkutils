@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.models.Faction;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
@@ -35,7 +34,7 @@ import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.RED;
 
 @PKUtilsListener
-public class BombListener extends PKUtilsBase implements IMessageReceiveListener, IHudRenderListener {
+public class BombListener implements IMessageReceiveListener, IHudRenderListener {
 
     private static final Pattern BOMB_FOUND_PATTERN = compile("^News: ACHTUNG! Es wurde eine Bombe in der Nähe von (?<location>.+) gefunden!$");
     private static final Pattern BOMB_STOP_PATTERN = compile("^News: Die Bombe konnte (erfolgreich|nicht) entschärft werden!$");

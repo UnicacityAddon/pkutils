@@ -1,6 +1,5 @@
 package de.rettichlp.pkutils.listener.impl;
 
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
@@ -15,7 +14,7 @@ import static de.rettichlp.pkutils.PKUtils.syncService;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class SyncListener extends PKUtilsBase implements ICommandSendListener, IMessageReceiveListener {
+public class SyncListener implements ICommandSendListener, IMessageReceiveListener {
 
     private static final Pattern SERVER_PASSWORD_MISSING_PATTERN = compile("^» Schütze deinen Account mit /passwort new \\[Passwort]$");
     private static final Pattern SERVER_PASSWORD_ACCEPTED_PATTERN = compile("^Du hast deinen Account freigeschaltet\\.$");

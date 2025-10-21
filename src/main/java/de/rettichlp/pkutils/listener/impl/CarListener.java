@@ -1,6 +1,5 @@
 package de.rettichlp.pkutils.listener.impl;
 
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IEnterVehicleListener;
 import de.rettichlp.pkutils.listener.IEntityRenderListener;
@@ -23,10 +22,12 @@ import net.minecraft.text.Text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
@@ -35,7 +36,7 @@ import static net.minecraft.screen.slot.SlotActionType.PICKUP;
 import static net.minecraft.util.Formatting.AQUA;
 
 @PKUtilsListener
-public class CarListener extends PKUtilsBase
+public class CarListener
         implements IEnterVehicleListener, IEntityRenderListener, IMessageReceiveListener, IScreenOpenListener {
 
     private static final Pattern CAR_UNLOCK_PATTERN = compile("^\\[Car] Du hast deinen .+ aufgeschlossen\\.$");
@@ -53,12 +54,12 @@ public class CarListener extends PKUtilsBase
 
         if (configuration.getOptions().car().automatedStart()) {
             // start the car with a small delay to ensure the player is fully in the vehicle
-            delayedAction(() -> sendCommand("car start"), 500);
+            utilsService.delayedAction(() -> commandService.sendCommand("car start"), 500);
         }
 
         // lock the car after 1 second and the small delay if not already locked
         if (!storage.isCarLocked() && configuration.getOptions().car().automatedLock()) {
-            delayedAction(() -> sendCommand("car lock"), 1500);
+            utilsService.delayedAction(() -> commandService.sendCommand("car lock"), 1500);
         }
     }
 
@@ -91,7 +92,7 @@ public class CarListener extends PKUtilsBase
 
         Matcher carLockedOwnMatcher = CAR_LOCKED_OWN_PATTERN.matcher(message);
         if (carLockedOwnMatcher.find()) {
-            sendCommand("car lock");
+            commandService.sendCommand("car lock");
             return true;
         }
 

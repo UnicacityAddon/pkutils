@@ -14,6 +14,8 @@ import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static com.mojang.brigadier.suggestion.Suggestions.empty;
 import static de.rettichlp.pkutils.PKUtils.api;
+import static de.rettichlp.pkutils.PKUtils.commandService;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
@@ -38,7 +40,7 @@ public class MinusPointsCommand extends CommandBase {
                                     String playerName = player.getGameProfile().getName();
                                     Faction faction = storage.getFaction(playerName);
                                     // rank 4 or higher in own faction
-                                    return isSuperUser() || faction.getMembers().stream()
+                                    return commandService.isSuperUser() || faction.getMembers().stream()
                                             .filter(factionMember -> factionMember.playerName().equals(playerName))
                                             .findFirst()
                                             .map(factionMember -> factionMember.rank() >= 4)
@@ -64,7 +66,7 @@ public class MinusPointsCommand extends CommandBase {
 
                                                     // check faction
                                                     if (faction != targetFaction) {
-                                                        sendModMessage("Der Spieler ist nicht in deiner Fraktion.", false);
+                                                        messageService.sendModMessage("Der Spieler ist nicht in deiner Fraktion.", false);
                                                         return 1;
                                                     }
 
@@ -81,7 +83,7 @@ public class MinusPointsCommand extends CommandBase {
 
                                     // check faction
                                     if (faction != targetFaction) {
-                                        sendModMessage("Der Spieler ist nicht in deiner Fraktion.", false);
+                                        messageService.sendModMessage("Der Spieler ist nicht in deiner Fraktion.", false);
                                         return 1;
                                     }
 
@@ -98,7 +100,7 @@ public class MinusPointsCommand extends CommandBase {
     private void fetchAndShowMinusPointsFor() {
         api.getMinusPoints(amount -> {
             player.sendMessage(Text.empty(), false);
-            sendModMessage(Text.empty()
+            messageService.sendModMessage(Text.empty()
                     .append(of("Minuspunkte").copy().formatted(GRAY))
                     .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                     .append(of(valueOf(amount)).copy().formatted(WHITE)), false);
@@ -109,7 +111,7 @@ public class MinusPointsCommand extends CommandBase {
     private void fetchAndShowMinusPointsFor(String playerName) {
         api.getMinusPointsPlayer(playerName, amount -> {
             player.sendMessage(Text.empty(), false);
-            sendModMessage(Text.empty()
+            messageService.sendModMessage(Text.empty()
                     .append(of("Minuspunkte für " + playerName).copy().formatted(GRAY))
                     .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                     .append(of(valueOf(amount)).copy().formatted(WHITE)), false);

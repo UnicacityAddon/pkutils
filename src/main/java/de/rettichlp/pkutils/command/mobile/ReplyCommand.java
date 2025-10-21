@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
+import static de.rettichlp.pkutils.PKUtils.commandService;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 
@@ -24,11 +26,11 @@ public class ReplyCommand extends CommandBase {
                             int lastReceivedSmsNumber = storage.getLastReceivedSmsNumber();
 
                             if (lastReceivedSmsNumber < 0) {
-                                sendModMessage("Kein SMS-Empfänger gefunden.", false);
+                                messageService.sendModMessage("Kein SMS-Empfänger gefunden.", false);
                                 return 1;
                             }
 
-                            sendCommand("sms " + lastReceivedSmsNumber + " " + message);
+                            commandService.sendCommand("sms " + lastReceivedSmsNumber + " " + message);
 
                             return 1;
                         }));

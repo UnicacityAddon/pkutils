@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.configuration;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static java.lang.Math.min;
 import static java.util.Optional.ofNullable;
@@ -32,13 +34,13 @@ public class ADropMoneyCommand extends CommandBase {
                             .map(scoreboardObjective -> scoreboard.getScore(fromName("§9Geld§8:"), scoreboardObjective));
 
                     if (optionalReadableScoreboardScore.isEmpty()) {
-                        sendModMessage("Der Geldtransport-Job wird nicht ausgeführt.", false);
+                        messageService.sendModMessage("Der Geldtransport-Job wird nicht ausgeführt.", false);
                         return 1;
                     }
 
                     List<String> scheduledCommands = getScheduledCommands(optionalReadableScoreboardScore);
 
-                    sendCommands(scheduledCommands);
+                    commandService.sendCommands(scheduledCommands);
 
                     return 1;
                 });

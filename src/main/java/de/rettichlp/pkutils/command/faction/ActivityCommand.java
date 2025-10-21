@@ -14,13 +14,14 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static com.mojang.brigadier.suggestion.Suggestions.empty;
 import static de.rettichlp.pkutils.PKUtils.api;
+import static de.rettichlp.pkutils.PKUtils.commandService;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
@@ -57,7 +58,7 @@ public class ActivityCommand extends CommandBase {
                                     String playerName = player.getGameProfile().getName();
                                     Faction faction = storage.getFaction(playerName);
                                     // rank 4 or higher in own faction
-                                    return isSuperUser() || faction.getMembers().stream()
+                                    return commandService.isSuperUser() || faction.getMembers().stream()
                                             .filter(factionMember -> factionMember.playerName().equals(playerName))
                                             .findFirst()
                                             .map(factionMember -> factionMember.rank() >= 4)
@@ -82,8 +83,8 @@ public class ActivityCommand extends CommandBase {
                                             int weeksAgo = context.getArgument("weeksAgo", Integer.class);
 
                                             // check faction
-                                            if (faction != targetFaction && !isSuperUser()) {
-                                                sendModMessage("Der Spieler ist nicht in deiner Fraktion.", false);
+                                            if (faction != targetFaction && !commandService.isSuperUser()) {
+                                                messageService.sendModMessage("Der Spieler ist nicht in deiner Fraktion.", false);
                                                 return 1;
                                             }
 
@@ -99,8 +100,8 @@ public class ActivityCommand extends CommandBase {
                                     Faction targetFaction = storage.getFaction(targetName);
 
                                     // check faction
-                                    if (faction != targetFaction && !isSuperUser()) {
-                                        sendModMessage("Der Spieler ist nicht in deiner Fraktion.", false);
+                                    if (faction != targetFaction && !commandService.isSuperUser()) {
+                                        messageService.sendModMessage("Der Spieler ist nicht in deiner Fraktion.", false);
                                         return 1;
                                     }
 
@@ -123,8 +124,8 @@ public class ActivityCommand extends CommandBase {
                     .collect(groupingBy(ActivityEntry::type, counting()));
 
             player.sendMessage(Text.empty(), false);
-            sendModMessage("Aktivität:", false);
-            amountPerType.forEach((type, amount) -> sendModMessage(Text.empty()
+            messageService.sendModMessage("Aktivität:", false);
+            amountPerType.forEach((type, amount) -> messageService.sendModMessage(Text.empty()
                     .append(of(type.getDisplayName()).copy().formatted(GRAY))
                     .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                     .append(of(amount + "x").copy().formatted(WHITE)), false));
@@ -140,8 +141,8 @@ public class ActivityCommand extends CommandBase {
                     .collect(groupingBy(ActivityEntry::type, counting()));
 
             player.sendMessage(Text.empty(), false);
-            sendModMessage("Aktivität von " + playerName + ":", false);
-            activityAmountPerType.forEach((type, amount) -> sendModMessage(Text.empty()
+            messageService.sendModMessage("Aktivität von " + playerName + ":", false);
+            activityAmountPerType.forEach((type, amount) -> messageService.sendModMessage(Text.empty()
                     .append(of(type.getDisplayName()).copy().formatted(GRAY))
                     .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                     .append(of(amount + "x").copy().formatted(WHITE)), false));

@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
+import static de.rettichlp.pkutils.PKUtils.commandService;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.Faction.fromDisplayName;
@@ -27,8 +29,8 @@ public class MiaCommand extends CommandBase {
                                 .map(Faction::getDisplayName), builder))
                         .executes(context -> {
                             String input = getString(context, "faction");
-                            fromDisplayName(input).ifPresentOrElse(faction -> sendCommand("memberinfoall " + faction.getMemberInfoCommandName()),
-                                    () -> sendModMessage("Die Fraktion " + input + " konnte nicht gefunden werden.", false));
+                            fromDisplayName(input).ifPresentOrElse(faction -> commandService.sendCommand("memberinfoall " + faction.getMemberInfoCommandName()),
+                                    () -> messageService.sendModMessage("Die Fraktion " + input + " konnte nicht gefunden werden.", false));
 
                             return 1;
                         })
@@ -36,7 +38,7 @@ public class MiaCommand extends CommandBase {
                 .executes(context -> {
                     String playerName = player.getGameProfile().getName();
                     Faction faction = storage.getFaction(playerName);
-                    sendCommand("memberinfoall " + faction.getMemberInfoCommandName());
+                    commandService.sendCommand("memberinfoall " + faction.getMemberInfoCommandName());
                     return 1;
                 });
     }

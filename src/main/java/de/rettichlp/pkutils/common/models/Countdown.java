@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.common.models;
 
 import de.rettichlp.pkutils.common.gui.widgets.CountdownWidget;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.text.Text;
 
@@ -9,6 +8,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.ScheduledExecutorService;
 
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
@@ -19,7 +19,7 @@ import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.WHITE;
 
 @RequiredArgsConstructor
-public class Countdown extends PKUtilsBase {
+public class Countdown {
 
     private final LocalDateTime startTime = now();
     private final String title;
@@ -43,7 +43,7 @@ public class Countdown extends PKUtilsBase {
     }
 
     public CountdownWidget toWidget() {
-        String millisToFriendlyString = millisToFriendlyString(getRemainingDuration().toMillis());
+        String millisToFriendlyString = messageService.millisToFriendlyString(getRemainingDuration().toMillis());
 
         Text text = empty()
                 .append(of(this.title).copy().formatted(WHITE))
