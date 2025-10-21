@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.listener.ServerPlayPacketListener;
@@ -13,11 +12,14 @@ import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.storage;
@@ -32,6 +34,9 @@ public class ScreenHandlerMixin {
     private static final long A_BUY_DELAY = 150;
 
     @Unique
+    private static final List<String> whitelistedInventoryTitles = List.of("Bäcker", "Feinkost", "Supermarkt", "Waffenladen");
+
+    @Unique
     private boolean isABuyProcessing = false;
 
     @Inject(
@@ -44,17 +49,17 @@ public class ScreenHandlerMixin {
         }
 
         ScreenHandler handler = (ScreenHandler) (Object) this;
+        MinecraftClient client = MinecraftClient.getInstance();
 
-        if (!storage.isABuyEnabled() || slotIndex < 0 || slotIndex >= handler.slots.size() || actionType != PICKUP || this.isABuyProcessing) {
+        if (!storage.isABuyEnabled() || slotIndex < 0 || slotIndex >= handler.slots.size() || actionType != PICKUP || this.isABuyProcessing || !isWhitelistedInventory(client.currentScreen)) {
             return;
         }
 
         int aBuyAmount = storage.getABuyAmount();
-        ClientPlayerInteractionManager interactionManager = MinecraftClient.getInstance().interactionManager;
         Slot clickedSlot = handler.slots.get(slotIndex);
         ItemStack itemStack = clickedSlot.getStack();
 
-        if (aBuyAmount <= 1 || isNull(interactionManager) || itemStack.isEmpty()) {
+        if (aBuyAmount <= 1 || itemStack.isEmpty()) {
             return;
         }
 
@@ -77,7 +82,7 @@ public class ScreenHandlerMixin {
         for (int i = 1; i < aBuyAmount; i++) {
             utilsService.delayedAction(() -> {
                 // check if the same inventory is still open
-                Screen currentScreen = MinecraftClient.getInstance().currentScreen;
+                Screen currentScreen = client.currentScreen;
                 if (isNull(currentScreen)) {
                     return;
                 }
@@ -87,5 +92,15 @@ public class ScreenHandlerMixin {
         }
 
         utilsService.delayedAction(() -> this.isABuyProcessing = false, A_BUY_DELAY * (aBuyAmount + 1));
+    }
+
+    @Unique
+    private boolean isWhitelistedInventory(@Nullable Screen screen) {
+        if (isNull(screen)) {
+            return false;
+        }
+
+        String title = screen.getTitle().getString();
+        return whitelistedInventoryTitles.stream().anyMatch(title::contains);
     }
 }
