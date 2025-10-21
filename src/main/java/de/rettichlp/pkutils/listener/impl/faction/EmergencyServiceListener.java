@@ -24,6 +24,8 @@ public class EmergencyServiceListener implements IMessageReceiveListener, INaviS
     private static final Pattern SERVICE_ACCEPTED_PATTERN = compile("^(?:HQ: )?(?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat den Notruf von (?:\\[PK])?(?<senderName>[a-zA-Z0-9_]+) angenommen\\.$");
     private static final Pattern SERVICE_REQUEUED_PATTERN = compile("^(?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat den Notruf von (?:\\[PK])?(?<senderName>[a-zA-Z0-9_]+) erneut geöffnet\\.$");
     private static final Pattern SERVICE_DONE_PATTERN = compile("^Du hast den Service von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) als 'Erledigt' markiert\\.$");
+    private static final Pattern SERVICE_ABORTED_PATTERN = compile("^Der Service von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) wurde abgebrochen\\.$");
+    private static final Pattern SERVICE_DELETED_PATTERN = compile("^(?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat den Notruf von (?:\\[PK])?(?<senderName>[a-zA-Z0-9_]+) gelöscht\\.$");
     private static final Pattern SERVICE_NONE_PATTERN = compile("^Offene Notrufe \\(0\\)$|^Fehler: Es ist kein Service offen\\.$");
 
     private boolean activeService = false;
@@ -68,6 +70,18 @@ public class EmergencyServiceListener implements IMessageReceiveListener, INaviS
             return true;
         }
 
+        Matcher serviceAbortedMatcher = SERVICE_ABORTED_PATTERN.matcher(message);
+        if (serviceAbortedMatcher.find()) {
+            storage.setActiveServices(max(0, storage.getActiveServices() - 1));
+            return true;
+        }
+
+        Matcher serviceDeletedMatcher = SERVICE_DELETED_PATTERN.matcher(message);
+        if (serviceDeletedMatcher.find()) {
+            storage.setActiveServices(max(0, storage.getActiveServices() - 1));
+            return true;
+        }
+
         Matcher serviceNoneMatcher = SERVICE_NONE_PATTERN.matcher(message);
         if (serviceNoneMatcher.find()) {
             storage.setActiveServices(0);
@@ -80,7 +94,7 @@ public class EmergencyServiceListener implements IMessageReceiveListener, INaviS
     @Override
     public void onNaviSpotReached() {
         if (this.activeService) {
-            commandService.sendCommand("/doneservice");
+            commandService.sendCommand("doneservice");
         }
     }
 }
