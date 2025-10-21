@@ -1,6 +1,5 @@
 package de.rettichlp.pkutils.listener.impl;
 
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.text.ClickEvent;
@@ -25,7 +24,7 @@ import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.UNDERLINE;
 
 @PKUtilsListener
-public class EconomyService extends PKUtilsBase implements IMessageReceiveListener {
+public class EconomyService implements IMessageReceiveListener {
 
     // bank
     private static final Pattern BANK_STATEMENT_PATTERN = compile("^Ihr Bankguthaben beträgt: \\+(?<amount>\\d+)\\$$");

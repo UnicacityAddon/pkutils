@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.common.gui.options;
 
-import de.rettichlp.pkutils.common.gui.OptionsScreen;
 import de.rettichlp.pkutils.common.configuration.options.Options;
+import de.rettichlp.pkutils.common.gui.OptionsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 

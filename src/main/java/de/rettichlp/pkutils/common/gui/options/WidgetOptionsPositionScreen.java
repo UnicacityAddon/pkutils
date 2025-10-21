@@ -8,9 +8,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.text.Text;
 
-import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.configuration;
-import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_PADDING;
 import static java.awt.Color.BLACK;

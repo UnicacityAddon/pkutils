@@ -6,6 +6,7 @@ import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.jetbrains.annotations.NotNull;
 
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static java.util.Comparator.comparingDouble;
@@ -20,10 +21,10 @@ public class BlackMarketCommand extends CommandBase {
                 .executes(context -> {
                     player.sendMessage(empty(), false);
 
-                    sendModMessage("Schwarzmarkt Orte:", false);
+                    messageService.sendModMessage("Schwarzmarkt Orte:", false);
                     storage.getBlackMarkets().stream()
                             .sorted(comparingDouble(value -> value.getType().getBlockPos().getSquaredDistance(player.getBlockPos())))
-                            .forEach(blackMarket -> sendModMessage(blackMarket.getText(), false));
+                            .forEach(blackMarket -> messageService.sendModMessage(blackMarket.getText(), false));
 
                     player.sendMessage(empty(), false);
 

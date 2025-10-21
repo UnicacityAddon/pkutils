@@ -42,8 +42,8 @@ public enum ScreenshotType {
                 File screenshotFile = getScreenshotFile();
                 nativeImage.writeTo(screenshotFile);
                 onSuccess.accept(screenshotFile);
-            } catch (Exception exception) {
-                LOGGER.warn("Could not save screenshot", exception);
+            } catch (Exception e) {
+                LOGGER.warn("Could not save screenshot", e);
             }
         });
     }

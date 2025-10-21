@@ -4,7 +4,6 @@ import de.rettichlp.pkutils.common.Storage;
 import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.models.BlackMarket;
 import de.rettichlp.pkutils.common.models.Reinforcement;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
@@ -25,14 +24,15 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
+import static de.rettichlp.pkutils.common.configuration.options.Options.ReinforcementType.UNICACITYADDON;
 import static de.rettichlp.pkutils.common.models.EquipEntry.Type.fromDisplayName;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
-import static de.rettichlp.pkutils.common.configuration.options.Options.ReinforcementType.UNICACITYADDON;
 import static java.lang.Integer.parseInt;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
@@ -50,7 +50,7 @@ import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.RED;
 
 @PKUtilsListener
-public class FactionListener extends PKUtilsBase implements IMessageReceiveListener, IMessageSendListener, IMoveListener {
+public class FactionListener implements IMessageReceiveListener, IMessageSendListener, IMoveListener {
 
     private static final Pattern REINFORCEMENT_PATTERN = compile("^(?:(?<type>.+)! )?(?<senderRank>.+) (?:\\[PK])?(?<senderPlayerName>[a-zA-Z0-9_]+) benötigt Unterstützung in der Nähe von (?<naviPoint>.+) \\((?<distance>\\d+)m\\)!$");
     private static final Pattern REINFORCEMENT_BUTTON_PATTERN = compile("^ §7» §cRoute anzeigen §7\\| §cUnterwegs$");
@@ -220,7 +220,7 @@ public class FactionListener extends PKUtilsBase implements IMessageReceiveListe
     public boolean onMessageSend(String message) {
         Storage.ToggledChat toggledChat = storage.getToggledChat();
         if (toggledChat != NONE) {
-            sendCommand(toggledChat.getCommand() + " " + message);
+            commandService.sendCommand(toggledChat.getCommand() + " " + message);
             return false;
         }
 

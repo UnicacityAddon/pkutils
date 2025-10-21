@@ -25,6 +25,8 @@ import java.util.concurrent.CompletableFuture;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
+import static de.rettichlp.pkutils.PKUtils.commandService;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
@@ -96,7 +98,7 @@ public class ASetBlacklistCommand extends CommandBase {
                 .collect(toSet());
 
         if (playerNames.isEmpty()) {
-            sendModMessage("Keine Spieler angegeben.", false);
+            messageService.sendModMessage("Keine Spieler angegeben.", false);
             return 1;
         }
 
@@ -106,7 +108,7 @@ public class ASetBlacklistCommand extends CommandBase {
                 .findFirst();
 
         if (optionalBlacklistReason.isEmpty()) {
-            sendModMessage("Der Grund \"" + reasonString + "\" ist PKUtils unbekannt.", false);
+            messageService.sendModMessage("Der Grund \"" + reasonString + "\" ist PKUtils unbekannt.", false);
             return 1;
         }
 
@@ -124,7 +126,7 @@ public class ASetBlacklistCommand extends CommandBase {
             if (optionalBlacklistEntry.isPresent()) {
                 BlacklistEntry blacklistEntry = optionalBlacklistEntry.get();
                 if (blacklistEntry.getReason().contains(reasonString)) {
-                    sendModMessage(playerName + " ist bereits für den Grund \"" + reasonString + "\" auf der Blacklist.", false);
+                    messageService.sendModMessage(playerName + " ist bereits für den Grund \"" + reasonString + "\" auf der Blacklist.", false);
                     continue;
                 }
             }
@@ -133,7 +135,7 @@ public class ASetBlacklistCommand extends CommandBase {
             blacklistCommands.add("blacklist add " + playerName + " " + blacklistReason.getPrice() + " " + blacklistReason.getKills() + " " + blacklistReason.getReason());
         }
 
-        sendCommands(blacklistCommands);
+        commandService.sendCommands(blacklistCommands);
 
         return 1;
     }

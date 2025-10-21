@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.text.Text;
@@ -9,14 +8,16 @@ import net.minecraft.text.Text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static java.lang.Integer.parseInt;
 import static java.lang.System.currentTimeMillis;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class BlacklistListener extends PKUtilsBase implements IMessageReceiveListener {
+public class BlacklistListener implements IMessageReceiveListener {
 
     private static final Pattern BLACKLIST_HEADER_PATTERN = compile("^==== Blacklist .+ ====$");
     private static final Pattern BLACKLIST_ENTRY_PATTERN = compile("^ » (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) \\| (?<reason>.+) \\| (?<dateTime>.+) \\| (?<kills>\\d+) Kills \\| (?<price>\\d+)\\$(| \\(AFK\\))$");
@@ -50,7 +51,7 @@ public class BlacklistListener extends PKUtilsBase implements IMessageReceiveLis
         Matcher blacklistEntryAddMatcher = BLACKLIST_ENTRY_ADD.matcher(message);
         if (blacklistEntryAddMatcher.find()) {
             // show all entries to sync
-            delayedAction(() -> sendCommandWithAfkCheck("blacklist"), 1000);
+            utilsService.delayedAction(() -> commandService.sendCommandWithAfkCheck("blacklist"), 1000);
             return true;
         }
 

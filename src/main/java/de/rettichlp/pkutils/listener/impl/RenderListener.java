@@ -4,7 +4,6 @@ import de.rettichlp.pkutils.common.gui.widgets.CountdownWidget;
 import de.rettichlp.pkutils.common.gui.widgets.NotificationWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsProgressTextWidget;
 import de.rettichlp.pkutils.common.models.Countdown;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.common.services.NotificationService;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
@@ -23,7 +22,7 @@ import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.RIGHT;
 
 @PKUtilsListener
-public class RenderListener extends PKUtilsBase implements IHudRenderListener {
+public class RenderListener implements IHudRenderListener {
 
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {

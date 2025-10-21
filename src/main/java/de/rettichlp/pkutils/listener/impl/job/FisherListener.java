@@ -1,6 +1,5 @@
 package de.rettichlp.pkutils.listener.impl.job;
 
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
@@ -18,7 +17,9 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.player;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static java.lang.Double.compare;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.LocalDate.now;
@@ -26,7 +27,7 @@ import static java.util.Arrays.stream;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class FisherListener extends PKUtilsBase implements IMessageReceiveListener, INaviSpotReachedListener {
+public class FisherListener implements IMessageReceiveListener, INaviSpotReachedListener {
 
     private static final Pattern FISHER_START = compile("^\\[Fischer] Mit /findschwarm kannst du dir den nächsten Fischschwarm anzeigen lassen\\.$");
     private static final Pattern FISHER_SPOT_FOUND_PATTERN = compile("^\\[Fischer] Du hast einen Fischschwarm gefunden!$");
@@ -41,16 +42,16 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
         if (fisherStartMatcher.find()) {
             this.currentFisherJobSpots = new ArrayList<>();
             String naviCommand = FisherJobSpot.SPOT_1.getNaviCommand();
-            sendCommand(naviCommand);
+            commandService.sendCommand(naviCommand);
             return true;
         }
 
         Matcher fisherSpotFoundMatcher = FISHER_SPOT_FOUND_PATTERN.matcher(message);
         if (fisherSpotFoundMatcher.find()) {
-            sendCommand("stoproute");
+            commandService.sendCommand("stoproute");
             FisherJobSpot nearestFisherJobSpot = getNearestFisherJobSpot(getNotVisitedFisherJobSpots()).orElseThrow();
             this.currentFisherJobSpots.add(nearestFisherJobSpot);
-            delayedAction(() -> sendCommand("catchfish"), 1000);
+            utilsService.delayedAction(() -> commandService.sendCommand("catchfish"), 1000);
             return true;
         }
 
@@ -58,7 +59,7 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
         Matcher fisherCatchFailureMatcher = FISHER_CATCH_FAILURE.matcher(message);
         if (fisherCatchSuccessMatcher.find() || fisherCatchFailureMatcher.find()) {
             if (this.currentFisherJobSpots.size() == getNetAmount()) {
-                sendCommand("navi -504 63 197");
+                commandService.sendCommand("navi -504 63 197");
                 return true;
             }
 
@@ -66,7 +67,7 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
             Optional<FisherJobSpot> nearestFisherJobSpot = getNearestFisherJobSpot(getNotVisitedFisherJobSpots());
             nearestFisherJobSpot.ifPresent(fisherJobSpot -> {
                 String naviCommand = fisherJobSpot.getNaviCommand();
-                sendCommand(naviCommand);
+                commandService.sendCommand(naviCommand);
             });
 
             return true;
@@ -79,7 +80,7 @@ public class FisherListener extends PKUtilsBase implements IMessageReceiveListen
     public void onNaviSpotReached() {
         if (this.currentFisherJobSpots.size() == getNetAmount()) {
             this.currentFisherJobSpots = new ArrayList<>();
-            sendCommand("dropfish");
+            commandService.sendCommand("dropfish");
         }
     }
 
