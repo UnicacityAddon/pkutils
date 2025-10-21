@@ -1,22 +1,23 @@
 {
-  "required": true,
-  "package": "de.rettichlp.pkutils.mixin",
-  "compatibilityLevel": "JAVA_21",
-  "mixins": [
-    "EntityMixin",
-    "InventoryScreenMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  },
-  "overwrites": {
-    "requireAnnotations": true
-  },
-  "client": [
-    "ChatScreenMixin",
-    "ClientPlayerEntityMixin",
-    "EntityRendererMixin",
-    "GameMenuScreenMixin",
-    "PlayerListHudMixin"
-  ]
+    "required": true,
+    "package": "de.rettichlp.pkutils.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "EntityMixin",
+        "ScreenHandlerMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "overwrites": {
+        "requireAnnotations": true
+    },
+    "client": [
+        "ChatScreenMixin",
+        "ClientPlayerEntityMixin",
+        "EntityRendererMixin",
+        "GameMenuScreenMixin",
+        "GenericContainerScreenMixin",
+        "PlayerListHudMixin"
+    ]
 }
