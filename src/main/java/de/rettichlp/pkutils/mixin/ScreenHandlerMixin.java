@@ -29,16 +29,23 @@ import static net.minecraft.screen.slot.SlotActionType.PICKUP;
 public class ScreenHandlerMixin {
 
     @Unique
-    private static final int A_BUY_DELAY = 150;
+    private static final long A_BUY_DELAY = 150;
+
+    @Unique
+    private boolean isABuyProcessing = false;
 
     @Inject(
             method = "onSlotClick",
             at = @At("HEAD")
     )
     private void onSlotClickMixin(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
+        if (!player.getWorld().isClient()) {
+            return;
+        }
+
         ScreenHandler handler = (ScreenHandler) (Object) this;
 
-        if (!storage.isABuyEnabled() || slotIndex < 0 || slotIndex >= handler.slots.size() || actionType != PICKUP) {
+        if (!storage.isABuyEnabled() || slotIndex < 0 || slotIndex >= handler.slots.size() || actionType != PICKUP || this.isABuyProcessing) {
             return;
         }
 
@@ -65,6 +72,8 @@ public class ScreenHandlerMixin {
                 itemStack,
                 stackMap);
 
+        this.isABuyProcessing = true;
+
         for (int i = 1; i < aBuyAmount; i++) {
             utilsService.delayedAction(() -> {
                 // check if the same inventory is still open
@@ -74,7 +83,9 @@ public class ScreenHandlerMixin {
                 }
 
                 networkHandler.sendPacket(packet);
-            }, 150L * i);
+            }, A_BUY_DELAY * i);
         }
+
+        utilsService.delayedAction(() -> this.isABuyProcessing = false, A_BUY_DELAY * (aBuyAmount + 1));
     }
 }
