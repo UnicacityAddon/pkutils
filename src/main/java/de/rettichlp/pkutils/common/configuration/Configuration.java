@@ -4,12 +4,14 @@ import de.rettichlp.pkutils.common.configuration.options.Options;
 import de.rettichlp.pkutils.common.models.TodoEntry;
 import lombok.Data;
 import net.fabricmc.loader.api.FabricLoader;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +35,8 @@ public class Configuration {
     private int minutesSinceLastPayDay = 0;
     private int predictedPayDaySalary = 0;
     private int predictedPayDayExp = 0;
+    @Nullable
+    private LocalDateTime firstAidLicenseExpireDateTime = null;
 
     public void addMinutesSinceLastPayDay(int minutes) {
         this.minutesSinceLastPayDay += minutes;

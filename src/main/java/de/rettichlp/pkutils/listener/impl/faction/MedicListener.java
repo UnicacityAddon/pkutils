@@ -4,6 +4,7 @@ import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +14,9 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.api;
 import static de.rettichlp.pkutils.PKUtils.commandService;
+import static de.rettichlp.pkutils.PKUtils.configuration;
+import static de.rettichlp.pkutils.PKUtils.messageService;
+import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
 import static de.rettichlp.pkutils.PKUtils.utilsService;
@@ -25,6 +29,7 @@ import static java.time.LocalDateTime.MIN;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
@@ -37,6 +42,8 @@ public class MedicListener implements IMessageReceiveListener {
     private static final Pattern HOUSEBAN_ENTRY_PATTERN = compile("^§[aec4](?<playerName>[a-zA-Z0-9_]+) \\| (?<issuerPlayerName>[a-zA-Z0-9_]+) \\| (?<reasons>.+) \\| (?<expireDateDay>\\d+)\\.(?<expireDateMonth>\\d+)\\.(?<expireDateYear>\\d+) (?<expireTimeHour>\\d+):(?<expireTimeMinute>\\d+) §8\\[§4Entfernen§8]$");
     private static final Pattern HOUSEBAN_ADD_PATTERN = compile("^(?<issuerPlayerName>[a-zA-Z0-9_]+) hat (?<playerName>[a-zA-Z0-9_]+) ein Hausverbot erteilt\\. \\((?<reason>.+) \\| Ende: (?<expireDateDay>\\d+)\\.(?<expireDateMonth>\\d+)\\.(?<expireDateYear>\\d+) (?<expireTimeHour>\\d+):(?<expireTimeMinute>\\d+)\\)$");
     private static final Pattern KARMA_GET_PATTERN = compile("^\\[Karma] \\+\\d Karma$");
+    private static final Pattern FIRST_AID_PATTERN = compile("^\\[Erste-Hilfe] (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat dir ein Erste-Hilfe-Schein für 14 Tage ausgestellt\\.$");
+    private static final Pattern FIRST_AID_LICENCES_PATTERN = compile("^- Erste-Hilfe-Schein: Vorhanden$");
 
     private LocalDateTime lastReviveStartetAt = MIN;
     private long activeCheck = 0;
@@ -96,6 +103,23 @@ public class MedicListener implements IMessageReceiveListener {
         Matcher karmaGetMatcher = KARMA_GET_PATTERN.matcher(message);
         if (!karmaGetMatcher.find()) {
             return true;
+        }
+
+        Matcher firstAidMatcher = FIRST_AID_PATTERN.matcher(message);
+        if (firstAidMatcher.find()) {
+            configuration.setFirstAidLicenseExpireDateTime(now().plusDays(14));
+            return true;
+        }
+
+        Matcher firstAidLicencesMatcher = FIRST_AID_LICENCES_PATTERN.matcher(message);
+        if (firstAidLicencesMatcher.find()) {
+            MutableText overwriteText = text.copy().append(" ")
+                    .append("bis " + ofNullable(configuration.getFirstAidLicenseExpireDateTime())
+                            .map(messageService::dateTimeToFriendlyString)
+                            .orElse("Unbekannt"));
+
+            player.sendMessage(overwriteText, false);
+            return false; // hide message
         }
 
         long seconds = between(this.lastReviveStartetAt, now()).toSeconds();
