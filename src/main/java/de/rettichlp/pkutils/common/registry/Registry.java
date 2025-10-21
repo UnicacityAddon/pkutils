@@ -30,7 +30,6 @@ import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import java.util.Set;
 

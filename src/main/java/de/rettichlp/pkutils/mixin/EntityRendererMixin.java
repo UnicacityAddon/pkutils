@@ -1,11 +1,11 @@
 package de.rettichlp.pkutils.mixin;
 
+import de.rettichlp.pkutils.common.configuration.options.NameTagOptions;
 import de.rettichlp.pkutils.common.models.BlacklistEntry;
 import de.rettichlp.pkutils.common.models.ContractEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.models.WantedEntry;
-import de.rettichlp.pkutils.common.configuration.options.NameTagOptions;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.ItemEntityRenderState;

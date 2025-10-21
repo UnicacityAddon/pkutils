@@ -83,7 +83,7 @@ public class ModCommand extends CommandBase {
                                         messageService.sendModMessage(empty()
                                                 .append(of("Version").copy().formatted(GRAY))
                                                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
-                                                .append(of(response.getVersion()).copy().formatted(WHITE)), false);
+                                                .append(of(response.version()).copy().formatted(WHITE)), false);
 
                                         messageService.sendModMessage(empty()
                                                 .append(of("Aktivitäten").copy().formatted(GRAY))

@@ -18,8 +18,6 @@ public abstract class AbstractPKUtilsProgressTextWidget<C extends PKUtilsWidgetC
 
     public abstract Text text();
 
-    public abstract double progress();
-
     @Override
     public void draw(@NotNull DrawContext drawContext, int x, int y, Alignment alignment) {
         drawContext.fill(x, y, x + getWidth(), y + getHeight(), getBackgroundColor().getRGB());
@@ -37,6 +35,8 @@ public abstract class AbstractPKUtilsProgressTextWidget<C extends PKUtilsWidgetC
             drawContext.drawBorder(x, y, getWidth(), getHeight(), new Color(0, 0, 255).getRGB());
         }
     }
+
+    public abstract double progress();
 
     protected double calculateProgress(Temporal creationTime, long durationInMillis) {
         long elapsedMillis = between(creationTime, now()).toMillis();
