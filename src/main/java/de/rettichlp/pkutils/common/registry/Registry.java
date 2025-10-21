@@ -14,6 +14,7 @@ import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
 import de.rettichlp.pkutils.listener.IMoveListener;
 import de.rettichlp.pkutils.listener.INaviSpotReachedListener;
+import de.rettichlp.pkutils.listener.IPKUtilsListener;
 import de.rettichlp.pkutils.listener.IScreenOpenListener;
 import de.rettichlp.pkutils.listener.ITickListener;
 import de.rettichlp.pkutils.listener.callback.PlayerEnterVehicleCallback;
@@ -50,7 +51,7 @@ import static org.atteo.classindex.ClassIndex.getAnnotated;
 
 public class Registry {
 
-    private final Set<PKUtilsBase> listenerInstances = getListenerInstances();
+    private final Set<IPKUtilsListener> listenerInstances = getListenerInstances();
 
     private boolean initialized = false;
     private BlockPos lastPlayerPos = null;
@@ -185,11 +186,11 @@ public class Registry {
         this.initialized = true;
     }
 
-    private @NotNull Set<PKUtilsBase> getListenerInstances() {
+    private @NotNull Set<IPKUtilsListener> getListenerInstances() {
         return stream(getAnnotated(PKUtilsListener.class).spliterator(), false)
                 .map(listenerClass -> {
                     try {
-                        return (PKUtilsBase) listenerClass.getConstructor().newInstance();
+                        return (IPKUtilsListener) listenerClass.getConstructor().newInstance();
                     } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
                         LOGGER.error("Error while registering listener: {}", listenerClass.getName(), e.getCause());
                         return null;
