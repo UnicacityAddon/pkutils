@@ -12,6 +12,7 @@ import java.util.List;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 import static de.rettichlp.pkutils.PKUtils.configuration;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
@@ -70,8 +71,8 @@ public class TodoCommand extends CommandBase {
         List<TodoEntry> todos = configuration.getTodos();
 
         player.sendMessage(empty(), false);
-        sendModMessage("TODOs:", false);
-        todos.forEach(todoEntry -> sendModMessage(empty()
+        messageService.sendModMessage("TODOs:", false);
+        todos.forEach(todoEntry -> messageService.sendModMessage(empty()
                 .append(todoEntry.isDone() ? todoEntry.getDeleteButton() : todoEntry.getDoneButton()).append(" ")
                 .append(of(todoEntry.getTask()).copy().styled(style -> style.withColor(WHITE).withStrikethrough(todoEntry.isDone()))), false));
         player.sendMessage(empty(), false);

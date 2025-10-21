@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -27,7 +28,7 @@ public class MessageService {
             .append(of(" "));
 
     public void sendModMessage(String message, boolean inActionbar) {
-        sendModMessage(of(message).copy().formatted(WHITE), inActionbar);
+        messageService.sendModMessage(of(message).copy().formatted(WHITE), inActionbar);
     }
 
     public void sendModMessage(Text message, boolean inActionbar) {

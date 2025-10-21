@@ -20,10 +20,13 @@ import java.util.StringJoiner;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
 import static de.rettichlp.pkutils.PKUtils.api;
+import static de.rettichlp.pkutils.PKUtils.commandService;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static java.time.LocalDateTime.MIN;
 import static java.util.Arrays.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
@@ -44,7 +47,7 @@ public class ModCommand extends CommandBase {
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
                 .then(literal("fakeActivity")
-                        .requires(fabricClientCommandSource -> isSuperUser())
+                        .requires(fabricClientCommandSource -> commandService.isSuperUser())
                         .then(argument("activityType", word())
                                 .suggests((context, builder) -> {
                                     stream(ActivityEntry.Type.values()).forEach(activityType -> builder.suggest(activityType.name()));
@@ -60,7 +63,7 @@ public class ModCommand extends CommandBase {
                                     return 1;
                                 })))
                 .then(literal("userinfo")
-                        .requires(fabricClientCommandSource -> isSuperUser())
+                        .requires(fabricClientCommandSource -> commandService.isSuperUser())
                         .then(argument("player", word())
                                 .suggests((context, builder) -> {
                                     List<String> list = networkHandler.getPlayerList().stream()
@@ -75,14 +78,14 @@ public class ModCommand extends CommandBase {
 
                                         player.sendMessage(empty(), false);
 
-                                        sendModMessage("PKUtils User Information - " + playerName, false);
+                                        messageService.sendModMessage("PKUtils User Information - " + playerName, false);
 
-                                        sendModMessage(empty()
+                                        messageService.sendModMessage(empty()
                                                 .append(of("Version").copy().formatted(GRAY))
                                                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                                                 .append(of(response.getVersion()).copy().formatted(WHITE)), false);
 
-                                        sendModMessage(empty()
+                                        messageService.sendModMessage(empty()
                                                 .append(of("Aktivitäten").copy().formatted(GRAY))
                                                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                                                 .append(of("Klick ↗").copy().styled(style -> style
@@ -108,39 +111,39 @@ public class ModCommand extends CommandBase {
                             return 1;
                         }))
                 .executes(context -> {
-                    String version = getVersion();
+                    String version = utilsService.getVersion();
                     String authors = getAuthors();
                     LocalDateTime lastSyncTimestamp = syncService.getLastSyncTimestamp();
 
                     player.sendMessage(empty(), false);
 
-                    sendModMessage("PKUtils Version " + version, false);
+                    messageService.sendModMessage("PKUtils Version " + version, false);
 
-                    sendModMessage(empty()
+                    messageService.sendModMessage(empty()
                             .append(of("Autoren").copy().formatted(GRAY))
                             .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                             .append(of(authors).copy().formatted(WHITE)), false);
 
-                    sendModMessage(empty()
+                    messageService.sendModMessage(empty()
                             .append(of("Discord").copy().formatted(GRAY))
                             .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                             .append(of("https://discord.gg/mZGAAwhPHu").copy().styled(style -> style
                                     .withColor(WHITE)
                                     .withClickEvent(new ClickEvent(OPEN_URL, "https://discord.gg/mZGAAwhPHu")))), false);
 
-                    sendModMessage(empty()
+                    messageService.sendModMessage(empty()
                             .append(of("GitHub").copy().formatted(GRAY))
                             .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                             .append(of("https://github.com/UnicacityAddon/pkutils").copy().styled(style -> style
                                     .withColor(WHITE)
                                     .withClickEvent(new ClickEvent(OPEN_URL, "https://github.com/UnicacityAddon/pkutils")))), false);
 
-                    sendModMessage(empty()
+                    messageService.sendModMessage(empty()
                             .append(of("Letzte Synchronisierung").copy().formatted(GRAY))
                             .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                             .append(of(lastSyncTimestamp.equals(MIN)
                                     ? "Nie"
-                                    : dateTimeToFriendlyString(lastSyncTimestamp)).copy().formatted(WHITE)), false);
+                                    : messageService.dateTimeToFriendlyString(lastSyncTimestamp)).copy().formatted(WHITE)), false);
 
                     player.sendMessage(empty(), false);
 

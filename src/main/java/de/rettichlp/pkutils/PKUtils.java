@@ -33,10 +33,6 @@ public class PKUtils implements ModInitializer {
     // That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static final Api api = new Api();
-    public static final Storage storage = new Storage();
-    public static final Configuration configuration = new Configuration().loadFromFile();
-
     public static final CommandService commandService = new CommandService();
     public static final FactionService factionService = new FactionService();
     public static final MessageService messageService = new MessageService();
@@ -44,6 +40,10 @@ public class PKUtils implements ModInitializer {
     public static final RenderService renderService = new RenderService();
     public static final SyncService syncService = new SyncService();
     public static final UtilsService utilsService = new UtilsService();
+
+    public static final Api api = new Api();
+    public static final Storage storage = new Storage();
+    public static final Configuration configuration = new Configuration().loadFromFile();
 
     public static ClientPlayerEntity player;
     public static ClientPlayNetworkHandler networkHandler;

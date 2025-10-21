@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static java.lang.String.valueOf;
 import static java.nio.file.Files.list;
@@ -44,7 +45,7 @@ public class ScreenshotCommand extends CommandBase {
                         }))
                 .executes(context -> {
                     player.sendMessage(empty(), false);
-                    sendModMessage("Screenshots:", false);
+                    messageService.sendModMessage("Screenshots:", false);
 
                     for (ScreenshotType screenshotType : ScreenshotType.values()) {
                         File screenshotDirectory = screenshotType.getScreenshotDirectory();
@@ -56,7 +57,7 @@ public class ScreenshotCommand extends CommandBase {
                             fileCount = 0;
                         }
 
-                        sendModMessage(empty()
+                        messageService.sendModMessage(empty()
                                 .append(of(screenshotType.getDisplayName()).copy().formatted(GRAY))
                                 .append(of(":").copy().formatted(DARK_GRAY)).append(" ")
                                 .append(of(valueOf(fileCount)))
