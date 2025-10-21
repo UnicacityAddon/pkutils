@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.listener.impl;
 
 import de.rettichlp.pkutils.common.models.CommandResponseRetriever;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
@@ -12,12 +11,13 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static java.lang.Character.isUpperCase;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class CommandListener extends PKUtilsBase implements ICommandSendListener, IMessageReceiveListener {
+public class CommandListener implements ICommandSendListener, IMessageReceiveListener {
 
     private static final Pattern COMMAND_NAVI_HOUSE_NUMBER_PATTERN = compile("^navi (?<number>\\d+)$");
 
@@ -36,14 +36,14 @@ public class CommandListener extends PKUtilsBase implements ICommandSendListener
                 stringJoiner.add(parts[1]);
             }
 
-            sendCommand(stringJoiner.toString());
+            commandService.sendCommand(stringJoiner.toString());
             return false;
         }
 
         Matcher commandNaviHouseNumberMatcher = COMMAND_NAVI_HOUSE_NUMBER_PATTERN.matcher(command);
         if (commandNaviHouseNumberMatcher.find()) {
             String number = commandNaviHouseNumberMatcher.group("number");
-            sendCommand("navi Haus:" + number);
+            commandService.sendCommand("navi Haus:" + number);
             return false;
         }
 

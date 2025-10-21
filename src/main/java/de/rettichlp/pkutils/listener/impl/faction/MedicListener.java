@@ -2,7 +2,6 @@ package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.text.Text;
@@ -13,8 +12,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.api;
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.REVIVE;
 import static java.lang.Integer.parseInt;
 import static java.lang.System.currentTimeMillis;
@@ -27,7 +28,7 @@ import static java.util.Collections.singletonList;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class MedicListener extends PKUtilsBase implements IMessageReceiveListener {
+public class MedicListener implements IMessageReceiveListener {
 
     private static final Pattern MEDIC_BANDAGE_PATTERN = compile("^(?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat dich bandagiert\\.$");
     private static final Pattern MEDIC_PILL_PATTERN = compile("^\\[Medic] Doktor (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat dir Schmerzpillen verabreicht\\.$");
@@ -57,7 +58,7 @@ public class MedicListener extends PKUtilsBase implements IMessageReceiveListene
         Matcher medicReviveStartMatcher = MEDIC_REVIVE_START.matcher(message);
         if (medicReviveStartMatcher.find()) {
             this.lastReviveStartetAt = now();
-            delayedAction(() -> sendCommand("dinfo"), 1000);
+            utilsService.delayedAction(() -> commandService.sendCommand("dinfo"), 1000);
         }
 
         Matcher housebanHeaderMatcher = HOUSEBAN_HEADER_PATTERN.matcher(message);

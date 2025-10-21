@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.listener.impl.job;
 
 import de.rettichlp.pkutils.common.models.Job;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.ICommandSendListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
@@ -15,8 +14,10 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static de.rettichlp.pkutils.common.models.Job.LUMBERJACK;
 import static de.rettichlp.pkutils.common.models.Job.PIZZA_DELIVERY;
 import static de.rettichlp.pkutils.common.models.Job.TOBACCO_PLANTATION;
@@ -27,7 +28,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class JobListener extends PKUtilsBase
+public class JobListener
         implements ICommandSendListener, IMessageReceiveListener, IMoveListener, INaviSpotReachedListener {
 
     private static final Pattern TRANSPORT_DELIVER_PATTERN = compile("^\\[Transport] Du hast (eine Holz Lieferung|eine Kiste|eine Waffenkiste|ein Weizen Paket|eine Schwarzpulverkiste) abgeliefert\\.$");
@@ -37,7 +38,7 @@ public class JobListener extends PKUtilsBase
     @Override
     public boolean onCommandSend(@NotNull String command) {
         if (command.equals("sägewerk")) {
-            delayedAction(() -> sendCommand("findtree"), 1000);
+            utilsService.delayedAction(() -> commandService.sendCommand("findtree"), 1000);
         }
 
         return true;
@@ -47,19 +48,19 @@ public class JobListener extends PKUtilsBase
     public boolean onMessageReceive(Text text, String message) {
         Matcher transportDeliverMatcher = TRANSPORT_DELIVER_PATTERN.matcher(message);
         if (transportDeliverMatcher.find()) {
-            delayedAction(() -> sendCommand("droptransport"), SECONDS.toMillis(10));
+            utilsService.delayedAction(() -> commandService.sendCommand("droptransport"), SECONDS.toMillis(10));
             return true;
         }
 
         Matcher drinkTransportDeliverMatcher = DRINK_TRANSPORT_DELIVER_PATTERN.matcher(message);
         if (drinkTransportDeliverMatcher.find()) {
-            delayedAction(() -> sendCommand("dropdrink"), 2500);
+            utilsService.delayedAction(() -> commandService.sendCommand("dropdrink"), 2500);
             return true;
         }
 
         Matcher pizzaJobTransportGetPizzaMatcher = PIZZA_JOB_TRANSPORT_GET_PIZZA_PATTERN.matcher(message);
         if (pizzaJobTransportGetPizzaMatcher.find()) {
-            delayedAction(() -> sendCommand("getpizza"), 2500);
+            utilsService.delayedAction(() -> commandService.sendCommand("getpizza"), 2500);
             return true;
         }
 
@@ -75,7 +76,7 @@ public class JobListener extends PKUtilsBase
             job.startCountdown();
 
             if (job == LUMBERJACK) {
-                delayedAction(() -> sendCommand("findtree"), 1000);
+                utilsService.delayedAction(() -> commandService.sendCommand("findtree"), 1000);
             }
 
             return true;
@@ -91,7 +92,7 @@ public class JobListener extends PKUtilsBase
         }
 
         if (storage.getCurrentJob() == URANIUM_TRANSPORT && player.getBlockPos().isWithinDistance(new BlockPos(1132, 68, 396), 2)) {
-            sendCommand("dropuran");
+            commandService.sendCommand("dropuran");
         }
     }
 
@@ -102,12 +103,12 @@ public class JobListener extends PKUtilsBase
         }
 
         if (storage.getCurrentJob() == PIZZA_DELIVERY && player.getBlockPos().isWithinDistance(new BlockPos(266, 69, 54), 2)) {
-            sendCommand("getpizza");
+            commandService.sendCommand("getpizza");
             return;
         }
 
         if (storage.getCurrentJob() == TOBACCO_PLANTATION && player.getBlockPos().isWithinDistance(new BlockPos(-133, 69, -78), 3)) {
-            sendCommand("droptabak");
+            commandService.sendCommand("droptabak");
         }
     }
 }

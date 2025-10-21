@@ -6,7 +6,6 @@ import de.rettichlp.pkutils.common.gui.options.components.ItemButtonWidget;
 import de.rettichlp.pkutils.common.gui.options.components.ToggleButtonWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -47,7 +46,7 @@ import static net.minecraft.text.Text.translatable;
 import static net.minecraft.util.math.RotationAxis.POSITIVE_Y;
 import static org.atteo.classindex.ClassIndex.getAnnotated;
 
-public class RenderService extends PKUtilsBase {
+public class RenderService {
 
     public static final int TEXT_BOX_PADDING = 3;
 

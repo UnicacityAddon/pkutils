@@ -1,8 +1,5 @@
 package de.rettichlp.pkutils.common.services;
 
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,9 +10,7 @@ import static net.minecraft.util.Formatting.GREEN;
 import static net.minecraft.util.Formatting.RED;
 import static net.minecraft.util.Formatting.YELLOW;
 
-@Getter
-@Setter
-public class FactionService extends PKUtilsBase {
+public class FactionService {
 
     public @NotNull Formatting getWantedPointColor(int wantedPointAmount) {
         Formatting color;

@@ -13,7 +13,6 @@ import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.EquipEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionEntry;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.session.Session;
@@ -32,13 +31,14 @@ import java.util.function.Consumer;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static java.lang.String.valueOf;
 import static java.net.URI.create;
 import static java.net.http.HttpRequest.BodyPublishers.ofString;
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static java.util.Optional.ofNullable;
 
-public class Api extends PKUtilsBase {
+public class Api {
 
     private static final String SESSION_TOKEN = ofNullable(MinecraftClient.getInstance())
             .map(MinecraftClient::getSession)
@@ -51,7 +51,7 @@ public class Api extends PKUtilsBase {
             .header("Accept", "application/json")
             .header("Content-Type", "application/json")
             .header("X-Minecraft-Session-Token", SESSION_TOKEN)
-            .header("X-PKU-Version", valueOf(getVersion()));
+            .header("X-PKU-Version", valueOf(utilsService.getVersion()));
 
     @Getter
     private final Gson gson = new GsonBuilder()

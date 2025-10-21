@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
@@ -48,6 +49,6 @@ public class ACallCommand extends CommandBase {
     }
 
     private void call(int number) {
-        sendCommand("call " + number);
+        commandService.sendCommand("call " + number);
     }
 }

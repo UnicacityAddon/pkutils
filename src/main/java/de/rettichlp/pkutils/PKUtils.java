@@ -3,7 +3,6 @@ package de.rettichlp.pkutils;
 import de.rettichlp.pkutils.common.Storage;
 import de.rettichlp.pkutils.common.api.Api;
 import de.rettichlp.pkutils.common.configuration.Configuration;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.services.CommandService;
 import de.rettichlp.pkutils.common.services.MessageService;
 import de.rettichlp.pkutils.common.services.UtilsService;
@@ -25,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import static java.lang.Boolean.getBoolean;
 import static java.util.Objects.isNull;
 
-public class PKUtils extends PKUtilsBase implements ModInitializer {
+public class PKUtils implements ModInitializer {
 
     public static final String MOD_ID = "pkutils";
 

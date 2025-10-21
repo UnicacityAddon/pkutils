@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtils.commandService;
+import static de.rettichlp.pkutils.PKUtils.messageService;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static java.lang.Integer.parseInt;
 import static java.util.regex.Pattern.compile;
 
@@ -27,13 +30,13 @@ public class DepositCommand extends CommandBase implements IMessageReceiveListen
     public LiteralArgumentBuilder<FabricClientCommandSource> execute(@NotNull LiteralArgumentBuilder<FabricClientCommandSource> node) {
         return node
                 .executes(context -> {
-                    sendCommand("stats");
+                    commandService.sendCommand("stats");
 
-                    delayedAction(() -> {
+                    utilsService.delayedAction(() -> {
                         if (amount <= 0) {
-                            sendModMessage("Du hast kein Geld zum Einzahlen.", false);
+                            messageService.sendModMessage("Du hast kein Geld zum Einzahlen.", false);
                         } else {
-                            sendCommand("bank einzahlen " + amount);
+                            commandService.sendCommand("bank einzahlen " + amount);
                         }
                     }, 1000);
 

@@ -16,7 +16,9 @@ import java.util.regex.Pattern;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.configuration;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static java.lang.String.valueOf;
 import static java.util.regex.Pattern.compile;
@@ -51,7 +53,7 @@ public class PersonalUseCommand extends CommandBase implements IMessageReceiveLi
                                     return 1;
                                 })))
                 .executes(context -> {
-                    sendCommands(createCommands("dbank get %name% %amount% %purity%"));
+                    commandService.sendCommands(createCommands("dbank get %name% %amount% %purity%"));
                     return 1;
                 });
     }
@@ -75,7 +77,7 @@ public class PersonalUseCommand extends CommandBase implements IMessageReceiveLi
                 .toList();
 
         if (commandStrings.isEmpty()) {
-            sendModMessage("Du hast keinen Eigenbedarf gesetzt.", false);
+            messageService.sendModMessage("Du hast keinen Eigenbedarf gesetzt.", false);
         }
 
         return commandStrings;
@@ -84,7 +86,7 @@ public class PersonalUseCommand extends CommandBase implements IMessageReceiveLi
     private void removeAndExecuteFirst() {
         if (!this.commands.isEmpty()) {
             String firstCommandString = this.commands.removeFirst();
-            sendCommand(firstCommandString);
+            commandService.sendCommand(firstCommandString);
         }
     }
 }

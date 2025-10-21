@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.common.services;
 
 import de.rettichlp.pkutils.common.gui.widgets.NotificationWidget;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import lombok.Data;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +27,7 @@ import static java.util.Objects.nonNull;
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class NotificationService extends PKUtilsBase {
+public class NotificationService {
 
     private final Collection<Notification> notifications = new ArrayList<>();
 

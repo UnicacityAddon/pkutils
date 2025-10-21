@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.models.WantedEntry;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,10 +12,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.api;
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.factionService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.ARREST;
 import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.ARREST_KILL;
 import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.PARK_TICKET;
@@ -35,7 +36,7 @@ import static net.minecraft.util.Formatting.RED;
 import static net.minecraft.util.TypeFilter.instanceOf;
 
 @PKUtilsListener
-public class WantedListener extends PKUtilsBase implements IMessageReceiveListener {
+public class WantedListener implements IMessageReceiveListener {
 
     private static final Pattern WANTED_GIVEN_POINTS_PATTERN = compile("^HQ: (?:\\[PK])?([a-zA-Z0-9_]+)'s momentanes WantedLevel: (\\d+)$");
     private static final Pattern WANTED_GIVEN_REASON_PATTERN = compile("^HQ: Gesuchter: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+)\\. Grund: (?<reason>.+)$");
@@ -202,7 +203,7 @@ public class WantedListener extends PKUtilsBase implements IMessageReceiveListen
         Matcher carCheckMatcher = CAR_CHECK_PATTERN.matcher(message);
         if (carCheckMatcher.find()) {
             String playerName = carCheckMatcher.group("playerName");
-            delayedAction(() -> sendCommand("memberinfo " + playerName), 1000);
+            utilsService.delayedAction(() -> commandService.sendCommand("memberinfo " + playerName), 1000);
         }
 
         Matcher carParkticketMatcher = CAR_PARKTICKET_PATTERN.matcher(message);

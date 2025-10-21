@@ -1,7 +1,6 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.models.Faction;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IBlockRightClickListener;
 import net.minecraft.util.Hand;
@@ -12,6 +11,7 @@ import net.minecraft.world.World;
 import java.util.Map;
 import java.util.Set;
 
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
@@ -22,7 +22,7 @@ import static net.minecraft.util.Hand.MAIN_HAND;
 import static net.minecraft.util.Hand.OFF_HAND;
 
 @PKUtilsListener
-public class FactionDoorListener extends PKUtilsBase implements IBlockRightClickListener {
+public class FactionDoorListener implements IBlockRightClickListener {
 
     private static final Map<Faction, Set<BlockPos>> FACTION_DOOR_POSITIONS = Map.of(
             FBI, Set.of(new BlockPos(879, 62, -87)),
@@ -42,6 +42,6 @@ public class FactionDoorListener extends PKUtilsBase implements IBlockRightClick
         factionDoorPositions.stream()
                 .filter(blockPos -> blockPos.isWithinDistance(hitResult.getBlockPos(), DISTANCE))
                 .findAny()
-                .ifPresent(blockPos -> sendCommand("fdoor"));
+                .ifPresent(blockPos -> commandService.sendCommand("fdoor"));
     }
 }

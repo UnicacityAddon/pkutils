@@ -1,6 +1,5 @@
 package de.rettichlp.pkutils.listener.impl.job;
 
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.ITickListener;
@@ -18,7 +17,10 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtils.commandService;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static java.lang.Double.compare;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.stream;
@@ -29,7 +31,7 @@ import static java.util.regex.Pattern.compile;
 import static net.minecraft.scoreboard.ScoreboardDisplaySlot.SIDEBAR;
 
 @PKUtilsListener
-public class GarbageManListener extends PKUtilsBase implements IMessageReceiveListener, ITickListener {
+public class GarbageManListener implements IMessageReceiveListener, ITickListener {
 
     private static final Pattern GARBAGE_MAN_DROP_START = compile("^\\[Müllmann] Du hast genug Mülltonnen entleert\\.$");
     private static final Pattern GARBAGE_MAN_FINISHED = compile("^\\[Müllmann] Du hast den Job beendet\\.$");
@@ -80,13 +82,13 @@ public class GarbageManListener extends PKUtilsBase implements IMessageReceiveLi
         }
 
         this.lastCommandExecution = now;
-        sendCommand("dropwaste");
+        commandService.sendCommand("dropwaste");
 
-        delayedAction(() -> sendModMessage("5", true), 200);
-        delayedAction(() -> sendModMessage("4", true), 1200);
-        delayedAction(() -> sendModMessage("3", true), 2200);
-        delayedAction(() -> sendModMessage("2", true), 3200);
-        delayedAction(() -> sendModMessage("1", true), 4200);
+        utilsService.delayedAction(() -> messageService.sendModMessage("5", true), 200);
+        utilsService.delayedAction(() -> messageService.sendModMessage("4", true), 1200);
+        utilsService.delayedAction(() -> messageService.sendModMessage("3", true), 2200);
+        utilsService.delayedAction(() -> messageService.sendModMessage("2", true), 3200);
+        utilsService.delayedAction(() -> messageService.sendModMessage("1", true), 4200);
     }
 
     private WasteDropSpot getNearestWasteDropSpot() {
