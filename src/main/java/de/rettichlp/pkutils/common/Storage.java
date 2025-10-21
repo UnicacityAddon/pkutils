@@ -76,6 +76,14 @@ public class Storage {
 
     @Getter
     @Setter
+    private int aBuyAmount = 10;
+
+    @Getter
+    @Setter
+    private boolean aBuyEnabled = false;
+
+    @Getter
+    @Setter
     private int activeServices = 0;
 
     @Getter
@@ -111,9 +119,6 @@ public class Storage {
     @Setter
     private ToggledChat toggledChat = NONE;
 
-    @Getter
-    @Setter
-    private int aBuyAmount = 0;
     {
         this.blackMarkets.addAll(stream(BlackMarket.Type.values())
                 .map(type -> new BlackMarket(type, null, false))
@@ -147,6 +152,8 @@ public class Storage {
         LOGGER.info("retrievedNumbers[{}]: {}", this.retrievedNumbers.size(), this.retrievedNumbers);
         // wantedEntries
         LOGGER.info("wantedEntries[{}]: {}", this.wantedEntries.size(), this.wantedEntries);
+        // aBuy
+        LOGGER.info("aBuy: {} {}", this.aBuyEnabled, this.aBuyAmount);
         // activeServices
         LOGGER.info("activeServices: {}", this.activeServices);
         // afk
@@ -165,8 +172,6 @@ public class Storage {
         LOGGER.info("punicaKitty: {}", this.punicaKitty);
         // toggledChat
         LOGGER.info("toggledChat: {}", this.toggledChat);
-        // abuyamount
-        LOGGER.info("aBuyAmount: {}", this.aBuyAmount);
     }
 
     public Faction getCachedFaction(String playerName) {
