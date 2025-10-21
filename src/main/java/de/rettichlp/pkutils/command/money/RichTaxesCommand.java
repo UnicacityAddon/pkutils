@@ -3,7 +3,6 @@ package de.rettichlp.pkutils.command.money;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
-import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +13,6 @@ import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.utilsService;
 
 @PKUtilsCommand(label = "reichensteuer")
-@PKUtilsListener
 public class RichTaxesCommand extends CommandBase {
 
     private static final int RICH_TAXES_THRESHOLD = 100000;
