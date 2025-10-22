@@ -31,6 +31,8 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
+import static net.minecraft.text.Text.of;
+import static net.minecraft.util.Formatting.AQUA;
 
 @PKUtilsListener
 public class MedicListener implements IMessageReceiveListener {
@@ -100,11 +102,6 @@ public class MedicListener implements IMessageReceiveListener {
             return true;
         }
 
-        Matcher karmaGetMatcher = KARMA_GET_PATTERN.matcher(message);
-        if (!karmaGetMatcher.find()) {
-            return true;
-        }
-
         Matcher firstAidMatcher = FIRST_AID_PATTERN.matcher(message);
         if (firstAidMatcher.find()) {
             configuration.setFirstAidLicenseExpireDateTime(now().plusDays(14));
@@ -114,17 +111,21 @@ public class MedicListener implements IMessageReceiveListener {
         Matcher firstAidLicencesMatcher = FIRST_AID_LICENCES_PATTERN.matcher(message);
         if (firstAidLicencesMatcher.find()) {
             MutableText overwriteText = text.copy().append(" ")
-                    .append("bis " + ofNullable(configuration.getFirstAidLicenseExpireDateTime())
+                    .append(of("bis " + ofNullable(configuration.getFirstAidLicenseExpireDateTime())
                             .map(messageService::dateTimeToFriendlyString)
-                            .orElse("Unbekannt"));
+                            .orElse("Unbekannt")).copy().formatted(AQUA));
 
             player.sendMessage(overwriteText, false);
             return false; // hide message
         }
 
-        long seconds = between(this.lastReviveStartetAt, now()).toSeconds();
-        if (seconds > 6 && seconds < 10) {
-            api.postActivityAdd(REVIVE);
+        Matcher karmaGetMatcher = KARMA_GET_PATTERN.matcher(message);
+        if (karmaGetMatcher.find()) {
+            long seconds = between(this.lastReviveStartetAt, now()).toSeconds();
+            if (seconds > 6 && seconds < 10) {
+                api.postActivityAdd(REVIVE);
+            }
+            return true;
         }
 
         return true;
