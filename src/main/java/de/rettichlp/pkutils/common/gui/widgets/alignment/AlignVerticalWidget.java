@@ -2,17 +2,29 @@ package de.rettichlp.pkutils.common.gui.widgets.alignment;
 
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 
 import static de.rettichlp.pkutils.PKUtils.renderService;
+import static net.minecraft.text.Text.empty;
 
 public class AlignVerticalWidget extends AlignWidget<AbstractPKUtilsWidget> {
 
     @Override
     public void add(AbstractPKUtilsWidget entry) {
         this.pkUtilsWidgets.add(entry);
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return empty();
+    }
+
+    @Override
+    public Text getTooltip() {
+        return empty();
     }
 
     @Override

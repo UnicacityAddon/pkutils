@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
 import static java.time.temporal.ChronoUnit.MILLIS;
+import static net.minecraft.text.Text.empty;
 
 @RequiredArgsConstructor
 @PKUtilsWidget(registryName = "notification")
@@ -34,6 +35,16 @@ public class NotificationWidget extends AbstractPKUtilsProgressTextWidget<Notifi
     @Override
     public Color getBorderColor() {
         return this.borderColor;
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return empty();
+    }
+
+    @Override
+    public Text getTooltip() {
+        return empty();
     }
 
     @Override

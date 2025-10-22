@@ -5,7 +5,5 @@ import net.minecraft.text.Text;
 
 public interface IOptionWidget {
 
-    Text sectionTitle();
-
     Widget optionsWidget();
 }
