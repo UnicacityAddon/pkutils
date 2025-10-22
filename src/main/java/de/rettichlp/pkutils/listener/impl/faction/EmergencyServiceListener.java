@@ -14,6 +14,7 @@ import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.EMERGENCY_SERVICE;
 import static de.rettichlp.pkutils.common.models.Sound.SERVICE;
+import static java.lang.Integer.parseInt;
 import static java.lang.Math.max;
 import static java.util.regex.Pattern.compile;
 
@@ -26,7 +27,8 @@ public class EmergencyServiceListener implements IMessageReceiveListener, INaviS
     private static final Pattern SERVICE_DONE_PATTERN = compile("^Du hast den Service von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) als 'Erledigt' markiert\\.$");
     private static final Pattern SERVICE_ABORTED_PATTERN = compile("^Der Service von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) wurde abgebrochen\\.$");
     private static final Pattern SERVICE_DELETED_PATTERN = compile("^(?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat den Notruf von (?:\\[PK])?(?<senderName>[a-zA-Z0-9_]+) gelöscht\\.$");
-    private static final Pattern SERVICE_NONE_PATTERN = compile("^Offene Notrufe \\(0\\)$|^Fehler: Es ist kein Service offen\\.$");
+    private static final Pattern SERVICE_COUNT_PATTERN = compile("^Offene Notrufe \\((?<count>\\d+)\\)$");
+    private static final Pattern SERVICE_NONE_PATTERN = compile("^Fehler: Es ist kein Service offen\\.$");
 
     private boolean activeService = false;
 
@@ -79,6 +81,13 @@ public class EmergencyServiceListener implements IMessageReceiveListener, INaviS
         Matcher serviceDeletedMatcher = SERVICE_DELETED_PATTERN.matcher(message);
         if (serviceDeletedMatcher.find()) {
             storage.setActiveServices(max(0, storage.getActiveServices() - 1));
+            return true;
+        }
+
+        Matcher serviceCountMatcher = SERVICE_COUNT_PATTERN.matcher(message);
+        if (serviceCountMatcher.find()) {
+            int count = parseInt(serviceCountMatcher.group("count"));
+            storage.setActiveServices(count);
             return true;
         }
 
