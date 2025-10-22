@@ -1,14 +1,19 @@
 package de.rettichlp.pkutils.common.services;
 
+import lombok.Getter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
 
 public class UtilsService {
+
+    @Getter
+    private final List<String> whitelistedInventoryTitles = List.of("Bäcker", "Feinkost", "Supermarkt", "Waffenladen");
 
     public void delayedAction(Runnable runnable, long milliseconds) {
         new Timer().schedule(new TimerTask() {

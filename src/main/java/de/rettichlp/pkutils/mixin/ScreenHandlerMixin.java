@@ -19,8 +19,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-
 import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.utilsService;
@@ -32,9 +30,6 @@ public class ScreenHandlerMixin {
 
     @Unique
     private static final long A_BUY_DELAY = 150;
-
-    @Unique
-    private static final List<String> whitelistedInventoryTitles = List.of("Bäcker", "Feinkost", "Supermarkt", "Waffenladen");
 
     @Unique
     private boolean isABuyProcessing = false;
@@ -101,6 +96,6 @@ public class ScreenHandlerMixin {
         }
 
         String title = screen.getTitle().getString();
-        return whitelistedInventoryTitles.stream().anyMatch(title::contains);
+        return utilsService.getWhitelistedInventoryTitles().stream().anyMatch(title::contains);
     }
 }

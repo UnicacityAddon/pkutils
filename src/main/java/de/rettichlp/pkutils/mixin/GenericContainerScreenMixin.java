@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static de.rettichlp.pkutils.PKUtils.utilsService;
 import static java.lang.Integer.max;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
@@ -27,12 +28,21 @@ import static net.minecraft.text.Text.of;
 @Mixin(GenericContainerScreen.class)
 public abstract class GenericContainerScreenMixin extends HandledScreen<GenericContainerScreenHandler> {
 
+    @Unique
+    private final Text title;
+
     public GenericContainerScreenMixin(GenericContainerScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
+        this.title = title;
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onContainerInit(CallbackInfo ci) {
+        boolean isABuyContainer = utilsService.getWhitelistedInventoryTitles().stream().anyMatch(s -> this.title.getString().contains(s));
+        if (isABuyContainer) {
+            return;
+        }
+
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         Window window = MinecraftClient.getInstance().getWindow();
 
