@@ -7,6 +7,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.util.Window;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 
 import static de.rettichlp.pkutils.PKUtils.configuration;
@@ -19,6 +20,8 @@ import static java.awt.Color.GREEN;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
+import static net.minecraft.screen.ScreenTexts.CANCEL;
+import static net.minecraft.screen.ScreenTexts.DONE;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 
@@ -36,12 +39,12 @@ public class WidgetOptionsPositionScreen extends PKUtilsScreen {
     public void initBody() {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addBody(horizontal().spacing(8), positioner -> positioner.marginTop(this.client.getWindow().getScaledHeight() / 4));
 
-        renderService.addButton(directionalLayoutWidget, "gui.done", button -> {
+        renderService.addButton(directionalLayoutWidget, DONE, button -> {
             renderService.getWidgets().forEach(AbstractPKUtilsWidget::saveConfiguration);
             back();
         }, 150);
 
-        renderService.addButton(directionalLayoutWidget, "gui.cancel", button -> {
+        renderService.addButton(directionalLayoutWidget, CANCEL, button -> {
             // restore configurations from the configuration file
             renderService.getWidgets().forEach(AbstractPKUtilsWidget::loadConfiguration);
             back();

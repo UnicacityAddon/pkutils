@@ -10,6 +10,7 @@ import net.minecraft.client.gui.widget.EmptyWidget;
 import net.minecraft.client.gui.widget.Positioner;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -28,8 +29,12 @@ import static net.minecraft.text.Text.translatable;
 
 public class PersonalUseOptionsScreen extends OptionsScreen {
 
+    private static final Text TEXT_PERSONAL_USE = translatable("pkutils.options.text.personal_use");
+    private static final Text TEXT_PURITY = translatable("pkutils.options.text.purity");
+    private static final Text TEXT_AMOUNT = translatable("pkutils.options.text.amount");
+
     public PersonalUseOptionsScreen(Screen parent) {
-        super(parent, "pkutils.options.personal_use.title");
+        super(parent, TEXT_PERSONAL_USE);
     }
 
     @Override
@@ -41,11 +46,11 @@ public class PersonalUseOptionsScreen extends OptionsScreen {
         EmptyWidget widget = new EmptyWidget(100, 0);
         directionalLayoutWidget1.add(widget);
 
-        TextWidget widget1 = new TextWidget(translatable("pkutils.purity.title"), this.textRenderer);
+        TextWidget widget1 = new TextWidget(TEXT_PURITY, this.textRenderer);
         widget1.setWidth(96);
         directionalLayoutWidget1.add(widget1, positioner -> positioner.alignVerticalCenter().alignHorizontalCenter());
 
-        TextWidget widget2 = new TextWidget(translatable("pkutils.options.personal_use.header.amount"), this.textRenderer);
+        TextWidget widget2 = new TextWidget(TEXT_AMOUNT, this.textRenderer);
         widget2.setWidth(96);
         directionalLayoutWidget1.add(widget2, positioner -> positioner.alignVerticalCenter().alignHorizontalCenter());
 
@@ -65,13 +70,13 @@ public class PersonalUseOptionsScreen extends OptionsScreen {
         DirectionalLayoutWidget directionalLayoutWidget = horizontal().spacing(8);
 
         // text
-        TextWidget widget = new TextWidget(translatable("pkutils.options.personal_use." + inventoryItem.name().toLowerCase()), this.textRenderer);
+        TextWidget widget = new TextWidget(translatable("pkutils.inventory." + inventoryItem.name().toLowerCase()), this.textRenderer);
         widget.setWidth(100);
         widget.alignLeft();
         directionalLayoutWidget.add(widget, Positioner::alignVerticalCenter);
 
         // purity input
-        renderService.addCyclingButton(directionalLayoutWidget, "pkutils.purity.title", Purity.values(), Purity::getDisplayName, (options, value) -> updatePersonalUseEntry(personalUseEntry, value), options -> personalUseEntry.getPurity(), 96);
+        renderService.addCyclingButton(directionalLayoutWidget, TEXT_PURITY, Purity.values(), Purity::getDisplayName, (options, value) -> updatePersonalUseEntry(personalUseEntry, value), options -> personalUseEntry.getPurity(), 96);
 
         // amount input
         DirectionalLayoutWidget widget2 = personalUseInput(personalUseEntry);
