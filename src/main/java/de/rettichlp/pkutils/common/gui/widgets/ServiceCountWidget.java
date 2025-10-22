@@ -1,8 +1,10 @@
 package de.rettichlp.pkutils.common.gui.widgets;
 
+import de.rettichlp.pkutils.common.gui.options.WidgetOptionsPositionScreen;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsTextWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
 import java.awt.Color;
@@ -26,7 +28,8 @@ public class ServiceCountWidget extends AbstractPKUtilsTextWidget<ServiceCountWi
 
     @Override
     public boolean isVisible() {
-        return storage.getActiveServices() > 0;
+        // visible if in the position options screen to allow positioning
+        return storage.getActiveServices() > 0 || MinecraftClient.getInstance().currentScreen instanceof WidgetOptionsPositionScreen;
     }
 
     public static class Configuration extends PKUtilsWidgetConfiguration {}
