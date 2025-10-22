@@ -6,12 +6,15 @@ import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
+import net.minecraft.client.util.Window;
 import net.minecraft.text.Text;
 
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.common.services.RenderService.TEXT_BOX_PADDING;
 import static java.awt.Color.BLACK;
+import static java.awt.Color.BLUE;
+import static java.awt.Color.GRAY;
 import static java.awt.Color.GREEN;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -56,6 +59,26 @@ public class WidgetOptionsPositionScreen extends PKUtilsScreen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
+        // draw center help lines
+        Window window = this.client.getWindow();
+        int scaledWidth = window.getScaledWidth();
+        int scaledHeight = window.getScaledHeight();
+        context.drawHorizontalLine(0, scaledWidth, scaledHeight / 2 - 1, GREEN.getRGB());
+        context.drawVerticalLine(scaledWidth / 2 - 1, 0, scaledHeight, GREEN.getRGB());
+
+        // draw widget help lines
+        renderService.getWidgets().forEach(abstractPKUtilsWidget -> {
+            double xTopLeft = abstractPKUtilsWidget.getWidgetConfiguration().getX();
+            double yTopLeft = abstractPKUtilsWidget.getWidgetConfiguration().getY();
+            double xBottomRight = xTopLeft + abstractPKUtilsWidget.getWidth();
+            double yBottomRight = yTopLeft + abstractPKUtilsWidget.getHeight();
+
+            context.drawHorizontalLine(0, scaledWidth, (int) yTopLeft, GRAY.getRGB());
+            context.drawHorizontalLine(0, scaledWidth, (int) yBottomRight - 1, GRAY.getRGB());
+            context.drawVerticalLine((int) xTopLeft, 0, scaledHeight, GRAY.getRGB());
+            context.drawVerticalLine((int) xBottomRight - 1, 0, scaledHeight, GRAY.getRGB());
+        });
+
         if (isNull(this.selectedWidget)) {
             return;
         }
@@ -74,6 +97,12 @@ public class WidgetOptionsPositionScreen extends PKUtilsScreen {
         Text widgetLocationText = of("X: " + x + " Y: " + y + " (W: " + this.selectedWidget.getWidth() + " H: " + this.selectedWidget.getHeight() + ")");
         context.fill(textX - TEXT_BOX_PADDING, textY - TEXT_BOX_PADDING, textX + this.textRenderer.getWidth(widgetLocationText) + TEXT_BOX_PADDING, textY + this.textRenderer.fontHeight + TEXT_BOX_PADDING, renderService.getSecondaryColor(BLACK).getRGB());
         context.drawText(this.textRenderer, widgetLocationText, textX, textY, 0xFFFFFF, false);
+
+        // draw widget center lines
+        double centerX = x + (this.selectedWidget.getWidth() / 2.0);
+        double centerY = y + (this.selectedWidget.getHeight() / 2.0);
+        context.drawHorizontalLine(0, scaledWidth, (int) centerY, BLUE.getRGB());
+        context.drawVerticalLine((int) centerX, 0, scaledHeight, BLUE.getRGB());
     }
 
     // disable background rendering to see overlay better
