@@ -11,6 +11,7 @@ import net.minecraft.client.util.Window;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,24 +23,20 @@ import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.lang.Integer.max;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
+import static java.util.Objects.isNull;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 
 @Mixin(GenericContainerScreen.class)
 public abstract class GenericContainerScreenMixin extends HandledScreen<GenericContainerScreenHandler> {
 
-    @Unique
-    private final Text title;
-
-    public GenericContainerScreenMixin(GenericContainerScreenHandler handler, PlayerInventory inventory, Text title) {
+    public GenericContainerScreenMixin(GenericContainerScreenHandler handler, PlayerInventory inventory, @Nullable Text title) {
         super(handler, inventory, title);
-        this.title = title;
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onContainerInit(CallbackInfo ci) {
-        boolean isABuyContainer = utilService.getWhitelistedInventoryTitles().stream().anyMatch(s -> this.title.getString().contains(s));
-        if (isABuyContainer) {
+        if (!isWhitelistedInventory()) {
             return;
         }
 
@@ -73,6 +70,16 @@ public abstract class GenericContainerScreenMixin extends HandledScreen<GenericC
         textField.setPlaceholder(of(valueOf(storage.getABuyAmount())));
         textField.setChangedListener(this::onTextFieldChange);
         addDrawableChild(textField);
+    }
+
+    @Unique
+    private boolean isWhitelistedInventory() {
+        if (isNull(this.title)) {
+            return false;
+        }
+
+        String title = this.title.getString();
+        return utilService.getWhitelistedInventoryTitles().stream().anyMatch(title::contains);
     }
 
     @Unique
