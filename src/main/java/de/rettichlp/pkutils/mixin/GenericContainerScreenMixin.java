@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.lang.Integer.max;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
@@ -38,7 +38,7 @@ public abstract class GenericContainerScreenMixin extends HandledScreen<GenericC
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onContainerInit(CallbackInfo ci) {
-        boolean isABuyContainer = utilsService.getWhitelistedInventoryTitles().stream().anyMatch(s -> this.title.getString().contains(s));
+        boolean isABuyContainer = utilService.getWhitelistedInventoryTitles().stream().anyMatch(s -> this.title.getString().contains(s));
         if (isABuyContainer) {
             return;
         }

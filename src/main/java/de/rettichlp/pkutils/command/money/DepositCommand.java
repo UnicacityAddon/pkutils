@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.messageService;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.lang.Integer.parseInt;
 import static java.util.regex.Pattern.compile;
 
@@ -32,7 +32,7 @@ public class DepositCommand extends CommandBase implements IMessageReceiveListen
                 .executes(context -> {
                     commandService.sendCommand("stats");
 
-                    utilsService.delayedAction(() -> {
+                    utilService.delayedAction(() -> {
                         if (amount <= 0) {
                             messageService.sendModMessage("Du hast kein Geld zum Einzahlen.", false);
                         } else {

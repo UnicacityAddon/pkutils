@@ -10,7 +10,7 @@ import java.util.TimerTask;
 
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
 
-public class UtilsService {
+public class UtilService {
 
     @Getter
     private final List<String> whitelistedInventoryTitles = List.of("Bäcker", "Feinkost", "Supermarkt", "Waffenladen");

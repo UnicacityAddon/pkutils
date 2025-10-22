@@ -10,7 +10,7 @@ import de.rettichlp.pkutils.common.services.MessageService;
 import de.rettichlp.pkutils.common.services.NotificationService;
 import de.rettichlp.pkutils.common.services.RenderService;
 import de.rettichlp.pkutils.common.services.SyncService;
-import de.rettichlp.pkutils.common.services.UtilsService;
+import de.rettichlp.pkutils.common.services.UtilService;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -39,7 +39,7 @@ public class PKUtils implements ModInitializer {
     public static final NotificationService notificationService = new NotificationService();
     public static final RenderService renderService = new RenderService();
     public static final SyncService syncService = new SyncService();
-    public static final UtilsService utilsService = new UtilsService();
+    public static final UtilService utilService = new UtilService();
 
     public static final Api api = new Api();
     public static final Storage storage = new Storage();

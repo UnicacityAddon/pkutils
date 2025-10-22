@@ -15,7 +15,7 @@ import static de.rettichlp.pkutils.PKUtils.api;
 import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.REVIVE;
 import static java.lang.Integer.parseInt;
 import static java.lang.System.currentTimeMillis;
@@ -58,7 +58,7 @@ public class MedicListener implements IMessageReceiveListener {
         Matcher medicReviveStartMatcher = MEDIC_REVIVE_START.matcher(message);
         if (medicReviveStartMatcher.find()) {
             this.lastReviveStartetAt = now();
-            utilsService.delayedAction(() -> commandService.sendCommand("dinfo"), 1000);
+            utilService.delayedAction(() -> commandService.sendCommand("dinfo"), 1000);
         }
 
         Matcher housebanHeaderMatcher = HOUSEBAN_HEADER_PATTERN.matcher(message);

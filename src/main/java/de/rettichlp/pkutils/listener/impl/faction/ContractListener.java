@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static de.rettichlp.pkutils.common.models.Sound.CONTRACT_FULFILLED;
 import static de.rettichlp.pkutils.common.models.Sound.CONTRACT_SET;
 import static java.lang.Integer.parseInt;
@@ -51,7 +51,7 @@ public class ContractListener implements IMessageReceiveListener {
         Matcher contractAddMatcher = CONTRACT_ADD_PATTERN.matcher(message);
         if (contractAddMatcher.find()) {
             // show all entries to sync
-            utilsService.delayedAction(() -> commandService.sendCommandWithAfkCheck("contractlist"), 1000);
+            utilService.delayedAction(() -> commandService.sendCommandWithAfkCheck("contractlist"), 1000);
             CONTRACT_SET.play();
             return true;
         }

@@ -17,7 +17,7 @@ import static de.rettichlp.pkutils.PKUtils.factionService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.ARREST;
 import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.ARREST_KILL;
 import static de.rettichlp.pkutils.common.models.ActivityEntry.Type.PARK_TICKET;
@@ -203,7 +203,7 @@ public class WantedListener implements IMessageReceiveListener {
         Matcher carCheckMatcher = CAR_CHECK_PATTERN.matcher(message);
         if (carCheckMatcher.find()) {
             String playerName = carCheckMatcher.group("playerName");
-            utilsService.delayedAction(() -> commandService.sendCommand("memberinfo " + playerName), 1000);
+            utilService.delayedAction(() -> commandService.sendCommand("memberinfo " + playerName), 1000);
         }
 
         Matcher carParkticketMatcher = CAR_PARKTICKET_PATTERN.matcher(message);

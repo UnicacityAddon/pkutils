@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.util.Objects.isNull;
 import static net.minecraft.screen.slot.SlotActionType.PICKUP;
 
@@ -75,7 +75,7 @@ public class ScreenHandlerMixin {
         this.isABuyProcessing = true;
 
         for (int i = 1; i < aBuyAmount; i++) {
-            utilsService.delayedAction(() -> {
+            utilService.delayedAction(() -> {
                 // check if the same inventory is still open
                 Screen currentScreen = client.currentScreen;
                 if (isNull(currentScreen)) {
@@ -86,7 +86,7 @@ public class ScreenHandlerMixin {
             }, A_BUY_DELAY * i);
         }
 
-        utilsService.delayedAction(() -> this.isABuyProcessing = false, A_BUY_DELAY * (aBuyAmount + 1));
+        utilService.delayedAction(() -> this.isABuyProcessing = false, A_BUY_DELAY * (aBuyAmount + 1));
     }
 
     @Unique
@@ -96,6 +96,6 @@ public class ScreenHandlerMixin {
         }
 
         String title = screen.getTitle().getString();
-        return utilsService.getWhitelistedInventoryTitles().stream().anyMatch(title::contains);
+        return utilService.getWhitelistedInventoryTitles().stream().anyMatch(title::contains);
     }
 }
