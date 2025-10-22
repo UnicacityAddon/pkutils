@@ -29,6 +29,10 @@ import static net.minecraft.util.Formatting.GREEN;
 @PKUtilsWidget(registryName = "car_locked", defaultX = 110.0, defaultY = 4.0)
 public class CarLockedWidget extends AbstractPKUtilsTextWidget<CarLockedWidget.Configuration> {
 
+    private static final Text WIDGETS_CAR_LOCKED_OPTIONS_NAME = translatable("pkutils.options.widgets.car_locked.options.name");
+    private static final Text WIDGETS_CAR_LOCKED_OPTIONS_TOOLTIP = translatable("pkutils.options.widgets.car_locked.options.tooltip");
+    private static final Text WIDGETS_CAR_LOCKED_OPTIONS_STYLE_NAME = translatable("pkutils.options.widgets.car_locked.options.style.name");
+
     @Override
     public Text text() {
         return getWidgetConfiguration().getStyle() == MINIMALISTIC
@@ -39,25 +43,34 @@ public class CarLockedWidget extends AbstractPKUtilsTextWidget<CarLockedWidget.C
                 .append(storage.isCarLocked() ? of("zu").copy().formatted(GREEN) : of("offen").copy().formatted(GOLD));
     }
 
+    @Override
+    public Text getDisplayName() {
+        return WIDGETS_CAR_LOCKED_OPTIONS_NAME;
+    }
+
+    @Override
+    public Text getTooltip() {
+        return WIDGETS_CAR_LOCKED_OPTIONS_TOOLTIP;
+    }
+
     @Getter
     @AllArgsConstructor
     public enum Style implements CyclingButtonEntry {
 
-        DEFAULT("pkutils.widget.car_locked.configuration.style.value.default"),
-        MINIMALISTIC("pkutils.widget.car_locked.configuration.style.value.minimalistic");
+        DEFAULT(translatable("pkutils.options.widgets.car_locked.options.style.value.default.name"), translatable("pkutils.options.widgets.car_locked.options.style.value.default.tooltip")),
+        MINIMALISTIC(translatable("pkutils.options.widgets.car_locked.options.style.value.minimalistic.name"), translatable("pkutils.options.widgets.car_locked.options.style.value.minimalistic.tooltip"));
 
-        private final String translationKey;
+        private final Text name;
+        private final Text tooltip;
 
-        @Contract(value = " -> new", pure = true)
         @Override
         public @NotNull Text getDisplayName() {
-            return translatable(this.translationKey + ".name");
+            return this.name;
         }
 
-        @Contract(" -> new")
         @Override
         public @NotNull Tooltip getTooltip() {
-            return Tooltip.of(translatable(this.translationKey + ".description"));
+            return Tooltip.of(this.tooltip);
         }
     }
 
@@ -68,17 +81,12 @@ public class CarLockedWidget extends AbstractPKUtilsTextWidget<CarLockedWidget.C
         private Style style = MINIMALISTIC;
 
         @Override
-        public Text sectionTitle() {
-            return translatable("pkutils.options.overlay.car.locked.name");
-        }
-
-        @Override
         public Widget optionsWidget() {
             return CyclingButtonWidget.builder(Style::getDisplayName)
                     .values(Style.values())
                     .initially(this.style)
                     .tooltip(Style::getTooltip)
-                    .build(of("text"), (button, style) -> this.style = style);
+                    .build(WIDGETS_CAR_LOCKED_OPTIONS_STYLE_NAME, (button, style) -> this.style = style);
         }
     }
 }

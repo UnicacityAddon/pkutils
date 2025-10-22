@@ -23,6 +23,13 @@ import static net.minecraft.util.Formatting.DARK_GRAY;
 @PKUtilsWidget(registryName = "payday", defaultX = 126.0, defaultY = 4.0)
 public class PayDayWidget extends AbstractPKUtilsTextWidget<PayDayWidget.Configuration> {
 
+    private static final Text WIDGETS_PAYDAY_OPTIONS_NAME = translatable("pkutils.options.widgets.payday.options.name");
+    private static final Text WIDGETS_PAYDAY_OPTIONS_TOOLTIP = translatable("pkutils.options.widgets.payday.options.tooltip");
+    private static final Text WIDGETS_PAYDAY_OPTIONS_SALARY_NAME = translatable("pkutils.options.widgets.payday.options.salary.name");
+    private static final Text WIDGETS_PAYDAY_OPTIONS_SALARY_TOOLTIP = translatable("pkutils.options.widgets.payday.options.salary.tooltip");
+    private static final Text WIDGETS_PAYDAY_OPTIONS_EXPERIENCE_NAME = translatable("pkutils.options.widgets.payday.options.experience.name");
+    private static final Text WIDGETS_PAYDAY_OPTIONS_EXPERIENCE_TOOLTIP = translatable("pkutils.options.widgets.payday.options.experience.tooltip");
+
     @Override
     public Text text() {
         MutableText payDayInfoText = keyValue("PayDay", empty()
@@ -41,6 +48,16 @@ public class PayDayWidget extends AbstractPKUtilsTextWidget<PayDayWidget.Configu
         return payDayInfoText;
     }
 
+    @Override
+    public Text getDisplayName() {
+        return WIDGETS_PAYDAY_OPTIONS_NAME;
+    }
+
+    @Override
+    public Text getTooltip() {
+        return WIDGETS_PAYDAY_OPTIONS_TOOLTIP;
+    }
+
     @Data
     @EqualsAndHashCode(callSuper = false)
     public static class Configuration extends PKUtilsWidgetConfiguration implements IOptionWidget {
@@ -49,15 +66,10 @@ public class PayDayWidget extends AbstractPKUtilsTextWidget<PayDayWidget.Configu
         private boolean showExperience = true;
 
         @Override
-        public Text sectionTitle() {
-            return translatable("pkutils.options.overlay.payday.name");
-        }
-
-        @Override
         public Widget optionsWidget() {
             DirectionalLayoutWidget directionalLayoutWidget = horizontal().spacing(8);
-            renderService.addToggleButton(directionalLayoutWidget, "pkutils.options.overlay.payday.salary", (options, value) -> this.showSalary = value, options -> this.showSalary, 150);
-            renderService.addToggleButton(directionalLayoutWidget, "pkutils.options.overlay.payday.experience", (options, value) -> this.showExperience = value, options -> this.showExperience, 150);
+            renderService.addToggleButton(directionalLayoutWidget, WIDGETS_PAYDAY_OPTIONS_SALARY_NAME, WIDGETS_PAYDAY_OPTIONS_SALARY_TOOLTIP, (options, value) -> this.showSalary = value, options -> this.showSalary, 150);
+            renderService.addToggleButton(directionalLayoutWidget, WIDGETS_PAYDAY_OPTIONS_EXPERIENCE_NAME, WIDGETS_PAYDAY_OPTIONS_EXPERIENCE_TOOLTIP, (options, value) -> this.showExperience = value, options -> this.showExperience, 150);
             return directionalLayoutWidget;
         }
     }

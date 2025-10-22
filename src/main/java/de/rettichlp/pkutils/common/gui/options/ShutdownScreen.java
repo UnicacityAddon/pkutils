@@ -4,16 +4,20 @@ import de.rettichlp.pkutils.common.gui.PKUtilsScreen;
 import de.rettichlp.pkutils.common.models.ShutdownReason;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.text.Text;
 
 import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
+import static net.minecraft.text.Text.translatable;
 import static net.minecraft.util.Formatting.GOLD;
 import static net.minecraft.util.Formatting.GRAY;
 
 public class ShutdownScreen extends PKUtilsScreen {
+
+    private static final Text BUTTON_SHUTDOWN_ABORT_NAME = translatable("pkutils.screen.button.shutdown_abort.name");
 
     private final ShutdownReason shutdownReason;
 
@@ -41,7 +45,7 @@ public class ShutdownScreen extends PKUtilsScreen {
         directionalLayoutWidget.add(new TextWidget(empty()
                 .append(of("wird das automatische Herunterfahren gestoppt.").copy().formatted(GRAY)), this.textRenderer), positioner -> positioner.marginBottom(16));
 
-        renderService.addButton(directionalLayoutWidget, "pkutils.screen.button.shutdown.abort.name", button -> storage.getActiveShutdowns().clear(), 150);
+        renderService.addButton(directionalLayoutWidget, BUTTON_SHUTDOWN_ABORT_NAME, button -> storage.getActiveShutdowns().clear(), 150);
 
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
     }

@@ -3,6 +3,7 @@ package de.rettichlp.pkutils.common.gui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
+import net.minecraft.text.Text;
 
 import java.net.URI;
 
@@ -28,16 +29,16 @@ public abstract class OptionsScreen extends PKUtilsScreen {
                 .append(translatable("options.title")), parent);
     }
 
-    public OptionsScreen(Screen parent, String subTitelKey) {
+    public OptionsScreen(Screen parent, Text subTitle) {
         super(empty()
                 .append("PKUtils").append(" ")
-                .append(translatable("options.title")), translatable(subTitelKey), parent);
+                .append(translatable("options.title")), subTitle, parent);
     }
 
-    public OptionsScreen(Screen parent, String subTitelKey, boolean renderBackground) {
+    public OptionsScreen(Screen parent, Text subTitel, boolean renderBackground) {
         super(empty()
                 .append("PKUtils").append(" ")
-                .append(translatable("options.title")), translatable(subTitelKey), parent, renderBackground);
+                .append(translatable("options.title")), subTitel, parent, renderBackground);
     }
 
     @Override

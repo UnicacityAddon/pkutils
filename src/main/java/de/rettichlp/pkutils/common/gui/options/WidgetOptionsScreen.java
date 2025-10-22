@@ -6,6 +6,7 @@ import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.IOptionWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.Positioner;
@@ -18,8 +19,12 @@ import static net.minecraft.text.Text.translatable;
 
 public class WidgetOptionsScreen extends OptionsScreen {
 
+    private static final Text TEXT_WIDGETS = translatable("pkutils.options.text.widgets");
+    private static final Text TEXT_GENERAL = translatable("pkutils.options.text.general");
+    private static final Text TEXT_POSITION = translatable("pkutils.options.text.position");
+
     public WidgetOptionsScreen(Screen parent) {
-        super(parent, "pkutils.options.overlay.title", false);
+        super(parent, TEXT_WIDGETS, false);
     }
 
     @Override
@@ -33,9 +38,9 @@ public class WidgetOptionsScreen extends OptionsScreen {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addBody(vertical().spacing(4));
 
         // general
-        directionalLayoutWidget.add(new TextWidget(translatable("pkutils.options.text.general"), this.textRenderer), Positioner::alignHorizontalCenter);
+        directionalLayoutWidget.add(new TextWidget(TEXT_GENERAL, this.textRenderer), Positioner::alignHorizontalCenter);
 
-        renderService.addButton(directionalLayoutWidget, "pkutils.options.overlay.position.title", button -> this.client.setScreen(new WidgetOptionsPositionScreen(this)), 308);
+        renderService.addButton(directionalLayoutWidget, TEXT_POSITION, button -> this.client.setScreen(new WidgetOptionsPositionScreen(this)), 308);
 
         // general - enable status
         GridWidget gridWidget = directionalLayoutWidget.add(new GridWidget());
@@ -45,7 +50,7 @@ public class WidgetOptionsScreen extends OptionsScreen {
         renderService.getWidgets().forEach(abstractPKUtilsWidget -> {
             Text displayName = abstractPKUtilsWidget.getDisplayName();
             ToggleButtonWidget toggleButton = new ToggleButtonWidget(displayName, value -> abstractPKUtilsWidget.getWidgetConfiguration().setEnabled(value), abstractPKUtilsWidget.getWidgetConfiguration().isEnabled());
-            toggleButton.setTooltip(abstractPKUtilsWidget.getTooltip());
+            toggleButton.setTooltip(Tooltip.of(abstractPKUtilsWidget.getTooltip()));
             gridWidgetAdder.add(toggleButton);
         });
 
@@ -59,7 +64,7 @@ public class WidgetOptionsScreen extends OptionsScreen {
                     IOptionWidget iOptionWidget = (IOptionWidget) abstractPKUtilsWidget.getWidgetConfiguration();
 
                     // section title
-                    Text text = iOptionWidget.sectionTitle();
+                    Text text = abstractPKUtilsWidget.getDisplayName();
                     directionalLayoutWidget.add(new TextWidget(text, this.textRenderer), positioner -> positioner.alignHorizontalCenter().marginTop(16));
 
                     // options widget

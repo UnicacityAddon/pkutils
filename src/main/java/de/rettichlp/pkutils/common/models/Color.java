@@ -30,7 +30,7 @@ public enum Color {
     WHITE;
 
     public MutableText getDisplayName() {
-        return translatable("pkutils.options.text.color." + this.name().toLowerCase()).formatted(getFormatting());
+        return translatable("pkutils.color." + this.name().toLowerCase()).formatted(getFormatting());
     }
 
     public Formatting getFormatting() {

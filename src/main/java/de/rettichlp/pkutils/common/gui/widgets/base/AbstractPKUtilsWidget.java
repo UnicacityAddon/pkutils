@@ -33,6 +33,10 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
 
     private C widgetConfiguration;
 
+    public abstract Text getDisplayName();
+
+    public abstract Text getTooltip();
+
     public abstract int getWidth();
 
     public abstract int getHeight();
@@ -69,16 +73,6 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
         return ofNullable(this.getClass().getAnnotation(PKUtilsWidget.class))
                 .map(PKUtilsWidget::registryName)
                 .orElseThrow(() -> new IllegalStateException("Widget class " + this.getClass().getName() + " has no registry name"));
-    }
-
-    public Text getDisplayName() {
-        String translationKey = "pkutils.widgets." + getRegistryName() + ".options.name";
-        return translatable(translationKey);
-    }
-
-    public Tooltip getTooltip() {
-        String translationKey = "pkutils.widgets." + getRegistryName() + ".options.tooltip";
-        return Tooltip.of(translatable(translationKey));
     }
 
     public void loadConfiguration() {
