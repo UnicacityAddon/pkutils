@@ -7,7 +7,6 @@ import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.models.WantedEntry;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -16,7 +15,6 @@ import net.minecraft.client.render.entity.state.ItemEntityRenderState;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Items;
-import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -45,8 +43,13 @@ import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.Color.WHITE;
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
+import static net.minecraft.client.font.TextRenderer.TextLayerType.NORMAL;
+import static net.minecraft.client.font.TextRenderer.TextLayerType.SEE_THROUGH;
+import static net.minecraft.client.render.LightmapTextureManager.applyEmission;
+import static net.minecraft.scoreboard.AbstractTeam.CollisionRule.NEVER;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
+import static net.minecraft.text.TextColor.fromFormatting;
 import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.DARK_RED;
 import static net.minecraft.util.Formatting.GOLD;
@@ -129,13 +132,13 @@ public abstract class EntityRendererMixin {
 
         TextRenderer textRenderer = this.textRenderer;
 
-        Text text = of(" ᴀꜰᴋ ").copy().formatted(GOLD);
+        Text text = of("ᴀꜰᴋ").copy().formatted(GOLD);
 
         float x = (-textRenderer.getWidth(text)) / 2.0F;
 
-        textRenderer.draw(text, x, -12.5f, -2130706433, true, matrix4f, vertexConsumers, sneaking ? TextRenderer.TextLayerType.SEE_THROUGH : TextRenderer.TextLayerType.NORMAL, 0, light);
+        textRenderer.draw(text, x, -12.5f, -2130706433, true, matrix4f, vertexConsumers, sneaking ? SEE_THROUGH : NORMAL, 0, light);
         if (sneaking) {
-            textRenderer.draw(text, x, -12.5f, -1, true, matrix4f, vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.applyEmission(light, 2));
+            textRenderer.draw(text, x, -12.5f, -1, true, matrix4f, vertexConsumers, NORMAL, 0, applyEmission(light, 2));
         }
 
         matrices.pop();
@@ -216,7 +219,7 @@ public abstract class EntityRendererMixin {
                         return false;
                     }
 
-                    if (team.getCollisionRule() != AbstractTeam.CollisionRule.NEVER) {
+                    if (team.getCollisionRule() != NEVER) {
                         return false; // only afk & aduty players have collision rule set to NEVER
                     }
 
@@ -235,7 +238,7 @@ public abstract class EntityRendererMixin {
                         return false;
                     }
 
-                    return !color.equals(TextColor.fromFormatting(DARK_GRAY)); // filter out aduty players (dark gray)
+                    return !color.equals(fromFormatting(DARK_GRAY)); // filter out aduty players (dark gray)
                 });
     }
 }
