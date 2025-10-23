@@ -10,7 +10,7 @@ import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 
 @PKUtilsCommand(label = "reichensteuer")
 public class RichTaxesCommand extends CommandBase {
@@ -25,10 +25,10 @@ public class RichTaxesCommand extends CommandBase {
                     commandService.sendCommand("bank info");
 
                     // execute command to check money in atm
-                    utilsService.delayedAction(() -> commandService.sendCommand("atminfo"), 1000);
+                    utilService.delayedAction(() -> commandService.sendCommand("atminfo"), 1000);
 
                     // handle money withdraw
-                    utilsService.delayedAction(() -> {
+                    utilService.delayedAction(() -> {
                         int moneyAtmAmount = storage.getMoneyAtmAmount();
                         int moneyBankAmount = configuration.getMoneyBankAmount();
 

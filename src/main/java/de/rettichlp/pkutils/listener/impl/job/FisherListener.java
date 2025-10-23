@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.player;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.lang.Double.compare;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.LocalDate.now;
@@ -51,7 +51,7 @@ public class FisherListener implements IMessageReceiveListener, INaviSpotReached
             commandService.sendCommand("stoproute");
             FisherJobSpot nearestFisherJobSpot = getNearestFisherJobSpot(getNotVisitedFisherJobSpots()).orElseThrow();
             this.currentFisherJobSpots.add(nearestFisherJobSpot);
-            utilsService.delayedAction(() -> commandService.sendCommand("catchfish"), 1000);
+            utilService.delayedAction(() -> commandService.sendCommand("catchfish"), 1000);
             return true;
         }
 

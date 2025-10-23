@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.lang.Integer.parseInt;
 import static java.lang.System.currentTimeMillis;
 import static java.util.regex.Pattern.compile;
@@ -51,7 +51,7 @@ public class BlacklistListener implements IMessageReceiveListener {
         Matcher blacklistEntryAddMatcher = BLACKLIST_ENTRY_ADD.matcher(message);
         if (blacklistEntryAddMatcher.find()) {
             // show all entries to sync
-            utilsService.delayedAction(() -> commandService.sendCommandWithAfkCheck("blacklist"), 1000);
+            utilService.delayedAction(() -> commandService.sendCommandWithAfkCheck("blacklist"), 1000);
             return true;
         }
 

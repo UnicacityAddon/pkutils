@@ -3,7 +3,8 @@
     "package": "de.rettichlp.pkutils.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
-        "EntityMixin"
+        "EntityMixin",
+        "ScreenHandlerMixin"
     ],
     "injectors": {
         "defaultRequire": 1
@@ -16,6 +17,7 @@
         "ClientPlayerEntityMixin",
         "EntityRendererMixin",
         "GameMenuScreenMixin",
+        "GenericContainerScreenMixin",
         "PlayerListHudMixin"
     ]
 }

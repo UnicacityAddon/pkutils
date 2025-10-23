@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.lang.String.valueOf;
 import static java.net.URI.create;
 import static java.net.http.HttpRequest.BodyPublishers.ofString;
@@ -51,7 +51,7 @@ public class Api {
             .header("Accept", "application/json")
             .header("Content-Type", "application/json")
             .header("X-Minecraft-Session-Token", SESSION_TOKEN)
-            .header("X-PKU-Version", valueOf(utilsService.getVersion()));
+            .header("X-PKU-Version", valueOf(utilService.getVersion()));
 
     @Getter
     private final Gson gson = new GsonBuilder()

@@ -26,7 +26,7 @@ import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.syncService;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.time.LocalDateTime.MIN;
 import static java.util.Arrays.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
@@ -111,7 +111,7 @@ public class ModCommand extends CommandBase {
                             return 1;
                         }))
                 .executes(context -> {
-                    String version = utilsService.getVersion();
+                    String version = utilService.getVersion();
                     String authors = getAuthors();
                     LocalDateTime lastSyncTimestamp = syncService.getLastSyncTimestamp();
 

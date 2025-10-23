@@ -27,7 +27,7 @@ import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
@@ -54,12 +54,12 @@ public class CarListener
 
         if (configuration.getOptions().car().automatedStart()) {
             // start the car with a small delay to ensure the player is fully in the vehicle
-            utilsService.delayedAction(() -> commandService.sendCommand("car start"), 500);
+            utilService.delayedAction(() -> commandService.sendCommand("car start"), 500);
         }
 
         // lock the car after 1 second and the small delay if not already locked
         if (!storage.isCarLocked() && configuration.getOptions().car().automatedLock()) {
-            utilsService.delayedAction(() -> commandService.sendCommand("car lock"), 1500);
+            utilService.delayedAction(() -> commandService.sendCommand("car lock"), 1500);
         }
     }
 

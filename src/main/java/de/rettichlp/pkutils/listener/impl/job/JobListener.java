@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static de.rettichlp.pkutils.common.models.Job.LUMBERJACK;
 import static de.rettichlp.pkutils.common.models.Job.PIZZA_DELIVERY;
 import static de.rettichlp.pkutils.common.models.Job.TOBACCO_PLANTATION;
@@ -38,7 +38,7 @@ public class JobListener
     @Override
     public boolean onCommandSend(@NotNull String command) {
         if (command.equals("sägewerk")) {
-            utilsService.delayedAction(() -> commandService.sendCommand("findtree"), 1000);
+            utilService.delayedAction(() -> commandService.sendCommand("findtree"), 1000);
         }
 
         return true;
@@ -48,19 +48,19 @@ public class JobListener
     public boolean onMessageReceive(Text text, String message) {
         Matcher transportDeliverMatcher = TRANSPORT_DELIVER_PATTERN.matcher(message);
         if (transportDeliverMatcher.find()) {
-            utilsService.delayedAction(() -> commandService.sendCommand("droptransport"), SECONDS.toMillis(10));
+            utilService.delayedAction(() -> commandService.sendCommand("droptransport"), SECONDS.toMillis(10));
             return true;
         }
 
         Matcher drinkTransportDeliverMatcher = DRINK_TRANSPORT_DELIVER_PATTERN.matcher(message);
         if (drinkTransportDeliverMatcher.find()) {
-            utilsService.delayedAction(() -> commandService.sendCommand("dropdrink"), 2500);
+            utilService.delayedAction(() -> commandService.sendCommand("dropdrink"), 2500);
             return true;
         }
 
         Matcher pizzaJobTransportGetPizzaMatcher = PIZZA_JOB_TRANSPORT_GET_PIZZA_PATTERN.matcher(message);
         if (pizzaJobTransportGetPizzaMatcher.find()) {
-            utilsService.delayedAction(() -> commandService.sendCommand("getpizza"), 2500);
+            utilService.delayedAction(() -> commandService.sendCommand("getpizza"), 2500);
             return true;
         }
 
@@ -76,7 +76,7 @@ public class JobListener
             job.startCountdown();
 
             if (job == LUMBERJACK) {
-                utilsService.delayedAction(() -> commandService.sendCommand("findtree"), 1000);
+                utilService.delayedAction(() -> commandService.sendCommand("findtree"), 1000);
             }
 
             return true;

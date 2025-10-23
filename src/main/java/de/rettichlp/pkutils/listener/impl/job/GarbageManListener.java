@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
-import static de.rettichlp.pkutils.PKUtils.utilsService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.lang.Double.compare;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.stream;
@@ -84,11 +84,11 @@ public class GarbageManListener implements IMessageReceiveListener, ITickListene
         this.lastCommandExecution = now;
         commandService.sendCommand("dropwaste");
 
-        utilsService.delayedAction(() -> messageService.sendModMessage("5", true), 200);
-        utilsService.delayedAction(() -> messageService.sendModMessage("4", true), 1200);
-        utilsService.delayedAction(() -> messageService.sendModMessage("3", true), 2200);
-        utilsService.delayedAction(() -> messageService.sendModMessage("2", true), 3200);
-        utilsService.delayedAction(() -> messageService.sendModMessage("1", true), 4200);
+        utilService.delayedAction(() -> messageService.sendModMessage("5", true), 200);
+        utilService.delayedAction(() -> messageService.sendModMessage("4", true), 1200);
+        utilService.delayedAction(() -> messageService.sendModMessage("3", true), 2200);
+        utilService.delayedAction(() -> messageService.sendModMessage("2", true), 3200);
+        utilService.delayedAction(() -> messageService.sendModMessage("1", true), 4200);
     }
 
     private WasteDropSpot getNearestWasteDropSpot() {
