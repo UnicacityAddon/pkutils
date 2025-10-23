@@ -67,10 +67,6 @@ public class PlantListener implements IBlockRightClickListener, IEntityRenderLis
 
     @Override
     public void onBlockRightClick(World world, Hand hand, BlockHitResult hitResult) {
-        if (hand == OFF_HAND) {
-            return;
-        }
-
         BlockPos blockPos = hitResult.getBlockPos();
 
         boolean targetBlockIsPlant = player.getWorld().getBlockState(blockPos).getBlock().equals(FERN) && player.getWorld().getBlockState(blockPos.down()).getBlock().equals(PODZOL);
