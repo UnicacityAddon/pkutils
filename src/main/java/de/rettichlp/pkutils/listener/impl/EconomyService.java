@@ -65,7 +65,7 @@ public class EconomyService implements IMessageReceiveListener {
             int amount = parseInt(bankStatementMatcher.group("amount"));
             configuration.setMoneyBankAmount(amount);
 
-            List<String> commands = switch (configuration.getOptions().bankInformationType()) {
+            List<String> commands = switch (configuration.getOptions().atmInformationType()) {
                 case NONE -> emptyList();
                 case F_BANK -> List.of("fbank info");
                 case G_BANK -> List.of("gruppierungkasse");
