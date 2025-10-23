@@ -46,6 +46,7 @@ import static net.minecraft.entity.effect.StatusEffects.ABSORPTION;
 import static net.minecraft.registry.Registries.SOUND_EVENT;
 import static net.minecraft.registry.Registry.register;
 import static net.minecraft.util.ActionResult.PASS;
+import static net.minecraft.util.Hand.OFF_HAND;
 import static org.atteo.classindex.ClassIndex.getAnnotated;
 
 public class Registry {
@@ -168,12 +169,18 @@ public class Registry {
         });
 
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            getListenersImplementing(IBlockRightClickListener.class).forEach(iBlockRightClickListener -> iBlockRightClickListener.onBlockRightClick(world, hand, hitResult));
+            if (hand != OFF_HAND && player.getWorld().isClient()) {
+                getListenersImplementing(IBlockRightClickListener.class).forEach(iBlockRightClickListener -> iBlockRightClickListener.onBlockRightClick(world, hand, hitResult));
+            }
+
             return PASS;
         });
 
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            getListenersImplementing(IEntityRightClickListener.class).forEach(iEntityRightClickListener -> iEntityRightClickListener.onEntityRightClick(world, hand, entity, hitResult));
+            if (hand != OFF_HAND && player.getWorld().isClient()) {
+                getListenersImplementing(IEntityRightClickListener.class).forEach(iEntityRightClickListener -> iEntityRightClickListener.onEntityRightClick(world, hand, entity, hitResult));
+            }
+
             return PASS;
         });
 

@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 
 import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
+import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.minecraft.text.Text.of;
@@ -42,13 +43,13 @@ public class MessageService {
     }
 
     public String millisToFriendlyString(long millis) {
-        long totalSeconds = millis / 1000;
+        long totalSeconds = abs(millis) / 1000;
         long seconds = totalSeconds % 60;
         long minutes = (totalSeconds / 60) % 60;
         long hours = totalSeconds / 3600;
 
-        return hours > 0
+        return (millis < 0 ? "-" : "") + (hours > 0
                 ? format("%02d:%02d:%02d", hours, minutes, seconds)
-                : format("%02d:%02d", minutes, seconds);
+                : format("%02d:%02d", minutes, seconds));
     }
 }

@@ -32,7 +32,7 @@ public class FactionDoorListener implements IBlockRightClickListener {
 
     @Override
     public void onBlockRightClick(World world, Hand hand, BlockHitResult hitResult) {
-        if (hand == OFF_HAND || !player.getStackInHand(MAIN_HAND).isEmpty()) {
+        if (!player.getStackInHand(MAIN_HAND).isEmpty()) {
             return;
         }
 
