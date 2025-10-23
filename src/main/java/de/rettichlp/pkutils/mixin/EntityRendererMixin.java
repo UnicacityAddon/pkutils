@@ -6,26 +6,41 @@ import de.rettichlp.pkutils.common.models.ContractEntry;
 import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.HousebanEntry;
 import de.rettichlp.pkutils.common.models.WantedEntry;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.ItemEntityRenderState;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Items;
+import net.minecraft.scoreboard.AbstractTeam;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.List;
 import java.util.Optional;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.factionService;
+import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.models.Color.WHITE;
 import static java.time.LocalDateTime.now;
@@ -34,10 +49,19 @@ import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.DARK_RED;
+import static net.minecraft.util.Formatting.GOLD;
 import static net.minecraft.util.Formatting.RED;
 
 @Mixin(EntityRenderer.class)
-public abstract class EntityRendererMixin<S extends Entity, T extends EntityRenderState> {
+public abstract class EntityRendererMixin {
+
+    @Final
+    @Shadow
+    protected EntityRenderDispatcher dispatcher;
+
+    @Final
+    @Shadow
+    private TextRenderer textRenderer;
 
     @ModifyVariable(
             method = "renderLabelIfPresent(Lnet/minecraft/client/render/entity/state/EntityRenderState;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
@@ -63,6 +87,58 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
         }
 
         return original;
+    }
+
+    @Inject(
+            method = "renderLabelIfPresent(Lnet/minecraft/client/render/entity/state/EntityRenderState;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
+            at = @At("TAIL")
+    )
+    private void renderLabelIfPresent(EntityRenderState state,
+                                      Text original,
+                                      MatrixStack matrices,
+                                      VertexConsumerProvider vertexConsumers,
+                                      int light,
+                                      CallbackInfo ci) {
+        if (!storage.isPunicaKitty()) {
+            return;
+        }
+
+        if (!(state instanceof PlayerEntityRenderState playerEntityRenderState && nonNull(playerEntityRenderState.displayName))) {
+            return;
+        }
+
+        String targetName = playerEntityRenderState.name;
+
+        // afk
+        if (!configuration.getOptions().nameTag().additionalAfk() || !isAfk(targetName)) {
+            return;
+        }
+
+        Vec3d vec3d = state.nameLabelPos;
+        if (vec3d == null) {
+            return;
+        }
+
+        boolean sneaking = !state.sneaking;
+        matrices.push();
+        matrices.translate(vec3d.x, vec3d.y + 0.5F, vec3d.z);
+        matrices.multiply(this.dispatcher.getRotation());
+        matrices.scale(0.02F, -0.02F, 0.02F);
+
+        Matrix4f matrix4f = matrices.peek().getPositionMatrix();
+
+        TextRenderer textRenderer = this.textRenderer;
+
+        Text text = of(" ᴀꜰᴋ ").copy().formatted(GOLD);
+
+        float x = (-textRenderer.getWidth(text)) / 2.0F;
+
+        textRenderer.draw(text, x, -12.5f, -2130706433, true, matrix4f, vertexConsumers, sneaking ? TextRenderer.TextLayerType.SEE_THROUGH : TextRenderer.TextLayerType.NORMAL, 0, light);
+        if (sneaking) {
+            textRenderer.draw(text, x, -12.5f, -1, true, matrix4f, vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.applyEmission(light, 2));
+        }
+
+        matrices.pop();
     }
 
     @Unique
@@ -128,5 +204,38 @@ public abstract class EntityRendererMixin<S extends Entity, T extends EntityRend
                 .append(newTargetDisplayName.copy().formatted(newTargetDisplayNameColor))
                 .append(" ")
                 .append(newTargetDisplayNameSuffix);
+    }
+
+    @Unique
+    private boolean isAfk(String targetName) {
+        return networkHandler.getPlayerList().stream()
+                .filter(entry -> entry.getProfile().getName().equals(targetName))
+                .anyMatch(entry -> {
+                    Team team = entry.getScoreboardTeam();
+                    if (team == null) {
+                        return false;
+                    }
+
+                    if (team.getCollisionRule() != AbstractTeam.CollisionRule.NEVER) {
+                        return false; // only afk & aduty players have collision rule set to NEVER
+                    }
+
+                    Text displayName = entry.getDisplayName();
+                    if (displayName == null) {
+                        return false;
+                    }
+
+                    List<Text> siblings = displayName.getSiblings();
+                    if (siblings.isEmpty()) {
+                        return false;
+                    }
+
+                    TextColor color = siblings.getFirst().getStyle().getColor();
+                    if (color == null) {
+                        return false;
+                    }
+
+                    return !color.equals(TextColor.fromFormatting(DARK_GRAY)); // filter out aduty players (dark gray)
+                });
     }
 }
