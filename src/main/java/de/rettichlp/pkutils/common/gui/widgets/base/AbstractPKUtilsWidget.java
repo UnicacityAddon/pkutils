@@ -48,7 +48,7 @@ public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration
     }
 
     public void draw(@NotNull DrawContext drawContext) {
-        if (!isVisible() || !this.widgetConfiguration.isEnabled()) {
+        if (!isVisible() || !this.widgetConfiguration.isEnabled() || MinecraftClient.getInstance().options.hudHidden) {
             return;
         }
 
