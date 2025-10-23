@@ -34,7 +34,6 @@ public class BankListener implements IMessageReceiveListener, IBlockRightClickLi
     public void onBlockRightClick(World world, Hand hand, BlockHitResult hitResult) {
         BlockEntity blockEntity = world.getBlockEntity(hitResult.getBlockPos());
         this.clickedSign = blockEntity instanceof SignBlockEntity;
-        PKUtils.LOGGER.info("Sign {}", this.clickedSign);
     }
 
     @Override
