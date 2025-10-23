@@ -153,18 +153,6 @@ public class RenderService {
         matrices.pop();
     }
 
-    public void drawLine(@NotNull VertexConsumer consumer,
-                         Matrix4f matrix,
-                         float x1,
-                         float y1,
-                         float z1,
-                         float x2,
-                         float y2,
-                         float z2) {
-        consumer.vertex(matrix, x1, y1, z1).color(1f, 1f, 0f, 0.6f).normal(0, 1, 0);
-        consumer.vertex(matrix, x2, y2, z2).color(1f, 1f, 0f, 0.6f).normal(0, 1, 0);
-    }
-
     public Color getSecondaryColor(@NotNull Color color) {
         return new Color(color.getRed() / 2, color.getGreen() / 2, color.getBlue() / 2, 100);
     }

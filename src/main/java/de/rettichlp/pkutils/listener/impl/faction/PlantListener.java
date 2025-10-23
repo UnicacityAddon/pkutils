@@ -1,7 +1,7 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.models.PlantEntry;
-import de.rettichlp.pkutils.common.registry.PKUtilsBase;
+import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IBlockRightClickListener;
 import de.rettichlp.pkutils.listener.IEntityRenderListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtils.commandService;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.PKUtils.storage;
@@ -53,8 +55,8 @@ import static net.minecraft.util.Formatting.GREEN;
 import static net.minecraft.util.Formatting.RED;
 import static net.minecraft.util.Hand.OFF_HAND;
 
-public class PlantListener extends PKUtilsBase
-        implements IBlockRightClickListener, IEntityRenderListener, IMessageReceiveListener, IScreenOpenListener {
+@PKUtilsListener
+public class PlantListener implements IBlockRightClickListener, IEntityRenderListener, IMessageReceiveListener, IScreenOpenListener {
 
     private static final Pattern PLANT_PLANT_PATTERN = compile("^\\[Plantage] (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat eine (Kräuter|Pulver)-Plantage gesetzt\\. \\[\\d+/10]$");
     private static final Pattern PLANT_WATER_PATTERN = compile("^\\[Plantage] Eine (Kräuter|Pulver)-Plantage wurde von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) gewässert\\.$");
@@ -77,7 +79,7 @@ public class PlantListener extends PKUtilsBase
             ItemStack mainHandStack = player.getInventory().getMainHandStack();
 
             if (player.isSneaking() && (mainHandStack.isOf(PUMPKIN_SEEDS) || mainHandStack.isOf(WHEAT_SEEDS))) {
-                sendCommand("plant plant");
+                commandService.sendCommand("plant plant");
             }
 
             return;
@@ -85,11 +87,11 @@ public class PlantListener extends PKUtilsBase
 
         boolean isStandingOnPlant = player.getBlockPos().equals(blockPos);
         if (!isStandingOnPlant) {
-            sendModMessage("Du musst auf der Plantage stehen, um sie via PKUtils zu verwalten.", false);
+            messageService.sendModMessage("Du musst auf der Plantage stehen, um sie via PKUtils zu verwalten.", false);
             return;
         }
 
-        sendCommand("plant");
+        commandService.sendCommand("plant");
     }
 
     @Override
@@ -120,7 +122,7 @@ public class PlantListener extends PKUtilsBase
 
                     waterText = empty()
                             .append(of("🫗").copy().formatted(BLUE)).append(" ")
-                            .append(of(millisToFriendlyString(millis)).copy().formatted(getTextColor(millis)));
+                            .append(of(messageService.millisToFriendlyString(millis)).copy().formatted(getTextColor(millis)));
                 } else {
                     waterText = of("↓").copy().formatted(AQUA);
                 }
@@ -134,7 +136,7 @@ public class PlantListener extends PKUtilsBase
 
                     fertilizeText = empty()
                             .append(of("🫘").copy().formatted(GOLD)).append(" ")
-                            .append(of(millisToFriendlyString(millis)).copy().formatted(getTextColor(millis)));
+                            .append(of(messageService.millisToFriendlyString(millis)).copy().formatted(getTextColor(millis)));
                 } else {
                     fertilizeText = of("↓").copy().formatted(AQUA);
                 }
