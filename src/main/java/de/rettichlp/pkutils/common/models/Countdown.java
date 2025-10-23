@@ -6,13 +6,11 @@ import net.minecraft.text.Text;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.concurrent.ScheduledExecutorService;
 
 import static de.rettichlp.pkutils.PKUtils.messageService;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
-import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.GRAY;
@@ -29,9 +27,7 @@ public class Countdown {
         this.title = title;
         this.duration = duration;
 
-        try (ScheduledExecutorService scheduledExecutorService = newSingleThreadScheduledExecutor()) {
-            scheduledExecutorService.schedule(runAfter, this.duration.toMillis(), MILLISECONDS);
-        }
+        utilService.delayedAction(runAfter, this.duration.toMillis());
     }
 
     public boolean isActive() {
