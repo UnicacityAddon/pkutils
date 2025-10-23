@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.common.configuration.options;
 
-import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
+import de.rettichlp.pkutils.common.gui.screens.components.CyclingButtonEntry;
 import de.rettichlp.pkutils.common.models.PersonalUseEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

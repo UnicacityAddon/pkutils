@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.common.gui.widgets;
 
-import de.rettichlp.pkutils.common.gui.options.WidgetOptionsPositionScreen;
+import de.rettichlp.pkutils.common.gui.screens.options.WidgetOptionsPositionScreen;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsTextWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;

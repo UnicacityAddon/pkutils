@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.common.models;
 
-import de.rettichlp.pkutils.common.gui.options.ShutdownScreen;
+import de.rettichlp.pkutils.common.gui.screens.options.ShutdownScreen;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;

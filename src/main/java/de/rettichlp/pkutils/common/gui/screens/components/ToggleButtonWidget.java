@@ -1,4 +1,4 @@
-package de.rettichlp.pkutils.common.gui.options.components;
+package de.rettichlp.pkutils.common.gui.screens.components;
 
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;

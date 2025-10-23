@@ -1,13 +1,12 @@
-package de.rettichlp.pkutils.common.gui.options;
+package de.rettichlp.pkutils.common.gui.screens.options;
 
-import de.rettichlp.pkutils.common.gui.PKUtilsScreen;
+import de.rettichlp.pkutils.common.gui.screens.PKUtilsScreen;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.util.Window;
-import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 
 import static de.rettichlp.pkutils.PKUtils.configuration;

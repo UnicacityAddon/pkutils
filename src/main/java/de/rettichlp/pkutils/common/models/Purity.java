@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.common.models;
 
-import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
+import de.rettichlp.pkutils.common.gui.screens.components.CyclingButtonEntry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.gui.tooltip.Tooltip;
