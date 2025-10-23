@@ -54,6 +54,8 @@
     "pkutils.options.nametag.additional.houseban.tooltip": "Highlights players with a houseban",
     "pkutils.options.nametag.additional.wanted.name": "Wanted",
     "pkutils.options.nametag.additional.wanted.tooltip": "Highlights wanted players",
+    "pkutils.options.nametag.additional.afk.name": "AFK",
+    "pkutils.options.nametag.additional.afk.tooltip": "Highlights afk players",
     "pkutils.options.notification_sounds.name": "Notification sounds",
     "pkutils.options.notification_sounds.tooltip": "Play custom sounds for some notifications",
     "pkutils.options.reinforcement_style.name": "Reinforcement style",

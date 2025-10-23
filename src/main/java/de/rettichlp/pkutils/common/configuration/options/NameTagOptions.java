@@ -20,4 +20,5 @@ public class NameTagOptions {
     private boolean additionalContract = true;
     private boolean additionalHouseban = true;
     private boolean additionalWanted = true;
+    private boolean additionalAfk = true;
 }

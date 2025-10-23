@@ -38,6 +38,8 @@ public class NameTagOptionsScreen extends OptionsScreen {
     private static final Text NAMETAG_ADDITIONAL_HOUSEBAN_TOOLTIP = translatable("pkutils.options.nametag.additional.houseban.tooltip");
     private static final Text NAMETAG_ADDITIONAL_WANTED_NAME = translatable("pkutils.options.nametag.additional.wanted.name");
     private static final Text NAMETAG_ADDITIONAL_WANTED_TOOLTIP = translatable("pkutils.options.nametag.additional.wanted.tooltip");
+    private static final Text NAMETAG_ADDITIONAL_AFK_NAME = translatable("pkutils.options.nametag.additional.afk.name");
+    private static final Text NAMETAG_ADDITIONAL_AFK_TOOLTIP = translatable("pkutils.options.nametag.additional.afk.tooltip");
 
     public NameTagOptionsScreen(Screen parent) {
         super(parent, TEXT_NAMETAG);
@@ -63,6 +65,9 @@ public class NameTagOptionsScreen extends OptionsScreen {
         DirectionalLayoutWidget directionalLayoutWidget4 = directionalLayoutWidget.add(horizontal().spacing(8));
         renderService.addToggleButton(directionalLayoutWidget4, NAMETAG_ADDITIONAL_HOUSEBAN_NAME, NAMETAG_ADDITIONAL_HOUSEBAN_TOOLTIP, (options, value) -> options.nameTag().additionalHouseban(value), options -> options.nameTag().additionalHouseban(), 150);
         renderService.addToggleButton(directionalLayoutWidget4, NAMETAG_ADDITIONAL_WANTED_NAME, NAMETAG_ADDITIONAL_WANTED_TOOLTIP, (options, value) -> options.nameTag().additionalWanted(value), options -> options.nameTag().additionalWanted(), 150);
+
+        DirectionalLayoutWidget directionalLayoutWidget5 = directionalLayoutWidget.add(horizontal().spacing(8));
+        renderService.addToggleButton(directionalLayoutWidget5, NAMETAG_ADDITIONAL_AFK_NAME, NAMETAG_ADDITIONAL_AFK_TOOLTIP, (options, value) -> options.nameTag().additionalAfk(value), options -> options.nameTag().additionalAfk(), 150);
 
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
     }
