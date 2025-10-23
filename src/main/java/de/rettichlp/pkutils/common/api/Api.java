@@ -75,7 +75,7 @@ public class Api {
     }
 
     public void getActivityPlayer(Instant from, Instant to, String playerName, Consumer<List<ActivityEntry>> callback) {
-        get("/activity/player/" + playerName + "?from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
+        get("/activity/" + playerName + "?from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
     }
 
     public void postActivityAdd(ActivityEntry.Type activityType) {
