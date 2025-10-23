@@ -134,10 +134,10 @@ public class Storage {
         LOGGER.info("activeShutdowns[{}]: {}", this.activeShutdowns.size(), this.activeShutdowns);
         // blacklistEntries
         LOGGER.info("blacklistEntries[{}]: {}", this.blacklistEntries.size(), this.blacklistEntries);
-        // blackMarkets
-        LOGGER.info("blackMarkets[{}]: {}", this.blackMarkets.size(), this.blackMarkets);
         // blacklistReasons
         this.blacklistReasons.forEach((faction, blacklistReasons) -> LOGGER.info("blacklistReasons[{}:{}]: {}", faction, blacklistReasons.size(), blacklistReasons));
+        // blackMarkets
+        LOGGER.info("blackMarkets[{}]: {}", this.blackMarkets.size(), this.blackMarkets);
         // commandResponseRetrievers
         LOGGER.info("commandResponseRetrievers[{}]: {}", this.commandResponseRetrievers.size(), this.commandResponseRetrievers);
         // contractEntries
