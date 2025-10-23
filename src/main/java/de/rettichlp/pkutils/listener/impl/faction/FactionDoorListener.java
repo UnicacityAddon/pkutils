@@ -19,7 +19,6 @@ import static de.rettichlp.pkutils.common.models.Faction.KERZAKOV;
 import static de.rettichlp.pkutils.common.models.Faction.WESTSIDEBALLAS;
 import static java.util.Collections.emptySet;
 import static net.minecraft.util.Hand.MAIN_HAND;
-import static net.minecraft.util.Hand.OFF_HAND;
 
 @PKUtilsListener
 public class FactionDoorListener implements IBlockRightClickListener {

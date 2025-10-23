@@ -7,7 +7,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.util.Window;
-import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 
 import static de.rettichlp.pkutils.PKUtils.configuration;
