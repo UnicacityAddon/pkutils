@@ -54,7 +54,7 @@ public class WantedListener implements IMessageReceiveListener {
     private static final Pattern TAKE_GUNS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Waffen abgenommen\\.$");
     private static final Pattern TAKE_DRUGS_PATTERN = compile("^(Beamter|Beamtin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) (seine|ihre) Drogen abgenommen.$");
     private static final Pattern CAR_CHECK_PATTERN = compile("^Das Fahrzeug mit dem Kennzeichen [A-Z0-9-]+ gehört (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+)\\.$");
-    private static final Pattern CAR_PARKTICKET_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel an das Fahrzeug \\[[A-Z0-9-]+] vergeben\\.$");
+    private static final Pattern CAR_PARKTICKET_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel an das Fahrzeug \\[(?<plate>[A-Z0-9-]+)] vergeben\\.$");
     private static final Pattern CAR_PARKTICKET_REMOVE_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Strafzettel von dem Fahrzeug \\[(?<plate>[A-Z0-9-]+)] entfernt\\.$");
     private static final Pattern SEARCH_TRUNK_PATTERN = compile("^HQ: (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat den Kofferraum vom Fahrzeug (?<plate>.+) durchsucht, over\\.$");
     private static final Pattern TRACKER_AGENT_PATTERN = compile("^HQ: (Agent|Agentin) (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat ein Peilsender an (?:\\[PK])?(?<targetName>[a-zA-Z0-9_]+) befestigt, over\\.$");
