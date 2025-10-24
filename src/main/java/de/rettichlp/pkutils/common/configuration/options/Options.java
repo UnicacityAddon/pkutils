@@ -14,9 +14,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.rettichlp.pkutils.common.configuration.options.Options.AtmInformationType.NONE;
 import static de.rettichlp.pkutils.common.configuration.options.Options.ReinforcementType.UNICACITYADDON;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
+import static net.minecraft.text.Text.translatable;
 import static net.minecraft.util.Formatting.AQUA;
 import static net.minecraft.util.Formatting.BLUE;
 import static net.minecraft.util.Formatting.DARK_AQUA;
@@ -33,6 +35,7 @@ public class Options {
 
     private ReinforcementType reinforcementType = UNICACITYADDON;
     private boolean customSounds = true;
+    private AtmInformationType atmInformationType = NONE;
 
     @Getter
     @AllArgsConstructor
@@ -56,6 +59,26 @@ public class Options {
         @Override
         public @NotNull Tooltip getTooltip() {
             return Tooltip.of(this.displayName);
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Accessors(fluent = false)
+    public enum AtmInformationType implements CyclingButtonEntry {
+
+        NONE(translatable("pkutils.options.atm_information.value.none.name"), translatable("pkutils.options.atm_information.value.none.tooltip")),
+        F_BANK(translatable("pkutils.options.atm_information.value.f_bank.name"), translatable("pkutils.options.atm_information.value.f_bank.tooltip")),
+        G_BANK(translatable("pkutils.options.atm_information.value.g_bank.name"), translatable("pkutils.options.atm_information.value.g_bank.tooltip")),
+        BOTH(translatable("pkutils.options.atm_information.value.both.name"), translatable("pkutils.options.atm_information.value.both.tooltip"));
+
+        private final Text displayName;
+        private final Text tooltip;
+
+        @Contract(value = " -> new", pure = true)
+        @Override
+        public @NotNull Tooltip getTooltip() {
+            return Tooltip.of(this.tooltip);
         }
     }
 }

@@ -7,14 +7,17 @@ import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.max;
+import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.text.ClickEvent.Action.RUN_COMMAND;
@@ -61,6 +64,16 @@ public class EconomyService implements IMessageReceiveListener {
         if (bankStatementMatcher.find()) {
             int amount = parseInt(bankStatementMatcher.group("amount"));
             configuration.setMoneyBankAmount(amount);
+
+            List<String> commands = switch (configuration.getOptions().atmInformationType()) {
+                case NONE -> emptyList();
+                case F_BANK -> List.of("fbank info");
+                case G_BANK -> List.of("gruppierungkasse");
+                case BOTH -> List.of("fbank info", "gruppierungkasse");
+            };
+
+            commandService.sendCommands(commands);
+
             return true;
         }
 

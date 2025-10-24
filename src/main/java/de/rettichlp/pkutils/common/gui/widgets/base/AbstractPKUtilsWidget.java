@@ -5,7 +5,6 @@ import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +21,6 @@ import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget
 import static de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget.Alignment.RIGHT;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
-import static net.minecraft.text.Text.translatable;
 
 @Getter
 public abstract class AbstractPKUtilsWidget<C extends PKUtilsWidgetConfiguration> {

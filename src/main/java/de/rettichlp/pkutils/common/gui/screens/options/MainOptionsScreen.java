@@ -17,9 +17,10 @@ public class MainOptionsScreen extends OptionsScreen {
     private static final Text TEXT_NAMETAG = translatable("pkutils.options.text.nametag");
     private static final Text TEXT_PERSONAL_USE = translatable("pkutils.options.text.personal_use");
     private static final Text TEXT_WIDGETS = translatable("pkutils.options.text.widgets");
-    private static final Text REINFORCEMENT_TYPE = translatable("pkutils.options.reinforcement_type.name");
+    private static final Text REINFORCEMENT_STYLE_NAME = translatable("pkutils.options.reinforcement_style.name");
     private static final Text NOTIFICATION_SOUNDS_NAME = translatable("pkutils.options.notification_sounds.name");
     private static final Text NOTIFICATION_SOUNDS_TOOLTIP = translatable("pkutils.options.notification_sounds.tooltip");
+    private static final Text BANK_INFORMATION_NAME = translatable("pkutils.options.atm_information.name");
 
     public MainOptionsScreen() {
         super(new GameMenuScreen(true));
@@ -29,7 +30,7 @@ public class MainOptionsScreen extends OptionsScreen {
     public void initBody() {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addBody(vertical().spacing(4));
 
-        renderService.addCyclingButton(directionalLayoutWidget, REINFORCEMENT_TYPE, Options.ReinforcementType.values(), Options.ReinforcementType::getDisplayName, Options::reinforcementType, Options::reinforcementType, 308);
+        renderService.addCyclingButton(directionalLayoutWidget, REINFORCEMENT_STYLE_NAME, Options.ReinforcementType.values(), Options.ReinforcementType::getDisplayName, Options::reinforcementType, Options::reinforcementType, 308);
 
         DirectionalLayoutWidget directionalLayoutWidget1 = directionalLayoutWidget.add(horizontal().spacing(8));
         renderService.addButton(directionalLayoutWidget1, TEXT_NAMETAG, button -> this.client.setScreen(new NameTagOptionsScreen(this)), 150);
@@ -41,6 +42,7 @@ public class MainOptionsScreen extends OptionsScreen {
 
         DirectionalLayoutWidget directionalLayoutWidget3 = directionalLayoutWidget.add(horizontal().spacing(8));
         renderService.addButton(directionalLayoutWidget3, TEXT_WIDGETS, button -> this.client.setScreen(new WidgetOptionsScreen(this)), 150);
+        renderService.addCyclingButton(directionalLayoutWidget3, BANK_INFORMATION_NAME, Options.AtmInformationType.values(), Options.AtmInformationType::getDisplayName, Options::atmInformationType, Options::atmInformationType, 150);
 
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
     }
