@@ -10,6 +10,8 @@ import java.util.List;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.POLIZEI;
 import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
+import static java.util.Arrays.asList;
+import static java.util.Objects.nonNull;
 
 public record ActivityEntry(String id, Instant timeStamp, Type type) {
 
@@ -30,7 +32,7 @@ public record ActivityEntry(String id, Instant timeStamp, Type type) {
 
         Type(String displayName) {
             this.displayName = displayName;
-            this.allowedFactions = List.of(Faction.values());
+            this.allowedFactions = asList(Faction.values());
         }
 
         public @NotNull String getSuccessMessage() {
@@ -38,7 +40,7 @@ public record ActivityEntry(String id, Instant timeStamp, Type type) {
         }
 
         public boolean isAllowedForFaction(Faction faction) {
-            return this.allowedFactions.contains(faction);
+            return nonNull(faction) && this.allowedFactions.contains(faction);
         }
     }
 }
