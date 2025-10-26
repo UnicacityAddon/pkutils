@@ -41,6 +41,7 @@ import static de.rettichlp.pkutils.common.models.EquipEntry.Type.fromDisplayName
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
 import static java.lang.Integer.parseInt;
+import static java.lang.System.currentTimeMillis;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
@@ -64,6 +65,8 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
     private static final Pattern REINFORCMENT_ON_THE_WAY_PATTERN = compile("^(?<senderRank>.+) (?:\\[PK])?(?<senderPlayerName>[a-zA-Z0-9_]+) kommt zum Verstärkungsruf von (?:\\[PK])?(?<target>[a-zA-Z0-9_]+)! \\((?<distance>\\d+) Meter entfernt\\)$");
     private static final Pattern EQUIP_PATTERN = compile("^\\[Equip] Du hast dich mit (?<type>.+) equipt!$");
 
+    private long lastFactionScreenExecution = 0;
+
     private static final ReinforcementConsumer<String, String, String, String> REINFORCEMENT = (type, sender, naviPoint, distance) -> empty()
             .append(of(type).copy().formatted(RED, BOLD)).append(" ")
             .append(of(sender).copy().formatted(AQUA)).append(" ")
@@ -86,7 +89,10 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
         MinecraftClient client = MinecraftClient.getInstance();
         Faction faction = storage.getFaction(player.getGameProfile().getName());
 
-        if (player.isSneaking()) {
+        long now = currentTimeMillis();
+        boolean isCooldownOver = now - this.lastFactionScreenExecution > 5000;
+        if (player.isSneaking() && isCooldownOver) {
+            this.lastFactionScreenExecution = currentTimeMillis();
             api.getActivityPlayers(Instant.EPOCH, Instant.now(), faction.getMembers().stream().map(FactionMember::playerName).toList(), activities -> client.execute(() -> {
                 FactionScreen factionScreen = new FactionScreen(faction, RANK, DESCENDING, activities, 0);
                 client.setScreen(factionScreen);
