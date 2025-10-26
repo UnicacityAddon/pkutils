@@ -1,10 +1,14 @@
 package de.rettichlp.pkutils.listener.impl.faction;
 
 import de.rettichlp.pkutils.common.Storage;
+import de.rettichlp.pkutils.common.gui.screens.FactionScreen;
 import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.models.BlackMarket;
+import de.rettichlp.pkutils.common.models.Faction;
+import de.rettichlp.pkutils.common.models.FactionMember;
 import de.rettichlp.pkutils.common.models.Reinforcement;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
+import de.rettichlp.pkutils.listener.IKeyPressListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
 import de.rettichlp.pkutils.listener.IMoveListener;
@@ -16,6 +20,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -30,6 +35,8 @@ import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.Storage.ToggledChat.NONE;
 import static de.rettichlp.pkutils.common.configuration.options.Options.ReinforcementType.UNICACITYADDON;
+import static de.rettichlp.pkutils.common.gui.screens.FactionScreen.SortingType.RANK;
+import static de.rettichlp.pkutils.common.gui.screens.components.TableHeaderTextWidget.SortingDirection.DESCENDING;
 import static de.rettichlp.pkutils.common.models.EquipEntry.Type.fromDisplayName;
 import static de.rettichlp.pkutils.common.models.Faction.FBI;
 import static de.rettichlp.pkutils.common.models.Faction.RETTUNGSDIENST;
@@ -50,7 +57,7 @@ import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.RED;
 
 @PKUtilsListener
-public class FactionListener implements IMessageReceiveListener, IMessageSendListener, IMoveListener {
+public class FactionListener implements IKeyPressListener, IMessageReceiveListener, IMessageSendListener, IMoveListener {
 
     private static final Pattern REINFORCEMENT_PATTERN = compile("^(?:(?<type>.+)! )?(?<senderRank>.+) (?:\\[PK])?(?<senderPlayerName>[a-zA-Z0-9_]+) benötigt Unterstützung in der Nähe von (?<naviPoint>.+) \\((?<distance>\\d+)m\\)!$");
     private static final Pattern REINFORCEMENT_BUTTON_PATTERN = compile("^ §7» §cRoute anzeigen §7\\| §cUnterwegs$");
@@ -73,6 +80,19 @@ public class FactionListener implements IMessageReceiveListener, IMessageSendLis
             .append(of("- (").copy().formatted(GRAY))
             .append(of(distance + "m").copy().formatted(DARK_AQUA))
             .append(of(")").copy().formatted(GRAY));
+
+    @Override
+    public void onSwapHandsKeyPress() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        Faction faction = storage.getFaction(player.getGameProfile().getName());
+
+        if (player.isSneaking()) {
+            api.getActivityPlayers(Instant.EPOCH, Instant.now(), faction.getMembers().stream().map(FactionMember::playerName).toList(), activities -> client.execute(() -> {
+                FactionScreen factionScreen = new FactionScreen(faction, RANK, DESCENDING, activities, 0);
+                client.setScreen(factionScreen);
+            }));
+        }
+    }
 
     @Override
     public boolean onMessageReceive(Text text, String message) {
