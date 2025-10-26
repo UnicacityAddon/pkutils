@@ -13,11 +13,14 @@ import net.minecraft.client.gui.widget.EmptyWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static de.rettichlp.pkutils.PKUtils.storage;
@@ -26,6 +29,7 @@ import static de.rettichlp.pkutils.common.gui.screens.FactionScreen.SortingType.
 import static de.rettichlp.pkutils.common.gui.screens.components.TableHeaderTextWidget.SortingDirection.NONE;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.lang.String.valueOf;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptySet;
 import static java.util.Comparator.comparing;
@@ -42,17 +46,20 @@ public class FactionScreen extends OptionsScreen {
     private final Faction faction;
     private final SortingType sortingType;
     private final TableHeaderTextWidget.SortingDirection sortingDirection;
+    private final Map<String, Map<String, Integer>> activities;
 
     private int offset;
 
     public FactionScreen(Faction faction,
                          SortingType sortingType,
                          TableHeaderTextWidget.SortingDirection sortingDirection,
+                         Map<String, Map<String, Integer>> activities,
                          int offset) {
         super(new GameMenuScreen(true), of("Faction Members"));
         this.faction = faction;
         this.sortingType = sortingType;
         this.sortingDirection = sortingDirection;
+        this.activities = activities;
         this.offset = offset;
     }
 
@@ -77,7 +84,7 @@ public class FactionScreen extends OptionsScreen {
 
         this.offset = max(0, min(getSortedFactionMembers().size() - getPageLimit(), this.offset + operant));
 
-        this.client.setScreen(new FactionScreen(this.faction, this.sortingType, this.sortingDirection, this.offset));
+        this.client.setScreen(new FactionScreen(this.faction, this.sortingType, this.sortingDirection, this.activities, this.offset));
 
         return mouseScroll;
     }
@@ -93,19 +100,17 @@ public class FactionScreen extends OptionsScreen {
     }
 
     private @NotNull DirectionalLayoutWidget getHeaderDirectionalLayoutWidget() {
-        List<ActivityEntry.Type> activityTypes = stream(ActivityEntry.Type.values())
-                .filter(type -> type.isAllowedForFaction(this.faction))
-                .toList();
+        List<ActivityEntry.Type> activityTypes = getActivityTypes();
 
         DirectionalLayoutWidget directionalLayoutWidget = vertical().spacing(4);
 
         DirectionalLayoutWidget directionalLayoutWidget1 = directionalLayoutWidget.add(horizontal().spacing(8));
 
-        TableHeaderTextWidget nameTableHeaderTextWidget = new TableHeaderTextWidget(of("Name"), sortingDirection -> this.client.setScreen(new FactionScreen(this.faction, NAME, sortingDirection, this.offset)), this.sortingType == NAME ? this.sortingDirection : NONE);
+        TableHeaderTextWidget nameTableHeaderTextWidget = new TableHeaderTextWidget(of("Name"), sortingDirection -> this.client.setScreen(new FactionScreen(this.faction, NAME, sortingDirection, this.activities, this.offset)), this.sortingType == NAME ? this.sortingDirection : NONE);
         nameTableHeaderTextWidget.setWidth(80);
         directionalLayoutWidget1.add(nameTableHeaderTextWidget);
 
-        TableHeaderTextWidget rangTableHeaderTextWidget = new TableHeaderTextWidget(of("Rang"), sortingDirection -> this.client.setScreen(new FactionScreen(this.faction, RANK, sortingDirection, this.offset)), this.sortingType == RANK ? this.sortingDirection : NONE);
+        TableHeaderTextWidget rangTableHeaderTextWidget = new TableHeaderTextWidget(of("Rang"), sortingDirection -> this.client.setScreen(new FactionScreen(this.faction, RANK, sortingDirection, this.activities, this.offset)), this.sortingType == RANK ? this.sortingDirection : NONE);
         rangTableHeaderTextWidget.setWidth(80);
         directionalLayoutWidget1.add(rangTableHeaderTextWidget);
 
@@ -131,15 +136,24 @@ public class FactionScreen extends OptionsScreen {
         DirectionalLayoutWidget directionalLayoutWidget = vertical().spacing(4);
 
         getSortedFactionMembers().stream().skip(this.offset).limit(getPageLimit()).forEach(factionMember -> {
+            Map<String, Integer> playerActivities = this.activities.getOrDefault(factionMember.playerName(), new HashMap<>());
+
             DirectionalLayoutWidget memberDirectionalLayoutWidget = directionalLayoutWidget.add(horizontal().spacing(8), positioner -> positioner.marginTop(4));
 
             TextWidget nameTextWidget = new TextWidget(of(factionMember.playerName()), TEXT_RENDERER);
             nameTextWidget.setWidth(80);
             memberDirectionalLayoutWidget.add(nameTextWidget);
 
-            TextWidget rangTextWidget = new TextWidget(of(String.valueOf(factionMember.rank())), TEXT_RENDERER);
+            TextWidget rangTextWidget = new TextWidget(of(valueOf(factionMember.rank())), TEXT_RENDERER);
             rangTextWidget.setWidth(80);
             memberDirectionalLayoutWidget.add(rangTextWidget);
+
+            getActivityTypes().forEach(type -> {
+                int activityAmount = playerActivities.getOrDefault(type.name(), 0);
+                TextWidget activityEntryTextWidget = new TextWidget(of(valueOf(activityAmount)), TEXT_RENDERER);
+                activityEntryTextWidget.setWidth(80);
+                memberDirectionalLayoutWidget.add(activityEntryTextWidget);
+            });
         });
 
         return directionalLayoutWidget;
@@ -148,6 +162,12 @@ public class FactionScreen extends OptionsScreen {
     private int getPageLimit() {
         int contentHeight = this.layout.getContentHeight();
         return contentHeight / 20;
+    }
+
+    private @NotNull @Unmodifiable List<ActivityEntry.Type> getActivityTypes() {
+        return stream(ActivityEntry.Type.values())
+                .filter(type -> type.isAllowedForFaction(this.faction))
+                .toList();
     }
 
     public enum SortingType {
