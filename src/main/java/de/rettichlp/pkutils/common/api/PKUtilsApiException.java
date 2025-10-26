@@ -4,19 +4,12 @@ import de.rettichlp.pkutils.common.api.response.ErrorResponse;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import static de.rettichlp.pkutils.PKUtils.notificationService;
+import java.net.http.HttpResponse;
 
 @Getter
-public class PKUtilsApiException extends RuntimeException {
+public class PKUtilsApiException extends ApiException {
 
-    private final ErrorResponse errorResponse;
-
-    public PKUtilsApiException(@NotNull ErrorResponse errorResponse) {
-        super(errorResponse.info());
-        this.errorResponse = errorResponse;
-    }
-
-    public void sendNotification() {
-        notificationService.sendErrorNotification("API Fehler: [" + this.errorResponse.httpStatusCode() + "] " + this.errorResponse.info());
+    public PKUtilsApiException(@NotNull HttpResponse<String> response, @NotNull ErrorResponse errorResponse) {
+        super(response, "Error while sending PKUtils API request: [" + errorResponse.httpStatusCode() + "] " + errorResponse.httpStatus() + " -> " + errorResponse.info() + " (" + response.request().uri().toString() + ")");
     }
 }

@@ -36,6 +36,7 @@ import static java.lang.String.valueOf;
 import static java.net.URI.create;
 import static java.net.http.HttpRequest.BodyPublishers.ofString;
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
+import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 
 public class Api {
@@ -174,20 +175,27 @@ public class Api {
     @Contract("_ -> param1")
     private @NotNull HttpResponse<String> catchDefaultApiError(@NotNull HttpResponse<String> response) {
         // check if the status code is 2xx and throw an exception if not
-        if (response.statusCode() < 200 || response.statusCode() >= 300) {
-            ErrorResponse errorResponse = getGson().fromJson(response.body(), ErrorResponse.class);
-            throw new PKUtilsApiException(errorResponse);
+        int statusCode = response.statusCode();
+        if (statusCode >= 200 && statusCode < 300) {
+            return response;
         }
 
-        return response;
+        // try to map to PKUtils API error response
+        ErrorResponse errorResponse = getGson().fromJson(response.body(), ErrorResponse.class);
+
+        if (nonNull(errorResponse)) {
+            throw new PKUtilsApiException(response, errorResponse);
+        }
+
+        throw new ApiException(response);
     }
 
     private void handleError(HttpRequest httpRequest, @NotNull Throwable throwable) {
-        if (throwable.getCause() instanceof PKUtilsApiException pkUtilsApiException) {
-            pkUtilsApiException.sendNotification();
-            pkUtilsApiException.getErrorResponse().log();
+        if (throwable.getCause() instanceof ApiException apiException) {
+            apiException.sendNotification();
+            apiException.log();
         } else {
-            LOGGER.warn("Error while sending request: [{}] {} ({})", httpRequest.method(), httpRequest.uri().toString(), throwable.getMessage());
+            LOGGER.error("Unexpected error while sending request: [{}] {}", httpRequest.method(), httpRequest.uri().toString(), throwable);
         }
     }
 }
