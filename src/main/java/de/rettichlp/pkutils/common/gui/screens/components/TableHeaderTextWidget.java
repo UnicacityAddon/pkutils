@@ -35,7 +35,9 @@ public class TableHeaderTextWidget extends ClickableWidget {
 
     @Override
     protected void renderWidget(@NotNull DrawContext context, int mouseX, int mouseY, float delta) {
-        context.drawText(TEXT_RENDERER, getModifiedText(), getX(), getY(), 0xFFFFFF, false);
+        Text modifiedText = getModifiedText();
+        int textWidth = TEXT_RENDERER.getWidth(modifiedText);
+        context.drawText(TEXT_RENDERER, modifiedText, getX() + (getWidth() - textWidth) / 2, getY(), 0xFFFFFF, false);
     }
 
     @Override
