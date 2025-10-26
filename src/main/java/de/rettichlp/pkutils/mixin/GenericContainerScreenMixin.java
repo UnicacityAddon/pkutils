@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.mixin;
 
-import de.rettichlp.pkutils.common.gui.options.components.ToggleButtonWidget;
+import de.rettichlp.pkutils.common.gui.screens.components.ToggleButtonWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;

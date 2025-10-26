@@ -32,6 +32,7 @@ import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.PKUtils.utilService;
+import static java.lang.String.join;
 import static java.lang.String.valueOf;
 import static java.net.URI.create;
 import static java.net.http.HttpRequest.BodyPublishers.ofString;
@@ -77,6 +78,14 @@ public class Api {
 
     public void getActivityPlayer(Instant from, Instant to, String playerName, Consumer<List<ActivityEntry>> callback) {
         get("/activity/" + playerName + "?from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
+    }
+
+    public void getActivityPlayers(Instant from,
+                                   Instant to,
+                                   Iterable<String> playerNames,
+                                   Consumer<Map<String, Map<String, Integer>>> callback) {
+        String playerNamesParam = join(",", playerNames);
+        get("/activity/users?playerNames=" + playerNamesParam + "&from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
     }
 
     public void postActivityAdd(ActivityEntry.Type activityType) {

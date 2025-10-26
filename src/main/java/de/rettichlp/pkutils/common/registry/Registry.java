@@ -10,6 +10,7 @@ import de.rettichlp.pkutils.listener.IEnterVehicleListener;
 import de.rettichlp.pkutils.listener.IEntityRenderListener;
 import de.rettichlp.pkutils.listener.IEntityRightClickListener;
 import de.rettichlp.pkutils.listener.IHudRenderListener;
+import de.rettichlp.pkutils.listener.IKeyPressListener;
 import de.rettichlp.pkutils.listener.IMessageReceiveListener;
 import de.rettichlp.pkutils.listener.IMessageSendListener;
 import de.rettichlp.pkutils.listener.IMoveListener;
@@ -27,6 +28,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -154,6 +157,12 @@ public class Registry {
             }
 
             this.lastAbsorptionState = hasAbsorption;
+
+            // handle key press
+            KeyBinding swapHandsKey = MinecraftClient.getInstance().options.swapHandsKey;
+            if (swapHandsKey.isPressed()) {
+                getListenersImplementing(IKeyPressListener.class).forEach(IKeyPressListener::onSwapHandsKeyPress);
+            }
         });
 
         HudRenderCallback.EVENT.register((drawContext, tickCounter) -> {

@@ -1,9 +1,9 @@
 package de.rettichlp.pkutils.common.services;
 
 import de.rettichlp.pkutils.common.configuration.options.Options;
-import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
-import de.rettichlp.pkutils.common.gui.options.components.ItemButtonWidget;
-import de.rettichlp.pkutils.common.gui.options.components.ToggleButtonWidget;
+import de.rettichlp.pkutils.common.gui.screens.components.CyclingButtonEntry;
+import de.rettichlp.pkutils.common.gui.screens.components.ItemButtonWidget;
+import de.rettichlp.pkutils.common.gui.screens.components.ToggleButtonWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;
 import lombok.Getter;

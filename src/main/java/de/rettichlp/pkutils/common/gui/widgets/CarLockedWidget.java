@@ -1,6 +1,6 @@
 package de.rettichlp.pkutils.common.gui.widgets;
 
-import de.rettichlp.pkutils.common.gui.options.components.CyclingButtonEntry;
+import de.rettichlp.pkutils.common.gui.screens.components.CyclingButtonEntry;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsTextWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.IOptionWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidget;

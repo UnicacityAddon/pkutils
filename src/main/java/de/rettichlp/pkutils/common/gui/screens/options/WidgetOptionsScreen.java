@@ -1,7 +1,7 @@
-package de.rettichlp.pkutils.common.gui.options;
+package de.rettichlp.pkutils.common.gui.screens.options;
 
-import de.rettichlp.pkutils.common.gui.OptionsScreen;
-import de.rettichlp.pkutils.common.gui.options.components.ToggleButtonWidget;
+import de.rettichlp.pkutils.common.gui.screens.OptionsScreen;
+import de.rettichlp.pkutils.common.gui.screens.components.ToggleButtonWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.IOptionWidget;
 import net.minecraft.client.gui.DrawContext;

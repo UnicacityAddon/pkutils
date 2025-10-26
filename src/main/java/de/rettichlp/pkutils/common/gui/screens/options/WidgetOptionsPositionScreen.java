@@ -1,6 +1,6 @@
-package de.rettichlp.pkutils.common.gui.options;
+package de.rettichlp.pkutils.common.gui.screens.options;
 
-import de.rettichlp.pkutils.common.gui.PKUtilsScreen;
+import de.rettichlp.pkutils.common.gui.screens.PKUtilsScreen;
 import de.rettichlp.pkutils.common.gui.widgets.base.AbstractPKUtilsWidget;
 import de.rettichlp.pkutils.common.gui.widgets.base.PKUtilsWidgetConfiguration;
 import net.minecraft.client.gui.DrawContext;
