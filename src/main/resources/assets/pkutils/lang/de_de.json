@@ -91,5 +91,6 @@
     "pkutils.purity.medium": "Mittlere",
     "pkutils.purity.bad": "Schlechte",
 
-    "pkutils.screen.button.shutdown_abort.name": "Herunterfahren abbrechen"
+    "pkutils.screen.data_usage_confirmation.message": "PKUtils kommuniziert mit einem externen Server und nutzt das Minecraft-Session-Token zur Authentifizierung. Dies ist notwendig, damit einige Funktionen richtig arbeiten. Mit dem Klick auf Zustimmen stimmst du der Datennutzung zu.",
+    "pkutils.screen.shutdown_abort.button.name": "Herunterfahren abbrechen"
 }
