@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static de.rettichlp.pkutils.PKUtils.api;
+import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.PKUtils.storage;
@@ -81,29 +82,16 @@ public class FactionScreen extends OptionsScreen {
     public void initBody() {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addBody(vertical().spacing(4));
 
-        DirectionalLayoutWidget directionalLayoutWidget1 = directionalLayoutWidget.add(horizontal().spacing(8));
+        DirectionalLayoutWidget directionalLayoutWidget1 = directionalLayoutWidget.add(horizontal().spacing(8), Positioner::alignHorizontalCenter);
 
-        renderService.addButton(directionalLayoutWidget1, of("←⇽"), button -> {
-            LocalDateTime newFrom = this.from.minusWeeks(1);
-            LocalDateTime newTo = this.to.minusWeeks(1);
+        renderService.addButton(directionalLayoutWidget1, of("←"), button -> getActivitiesAndReopen(this.from.minusWeeks(1), this.to.minusWeeks(1)), 20);
 
-            api.getActivityPlayers(newFrom, newTo, this.faction.getMembers().stream().map(FactionMember::playerName).toList(), activities -> this.client.execute(() -> {
-                FactionScreen factionScreen = new FactionScreen(this.faction, this.sortingType, this.sortingDirection, activities, newFrom, newTo, 0);
-                this.client.setScreen(factionScreen);
-            }));
-        }, 30);
+        renderService.addButton(directionalLayoutWidget1, empty()
+                        .append(of(messageService.dateTimeToFriendlyString(this.from)))
+                        .append(" - ")
+                        .append(of(messageService.dateTimeToFriendlyString(this.to))), button -> {}, 300);
 
-        renderService.addButton(directionalLayoutWidget1, empty(), button -> {}, 300);
-
-        renderService.addButton(directionalLayoutWidget1, of("→⇾"), button -> {
-            LocalDateTime newFrom = this.from.plusWeeks(1);
-            LocalDateTime newTo = this.to.plusWeeks(1);
-
-            api.getActivityPlayers(newFrom, newTo, this.faction.getMembers().stream().map(FactionMember::playerName).toList(), activities -> this.client.execute(() -> {
-                FactionScreen factionScreen = new FactionScreen(this.faction, this.sortingType, this.sortingDirection, activities, newFrom, newTo, 0);
-                this.client.setScreen(factionScreen);
-            }));
-        }, 30);
+        renderService.addButton(directionalLayoutWidget1, of("→"), button -> getActivitiesAndReopen(this.from.plusWeeks(1), this.to.plusWeeks(1)), 20);
 
         directionalLayoutWidget.add(getHeaderDirectionalLayoutWidget(), positioner -> positioner.marginBottom(4));
         directionalLayoutWidget.add(getMemberDirectionalLayoutWidget());
@@ -126,6 +114,13 @@ public class FactionScreen extends OptionsScreen {
         this.client.setScreen(new FactionScreen(this.faction, this.sortingType, this.sortingDirection, this.activities, this.from, this.to, this.offset));
 
         return mouseScroll;
+    }
+
+    private void getActivitiesAndReopen(LocalDateTime newFrom, LocalDateTime newTo) {
+        api.getActivityPlayers(newFrom, newTo, this.faction.getMembers().stream().map(FactionMember::playerName).toList(), activities -> this.client.execute(() -> {
+            FactionScreen factionScreen = new FactionScreen(this.faction, this.sortingType, this.sortingDirection, activities, newFrom, newTo, 0);
+            this.client.setScreen(factionScreen);
+        }));
     }
 
     private Set<FactionMember> getSortedFactionMembers() {
@@ -204,7 +199,7 @@ public class FactionScreen extends OptionsScreen {
 
     private int getPageLimit() {
         int contentHeight = this.layout.getContentHeight();
-        return contentHeight / 20;
+        return contentHeight / 25;
     }
 
     private @NotNull @Unmodifiable List<ActivityEntry.Type> getActivityTypes() {
