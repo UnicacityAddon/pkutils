@@ -21,8 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,6 +65,7 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
     private static final Pattern EQUIP_PATTERN = compile("^\\[Equip] Du hast dich mit (?<type>.+) equipt!$");
 
     private long lastFactionScreenExecution = 0;
+    private boolean syncBlackMarket = true;
 
     private static final ReinforcementConsumer<String, String, String, String> REINFORCEMENT = (type, sender, naviPoint, distance) -> empty()
             .append(of(type).copy().formatted(RED, BOLD)).append(" ")
@@ -217,7 +217,8 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
                         boolean b = switch (reinforcement.getType()) { // reinforcement types that should be accepted
                             case "Medic benötigt" ->
                                     storage.getFaction(senderPlayerName) == RETTUNGSDIENST; // only medics accept medic calls
-                            case "Drogenabnahme" -> storage.getFaction(senderPlayerName) == FBI; // only FBI accept drug bust calls
+                            case "Drogenabnahme" ->
+                                    storage.getFaction(senderPlayerName) == FBI; // only FBI accept drug bust calls
                             default -> true; // all others accept all calls
                         };
                         LOGGER.debug("Checking if reinforcement type {} should be accepted by the player in faction {}: -> {}", reinforcement.getType(), storage.getFaction(senderPlayerName), b);
@@ -290,27 +291,38 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
                     LOGGER.info("Reinforcement reached, tracked activity");
                 });
 
-        // mark the black market spot as visited if within 60 blocks
-        stream(BlackMarket.Type.values())
-                .filter(type -> type.getBlockPos().isWithinDistance(blockPos, 60))
-                .forEach(type -> {
-                    // remove old type association if exists
-                    storage.getBlackMarkets().removeIf(blackMarket -> blackMarket.getType() == type);
+        if (!syncBlackMarket){
+            return;
+        }
+        syncBlackMarket = false;
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // mark the black market spot as visited if within 60 blocks
+                stream(BlackMarket.Type.values())
+                        .filter(type -> type.getBlockPos().isWithinDistance(blockPos, 60))
+                        .forEach(type -> {
+                            // remove old type association if exists
+                            storage.getBlackMarkets().removeIf(blackMarket -> blackMarket.getType() == type);
 
-                    // check if black market was found there
-                    Box box = player.getBoundingBox().expand(60);
-                    Predicate<VillagerEntity> isBlackMarket = villagerEntity -> ofNullable(villagerEntity.getCustomName())
-                            .map(text -> text.getString().contains("Schwarzmarkt"))
-                            .orElse(false);
+                            // check if black market was found there
+                            Box box = player.getBoundingBox().expand(60);
+                            Predicate<VillagerEntity> isBlackMarket = villagerEntity -> ofNullable(villagerEntity.getCustomName())
+                                    .map(text -> text.getString().contains("Schwarzmarkt"))
+                                    .orElse(false);
 
-                    assert MinecraftClient.getInstance().world != null; // cannot be null at this point
-                    boolean found = !MinecraftClient.getInstance().world.getEntitiesByClass(VillagerEntity.class, box, isBlackMarket).isEmpty();
+                            assert MinecraftClient.getInstance().world != null; // cannot be null at this point
+                            boolean found = !MinecraftClient.getInstance().world.getEntitiesByClass(VillagerEntity.class, box, isBlackMarket).isEmpty();
 
-                    // add new black market entry
-                    BlackMarket blackMarket = new BlackMarket(type, now(), found);
-                    storage.getBlackMarkets().add(blackMarket);
-                    LOGGER.info("Marked black market spot as visited: {}", type);
-                });
+                            // add new black market entry
+                            BlackMarket blackMarket = new BlackMarket(type, now(), found);
+                            storage.getBlackMarkets().add(blackMarket);
+                            LOGGER.info("Marked black market spot as visited: {}", type);
+                        });
+                syncBlackMarket = true;
+            }
+        }, 5000); // 5 Seconds
+
     }
 
     @FunctionalInterface
