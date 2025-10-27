@@ -81,8 +81,8 @@ public class Api {
         get("/activity/" + playerName + "?from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
     }
 
-    public void getActivityPlayers(Instant from,
-                                   Instant to,
+    public void getActivityPlayers(LocalDateTime from,
+                                   LocalDateTime to,
                                    Iterable<String> playerNames,
                                    Consumer<Map<String, Map<String, Integer>>> callback) {
         String playerNamesParam = join(",", playerNames);

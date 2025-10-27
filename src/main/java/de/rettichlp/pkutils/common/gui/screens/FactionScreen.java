@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -24,7 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static de.rettichlp.pkutils.PKUtils.api;
 import static de.rettichlp.pkutils.PKUtils.player;
+import static de.rettichlp.pkutils.PKUtils.renderService;
 import static de.rettichlp.pkutils.PKUtils.storage;
 import static de.rettichlp.pkutils.common.gui.screens.FactionScreen.SortingType.NAME;
 import static de.rettichlp.pkutils.common.gui.screens.FactionScreen.SortingType.RANK;
@@ -39,6 +42,7 @@ import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toCollection;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.horizontal;
 import static net.minecraft.client.gui.widget.DirectionalLayoutWidget.vertical;
+import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
 import static net.minecraft.util.Formatting.GREEN;
 import static net.minecraft.util.Formatting.WHITE;
@@ -51,6 +55,8 @@ public class FactionScreen extends OptionsScreen {
     private final SortingType sortingType;
     private final TableHeaderTextWidget.SortingDirection sortingDirection;
     private final Map<String, Map<String, Integer>> activities;
+    private final LocalDateTime from;
+    private final LocalDateTime to;
 
     private int offset;
 
@@ -58,18 +64,47 @@ public class FactionScreen extends OptionsScreen {
                          SortingType sortingType,
                          TableHeaderTextWidget.SortingDirection sortingDirection,
                          Map<String, Map<String, Integer>> activities,
+                         LocalDateTime from,
+                         LocalDateTime to,
                          int offset) {
         super(new GameMenuScreen(true), of("Faction Members"));
         this.faction = faction;
         this.sortingType = sortingType;
         this.sortingDirection = sortingDirection;
         this.activities = activities;
+        this.from = from;
+        this.to = to;
         this.offset = offset;
     }
 
     @Override
     public void initBody() {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addBody(vertical().spacing(4));
+
+        DirectionalLayoutWidget directionalLayoutWidget1 = directionalLayoutWidget.add(horizontal().spacing(8));
+
+        renderService.addButton(directionalLayoutWidget1, of("←⇽"), button -> {
+            LocalDateTime newFrom = this.from.minusWeeks(1);
+            LocalDateTime newTo = this.to.minusWeeks(1);
+
+            api.getActivityPlayers(newFrom, newTo, this.faction.getMembers().stream().map(FactionMember::playerName).toList(), activities -> this.client.execute(() -> {
+                FactionScreen factionScreen = new FactionScreen(this.faction, this.sortingType, this.sortingDirection, activities, newFrom, newTo, 0);
+                this.client.setScreen(factionScreen);
+            }));
+        }, 30);
+
+        renderService.addButton(directionalLayoutWidget1, empty(), button -> {}, 300);
+
+        renderService.addButton(directionalLayoutWidget1, of("→⇾"), button -> {
+            LocalDateTime newFrom = this.from.plusWeeks(1);
+            LocalDateTime newTo = this.to.plusWeeks(1);
+
+            api.getActivityPlayers(newFrom, newTo, this.faction.getMembers().stream().map(FactionMember::playerName).toList(), activities -> this.client.execute(() -> {
+                FactionScreen factionScreen = new FactionScreen(this.faction, this.sortingType, this.sortingDirection, activities, newFrom, newTo, 0);
+                this.client.setScreen(factionScreen);
+            }));
+        }, 30);
+
         directionalLayoutWidget.add(getHeaderDirectionalLayoutWidget(), positioner -> positioner.marginBottom(4));
         directionalLayoutWidget.add(getMemberDirectionalLayoutWidget());
         directionalLayoutWidget.forEachChild(this::addDrawableChild);
@@ -88,7 +123,7 @@ public class FactionScreen extends OptionsScreen {
 
         this.offset = max(0, min(getSortedFactionMembers().size() - getPageLimit(), this.offset + operant));
 
-        this.client.setScreen(new FactionScreen(this.faction, this.sortingType, this.sortingDirection, this.activities, this.offset));
+        this.client.setScreen(new FactionScreen(this.faction, this.sortingType, this.sortingDirection, this.activities, this.from, this.to, this.offset));
 
         return mouseScroll;
     }
@@ -120,17 +155,17 @@ public class FactionScreen extends OptionsScreen {
 
         DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(horizontal().spacing(8), positioner -> positioner.marginBottom(16));
 
-        TableHeaderTextWidget nameTableHeaderTextWidget = new TableHeaderTextWidget(of("Name"), sortingDirection -> this.client.setScreen(new FactionScreen(this.faction, NAME, sortingDirection, this.activities, this.offset)), this.sortingType == NAME ? this.sortingDirection : NONE);
+        TableHeaderTextWidget nameTableHeaderTextWidget = new TableHeaderTextWidget(of("Name"), sortingDirection -> this.client.setScreen(new FactionScreen(this.faction, NAME, sortingDirection, this.activities, this.from, this.to, this.offset)), this.sortingType == NAME ? this.sortingDirection : NONE);
         nameTableHeaderTextWidget.setWidth(80);
         directionalLayoutWidget2.add(nameTableHeaderTextWidget);
 
-        TableHeaderTextWidget rangTableHeaderTextWidget = new TableHeaderTextWidget(of("Rang"), sortingDirection -> this.client.setScreen(new FactionScreen(this.faction, RANK, sortingDirection, this.activities, this.offset)), this.sortingType == RANK ? this.sortingDirection : NONE);
+        TableHeaderTextWidget rangTableHeaderTextWidget = new TableHeaderTextWidget(of("Rang"), sortingDirection -> this.client.setScreen(new FactionScreen(this.faction, RANK, sortingDirection, this.activities, this.from, this.to, this.offset)), this.sortingType == RANK ? this.sortingDirection : NONE);
         rangTableHeaderTextWidget.setWidth(80);
         directionalLayoutWidget2.add(rangTableHeaderTextWidget);
 
         activityTypes.forEach(type -> {
             SortingType sortingType = SortingType.valueOf(type.name());
-            TableHeaderTextWidget activityTableHeaderTextWidget = new TableHeaderTextWidget(of(type.getDisplayName()), sortingDirection -> this.client.setScreen(new FactionScreen(this.faction, sortingType, sortingDirection, this.activities, this.offset)), this.sortingType == sortingType ? this.sortingDirection : NONE);
+            TableHeaderTextWidget activityTableHeaderTextWidget = new TableHeaderTextWidget(of(type.getDisplayName()), sortingDirection -> this.client.setScreen(new FactionScreen(this.faction, sortingType, sortingDirection, this.activities, this.from, this.to, this.offset)), this.sortingType == sortingType ? this.sortingDirection : NONE);
             activityTableHeaderTextWidget.setWidth(80);
             directionalLayoutWidget2.add(activityTableHeaderTextWidget, Positioner::alignHorizontalCenter);
         });
