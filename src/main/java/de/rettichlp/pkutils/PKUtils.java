@@ -56,16 +56,6 @@ public class PKUtils implements ModInitializer {
 
         this.registry.registerSounds();
 
-        // sync faction members
-        syncService.syncFactionMembersWithApi();
-        // sync blacklist reasons
-        syncService.syncBlacklistReasonsFromApi();
-        // check for updates
-        syncService.checkForUpdates();
-
-        // login to PKUtils API
-        api.postUserRegister();
-
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             player = client.player;
             networkHandler = handler;

@@ -1,6 +1,5 @@
-package de.rettichlp.pkutils.common.gui.screens.options;
+package de.rettichlp.pkutils.common.gui.screens;
 
-import de.rettichlp.pkutils.common.gui.screens.PKUtilsScreen;
 import de.rettichlp.pkutils.common.models.ShutdownReason;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.TextWidget;
@@ -17,7 +16,7 @@ import static net.minecraft.util.Formatting.GRAY;
 
 public class ShutdownScreen extends PKUtilsScreen {
 
-    private static final Text BUTTON_SHUTDOWN_ABORT_NAME = translatable("pkutils.screen.button.shutdown_abort.name");
+    private static final Text BUTTON_SHUTDOWN_ABORT_NAME = translatable("pkutils.screen.shutdown_abort.button.name");
 
     private final ShutdownReason shutdownReason;
 

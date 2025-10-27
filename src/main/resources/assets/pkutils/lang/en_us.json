@@ -93,5 +93,6 @@
     "pkutils.purity.medium": "Medium",
     "pkutils.purity.bad": "Bad",
 
-    "pkutils.screen.button.shutdown_abort.name": "Abort shutdown"
+    "pkutils.screen.data_usage_confirmation.message": "PKUtils sends and receives data from an external server and uses the Minecraft session token for authentication. This is required for certain features to function properly. By clicking Agree, you agree to this data usage.",
+    "pkutils.screen.shutdown_abort.button.name": "Abort shutdown"
 }

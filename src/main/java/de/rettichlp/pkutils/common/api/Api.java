@@ -166,6 +166,11 @@ public class Api {
     }
 
     private <T> void sendRequest(HttpRequest httpRequest, TypeToken<T> typeToken, Consumer<T> callback) {
+        if (!utilService.dataUsageConfirmed()) {
+            LOGGER.warn("Data usage not confirmed, skipping API request: [{}] {}", httpRequest.method(), httpRequest.uri().toString());
+            return;
+        }
+
         this.httpClient.sendAsync(httpRequest, ofString())
                 .thenApply(this::catchDefaultApiError)
                 .thenApply(response -> ofNullable(typeToken)
