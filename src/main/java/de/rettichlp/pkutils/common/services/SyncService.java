@@ -53,16 +53,14 @@ public class SyncService {
 
     public void syncFactionMembersWithApi() {
         api.getFactions(factionEntries -> {
-            storage.getPlayerFactionCache().clear();
             storage.getFactionEntries().clear();
             storage.getFactionEntries().addAll(factionEntries);
+            storage.getPlayerFactionCache().clear();
             LOGGER.info("Faction members synced with API");
         });
     }
 
     public void syncFactionMembersWithCommandResponse() {
-        storage.getPlayerFactionCache().clear();
-
         List<CommandResponseRetriever> commandResponseRetrievers = stream(Faction.values())
                 .filter(faction -> faction != NULL)
                 .map(this::syncFactionMembersWithCommandResponse)
@@ -73,6 +71,7 @@ public class SyncService {
             utilService.delayedAction(commandResponseRetriever::execute, i * 1000L);
         }
 
+        storage.getPlayerFactionCache().clear();
         utilService.delayedAction(api::postFactions, commandResponseRetrievers.size() * 1000L + 1200);
     }
 
