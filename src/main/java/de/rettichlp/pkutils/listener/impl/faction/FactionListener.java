@@ -20,7 +20,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -86,17 +86,22 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
 
     @Override
     public void onSwapHandsKeyPress() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        Faction faction = storage.getFaction(player.getGameProfile().getName());
-
         long now = currentTimeMillis();
         boolean isCooldownOver = now - this.lastFactionScreenExecution > 5000;
         if (player.isSneaking() && isCooldownOver) {
             this.lastFactionScreenExecution = currentTimeMillis();
-            api.getActivityPlayers(Instant.EPOCH, Instant.now(), faction.getMembers().stream().map(FactionMember::playerName).toList(), activities -> client.execute(() -> {
-                FactionScreen factionScreen = new FactionScreen(faction, RANK, DESCENDING, activities, 0);
-                client.setScreen(factionScreen);
-            }));
+
+            Faction faction = storage.getFaction(player.getGameProfile().getName());
+            api.getActivityResetTime(faction, weeklyTime -> {
+                MinecraftClient client = MinecraftClient.getInstance();
+
+                LocalDateTime to = weeklyTime.nextOccurrence();
+                LocalDateTime from = to.minusWeeks(1);
+                api.getActivityPlayers(from, to, faction.getMembers().stream().map(FactionMember::playerName).toList(), activities -> client.execute(() -> {
+                    FactionScreen factionScreen = new FactionScreen(faction, RANK, DESCENDING, activities, from, to, 0);
+                    client.setScreen(factionScreen);
+                }));
+            });
         }
     }
 

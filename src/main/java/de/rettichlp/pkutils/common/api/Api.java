@@ -8,6 +8,7 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import de.rettichlp.pkutils.common.api.response.ErrorResponse;
 import de.rettichlp.pkutils.common.api.response.GetUserInfoResponse;
+import de.rettichlp.pkutils.common.api.response.WeeklyTime;
 import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.EquipEntry;
@@ -23,7 +24,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -62,6 +66,8 @@ public class Api {
             .registerTypeAdapter(Instant.class, (JsonSerializer<Instant>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
             .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString()))
             .registerTypeAdapter(LocalDateTime.class, (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
+            .registerTypeAdapter(LocalTime.class, (JsonDeserializer<LocalTime>) (json, typeOfT, context) -> LocalTime.parse(json.getAsString()))
+            .registerTypeAdapter(LocalTime.class, (JsonSerializer<LocalTime>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
             .create();
 
     public void postUserRegister() {
@@ -80,12 +86,18 @@ public class Api {
         get("/activity/" + playerName + "?from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
     }
 
-    public void getActivityPlayers(Instant from,
-                                   Instant to,
+    public void getActivityPlayers(ChronoLocalDateTime<LocalDate> from,
+                                   ChronoLocalDateTime<LocalDate> to,
                                    Iterable<String> playerNames,
                                    Consumer<Map<String, Map<String, Integer>>> callback) {
         String playerNamesParam = join(",", playerNames);
-        get("/activity/users?playerNames=" + playerNamesParam + "&from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
+        Instant fromInstant = from.atZone(utilService.getServerZoneId()).toInstant();
+        Instant toInstant = to.atZone(utilService.getServerZoneId()).toInstant();
+        get("/activity/users?playerNames=" + playerNamesParam + "&from=" + fromInstant + "&to=" + toInstant, new TypeToken<>() {}, callback);
+    }
+
+    public void getActivityResetTime(Faction faction, Consumer<WeeklyTime> callback) {
+        get("/activity/resettime?faction=" + faction, new TypeToken<>() {}, callback);
     }
 
     public void postActivityAdd(ActivityEntry.Type activityType) {

@@ -24,6 +24,7 @@ import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static de.rettichlp.pkutils.common.models.Faction.NULL;
 import static java.lang.Integer.MIN_VALUE;
 import static java.time.DayOfWeek.FRIDAY;
@@ -150,7 +151,7 @@ public class EquippedCommand extends CommandBase {
     }
 
     private @NotNull Range getRange(int relativeWeekIndex) {
-        ZonedDateTime now = now(ZoneId.of("Europe/Berlin"));
+        ZonedDateTime now = now(utilService.getServerZoneId());
 
         // friday 20 o'clock
         ZonedDateTime friday20 = now
