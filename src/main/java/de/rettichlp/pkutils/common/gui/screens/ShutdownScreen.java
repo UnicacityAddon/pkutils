@@ -1,6 +1,5 @@
-package de.rettichlp.pkutils.common.gui.screens.options;
+package de.rettichlp.pkutils.common.gui.screens;
 
-import de.rettichlp.pkutils.common.gui.screens.PKUtilsScreen;
 import de.rettichlp.pkutils.common.models.ShutdownReason;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.TextWidget;
