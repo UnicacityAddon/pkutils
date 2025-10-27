@@ -8,6 +8,7 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import de.rettichlp.pkutils.common.api.response.ErrorResponse;
 import de.rettichlp.pkutils.common.api.response.GetUserInfoResponse;
+import de.rettichlp.pkutils.common.api.response.WeeklyTime;
 import de.rettichlp.pkutils.common.models.ActivityEntry;
 import de.rettichlp.pkutils.common.models.BlacklistReason;
 import de.rettichlp.pkutils.common.models.EquipEntry;
@@ -86,6 +87,10 @@ public class Api {
                                    Consumer<Map<String, Map<String, Integer>>> callback) {
         String playerNamesParam = join(",", playerNames);
         get("/activity/users?playerNames=" + playerNamesParam + "&from=" + from + "&to=" + to, new TypeToken<>() {}, callback);
+    }
+
+    public void getActivityResetTime(Faction faction, Consumer<WeeklyTime> callback) {
+        get("/activity/resettime?faction=" + faction, new TypeToken<>() {}, callback);
     }
 
     public void postActivityAdd(ActivityEntry.Type activityType) {
