@@ -9,8 +9,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static de.rettichlp.pkutils.PKUtils.MOD_ID;
+import static de.rettichlp.pkutils.PKUtils.configuration;
 
 public class UtilService {
+
+    private static final int REQUIRED_DATA_USAGE_CONFIRMATION_UID = 1;
 
     @Getter
     private final List<String> whitelistedInventoryTitles = List.of("Bäcker", "Feinkost", "Supermarkt", "Waffenladen");
@@ -28,5 +31,14 @@ public class UtilService {
         return FabricLoader.getInstance().getModContainer(MOD_ID)
                 .map(modContainer -> modContainer.getMetadata().getVersion().getFriendlyString())
                 .orElseThrow(() -> new NullPointerException("Cannot find version"));
+    }
+
+    public boolean dataUsageConfirmed() {
+        int currentDataUsageConfirmationUID = configuration.getDataUsageConfirmationUID();
+        return currentDataUsageConfirmationUID >= REQUIRED_DATA_USAGE_CONFIRMATION_UID;
+    }
+
+    public void updateDataUsageConfirmedUID() {
+        configuration.setDataUsageConfirmationUID(REQUIRED_DATA_USAGE_CONFIRMATION_UID);
     }
 }

@@ -37,6 +37,7 @@ public class Configuration {
     private int predictedPayDayExp = 0;
     @Nullable
     private LocalDateTime firstAidLicenseExpireDateTime = null;
+    private int dataUsageConfirmationUID = 0;
 
     public void addMinutesSinceLastPayDay(int minutes) {
         this.minutesSinceLastPayDay += minutes;
