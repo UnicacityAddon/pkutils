@@ -21,7 +21,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -217,8 +218,7 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
                         boolean b = switch (reinforcement.getType()) { // reinforcement types that should be accepted
                             case "Medic benötigt" ->
                                     storage.getFaction(senderPlayerName) == RETTUNGSDIENST; // only medics accept medic calls
-                            case "Drogenabnahme" ->
-                                    storage.getFaction(senderPlayerName) == FBI; // only FBI accept drug bust calls
+                            case "Drogenabnahme" -> storage.getFaction(senderPlayerName) == FBI; // only FBI accept drug bust calls
                             default -> true; // all others accept all calls
                         };
                         LOGGER.debug("Checking if reinforcement type {} should be accepted by the player in faction {}: -> {}", reinforcement.getType(), storage.getFaction(senderPlayerName), b);
