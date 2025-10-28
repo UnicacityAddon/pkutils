@@ -65,7 +65,7 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
     private static final Pattern EQUIP_PATTERN = compile("^\\[Equip] Du hast dich mit (?<type>.+) equipt!$");
 
     private long lastFactionScreenExecution = 0;
-    private boolean syncBlackMarket = true;
+    private long lastBlackMarketCheck = 0;
 
     private static final ReinforcementConsumer<String, String, String, String> REINFORCEMENT = (type, sender, naviPoint, distance) -> empty()
             .append(of(type).copy().formatted(RED, BOLD)).append(" ")
@@ -291,38 +291,31 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
                     LOGGER.info("Reinforcement reached, tracked activity");
                 });
 
-        if (!syncBlackMarket){
-            return;
+        // mark the black market spot as visited if within 60 blocks
+        if (currentTimeMillis() - this.lastBlackMarketCheck >= 5000) { // every 5 seconds to reduce performance impact
+            this.lastBlackMarketCheck = currentTimeMillis();
+
+            stream(BlackMarket.Type.values())
+                    .filter(type -> type.getBlockPos().isWithinDistance(blockPos, 60))
+                    .forEach(type -> {
+                        // remove old type association if exists
+                        storage.getBlackMarkets().removeIf(blackMarket -> blackMarket.getType() == type);
+
+                        // check if black market was found there
+                        Box box = player.getBoundingBox().expand(60);
+                        Predicate<VillagerEntity> isBlackMarket = villagerEntity -> ofNullable(villagerEntity.getCustomName())
+                                .map(text -> text.getString().contains("Schwarzmarkt"))
+                                .orElse(false);
+
+                        assert MinecraftClient.getInstance().world != null; // cannot be null at this point
+                        boolean found = !MinecraftClient.getInstance().world.getEntitiesByClass(VillagerEntity.class, box, isBlackMarket).isEmpty();
+
+                        // add new black market entry
+                        BlackMarket blackMarket = new BlackMarket(type, now(), found);
+                        storage.getBlackMarkets().add(blackMarket);
+                        LOGGER.info("Marked black market spot as visited: {}", type);
+                    });
         }
-        syncBlackMarket = false;
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                // mark the black market spot as visited if within 60 blocks
-                stream(BlackMarket.Type.values())
-                        .filter(type -> type.getBlockPos().isWithinDistance(blockPos, 60))
-                        .forEach(type -> {
-                            // remove old type association if exists
-                            storage.getBlackMarkets().removeIf(blackMarket -> blackMarket.getType() == type);
-
-                            // check if black market was found there
-                            Box box = player.getBoundingBox().expand(60);
-                            Predicate<VillagerEntity> isBlackMarket = villagerEntity -> ofNullable(villagerEntity.getCustomName())
-                                    .map(text -> text.getString().contains("Schwarzmarkt"))
-                                    .orElse(false);
-
-                            assert MinecraftClient.getInstance().world != null; // cannot be null at this point
-                            boolean found = !MinecraftClient.getInstance().world.getEntitiesByClass(VillagerEntity.class, box, isBlackMarket).isEmpty();
-
-                            // add new black market entry
-                            BlackMarket blackMarket = new BlackMarket(type, now(), found);
-                            storage.getBlackMarkets().add(blackMarket);
-                            LOGGER.info("Marked black market spot as visited: {}", type);
-                        });
-                syncBlackMarket = true;
-            }
-        }, 5000); // 5 Seconds
-
     }
 
     @FunctionalInterface
