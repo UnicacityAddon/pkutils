@@ -1,5 +1,6 @@
 package de.rettichlp.pkutils.listener.impl;
 
+import de.rettichlp.pkutils.PKUtils;
 import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
@@ -33,6 +34,7 @@ import static net.minecraft.util.Formatting.RED;
 public class PlayerListener implements IAbsorptionGetListener, IMessageReceiveListener, ITickListener {
 
     private static final String SHUTDOWN_TIMEOUT = "5";
+    private static final int PRAY_DELAY = 30;
 
     // afk
     private static final Pattern AFK_START_PATTERN = compile("^Du bist nun im AFK-Modus\\.$");
@@ -45,6 +47,9 @@ public class PlayerListener implements IAbsorptionGetListener, IMessageReceiveLi
     // jail
     private static final Pattern JAIL_PATTERN = compile("^\\[Gefängnis] Du bist nun für (?<minutes>\\d+) Minuten im Gefängnis\\.$");
     private static final Pattern JAIL_UNJAIL_PATTERN = compile("^\\[Gefängnis] Du bist nun wieder frei!$");
+
+    // pray
+    private static final Pattern PRAY_START_PATTERN = compile("^\\[Kirche] Du fängst an für (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) zu beten\\.$");
 
     @Override
     public void onAbsorptionGet() {
@@ -99,6 +104,11 @@ public class PlayerListener implements IAbsorptionGetListener, IMessageReceiveLi
             }
 
             return true;
+        }
+
+        Matcher prayStartMatcher = PRAY_START_PATTERN.matcher(message);
+        if (prayStartMatcher.find()) {
+            PKUtils.utilService.delayedAction(() -> PKUtils.commandService.sendCommand("beten"), PRAY_DELAY * 1000L);
         }
 
         return true;
