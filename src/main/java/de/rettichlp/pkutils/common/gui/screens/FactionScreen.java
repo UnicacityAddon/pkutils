@@ -89,7 +89,7 @@ public class FactionScreen extends OptionsScreen {
         renderService.addButton(directionalLayoutWidget1, empty()
                         .append(of(messageService.dateTimeToFriendlyString(this.from)))
                         .append(" - ")
-                        .append(of(messageService.dateTimeToFriendlyString(this.to))), button -> {}, 300);
+                        .append(of(messageService.dateTimeToFriendlyString(this.to))), button -> {}, 400);
 
         renderService.addButton(directionalLayoutWidget1, of("→"), button -> getActivitiesAndReopen(this.from.plusWeeks(1), this.to.plusWeeks(1)), 20);
 
