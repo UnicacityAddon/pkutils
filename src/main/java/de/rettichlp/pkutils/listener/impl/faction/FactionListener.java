@@ -292,7 +292,7 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
                 });
 
         // mark the black market spot as visited if within 60 blocks
-        if (currentTimeMillis() - this.lastBlackMarketCheck >= 5000) { // every 5 seconds to reduce performance impact
+        if (currentTimeMillis() - this.lastBlackMarketCheck >= 3000) { // every 3 seconds to reduce performance impact
             this.lastBlackMarketCheck = currentTimeMillis();
 
             stream(BlackMarket.Type.values())
