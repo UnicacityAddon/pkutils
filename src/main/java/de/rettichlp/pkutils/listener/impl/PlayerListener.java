@@ -1,6 +1,5 @@
 package de.rettichlp.pkutils.listener.impl;
 
-import de.rettichlp.pkutils.PKUtils;
 import de.rettichlp.pkutils.common.models.Countdown;
 import de.rettichlp.pkutils.common.registry.PKUtilsListener;
 import de.rettichlp.pkutils.listener.IAbsorptionGetListener;
@@ -14,9 +13,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
+import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static de.rettichlp.pkutils.PKUtils.utilService;
 import static de.rettichlp.pkutils.common.models.ShutdownReason.CEMETERY;
 import static de.rettichlp.pkutils.common.models.ShutdownReason.JAIL;
 import static java.lang.Integer.parseInt;
@@ -34,7 +35,7 @@ import static net.minecraft.util.Formatting.RED;
 public class PlayerListener implements IAbsorptionGetListener, IMessageReceiveListener, ITickListener {
 
     private static final String SHUTDOWN_TIMEOUT = "5";
-    private static final int PRAY_DELAY = 30;
+    private static final int PRAY_DELAY_IN_SECONDS = 30;
 
     // afk
     private static final Pattern AFK_START_PATTERN = compile("^Du bist nun im AFK-Modus\\.$");
@@ -108,7 +109,8 @@ public class PlayerListener implements IAbsorptionGetListener, IMessageReceiveLi
 
         Matcher prayStartMatcher = PRAY_START_PATTERN.matcher(message);
         if (prayStartMatcher.find()) {
-            PKUtils.utilService.delayedAction(() -> PKUtils.commandService.sendCommand("beten"), PRAY_DELAY * 1000L);
+            utilService.delayedAction(() -> commandService.sendCommand("beten"), PRAY_DELAY_IN_SECONDS * 1000L);
+            return true;
         }
 
         return true;
