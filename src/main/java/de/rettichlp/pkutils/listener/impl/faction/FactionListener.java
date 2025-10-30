@@ -65,9 +65,6 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
     private static final Pattern REINFORCMENT_ON_THE_WAY_PATTERN = compile("^(?<senderRank>.+) (?:\\[PK])?(?<senderPlayerName>[a-zA-Z0-9_]+) kommt zum Verstärkungsruf von (?:\\[PK])?(?<target>[a-zA-Z0-9_]+)! \\((?<distance>\\d+) Meter entfernt\\)$");
     private static final Pattern EQUIP_PATTERN = compile("^\\[Equip] Du hast dich mit (?<type>.+) equipt!$");
 
-    private long lastFactionScreenExecution = 0;
-    private long lastBlackMarketCheck = 0;
-
     private static final ReinforcementConsumer<String, String, String, String> REINFORCEMENT = (type, sender, naviPoint, distance) -> empty()
             .append(of(type).copy().formatted(RED, BOLD)).append(" ")
             .append(of(sender).copy().formatted(AQUA)).append(" ")
@@ -84,6 +81,9 @@ public class FactionListener implements IKeyPressListener, IMessageReceiveListen
             .append(of("- (").copy().formatted(GRAY))
             .append(of(distance + "m").copy().formatted(DARK_AQUA))
             .append(of(")").copy().formatted(GRAY));
+
+    private long lastFactionScreenExecution = 0;
+    private long lastBlackMarketCheck = 0;
 
     @Override
     public void onSwapHandsKeyPress() {

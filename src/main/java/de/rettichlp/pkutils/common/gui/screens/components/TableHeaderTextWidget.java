@@ -41,11 +41,6 @@ public class TableHeaderTextWidget extends ClickableWidget {
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-
-    }
-
-    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         boolean mouseClicked = super.mouseClicked(mouseX, mouseY, button);
 
@@ -62,6 +57,11 @@ public class TableHeaderTextWidget extends ClickableWidget {
         this.onChange.accept(this.sortingDirection);
 
         return mouseClicked;
+    }
+
+    @Override
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+
     }
 
     private Text getModifiedText() {
