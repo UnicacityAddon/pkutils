@@ -64,6 +64,7 @@ public class PKUtils implements ModInitializer {
             client.execute(() -> {
                 this.registry.registerListeners();
                 renderService.initializeWidgets();
+                syncService.sync(true);
             });
         });
 

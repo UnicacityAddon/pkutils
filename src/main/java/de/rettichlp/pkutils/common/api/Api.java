@@ -35,6 +35,7 @@ import java.util.function.Consumer;
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.storage;
+import static de.rettichlp.pkutils.PKUtils.syncService;
 import static de.rettichlp.pkutils.PKUtils.utilService;
 import static java.lang.String.join;
 import static java.lang.String.valueOf;
@@ -178,7 +179,7 @@ public class Api {
     }
 
     private <T> void sendRequest(HttpRequest httpRequest, TypeToken<T> typeToken, Consumer<T> callback) {
-        if (!utilService.dataUsageConfirmed()) {
+        if (!syncService.dataUsageConfirmed()) {
             LOGGER.warn("Data usage not confirmed, skipping API request: [{}] {}", httpRequest.method(), httpRequest.uri().toString());
             return;
         }

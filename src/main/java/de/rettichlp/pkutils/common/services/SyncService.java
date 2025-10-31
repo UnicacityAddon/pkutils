@@ -5,6 +5,9 @@ import de.rettichlp.pkutils.common.models.Faction;
 import de.rettichlp.pkutils.common.models.FactionEntry;
 import de.rettichlp.pkutils.common.models.FactionMember;
 import lombok.Getter;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.PopupScreen;
+import net.minecraft.client.gui.screen.Screen;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,13 +16,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
 import static de.rettichlp.pkutils.PKUtils.commandService;
-import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.player;
@@ -33,11 +34,11 @@ import static java.time.LocalDateTime.now;
 import static java.util.Arrays.stream;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
-import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.text.Text.empty;
 import static net.minecraft.text.Text.of;
+import static net.minecraft.text.Text.translatable;
 import static net.minecraft.util.Formatting.DARK_GRAY;
 import static net.minecraft.util.Formatting.GRAY;
 import static net.minecraft.util.Formatting.GREEN;
@@ -53,13 +54,6 @@ public class SyncService {
     @Getter
     private boolean gameSyncProcessActive = false;
 
-    public void syncFactionMembersWithApi() {
-        api.getFactions(factionEntries -> {
-            storage.getFactionEntries().clear();
-            storage.getFactionEntries().addAll(factionEntries);
-            storage.getPlayerFactionCache().clear();
-            LOGGER.info("Faction members synced with API");
-        });
     public boolean dataUsageConfirmed() {
         int currentDataUsageConfirmationUID = configuration.getDataUsageConfirmationUID();
         return currentDataUsageConfirmationUID >= REQUIRED_DATA_USAGE_CONFIRMATION_UID;
@@ -67,6 +61,32 @@ public class SyncService {
 
     public void updateDataUsageConfirmedUID() {
         configuration.setDataUsageConfirmationUID(REQUIRED_DATA_USAGE_CONFIRMATION_UID);
+    }
+
+    public void sync(boolean showPopupIfNotGiven) {
+        boolean dataUsageConfirmed = dataUsageConfirmed();
+
+        if (dataUsageConfirmed) {
+            LOGGER.info("Data usage confirmed, proceeding with sync...");
+
+            // sync faction members
+            syncFactionMembersWithApi();
+            // sync blacklist reasons
+            syncBlacklistReasonsFromApi();
+            // check for updates
+            checkForUpdates();
+
+            // login to PKUtils API
+            api.postUserRegister();
+        } else if (showPopupIfNotGiven) {
+            LOGGER.info("Data usage not yet confirmed, showing confirmation popup");
+            showDataUsageConfirmationPopup();
+        } else {
+            LOGGER.info("Data usage not confirmed, skipping sync");
+        }
+
+        // always sync faction specific data (no external data)
+        syncFactionSpecificData();
     }
 
     public void syncFactionMembersWithCommandResponse() {
@@ -82,13 +102,6 @@ public class SyncService {
 
         storage.getPlayerFactionCache().clear();
         utilService.delayedAction(api::postFactions, commandResponseRetrievers.size() * 1000L + 1200);
-    }
-
-    public void syncBlacklistReasonsFromApi() {
-        api.getBlacklistReasonData(factionListMap -> {
-            storage.getBlacklistReasons().clear();
-            storage.getBlacklistReasons().putAll(factionListMap);
-        });
     }
 
     public void syncFactionSpecificData() {
@@ -118,7 +131,23 @@ public class SyncService {
         }, 2000);
     }
 
-    public void checkForUpdates() {
+    private void syncFactionMembersWithApi() {
+        api.getFactions(factionEntries -> {
+            storage.getFactionEntries().clear();
+            storage.getFactionEntries().addAll(factionEntries);
+            storage.getPlayerFactionCache().clear();
+            LOGGER.info("Faction members synced with API");
+        });
+    }
+
+    private void syncBlacklistReasonsFromApi() {
+        api.getBlacklistReasonData(factionListMap -> {
+            storage.getBlacklistReasons().clear();
+            storage.getBlacklistReasons().putAll(factionListMap);
+        });
+    }
+
+    private void checkForUpdates() {
         api.getModrinthVersions(maps -> {
             if (maps.isEmpty()) {
                 return;
@@ -137,6 +166,21 @@ public class SyncService {
                         .append(of(latestVersion).copy().formatted(GREEN)), MAGENTA, MINUTES.toMillis(5));
             }
         });
+    }
+
+    private void showDataUsageConfirmationPopup() {
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        PopupScreen dataUsageConfirmationScreen = new PopupScreen.Builder(client.currentScreen, empty().append(of("PKUtils")).append(" ").append(translatable("mco.terms.sentence.2")))
+                .message(translatable("pkutils.screen.data_usage_confirmation.message"))
+                .button(translatable("mco.terms.buttons.agree"), popupScreen -> {
+                    updateDataUsageConfirmedUID();
+                    popupScreen.close();
+                })
+                .button(translatable("mco.terms.buttons.disagree"), Screen::close)
+                .build();
+
+        client.execute(() -> client.setScreen(dataUsageConfirmationScreen));
     }
 
     @Contract("_ -> new")
