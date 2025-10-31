@@ -84,9 +84,6 @@ public class SyncService {
         } else {
             LOGGER.info("Data usage not confirmed, skipping sync");
         }
-
-        // always sync faction specific data (no external data)
-        syncFactionSpecificData();
     }
 
     public void syncFactionMembersWithCommandResponse() {

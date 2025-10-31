@@ -105,6 +105,7 @@ public class ModCommand extends CommandBase {
                                 }))
                         .executes(context -> {
                             syncService.sync(true);
+                            syncService.syncFactionSpecificData();
                             return 1;
                         }))
                 .executes(context -> {
