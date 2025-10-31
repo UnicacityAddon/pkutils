@@ -2,6 +2,7 @@ package de.rettichlp.pkutils.common.configuration;
 
 import de.rettichlp.pkutils.common.configuration.options.Options;
 import de.rettichlp.pkutils.common.models.TodoEntry;
+import de.rettichlp.pkutils.listener.impl.EventService;
 import lombok.Data;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
@@ -38,6 +40,7 @@ public class Configuration {
     @Nullable
     private LocalDateTime firstAidLicenseExpireDateTime = null;
     private int dataUsageConfirmationUID = 0;
+    private Set<EventService.HalloweenDoor> halloweenClickedDoors = Set.of();
 
     public void addMinutesSinceLastPayDay(int minutes) {
         this.minutesSinceLastPayDay += minutes;
