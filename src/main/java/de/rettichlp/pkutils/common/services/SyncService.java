@@ -20,6 +20,7 @@ import static de.rettichlp.pkutils.PKUtils.LOGGER;
 import static de.rettichlp.pkutils.PKUtils.api;
 import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.messageService;
+import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.notificationService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static de.rettichlp.pkutils.PKUtils.storage;
@@ -45,6 +46,7 @@ import static net.minecraft.util.Formatting.RED;
 public class SyncService {
 
     private static final Pattern FACTION_MEMBER_ALL_ENTRY = compile("^\\s*-\\s*(?<rank>\\d)\\s*\\|\\s*(?<playerNames>.+)$");
+    private static final int REQUIRED_DATA_USAGE_CONFIRMATION_UID = 1;
 
     @Getter
     private LocalDateTime lastSyncTimestamp = MIN;
@@ -58,6 +60,13 @@ public class SyncService {
             storage.getPlayerFactionCache().clear();
             LOGGER.info("Faction members synced with API");
         });
+    public boolean dataUsageConfirmed() {
+        int currentDataUsageConfirmationUID = configuration.getDataUsageConfirmationUID();
+        return currentDataUsageConfirmationUID >= REQUIRED_DATA_USAGE_CONFIRMATION_UID;
+    }
+
+    public void updateDataUsageConfirmedUID() {
+        configuration.setDataUsageConfirmationUID(REQUIRED_DATA_USAGE_CONFIRMATION_UID);
     }
 
     public void syncFactionMembersWithCommandResponse() {
