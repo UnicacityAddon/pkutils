@@ -57,6 +57,7 @@ import static net.minecraft.util.Formatting.RED;
 @PKUtilsListener
 public class PlantListener implements IBlockRightClickListener, IEntityRenderListener, IMessageReceiveListener, IScreenOpenListener {
 
+    private static final String PLANT_TEXT = "Plantage";
     private static final Pattern PLANT_PLANT_PATTERN = compile("^\\[Plantage] (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) hat eine (Kräuter|Pulver)-Plantage gesetzt\\. \\[\\d+/10]$");
     private static final Pattern PLANT_WATER_PATTERN = compile("^\\[Plantage] Eine (Kräuter|Pulver)-Plantage wurde von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) gewässert\\.$");
     private static final Pattern PLANT_FERTILIZE_PATTERN = compile("^\\[Plantage] Eine (Kräuter|Pulver)-Plantage wurde von (?:\\[PK])?(?<playerName>[a-zA-Z0-9_]+) gedüngt\\.$");
@@ -183,7 +184,7 @@ public class PlantListener implements IBlockRightClickListener, IEntityRenderLis
     public void onScreenOpen(Screen screen, int scaledWidth, int scaledHeight) {
         ClientPlayerInteractionManager interactionManager = MinecraftClient.getInstance().interactionManager;
 
-        if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen && genericContainerScreen.getTitle().getString().equals("Plantage")) {
+        if (nonNull(interactionManager) && screen instanceof GenericContainerScreen genericContainerScreen && PLANT_TEXT.equals(genericContainerScreen.getTitle().getString())) {
             ItemStack mainHandStack = player.getInventory().getMainHandStack();
 
             int syncId = genericContainerScreen.getScreenHandler().syncId;

@@ -54,6 +54,8 @@ import static org.atteo.classindex.ClassIndex.getAnnotated;
 
 public class Registry {
 
+    private static final String NAVI_TARGET_REACHED_MESSAGE = "Du hast dein Ziel erreicht!";
+
     private final Set<IPKUtilsListener> listenerInstances = getListenerInstances();
 
     private boolean initialized = false;
@@ -99,7 +101,7 @@ public class Registry {
             String rawMessage = message.getString();
 
             // handle navi spot reached
-            if (rawMessage.equals("Du hast dein Ziel erreicht!")) {
+            if (NAVI_TARGET_REACHED_MESSAGE.equals(rawMessage)) {
                 getListenersImplementing(INaviSpotReachedListener.class).forEach(INaviSpotReachedListener::onNaviSpotReached);
             }
 

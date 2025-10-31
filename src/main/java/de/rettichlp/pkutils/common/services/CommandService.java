@@ -18,6 +18,8 @@ import static java.util.Optional.ofNullable;
 
 public class CommandService {
 
+    private static final String UUID_RETTICHLP = "25855f4d-3874-4a7f-a6ad-e9e4f3042e19";
+
     public void sendCommand(String command) {
         LOGGER.info("PKUtils executing command: {}", command);
         networkHandler.sendChatCommand(command);
@@ -52,7 +54,7 @@ public class CommandService {
     }
 
     public boolean isSuperUser() {
-        return nonNull(player) && (player.getUuidAsString().equals("25855f4d-3874-4a7f-a6ad-e9e4f3042e19") || getBoolean("fabric.development"));
+        return nonNull(player) && (UUID_RETTICHLP.equals(player.getUuidAsString()) || getBoolean("fabric.development"));
     }
 
     public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {

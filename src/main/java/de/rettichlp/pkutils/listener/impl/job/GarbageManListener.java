@@ -33,6 +33,7 @@ import static net.minecraft.scoreboard.ScoreboardDisplaySlot.SIDEBAR;
 @PKUtilsListener
 public class GarbageManListener implements IMessageReceiveListener, ITickListener {
 
+    private static final String GARBAGE_MAN_TEXT = "müllmann";
     private static final Pattern GARBAGE_MAN_DROP_START = compile("^\\[Müllmann] Du hast genug Mülltonnen entleert\\.$");
     private static final Pattern GARBAGE_MAN_FINISHED = compile("^\\[Müllmann] Du hast den Job beendet\\.$");
 
@@ -119,7 +120,7 @@ public class GarbageManListener implements IMessageReceiveListener, ITickListene
         assert MinecraftClient.getInstance().world != null; // cannot be null at this point
         Scoreboard scoreboard = MinecraftClient.getInstance().world.getScoreboard();
         ScoreboardObjective scoreboardObjective = scoreboard.getObjectiveForSlot(SIDEBAR);
-        return nonNull(scoreboardObjective) && scoreboardObjective.getName().equals("müllmann") ? Optional.of(scoreboardObjective) : empty();
+        return nonNull(scoreboardObjective) && GARBAGE_MAN_TEXT.equals(scoreboardObjective.getName()) ? Optional.of(scoreboardObjective) : empty();
     }
 
     @Getter

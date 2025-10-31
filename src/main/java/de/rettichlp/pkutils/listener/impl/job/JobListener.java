@@ -31,13 +31,14 @@ import static java.util.regex.Pattern.compile;
 public class JobListener
         implements ICommandSendListener, IMessageReceiveListener, IMoveListener, INaviSpotReachedListener {
 
+    private static final String SAWMILL_TEXT = "sägewerk";
     private static final Pattern TRANSPORT_DELIVER_PATTERN = compile("^\\[Transport] Du hast (eine Holz Lieferung|eine Kiste|eine Waffenkiste|ein Weizen Paket|eine Schwarzpulverkiste) abgeliefert\\.$");
     private static final Pattern DRINK_TRANSPORT_DELIVER_PATTERN = compile("^\\[Bar] Du hast eine Flasche abgegeben!$");
     private static final Pattern PIZZA_JOB_TRANSPORT_GET_PIZZA_PATTERN = compile("^\\[Pizzalieferant] Sobald du 10 Pizzen dabei hast, wird dir deine erste Route angezeigt\\.$");
 
     @Override
     public boolean onCommandSend(@NotNull String command) {
-        if (command.equals("sägewerk")) {
+        if (SAWMILL_TEXT.equals(command)) {
             utilService.delayedAction(() -> commandService.sendCommand("findtree"), 1000);
         }
 
