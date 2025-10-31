@@ -18,7 +18,6 @@
         "EntityRendererMixin",
         "GameMenuScreenMixin",
         "GenericContainerScreenMixin",
-        "PlayerListHudMixin",
-        "TitleScreenMixin"
+        "PlayerListHudMixin"
     ]
 }

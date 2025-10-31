@@ -104,10 +104,8 @@ public class ModCommand extends CommandBase {
                                     return 1;
                                 }))
                         .executes(context -> {
-                            syncService.syncFactionMembersWithApi();
-                            syncService.syncBlacklistReasonsFromApi();
+                            syncService.sync(true);
                             syncService.syncFactionSpecificData();
-
                             return 1;
                         }))
                 .executes(context -> {

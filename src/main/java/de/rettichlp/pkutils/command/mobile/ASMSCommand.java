@@ -16,7 +16,6 @@ import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.PKUtils.syncService;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.minecraft.command.CommandSource.suggestMatching;
 
@@ -44,7 +43,7 @@ public class ASMSCommand extends CommandBase {
                                         int number = storage.getRetrievedNumbers().get(playerName);
                                         sms(number, message);
                                     } else {
-                                        syncService.retrieveNumberAndRun(playerName, number -> sms(number, message));
+                                        commandService.retrieveNumberAndRun(playerName, number -> sms(number, message));
                                     }
 
                                     return 1;
