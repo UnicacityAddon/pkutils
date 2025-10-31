@@ -18,7 +18,7 @@ import static java.time.LocalDateTime.now;
 import static java.util.regex.Pattern.compile;
 
 @PKUtilsListener
-public class EventService implements IMessageReceiveListener {
+public class EventListener implements IMessageReceiveListener {
 
     private static final Pattern HALLOWEEN_DOOR_VISITED_PATTERN = compile("^\\[Halloween] Du hast bei Haus (?<number>\\d+) geklingelt\\.$");
 

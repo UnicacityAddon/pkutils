@@ -3,7 +3,7 @@ package de.rettichlp.pkutils.command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
-import de.rettichlp.pkutils.listener.impl.EventService;
+import de.rettichlp.pkutils.listener.impl.EventListener;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class NotVisitedHousesCommand extends CommandBase {
         return node
                 .executes(context -> {
                     List<Integer> doorNumbersVisited = configuration.getHalloweenClickedDoors().stream()
-                            .map(EventService.HalloweenDoor::getDoorNumber)
+                            .map(EventListener.HalloweenDoor::getDoorNumber)
                             .toList();
 
                     Collection<Integer> doorNumbersNotVisited = new ArrayList<>();
