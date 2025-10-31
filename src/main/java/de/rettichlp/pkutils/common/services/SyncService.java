@@ -130,13 +130,6 @@ public class SyncService {
         });
     }
 
-    public void retrieveNumberAndRun(String playerName, Consumer<Integer> runWithNumber) {
-        commandService.sendCommand("nummer " + playerName);
-
-        utilService.delayedAction(() -> ofNullable(storage.getRetrievedNumbers().get(playerName))
-                .ifPresentOrElse(runWithNumber, () -> messageService.sendModMessage("Die Nummer von " + playerName + " konnte nicht abgerufen werden.", false)), 1000);
-    }
-
     @Contract("_ -> new")
     private @NotNull CommandResponseRetriever syncFactionMembersWithCommandResponse(@NotNull Faction faction) {
         String commandToExecute = "memberinfoall " + faction.getMemberInfoCommandName();

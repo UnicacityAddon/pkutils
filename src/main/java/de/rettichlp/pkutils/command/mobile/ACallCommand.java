@@ -15,7 +15,6 @@ import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static de.rettichlp.pkutils.PKUtils.commandService;
 import static de.rettichlp.pkutils.PKUtils.networkHandler;
 import static de.rettichlp.pkutils.PKUtils.storage;
-import static de.rettichlp.pkutils.PKUtils.syncService;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.minecraft.command.CommandSource.suggestMatching;
 
@@ -41,7 +40,7 @@ public class ACallCommand extends CommandBase {
                                 int number = storage.getRetrievedNumbers().get(playerName);
                                 call(number);
                             } else {
-                                syncService.retrieveNumberAndRun(playerName, this::call);
+                                commandService.retrieveNumberAndRun(playerName, this::call);
                             }
 
                             return 1;
