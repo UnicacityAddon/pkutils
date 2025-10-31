@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +41,7 @@ public class Configuration {
     @Nullable
     private LocalDateTime firstAidLicenseExpireDateTime = null;
     private int dataUsageConfirmationUID = 0;
-    private Set<EventService.HalloweenDoor> halloweenClickedDoors = Set.of();
+    private Set<EventListener.HalloweenDoor> halloweenClickedDoors = new HashSet<>();
 
     public void addMinutesSinceLastPayDay(int minutes) {
         this.minutesSinceLastPayDay += minutes;

@@ -5,7 +5,6 @@ import de.rettichlp.pkutils.common.registry.CommandBase;
 import de.rettichlp.pkutils.common.registry.PKUtilsCommand;
 import de.rettichlp.pkutils.listener.impl.EventListener;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -16,6 +15,7 @@ import static de.rettichlp.pkutils.PKUtils.configuration;
 import static de.rettichlp.pkutils.PKUtils.messageService;
 import static de.rettichlp.pkutils.PKUtils.player;
 import static net.minecraft.text.Text.empty;
+import static net.minecraft.text.Text.of;
 
 @PKUtilsCommand(label = "notvisitedhouses")
 public class NotVisitedHousesCommand extends CommandBase {
@@ -38,7 +38,7 @@ public class NotVisitedHousesCommand extends CommandBase {
                     player.sendMessage(empty(), false);
 
                     messageService.sendModMessage("Noch nicht besuchte Häuser:", false);
-                    doorNumbersNotVisited.forEach(integer -> messageService.sendModMessage(Text.of("- Haus " + integer), false));
+                    doorNumbersNotVisited.forEach(integer -> messageService.sendModMessage(of("Haus " + integer), false));
 
                     player.sendMessage(empty(), false);
 
