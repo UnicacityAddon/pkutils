@@ -109,8 +109,6 @@ public class SyncService {
         this.lastSyncTimestamp = now();
 
         // parse from faction-related init commands after all faction members are synced
-        notificationService.sendInfoNotification("Synchronisiere fraktionsabhängige Daten...");
-
         utilService.delayedAction(() -> {
             Faction faction = storage.getFaction(requireNonNull(player.getDisplayName()).getString());
             switch (faction) {
@@ -125,10 +123,7 @@ public class SyncService {
             }
         }, 1000);
 
-        utilService.delayedAction(() -> {
-            this.gameSyncProcessActive = false;
-            notificationService.sendSuccessNotification("PKUtils synchronisiert");
-        }, 2000);
+        utilService.delayedAction(() -> this.gameSyncProcessActive = false, 2000);
     }
 
     private void syncFactionMembersWithApi() {
@@ -175,6 +170,7 @@ public class SyncService {
                 .message(translatable("pkutils.screen.data_usage_confirmation.message"))
                 .button(translatable("mco.terms.buttons.agree"), popupScreen -> {
                     updateDataUsageConfirmedUID();
+                    sync(false);
                     popupScreen.close();
                 })
                 .button(translatable("mco.terms.buttons.disagree"), Screen::close)
