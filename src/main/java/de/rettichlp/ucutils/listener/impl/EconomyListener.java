@@ -78,7 +78,7 @@ public class EconomyListener implements IMessageReceiveListener {
     private static final Pattern MEDIC_REVIVE_PATTERN = compile("^Du wirst von (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+) wiederbelebt\\.$");
     private static final Pattern REVIVE_ADMIN_PATTERN = compile("^Du wurdest von \\[UC](?<playerName>[a-zA-Z0-9_]+) wiederbelebt\\.$");
     private static final Pattern BACK_IN_LIFE_PATTERN = compile("^\\[Friedhof] Du lebst nun wieder\\.$");
-    private static final Pattern LUMBERJACK_SELL_PATTERN = compile("^\\[Holzfäller] Du hast (\\d+x .+|dein ganzes Inventar abgeladen: \\d+ Items) für §6(?<amount>\\d+)\\$§a( §6\\(\\+\\d+% Bonus\\))?( verkauft)?\\.$");
+    private static final Pattern LUMBERJACK_SELL_PATTERN = compile("^\\[Holzfäller] Du hast (\\d+x .+|dein ganzes Inventar abgeladen: \\d+ Items|dein Inventar und Rucksack abgeladen: \\d+ Items) für §6(?<amount>\\d+)\\$§a( §6\\(\\+\\d+% Bonus\\))?( verkauft)?\\.$");
 
     private long lastMedicReviveAction = 0;
     private boolean maxExperiencePerLevelReached = false;
