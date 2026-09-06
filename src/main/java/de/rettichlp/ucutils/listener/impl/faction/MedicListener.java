@@ -51,6 +51,7 @@ public class MedicListener implements IMessageReceiveListener {
     private static final Pattern MEDIC_PILL_PATTERN = compile("^\\[Medic] Doktor (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+) hat dir Schmerzpillen verabreicht\\.$");
     private static final Pattern MEDIC_PILL_GIVE_PATTERN = compile("^\\[Medic] Du hast (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+) Schmerzpillen verabreicht\\.$");
     private static final Pattern MEDIC_REVIVE_START_PATTERN = compile("^Du beginnst mit der Wiederbelebung von (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+)\\.\\.\\.$");
+    private static final Pattern MEDIC_STATUS_PATTERN = compile("^HQ: (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+) hat den Status (?<status>[1-6]) \\(.+\\) betreten\\.$");
     private static final Pattern LABOR_TRANSPORT_STARTED_PATTERN = compile("^\\[ʟᴀʙᴏʀ] Transport gestartet: (?<chestAmount>\\d+) ᴋɪsᴛᴇɴ mit (?<ingredientAmount>\\d+) (?<ingredient>.+)$");
     private static final Pattern STORAGE_INGREDIENT_SHARE_PATTERN = compile("^.+ (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+): (?<ingredient1>\\d+)x Wirkstoff \\| (?<ingredient2>\\d+)x Trägerstoff \\| (?<ingredient3>\\d+)x Zusatzstoff$");
     private static final Pattern STORAGE_INGREDIENT_ACCEPT_PATTERN = compile("^.+ (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+): Ich nehme (?<ingredient>Wirkstoff|Trägerstoff|Zusatzstoff)! \\(geschätzt: (?<amountBefore>\\d+) → (?<amountAfter>\\d+)\\)$");
@@ -105,6 +106,17 @@ public class MedicListener implements IMessageReceiveListener {
         Matcher medicReviveStartMatcher = MEDIC_REVIVE_START_PATTERN.matcher(message);
         if (medicReviveStartMatcher.find()) {
             utilService.delayedAction(() -> commandService.sendCommand("dinfo"), COMMAND_COOLDOWN_MILLIS);
+            return true;
+        }
+
+        Matcher medicStatusMatcher = MEDIC_STATUS_PATTERN.matcher(message);
+        if (medicStatusMatcher.find()) {
+            String playerName = medicStatusMatcher.group("playerName");
+
+            if (playerName.equals(player.getGameProfile().name())) {
+                storage.setMedicStatus(parseInt(medicStatusMatcher.group("status")));
+            }
+
             return true;
         }
 

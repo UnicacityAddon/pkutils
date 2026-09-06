@@ -105,6 +105,10 @@ public class Storage {
 
     @Getter
     @Setter
+    private int medicStatus = -1;
+
+    @Getter
+    @Setter
     private Minecart minecartEntityToHighlight;
 
     @Getter
@@ -173,6 +177,8 @@ public class Storage {
         LOGGER.info("hydration: {}", this.hydration);
         // joinTimestamp
         LOGGER.info("joinTimestamp: {}", this.joinTimestamp);
+        // medicStatus
+        LOGGER.info("medicStatus: {}", this.medicStatus);
         // minecartEntityToHighlight
         LOGGER.info("minecartEntityToHighlight: {}", this.minecartEntityToHighlight);
         // moneyAtmAmount

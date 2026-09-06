@@ -149,6 +149,9 @@
   "ucutils.options.widgets.corpse_count.options.tooltip": "Zeigt an wie viele Leichen sich in der Nähe befinden",
   "ucutils.options.widgets.corpse_count.options.show_factions.name": "Fraktionen anzeigen",
   "ucutils.options.widgets.corpse_count.options.show_factions.tooltip": "Zeigt die Anzahl der Leichen pro Fraktion an",
+  "ucutils.options.widgets.medic_status.label": "Status",
+  "ucutils.options.widgets.medic_status.options.name": "Medic-Status",
+  "ucutils.options.widgets.medic_status.options.tooltip": "Zeigt deinen aktuellen Medic-Status an",
 
   "ucutils.screen.shutdown_abort.button.name": "Herunterfahren abbrechen",
 
