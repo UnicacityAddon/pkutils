@@ -15,7 +15,7 @@ import static java.time.Duration.ofMinutes;
 import static java.util.regex.Pattern.compile;
 
 @UCUtilsListener
-public class PrayListener implements IMessageReceiveListener {
+public class ChurchListener implements IMessageReceiveListener {
 
     private static final Pattern PRAYING_START_PATTERN = compile("^\\[Kirche] Du hast begonnen für (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+) zu beten\\.$");
     private static final Pattern BLESSING_GIVEN_PATTERN = compile("^\\[Segen] Du hast (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+) gesegnet\\.$");
