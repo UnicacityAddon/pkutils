@@ -22,6 +22,7 @@ public class MiscellaneousOptionsScreen extends OptionsScreen {
     private static final Component TEXT_MISCELLANEOUS = translatable("ucutils.options.text.miscellaneous");
     private static final Component HYDRATION_NAME = translatable("ucutils.options.hydration.name");
     private static final Component HYDRATION_TOOLTIP = translatable("ucutils.options.hydration.tooltip");
+    private static final Component HYDRATION_TEXTURE_NAME = translatable("ucutils.options.hydration_texture.name");
     private static final Component BANK_INFORMATION_NAME = translatable("ucutils.options.atm_information.name");
     private static final Component AUTO_TRASH_CAN_NAME = translatable("ucutils.options.auto_trash_can.name");
     private static final Component AUTO_TRASH_CAN_TOOLTIP = translatable("ucutils.options.auto_trash_can.tooltip");
@@ -51,12 +52,19 @@ public class MiscellaneousOptionsScreen extends OptionsScreen {
         toggleButton1.setTooltip(create(HYDRATION_TOOLTIP));
         gridLayoutRowHelper.addChild(toggleButton1);
 
-        CycleButton<MiscellaneousOptions.AtmInformationType> cycleButton1 = CycleButton.builder(MiscellaneousOptions.AtmInformationType::getDisplayName, miscellaneousOptions.atmInformationType())
+        CycleButton<MiscellaneousOptions.HydrationTextureType> cycleButton1 = CycleButton.builder(MiscellaneousOptions.HydrationTextureType::getDisplayName, miscellaneousOptions.hydrationTextureType())
+                .withValues(MiscellaneousOptions.HydrationTextureType.values())
+                .withTooltip(CyclingButtonEntry::getTooltip)
+                .create(HYDRATION_TEXTURE_NAME, (_, value) -> miscellaneousOptions.hydrationTextureType(value));
+        cycleButton1.setWidth(150);
+        gridLayoutRowHelper.addChild(cycleButton1);
+
+        CycleButton<MiscellaneousOptions.AtmInformationType> cycleButton2 = CycleButton.builder(MiscellaneousOptions.AtmInformationType::getDisplayName, miscellaneousOptions.atmInformationType())
                 .withValues(MiscellaneousOptions.AtmInformationType.values())
                 .withTooltip(CyclingButtonEntry::getTooltip)
                 .create(BANK_INFORMATION_NAME, (_, value) -> miscellaneousOptions.atmInformationType(value));
-        cycleButton1.setWidth(150);
-        gridLayoutRowHelper.addChild(cycleButton1);
+        cycleButton2.setWidth(150);
+        gridLayoutRowHelper.addChild(cycleButton2);
 
         Button button1 = Button.builder(AUTO_TRASH_CAN_NAME, _ -> this.minecraft.gui.setScreen(new TrashCanOptionsScreen(this)))
                 .tooltip(create(AUTO_TRASH_CAN_TOOLTIP))

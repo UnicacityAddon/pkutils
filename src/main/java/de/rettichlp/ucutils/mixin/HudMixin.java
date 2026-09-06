@@ -41,13 +41,25 @@ import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 public abstract class HudMixin {
 
     @Unique
-    private static final Identifier HYDRATION_EMPTY_TEXTURE = fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_empty.png");
+    private static final Identifier[] HYDRATION_DEFAULT_TEXTURES = {
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_1_empty.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_1_half.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_1_full.png")
+    };
 
     @Unique
-    private static final Identifier HYDRATION_HALF_TEXTURE = fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_half.png");
+    private static final Identifier[] HYDRATION_STYLE_2_TEXTURES = {
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_2_empty.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_2_half.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_2_full.png")
+    };
 
     @Unique
-    private static final Identifier HYDRATION_FULL_TEXTURE = fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_full.png");
+    private static final Identifier[] HYDRATION_STYLE_3_TEXTURES = {
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_3_empty.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_3_half.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_3_full.png")
+    };
 
     @Unique
     private static final Identifier CAPTCHA_IDENTIFIER = fromNamespaceAndPath(MOD_ID, "captcha");
@@ -125,18 +137,24 @@ public abstract class HudMixin {
             yLineAir -= hearthRows * 10;
         }
 
+        Identifier[] textures = switch (configuration.getOptions().miscellaneous().hydrationTextureType()) {
+            case STYLE_1 -> HYDRATION_DEFAULT_TEXTURES;
+            case STYLE_2 -> HYDRATION_STYLE_2_TEXTURES;
+            case STYLE_3 -> HYDRATION_STYLE_3_TEXTURES;
+        };
+
         for (int n = 0; n < 10; n++) {
             int o = xRight - 9 - n * 8;
 
             // always render empty hydration
-            context.blit(GUI_TEXTURED, HYDRATION_EMPTY_TEXTURE, o, yLineAir, 0, 0, 9, 9, 9, 9);
+            context.blit(GUI_TEXTURED, textures[0], o, yLineAir, 0, 0, 9, 9, 9, 9);
 
             // render texture depending on hydration
             int hydrationLeft = hydration - (n * 2);
             if (hydrationLeft >= 2.0) {
-                context.blit(GUI_TEXTURED, HYDRATION_FULL_TEXTURE, o, yLineAir, 0, 0, 9, 9, 9, 9);
+                context.blit(GUI_TEXTURED, textures[2], o, yLineAir, 0, 0, 9, 9, 9, 9);
             } else if (hydrationLeft >= 1.0) {
-                context.blit(GUI_TEXTURED, HYDRATION_HALF_TEXTURE, o, yLineAir, 0, 0, 9, 9, 9, 9);
+                context.blit(GUI_TEXTURED, textures[1], o, yLineAir, 0, 0, 9, 9, 9, 9);
             }
         }
     }

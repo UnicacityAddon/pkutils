@@ -20,7 +20,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM;
 import static java.lang.Boolean.getBoolean;
@@ -31,6 +30,7 @@ import static net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper.regi
 import static net.minecraft.client.KeyMapping.Category.register;
 import static net.minecraft.resources.Identifier.fromNamespaceAndPath;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UNKNOWN;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class UCUtils implements ModInitializer {
 
@@ -40,7 +40,7 @@ public class UCUtils implements ModInitializer {
     // This logger is used to write text to the console and the log file.
     // It is considered best practice to use your mod id as the logger's name.
     // That way, it's clear which mod wrote info, warnings, and errors.
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger LOGGER = getLogger(MOD_ID);
 
     public static final Api api = new Api();
     public static final Storage storage = new Storage();
