@@ -13,22 +13,18 @@ import org.jspecify.annotations.Nullable;
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static de.rettichlp.ucutils.common.services.RenderService.keyValue;
 import static java.lang.String.valueOf;
+import static net.minecraft.ChatFormatting.GOLD;
+import static net.minecraft.ChatFormatting.GREEN;
+import static net.minecraft.ChatFormatting.WHITE;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
 
 public class MedicStatusWidget extends AbstractTRCTextWidget<MedicStatusWidget.Configuration> {
 
-    private static final int WARNING_STATUS = 6;
-
     @Override
     public Component text() {
         int medicStatus = storage.getMedicStatus();
-
-        MutableComponent value = literal(valueOf(medicStatus));
-        if (medicStatus == WARNING_STATUS) {
-            value = value.append(" ⚠️");
-        }
-
+        MutableComponent value = literal(valueOf(medicStatus)).withStyle(getStatusColor(medicStatus));
         return keyValue(translatable("ucutils.options.widgets.medic_status.label"), value);
     }
 
@@ -54,6 +50,14 @@ public class MedicStatusWidget extends AbstractTRCTextWidget<MedicStatusWidget.C
     public boolean isVisible() {
         // visible if in the position options screen to allow positioning
         return super.isVisible() && (storage.getMedicStatus() > 0 || isWidgetPositionScreen());
+    }
+
+    private net.minecraft.ChatFormatting getStatusColor(int medicStatus) {
+        return switch (medicStatus) {
+            case 1, 2 -> GREEN;
+            case 6 -> GOLD;
+            default -> WHITE;
+        };
     }
 
     @Data
