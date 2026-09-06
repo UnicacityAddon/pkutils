@@ -70,7 +70,7 @@ public class EconomyListener implements IMessageReceiveListener {
     // other
     private static final Pattern ATM_MONEY_AMOUNT_PATTERN = compile("ATM \\d+: (?<moneyAtmAmount>\\d+)\\$/100000\\$");
     private static final Pattern BUSINESS_CASH_PATTERN = compile("^Kasse: (\\d+)\\$$");
-    private static final Pattern EXP_PATTERN = compile("(?<amount>[+-]\\d+) Exp!( \\(x(?<multiplier>\\d)\\))?$");
+    private static final Pattern EXP_PATTERN = compile("^(?<amount>[+-]\\d+) Exp!( \\(x(?<multiplier>\\d)\\))?$");
     private static final Pattern MAX_EXP_REACHED_PATTERN = compile("^Du hast die maximale Exp erreicht! Benutze /buylevel um ein Level aufzusteigen\\.$");
     private static final Pattern LOTTO_WIN_PATTERN = compile("^\\[Lotto] Du hast im Lotto gewonnen! \\((?<amount>\\d+)\\$\\)$");
     private static final Pattern BATTLEPASS_REWARD_PATTERN = compile("\\[.+ Pass] \\+(?<amount>\\d+)\\$ erhalten\\.$");
