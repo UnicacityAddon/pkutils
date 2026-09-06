@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.InputStream;
@@ -122,15 +123,28 @@ public abstract class HudMixin {
         Profiler.get().pop();
     }
 
+    @ModifyArg(method = "extractPlayerHealth",
+               at = @At(value = "INVOKE",
+                        target = "Lnet/minecraft/client/gui/Hud;extractAirBubbles(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/world/entity/player/Player;III)V"),
+               index = 3)
+    private int ucutils$shiftAirBubblesForHydration(int yLineAir) {
+        if (!storage.isUnicaCity()) {
+            return yLineAir;
+        }
+
+        if (!configuration.getOptions().miscellaneous().showHydration() || storage.getHydration() < 0) {
+            return yLineAir;
+        }
+
+        // move the air bubbles one row up so the hydration bar can take their usual spot
+        return yLineAir - 10;
+    }
+
     @Unique
     private void renderHydration(GuiGraphicsExtractor context, int yLineAir, int xRight) {
         double maxHydrated = 20;
         long round = round(storage.getHydration());
         int hydration = (int) clamp(round, 0, maxHydrated);
-
-        if (player.isUnderWater() || player.getAirSupply() < player.getMaxAirSupply()) {
-            yLineAir -= 10;
-        }
 
         if (player.getVehicle() instanceof LivingEntity livingEntity) {
             int hearthRows = (int) ceil(livingEntity.getHealth() / 20.0);
