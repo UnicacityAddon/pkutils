@@ -48,7 +48,7 @@ dependencies {
     implementation("org.atteo.classindex:classindex:3.13")
     annotationProcessor("org.atteo.classindex:classindex:3.13")
 
-    compileOnly("maven.modrinth:the-rettington-companion:2.4.0")
+    compileOnly("maven.modrinth:the-rettington-companion:2.5.0")
 }
 
 tasks.processResources {
