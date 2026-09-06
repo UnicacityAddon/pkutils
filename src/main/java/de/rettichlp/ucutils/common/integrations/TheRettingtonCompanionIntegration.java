@@ -71,7 +71,7 @@ public class TheRettingtonCompanionIntegration implements TheRettingtonCompanion
                 toHiddenMessage(compile("^\\[Küche] \uD83C\uDF73 Klicke das schwebende Item bevor es verschwindet!$")),
                 toHiddenMessage(compile("^\\[Küche] ✔ Erwischt! Qualität steigt\\.$")),
                 // lumberjack
-                toHiddenMessage(compile("^\\[Holzfäller] 3 Perk\\(s\\) geladen\\.$")),
+                toHiddenMessage(compile("^\\[Holzfäller] \\d Perk\\(s\\) geladen\\.$")),
                 // faction: medics
                 toHiddenMessage(compile("^\\[ʟᴀʙᴏʀ] \\d+ Kräuter-Rezept\\(e\\) ausgegeben \\(\\d+g Gras verbraucht · \\d+g verbleibend\\)\\.$")),
                 toHiddenMessage(compile("^\\[Tierarzt] Standort: -?\\d+ -?\\d+ -?\\d+ – behandle das Tier per Sneak-Rechtsklick\\.$"))
