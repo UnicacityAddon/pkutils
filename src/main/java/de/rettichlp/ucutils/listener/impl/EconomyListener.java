@@ -44,6 +44,7 @@ public class EconomyListener implements IMessageReceiveListener {
     private static final Pattern BANK_NEW_BALANCE_BANK_PATTERN = compile("^Neuer Bankkontostand: (?<amount>\\d+)\\$$");
     private static final Pattern BANK_NEW_BALANCE_CASH_PATTERN = compile("^Neuer Bargeldbestand: (?<amount>\\d+)\\$$");
     private static final Pattern BANK_DEPOSIT_ATM_TOO_MUCH_PATTERN = compile("^Du versuchst (?<amount>\\d+)\\$ einzuzahlen, der Bankautomat hat aber nur Platz für (?<availableAmount>\\d+)\\$\\. Fortfahren\\? \\[Bestätigen]$");
+    private static final Pattern BANK_DAILY_REWARD_PATTERN = compile("^• \\+ (?<amount>\\d+)\\$ \\(auf die Bank\\)$");
 
     // cash
     private static final Pattern CASH_GIVE_PATTERN = compile("^Du hast (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+) (?<amount>\\d+)\\$ gegeben!$");
@@ -56,6 +57,7 @@ public class EconomyListener implements IMessageReceiveListener {
     private static final Pattern CASH_GET_COMBO_PATTERN = compile("^\\[Combo] x\\d+ Fang-Combo! \\+(?<amount>\\d+)\\$$");
     private static final Pattern CASH_REMOVE_PATTERN = compile("^-(?<amount>\\d+)\\$$");
     private static final Pattern CASH_STATS_PATTERN = compile("^- Geld: (?<amount>\\d+)\\$$");
+    private static final Pattern CASH_DAILY_REWARD_PATTERN = compile("^• \\+ (?<amount>\\d+)\\$ \\(bar\\)$");
 
     // payday
     private static final Pattern PAYDAY_TIME_PATTERN = compile("^- Zeit seit PayDay: (?<minutes>\\d+)/60 Minuten$");
@@ -167,6 +169,13 @@ public class EconomyListener implements IMessageReceiveListener {
             return false;
         }
 
+        Matcher bankDailyRewardMatcher = BANK_DAILY_REWARD_PATTERN.matcher(message);
+        if (bankDailyRewardMatcher.find()) {
+            int amount = parseInt(bankDailyRewardMatcher.group("amount"));
+            configuration.setMoneyBankAmount(configuration.getMoneyBankAmount() + amount);
+            return true;
+        }
+
         Matcher cashGiveMatcher = CASH_GIVE_PATTERN.matcher(message);
         if (cashGiveMatcher.find()) {
             int amount = parseInt(cashGiveMatcher.group("amount"));
@@ -246,6 +255,13 @@ public class EconomyListener implements IMessageReceiveListener {
         if (cashStatsMatcher.find()) {
             int amount = parseInt(cashStatsMatcher.group("amount"));
             configuration.setMoneyCashAmount(amount);
+            return true;
+        }
+
+        Matcher cashDailyRewardMatcher = CASH_DAILY_REWARD_PATTERN.matcher(message);
+        if (cashDailyRewardMatcher.find()) {
+            int amount = parseInt(cashDailyRewardMatcher.group("amount"));
+            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() + amount);
             return true;
         }
 
