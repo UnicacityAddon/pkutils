@@ -46,6 +46,10 @@ public enum Job {
     }
 
     public void startCountdown() {
+        if (!configuration.getOptions().notification().jobCooldown()) {
+            return;
+        }
+
         new Countdown(this.displayName, getCooldown(), () -> {});
     }
 }

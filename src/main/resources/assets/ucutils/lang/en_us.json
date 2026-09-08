@@ -78,6 +78,8 @@
   "ucutils.options.notifications.report.tooltip": "Shows a notification when a player enters or leaves a report",
   "ucutils.options.notifications.build_mode.name": "Buildmode",
   "ucutils.options.notifications.build_mode.tooltip": "Shows a notification when a player enters or leaves build mode",
+  "ucutils.options.notifications.job_cooldown.name": "Job Cooldown",
+  "ucutils.options.notifications.job_cooldown.tooltip": "Shows the remaining time until the job can be started again",
   "ucutils.options.reinforcement_style.name": "Reinforcement style",
   "ucutils.options.atm_information.name": "ATM information",
   "ucutils.options.atm_information.value.none.name": "None",
