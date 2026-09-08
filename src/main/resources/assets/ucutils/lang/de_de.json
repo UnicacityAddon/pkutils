@@ -78,6 +78,8 @@
   "ucutils.options.notifications.report.tooltip": "Zeigt eine Benachrichtigung an wenn ein Spieler einen Report betritt oder verlässt",
   "ucutils.options.notifications.build_mode.name": "Baumodus",
   "ucutils.options.notifications.build_mode.tooltip": "Zeigt eine Benachrichtigung an wenn ein Spieler den Baumodus betritt oder verlässt",
+  "ucutils.options.notifications.job_cooldown.name": "Job-Cooldown",
+  "ucutils.options.notifications.job_cooldown.tooltip": "Zeigt die verbleibenden Zeit an, bis der Job erneut gestartet werden kann",
   "ucutils.options.reinforcement_style.name": "Reinforcement Stil",
   "ucutils.options.atm_information.name": "ATM Information",
   "ucutils.options.atm_information.value.none.name": "Keine",

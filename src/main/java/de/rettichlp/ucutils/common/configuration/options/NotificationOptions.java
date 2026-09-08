@@ -13,4 +13,5 @@ public class NotificationOptions {
     private boolean aDuty = false;
     private boolean report = false;
     private boolean buildMode = false;
+    private boolean jobCooldown = true;
 }
