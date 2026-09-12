@@ -47,11 +47,11 @@ public class RenderService {
     }
 
     public ToggleButtonWidget addToggleButton(@NotNull LinearLayout widget,
-                                Component name,
-                                Component tooltip,
-                                BiConsumer<Options, Boolean> onPress,
-                                @NotNull Function<Options, Boolean> currentValue,
-                                int width) {
+                                              Component name,
+                                              Component tooltip,
+                                              BiConsumer<Options, Boolean> onPress,
+                                              @NotNull Function<Options, Boolean> currentValue,
+                                              int width) {
         ToggleButtonWidget toggleButton = new ToggleButtonWidget(name, value -> onPress.accept(configuration.getOptions(), value), currentValue.apply(configuration.getOptions()));
 
         toggleButton.setWidth(width);
