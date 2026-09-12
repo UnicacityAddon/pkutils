@@ -40,6 +40,7 @@ import static de.rettichlp.ucutils.UCUtils.player;
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static de.rettichlp.ucutils.common.models.StockMarketEntry.fromItemStack;
 import static java.awt.Color.BLUE;
+import static java.awt.Color.MAGENTA;
 import static java.lang.Integer.parseInt;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
@@ -118,6 +119,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
                     }
                 }
             }
+            case "Durchsuchung" -> extractTrunkHighlight(graphics, mouseX, mouseY, a);
             default -> {
                 if (commandService.isSuperUser()) {
                     LOGGER.info("Screen opened: {}", title);
@@ -214,6 +216,33 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
                 .toList();
 
         graphics.tooltip(this.minecraft.font, legendClientTooltipComponents, this.leftPos + this.imageWidth + 2, this.topPos, new CompanyShareTooltipPositioner(), null);
+    }
+
+    @Unique
+    private void extractTrunkHighlight(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        for (Slot slot : player.containerMenu.slots) {
+            ItemStack itemStack = slot.getItem();
+            ItemLore itemLore = itemStack.get(LORE);
+
+            if (itemStack.isEmpty() || itemStack.getCustomName() == null || itemLore == null) {
+                continue;
+            }
+
+            List<Component> lines = itemLore.lines();
+            boolean amountZeroOrNotMatching = lines.stream()
+                    .map(Component::getString)
+                    .anyMatch(loreLineString -> loreLineString.equals("0g") || !loreLineString.matches("^\\d+g$"));
+
+            if (amountZeroOrNotMatching) {
+                continue;
+            }
+
+            int x = this.leftPos + slot.x;
+            int y = this.topPos + slot.y;
+
+            int argb = (0x80 << 24) | (MAGENTA.getRGB() & 0x00FFFFFF);
+            graphics.fill(x, y, x + 16, y + 16, argb);
+        }
     }
 
     @Unique
