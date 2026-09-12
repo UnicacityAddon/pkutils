@@ -19,14 +19,14 @@ import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
 import static java.time.LocalDateTime.parse;
 import static java.util.regex.Pattern.compile;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.DARK_RED;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.GREEN;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.DARK_RED;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.GREEN;
+import static net.minecraft.network.chat.TextColor.RED;
 
 @UCUtilsListener
 public class HouseListener implements IMessageReceiveListener {
@@ -50,15 +50,15 @@ public class HouseListener implements IMessageReceiveListener {
             String playerName = houseRenterEntryOnlineMatcher.group("playerName");
 
             MutableComponent modifiedText = empty()
-                    .append(literal("  » ").withStyle(GRAY))
-                    .append(literal(playerName).withStyle(GOLD))
-                    .append(literal(" (").withStyle(DARK_GRAY))
-                    .append(literal("Online").withStyle(GREEN))
-                    .append(literal(") ").withStyle(DARK_GRAY))
+                    .append(literal("  » ").withColor(GRAY))
+                    .append(literal(playerName).withColor(GOLD))
+                    .append(literal(" (").withColor(DARK_GRAY))
+                    .append(literal("Online").withColor(GREEN))
+                    .append(literal(") ").withColor(DARK_GRAY))
                     .append(literal("⨉").withStyle(style -> style
                             .withColor(RED)
                             .withBold(true)
-                            .withHoverEvent(new HoverEvent.ShowText(literal("Kündigen").withStyle(RED)))
+                            .withHoverEvent(new HoverEvent.ShowText(literal("Kündigen").withColor(RED)))
                             .withClickEvent(new ClickEvent.RunCommand("/unrent " + this.lastHouseNumber + " " + playerName))));
 
             player.sendSystemMessage(modifiedText);
@@ -73,17 +73,17 @@ public class HouseListener implements IMessageReceiveListener {
             long daysSinceOffline = abs(between(now(), dateTime).toDays());
 
             MutableComponent modifiedText = empty()
-                    .append(literal("  » ").withStyle(GRAY))
-                    .append(literal(playerName).withStyle(GOLD))
-                    .append(literal(" (").withStyle(DARK_GRAY))
-                    .append(literal("Offline seit " + dateTimeString).withStyle(RED))
-                    .append(literal(" - ").withStyle(DARK_GRAY))
-                    .append(literal(daysSinceOffline + " " + (daysSinceOffline == 1 ? "Tag" : "Tage")).withStyle(DARK_RED))
-                    .append(literal(") ").withStyle(DARK_GRAY))
+                    .append(literal("  » ").withColor(GRAY))
+                    .append(literal(playerName).withColor(GOLD))
+                    .append(literal(" (").withColor(DARK_GRAY))
+                    .append(literal("Offline seit " + dateTimeString).withColor(RED))
+                    .append(literal(" - ").withColor(DARK_GRAY))
+                    .append(literal(daysSinceOffline + " " + (daysSinceOffline == 1 ? "Tag" : "Tage")).withColor(DARK_RED))
+                    .append(literal(") ").withColor(DARK_GRAY))
                     .append(literal("⨉").withStyle(style -> style
                             .withColor(RED)
                             .withBold(true)
-                            .withHoverEvent(new HoverEvent.ShowText(literal("Kündigen").withStyle(RED)))
+                            .withHoverEvent(new HoverEvent.ShowText(literal("Kündigen").withColor(RED)))
                             .withClickEvent(new ClickEvent.RunCommand("/unrent " + this.lastHouseNumber + " " + playerName))));
 
             player.sendSystemMessage(modifiedText);

@@ -11,8 +11,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 import static de.rettichlp.ucutils.UCUtils.configuration;
-import static net.minecraft.ChatFormatting.GOLD;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.GOLD;
 
 public class CarOptionsScreen extends OptionsScreen {
 
@@ -58,7 +58,7 @@ public class CarOptionsScreen extends OptionsScreen {
         toggleButton3.setTooltip(Tooltip.create(CAR_AUTOMATION_CHECK_KFZ_TOOLTIP));
         gridLayoutRowHelper.addChild(toggleButton3);
 
-        MultiLineTextWidget multiLineTextWidget = gridLayoutRowHelper.addChild(new MultiLineTextWidget(CAR_PREMIUM_INFO.copy().withStyle(GOLD), this.font), 2, LayoutSettings.defaults().alignHorizontallyCenter().paddingTop(16));
+        MultiLineTextWidget multiLineTextWidget = gridLayoutRowHelper.addChild(new MultiLineTextWidget(CAR_PREMIUM_INFO.copy().withColor(GOLD), this.font), 2, LayoutSettings.defaults().alignHorizontallyCenter().paddingTop(16));
         multiLineTextWidget.setMaxWidth(308);
         multiLineTextWidget.setCentered(true);
 

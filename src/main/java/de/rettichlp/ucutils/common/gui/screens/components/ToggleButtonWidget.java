@@ -7,13 +7,13 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.GREEN;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.network.chat.CommonComponents.OPTION_OFF;
 import static net.minecraft.network.chat.CommonComponents.OPTION_ON;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.GREEN;
+import static net.minecraft.network.chat.TextColor.RED;
 
 public class ToggleButtonWidget extends Button.Plain {
 
@@ -43,7 +43,7 @@ public class ToggleButtonWidget extends Button.Plain {
 
     private Component getText() {
         return this.text.copy()
-                .append(literal(":").withStyle(GRAY)).append(" ")
-                .append(this.state ? OPTION_ON.copy().withStyle(GREEN) : OPTION_OFF.copy().withStyle(RED));
+                .append(literal(":").withColor(GRAY)).append(" ")
+                .append(this.state ? OPTION_ON.copy().withColor(GREEN) : OPTION_OFF.copy().withColor(RED));
     }
 }

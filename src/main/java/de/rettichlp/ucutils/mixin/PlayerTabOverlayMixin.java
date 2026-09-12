@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static net.minecraft.ChatFormatting.BOLD;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.RED;
 
 @Mixin(PlayerTabOverlay.class)
 public abstract class PlayerTabOverlayMixin {
@@ -32,7 +32,7 @@ public abstract class PlayerTabOverlayMixin {
                 .anyMatch(wantedEntry -> wantedEntry.getPlayerName().equals(playerName));
 
         if (isWanted) {
-            text = literal(" 🔍").withStyle(RED, BOLD);
+            text = literal(" 🔍").withColor(RED).withStyle(BOLD);
         }
 
         if (text != null) {

@@ -17,27 +17,27 @@ import org.jspecify.annotations.Nullable;
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static de.rettichlp.ucutils.common.gui.widgets.CarLockedWidget.Style.MINIMALISTIC;
 import static java.util.Arrays.asList;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.GREEN;
 import static net.minecraft.client.gui.components.Tooltip.create;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.GREEN;
 
 public class CarLockedWidget extends AbstractTRCTextWidget<CarLockedWidget.Configuration> {
 
     @Override
     public Component text() {
         return getWidgetConfiguration().getStyle() == MINIMALISTIC
-                ? (storage.isCarLocked() ? literal("🔒").withStyle(GREEN) : literal("🔓").withStyle(GOLD))
+                ? (storage.isCarLocked() ? literal("🔒").withColor(GREEN) : literal("🔓").withColor(GOLD))
                 : empty()
-                .append(translatable("ucutils.options.widgets.car_locked.label").withStyle(GRAY))
-                .append(literal(":").withStyle(DARK_GRAY)).append(" ")
+                .append(translatable("ucutils.options.widgets.car_locked.label").withColor(GRAY))
+                .append(literal(":").withColor(DARK_GRAY)).append(" ")
                 .append(storage.isCarLocked()
-                        ? translatable("ucutils.options.widgets.car_locked.locked").withStyle(GREEN)
-                        : translatable("ucutils.options.widgets.car_locked.unlocked").withStyle(GOLD));
+                        ? translatable("ucutils.options.widgets.car_locked.locked").withColor(GREEN)
+                        : translatable("ucutils.options.widgets.car_locked.unlocked").withColor(GOLD));
     }
 
     @Override

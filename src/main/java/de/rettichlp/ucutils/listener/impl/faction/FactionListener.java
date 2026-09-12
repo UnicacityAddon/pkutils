@@ -28,16 +28,16 @@ import static de.rettichlp.ucutils.common.models.Faction.RETTUNGSDIENST;
 import static java.awt.Color.MAGENTA;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
-import static net.minecraft.ChatFormatting.AQUA;
 import static net.minecraft.ChatFormatting.BOLD;
-import static net.minecraft.ChatFormatting.DARK_AQUA;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.AQUA;
+import static net.minecraft.network.chat.TextColor.DARK_AQUA;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.RED;
 
 @UCUtilsListener
 public class FactionListener implements IMessageReceiveListener, IMessageSendListener {
@@ -51,21 +51,21 @@ public class FactionListener implements IMessageReceiveListener, IMessageSendLis
     private static final Pattern FACTION_CHAT_PATTERN = compile("^(?<playerPrefix>[\\p{L} ]+) (?:\\[UC])?(?<senderPlayerName>[a-zA-Z0-9_]+): (?<message>.+)$");
 
     private static final ReinforcementConsumer<String, String, String, String> REINFORCEMENT = (type, sender, naviPoint, distance) -> empty()
-            .append(literal(type).withStyle(RED, BOLD)).append(" ")
-            .append(literal(sender).withStyle(AQUA)).append(" ")
-            .append(literal("-").withStyle(GRAY)).append(" ")
-            .append(literal(naviPoint).withStyle(AQUA)).append(" ")
-            .append(literal("-").withStyle(GRAY)).append(" ")
-            .append(literal(distance + "m").withStyle(DARK_AQUA));
+            .append(literal(type).withColor(RED).withStyle(BOLD)).append(" ")
+            .append(literal(sender).withColor(AQUA)).append(" ")
+            .append(literal("-").withColor(GRAY)).append(" ")
+            .append(literal(naviPoint).withColor(AQUA)).append(" ")
+            .append(literal("-").withColor(GRAY)).append(" ")
+            .append(literal(distance + "m").withColor(DARK_AQUA));
 
     private static final ReinforcementOnTheWayConsumer<String, String, String> REINFORCEMENT_ON_THE_WAY = (sender, target, distance) -> empty()
-            .append(literal("➥").withStyle(GRAY)).append(" ")
-            .append(literal(sender).withStyle(AQUA)).append(" ")
-            .append(literal("➡").withStyle(GRAY)).append(" ")
-            .append(literal(target).withStyle(DARK_AQUA)).append(" ")
-            .append(literal("- (").withStyle(GRAY))
-            .append(literal(distance + "m").withStyle(DARK_AQUA))
-            .append(literal(")").withStyle(GRAY));
+            .append(literal("➥").withColor(GRAY)).append(" ")
+            .append(literal(sender).withColor(AQUA)).append(" ")
+            .append(literal("➡").withColor(GRAY)).append(" ")
+            .append(literal(target).withColor(DARK_AQUA)).append(" ")
+            .append(literal("- (").withColor(GRAY))
+            .append(literal(distance + "m").withColor(DARK_AQUA))
+            .append(literal(")").withColor(GRAY));
 
     private boolean isReinforcementRelevantForFaction = false;
 
@@ -172,7 +172,7 @@ public class FactionListener implements IMessageReceiveListener, IMessageSendLis
                     .append(literal(playerPrefix).withColor(primaryColorValue))
                     .append(literal(" "))
                     .append(literal(senderPlayerName).withColor(secondaryColorValue))
-                    .append(literal(": ").withStyle(DARK_GRAY))
+                    .append(literal(": ").withColor(DARK_GRAY))
                     .append(literal(factionMessage).withColor(secondaryColorValue)));
 
             return false;

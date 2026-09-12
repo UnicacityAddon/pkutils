@@ -13,10 +13,10 @@ import static de.rettichlp.ucutils.UCUtils.storage;
 import static de.rettichlp.ucutils.UCUtils.utilService;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.WHITE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.WHITE;
 
 @Getter
 @RequiredArgsConstructor
@@ -35,8 +35,8 @@ public class Countdown {
                     String millisToFriendlyString = messageService.millisToFriendlyString(getRemainingDuration().toMillis());
 
                     return empty()
-                            .append(literal(this.title).withStyle(WHITE))
-                            .append(literal(":").withStyle(GRAY)).append(" ")
+                            .append(literal(this.title).withColor(WHITE))
+                            .append(literal(":").withColor(GRAY)).append(" ")
                             .append(literal(millisToFriendlyString));
                 })
                 .displayDuration(duration)

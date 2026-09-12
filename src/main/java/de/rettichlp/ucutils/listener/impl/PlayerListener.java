@@ -24,10 +24,10 @@ import static java.lang.Runtime.getRuntime;
 import static java.lang.System.getProperty;
 import static java.time.Duration.ofMinutes;
 import static java.util.regex.Pattern.compile;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.RED;
 
 @UCUtilsListener
 public class PlayerListener implements IMessageReceiveListener {
@@ -162,9 +162,9 @@ public class PlayerListener implements IMessageReceiveListener {
 
         Connection connection = player.connection.getConnection();
         connection.disconnect(empty()
-                .append(literal("Der PC wird in").withStyle(GRAY)).append(" ")
-                .append(literal(SHUTDOWN_TIMEOUT + " Sekunden").withStyle(RED)).append(" ")
-                .append(literal("durch UCUtils heruntergefahren...").withStyle(GRAY)));
+                .append(literal("Der PC wird in").withColor(GRAY)).append(" ")
+                .append(literal(SHUTDOWN_TIMEOUT + " Sekunden").withColor(RED)).append(" ")
+                .append(literal("durch UCUtils heruntergefahren...").withColor(GRAY)));
 
         if (command.length == 0) {
             LOGGER.warn("Unknown operating system {} - shutdown aborted", os);

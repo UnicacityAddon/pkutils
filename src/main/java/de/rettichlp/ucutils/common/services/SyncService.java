@@ -16,13 +16,13 @@ import static de.rettichlp.ucutils.common.models.Faction.NULL;
 import static java.awt.Color.MAGENTA;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MINUTES;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.GREEN;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.GREEN;
+import static net.minecraft.network.chat.TextColor.RED;
 
 public class SyncService {
 
@@ -73,11 +73,11 @@ public class SyncService {
             String currentVersion = utilService.getVersion();
             if (nonNull(latestVersion) && !currentVersion.equals(latestVersion) && !currentVersion.equals("0.0.0") && latestVersion.matches("^\\d+\\.\\d+\\.\\d+$")) {
                 notificationService.sendNotification(empty()
-                        .append(translatable("ucutils.notification.info.new_version").withStyle(GRAY))
-                        .append(literal(":").withStyle(DARK_GRAY)).append(" ")
-                        .append(literal(currentVersion).withStyle(RED)).append(" ")
-                        .append(literal("→").withStyle(GRAY)).append(" ")
-                        .append(literal(latestVersion).withStyle(GREEN)), MAGENTA, MINUTES.toMillis(5));
+                        .append(translatable("ucutils.notification.info.new_version").withColor(GRAY))
+                        .append(literal(":").withColor(DARK_GRAY)).append(" ")
+                        .append(literal(currentVersion).withColor(RED)).append(" ")
+                        .append(literal("→").withColor(GRAY)).append(" ")
+                        .append(literal(latestVersion).withColor(GREEN)), MAGENTA, MINUTES.toMillis(5));
             }
         });
     }

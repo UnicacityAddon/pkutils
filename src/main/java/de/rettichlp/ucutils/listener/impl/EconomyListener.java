@@ -25,12 +25,12 @@ import static java.lang.Math.max;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.ChatFormatting.UNDERLINE;
 import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.RED;
 
 @UCUtilsListener
 public class EconomyListener implements IMessageReceiveListener {
@@ -162,7 +162,7 @@ public class EconomyListener implements IMessageReceiveListener {
                     .append(literal("[" + availableAmount + "$ einzahlen]").withStyle(style -> style
                             .withColor(GOLD)
                             .withClickEvent(new ClickEvent.RunCommand("/bank einzahlen " + availableAmount))
-                            .withHoverEvent(new HoverEvent.ShowText(literal("Nur " + availableAmount + "$ einzahlen").withStyle(GOLD)))));
+                            .withHoverEvent(new HoverEvent.ShowText(literal("Nur " + availableAmount + "$ einzahlen").withColor(GOLD)))));
 
             player.sendSystemMessage(modified);
 
@@ -336,7 +336,7 @@ public class EconomyListener implements IMessageReceiveListener {
             String amountString = businessCashMatcher.group(1);
 
             MutableComponent appendedText = text.copy().append(" ")
-                    .append(literal("Geld entnehmen").withStyle(GRAY, UNDERLINE))
+                    .append(literal("Geld entnehmen").withColor(GRAY).withStyle(UNDERLINE))
                     .withStyle(style -> style
                             .withClickEvent(new ClickEvent.RunCommand("/biz kasse get " + amountString))
                             .withHoverEvent(new HoverEvent.ShowText(literal("Klicke, um " + amountString + "$ aus der Kasse zu nehmen.")))
@@ -358,7 +358,7 @@ public class EconomyListener implements IMessageReceiveListener {
                 MutableComponent modifiedMessage = text.copy()
                         .append(SPACE)
                         .append(literal("↑").withStyle(style -> style
-                                .withHoverEvent(new HoverEvent.ShowText(literal("Du hast die maximale Exp erreicht! Benutze /buylevel um ein Level aufzusteigen.").withStyle(RED)))
+                                .withHoverEvent(new HoverEvent.ShowText(literal("Du hast die maximale Exp erreicht! Benutze /buylevel um ein Level aufzusteigen.").withColor(RED)))
                                 .withColor(RED)
                                 .withBold(true)));
                 player.sendSystemMessage(modifiedMessage);

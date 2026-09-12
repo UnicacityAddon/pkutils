@@ -7,24 +7,25 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static de.rettichlp.ucutils.common.services.RenderService.keyValue;
 import static java.lang.String.valueOf;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.GREEN;
-import static net.minecraft.ChatFormatting.WHITE;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GREEN;
+import static net.minecraft.network.chat.TextColor.WHITE;
 
 public class MedicStatusWidget extends AbstractTRCTextWidget<MedicStatusWidget.Configuration> {
 
     @Override
     public Component text() {
         int medicStatus = storage.getMedicStatus();
-        MutableComponent value = literal(valueOf(medicStatus)).withStyle(getStatusColor(medicStatus));
+        MutableComponent value = literal(valueOf(medicStatus)).withColor(getStatusColor(medicStatus));
         return keyValue(translatable("ucutils.options.widgets.medic_status.label"), value);
     }
 
@@ -52,7 +53,7 @@ public class MedicStatusWidget extends AbstractTRCTextWidget<MedicStatusWidget.C
         return super.isVisible() && (storage.getMedicStatus() > 0 || isWidgetPositionScreen());
     }
 
-    private net.minecraft.ChatFormatting getStatusColor(int medicStatus) {
+    private TextColor getStatusColor(int medicStatus) {
         return switch (medicStatus) {
             case 1, 2 -> GREEN;
             case 6 -> GOLD;
