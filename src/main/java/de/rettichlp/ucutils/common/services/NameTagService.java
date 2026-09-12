@@ -14,6 +14,7 @@ import static de.rettichlp.ucutils.UCUtils.networkHandler;
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.BLUE;
@@ -79,7 +80,7 @@ public class NameTagService {
         Duration pillExpirationDuration = between(now(), pillCooldownExpiration);
         if (pillExpirationDuration.isPositive()) {
             if (!text.getSiblings().isEmpty()) {
-                text.append(" ");
+                text.append(SPACE);
             }
 
             text

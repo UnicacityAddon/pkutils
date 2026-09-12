@@ -40,15 +40,15 @@ public enum Faction {
     KIRCHE("Kirche", "church", false, LIGHT_PURPLE, "†"),
     NEWS("News", "news", false, YELLOW, "✉");
 
+    private static final Faction[] CORPSE_FACTIONS = Stream.of(values())
+            .filter(faction -> faction != NULL)
+            .toArray(Faction[]::new);
+
     private final String displayName;
     private final String apiKey;
     private final boolean isBadFaction;
     private final TextColor color;
     private final String icon;
-
-    private static final Faction[] CORPSE_FACTIONS = Stream.of(values())
-            .filter(faction -> faction != NULL)
-            .toArray(Faction[]::new);
 
     public static @NonNull Faction getFactionByCorpse(@NonNull Nameable itemEntity) {
         if (itemEntity.getCustomName() == null) {

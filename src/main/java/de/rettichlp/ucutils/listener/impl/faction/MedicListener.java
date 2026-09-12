@@ -3,11 +3,11 @@ package de.rettichlp.ucutils.listener.impl.faction;
 import de.rettichlp.ucutils.common.models.Countdown;
 import de.rettichlp.ucutils.common.registry.UCUtilsListener;
 import de.rettichlp.ucutils.listener.IMessageReceiveListener;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 
 import java.awt.Color;
 import java.time.Duration;
@@ -26,17 +26,17 @@ import static java.time.Duration.ofMinutes;
 import static java.time.LocalDateTime.now;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.ChatFormatting.BOLD;
-import static net.minecraft.ChatFormatting.DARK_AQUA;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.DARK_GREEN;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.GREEN;
-import static net.minecraft.ChatFormatting.RED;
-import static net.minecraft.ChatFormatting.YELLOW;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.DARK_AQUA;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.DARK_GREEN;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.GREEN;
 import static net.minecraft.network.chat.TextColor.LIGHT_PURPLE;
+import static net.minecraft.network.chat.TextColor.RED;
+import static net.minecraft.network.chat.TextColor.YELLOW;
 
 @UCUtilsListener
 public class MedicListener implements IMessageReceiveListener {
@@ -147,11 +147,11 @@ public class MedicListener implements IMessageReceiveListener {
             player.sendSystemMessage(empty());
 
             MutableComponent storageText = empty()
-                    .append(literal("[").withStyle(DARK_GRAY))
+                    .append(literal("[").withColor(DARK_GRAY))
                     .append(STORAGE_TEXT)
-                    .append(literal("] ").withStyle(DARK_GRAY))
-                    .append(literal("Aktueller Bestand (geteilt von " + playerName + ")").withStyle(GRAY))
-                    .append(literal(":").withStyle(DARK_GRAY));
+                    .append(literal("] ").withColor(DARK_GRAY))
+                    .append(literal("Aktueller Bestand (geteilt von " + playerName + ")").withColor(GRAY))
+                    .append(literal(":").withColor(DARK_GRAY));
 
             player.sendSystemMessage(storageText);
 
@@ -171,20 +171,20 @@ public class MedicListener implements IMessageReceiveListener {
             int amountAfter = parseInt(storageIngredientAcceptMatcher.group("amountAfter"));
 
             player.sendSystemMessage(empty()
-                    .append(literal("[").withStyle(DARK_GRAY))
+                    .append(literal("[").withColor(DARK_GRAY))
                     .append(STORAGE_TEXT)
-                    .append(literal("] ").withStyle(DARK_GRAY))
-                    .append(literal(playerName).withStyle(RED))
-                    .append(literal(" übernimmt ").withStyle(GRAY))
-                    .append(literal(ingredient).withStyle(RED))
-                    .append(literal(":").withStyle(DARK_GRAY)));
+                    .append(literal("] ").withColor(DARK_GRAY))
+                    .append(literal(playerName).withColor(RED))
+                    .append(literal(" übernimmt ").withColor(GRAY))
+                    .append(literal(ingredient).withColor(RED))
+                    .append(literal(":").withColor(DARK_GRAY)));
 
             player.sendSystemMessage(empty()
-                    .append(literal("  > ").withStyle(DARK_GRAY))
-                    .append(literal("Geschätzte Menge nach Transport").withStyle(GRAY))
-                    .append(literal(": ").withStyle(DARK_GRAY))
-                    .append(literal(amountBefore + " → ").withStyle(GRAY))
-                    .append(literal(valueOf(amountAfter)).withStyle(getColor(amountAfter), BOLD)));
+                    .append(literal("  > ").withColor(DARK_GRAY))
+                    .append(literal("Geschätzte Menge nach Transport").withColor(GRAY))
+                    .append(literal(": ").withColor(DARK_GRAY))
+                    .append(literal(amountBefore + " → ").withColor(GRAY))
+                    .append(literal(valueOf(amountAfter)).withColor(getColor(amountAfter)).withStyle(BOLD)));
             return false;
         }
 
@@ -193,19 +193,19 @@ public class MedicListener implements IMessageReceiveListener {
 
     private MutableComponent getIngredientText(String ingredient, int amount) {
         return empty()
-                .append(literal("  > ").withStyle(DARK_GRAY))
-                .append(literal("[").withStyle(DARK_GRAY))
+                .append(literal("  > ").withColor(DARK_GRAY))
+                .append(literal("[").withColor(DARK_GRAY))
                 .append(literal("Ich übernehme!").withStyle(style -> style
                         .withColor(DARK_AQUA)
                         .withHoverEvent(new HoverEvent.ShowText(literal("Klicke um bescheid zu sagen, dass Du den Transport übernimmst")))
                         .withClickEvent(new ClickEvent.RunCommand("/f Ich nehme " + ingredient + "! (geschätzt: " + amount + " → " + (amount + 20) + ")"))))
-                .append(literal("] ").withStyle(DARK_GRAY))
-                .append(literal(ingredient).withStyle(GRAY))
-                .append(literal(": ").withStyle(DARK_GRAY))
-                .append(literal(valueOf(amount)).withStyle(getColor(amount), BOLD));
+                .append(literal("] ").withColor(DARK_GRAY))
+                .append(literal(ingredient).withColor(GRAY))
+                .append(literal(": ").withColor(DARK_GRAY))
+                .append(literal(valueOf(amount)).withColor(getColor(amount)).withStyle(BOLD));
     }
 
-    private ChatFormatting getColor(int amount) {
+    private TextColor getColor(int amount) {
         if (amount >= 80) {
             return DARK_GREEN;
         } else if (amount >= 60) {

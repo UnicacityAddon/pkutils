@@ -16,10 +16,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static de.rettichlp.ucutils.UCUtils.configuration;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.GRAY;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.GRAY;
 
 public class RenderService {
 
@@ -46,11 +47,11 @@ public class RenderService {
     }
 
     public ToggleButtonWidget addToggleButton(@NotNull LinearLayout widget,
-                                Component name,
-                                Component tooltip,
-                                BiConsumer<Options, Boolean> onPress,
-                                @NotNull Function<Options, Boolean> currentValue,
-                                int width) {
+                                              Component name,
+                                              Component tooltip,
+                                              BiConsumer<Options, Boolean> onPress,
+                                              @NotNull Function<Options, Boolean> currentValue,
+                                              int width) {
         ToggleButtonWidget toggleButton = new ToggleButtonWidget(name, value -> onPress.accept(configuration.getOptions(), value), currentValue.apply(configuration.getOptions()));
 
         toggleButton.setWidth(width);
@@ -65,7 +66,7 @@ public class RenderService {
     }
 
     public static @NonNull MutableComponent keyValue(String key, Component value) {
-        return keyValue(literal(key).withStyle(GRAY), value);
+        return keyValue(literal(key).withColor(GRAY), value);
     }
 
     public static @NonNull MutableComponent keyValue(@NonNull MutableComponent key, String value) {
@@ -74,8 +75,8 @@ public class RenderService {
 
     public static @NonNull MutableComponent keyValue(@NonNull MutableComponent key, Component value) {
         return empty()
-                .append(key.withStyle(GRAY))
-                .append(literal(":").withStyle(DARK_GRAY)).append(" ")
+                .append(key.withColor(GRAY))
+                .append(literal(":").withColor(DARK_GRAY)).append(SPACE)
                 .append(value);
     }
 }

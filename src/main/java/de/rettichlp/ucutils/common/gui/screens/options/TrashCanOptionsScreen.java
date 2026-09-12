@@ -57,7 +57,10 @@ public class TrashCanOptionsScreen extends OptionsScreen {
         gridLayout.visitWidgets(this::addRenderableWidget);
     }
 
-    private void addToggleButton(GridLayout.@NonNull RowHelper gridLayoutRowHelper, Component name, boolean currentValue, Consumer<Boolean> setter) {
+    private void addToggleButton(GridLayout.@NonNull RowHelper gridLayoutRowHelper,
+                                 Component name,
+                                 boolean currentValue,
+                                 Consumer<Boolean> setter) {
         ToggleButtonWidget toggleButton = new ToggleButtonWidget(name, setter, currentValue);
         toggleButton.setWidth(150);
         gridLayoutRowHelper.addChild(toggleButton);

@@ -8,12 +8,12 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 
 import static de.rettichlp.ucutils.UCUtils.storage;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.GRAY;
 import static net.minecraft.client.gui.layouts.LinearLayout.vertical;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GRAY;
 
 public class ShutdownScreen extends UCUtilsScreen {
 
@@ -32,18 +32,18 @@ public class ShutdownScreen extends UCUtilsScreen {
         directionalLayoutWidget.newCellSettings().alignHorizontallyCenter();
 
         directionalLayoutWidget.addChild(new StringWidget(empty()
-                .append(literal("Das Spiel wird beendet und der PC heruntergefahren,").withStyle(GRAY)), this.font), positioner -> positioner.alignHorizontallyCenter().paddingTop(16));
+                .append(literal("Das Spiel wird beendet und der PC heruntergefahren,").withColor(GRAY)), this.font), positioner -> positioner.alignHorizontallyCenter().paddingTop(16));
 
         directionalLayoutWidget.addChild(new StringWidget(empty()
-                .append(literal("wenn folgende Bedingung erfüllt ist:").withStyle(GRAY)), this.font), positioner -> positioner.alignHorizontallyCenter().paddingBottom(16));
+                .append(literal("wenn folgende Bedingung erfüllt ist:").withColor(GRAY)), this.font), positioner -> positioner.alignHorizontallyCenter().paddingBottom(16));
 
-        directionalLayoutWidget.addChild(new StringWidget(literal(this.shutdownReason.getConditionString()).withStyle(GOLD), this.font), LayoutSettings::alignHorizontallyCenter);
-
-        directionalLayoutWidget.addChild(new StringWidget(empty()
-                .append(literal("Wenn du dieses Fenster schließt,").withStyle(GRAY)), this.font), positioner -> positioner.alignHorizontallyCenter().paddingTop(16));
+        directionalLayoutWidget.addChild(new StringWidget(literal(this.shutdownReason.getConditionString()).withColor(GOLD), this.font), LayoutSettings::alignHorizontallyCenter);
 
         directionalLayoutWidget.addChild(new StringWidget(empty()
-                .append(literal("wird das automatische Herunterfahren gestoppt.").withStyle(GRAY)), this.font), positioner -> positioner.alignHorizontallyCenter().paddingBottom(16));
+                .append(literal("Wenn du dieses Fenster schließt,").withColor(GRAY)), this.font), positioner -> positioner.alignHorizontallyCenter().paddingTop(16));
+
+        directionalLayoutWidget.addChild(new StringWidget(empty()
+                .append(literal("wird das automatische Herunterfahren gestoppt.").withColor(GRAY)), this.font), positioner -> positioner.alignHorizontallyCenter().paddingBottom(16));
 
         directionalLayoutWidget.addChild(Button.builder(BUTTON_SHUTDOWN_ABORT_NAME, button -> onClose()).width(150).build(), LayoutSettings::alignHorizontallyCenter);
 
