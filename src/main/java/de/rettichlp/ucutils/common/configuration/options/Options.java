@@ -14,13 +14,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static de.rettichlp.ucutils.common.configuration.options.Options.ReinforcementType.UNICACITYADDON;
-import static net.minecraft.ChatFormatting.AQUA;
-import static net.minecraft.ChatFormatting.BLUE;
-import static net.minecraft.ChatFormatting.DARK_AQUA;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.client.gui.components.Tooltip.create;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.AQUA;
+import static net.minecraft.network.chat.TextColor.BLUE;
+import static net.minecraft.network.chat.TextColor.DARK_AQUA;
+import static net.minecraft.network.chat.TextColor.RED;
 import static net.minecraft.world.item.Items.CHEST;
 import static net.minecraft.world.item.Items.ENDER_CHEST;
 import static net.minecraft.world.item.Items.TRAPPED_CHEST;
@@ -47,14 +47,14 @@ public class Options {
     public enum ReinforcementType implements CyclingButtonEntry {
 
         UCUTILS(empty()
-                .append(literal("UC").withStyle(DARK_AQUA))
-                .append(literal("Utils").withStyle(AQUA))),
+                .append(literal("UC").withColor(DARK_AQUA))
+                .append(literal("Utils").withColor(AQUA))),
         UNICACITYADDON(empty()
-                .append(literal("U").withStyle(BLUE))
+                .append(literal("U").withColor(BLUE))
                 .append(literal("nica"))
-                .append(literal("C").withStyle(RED))
+                .append(literal("C").withColor(RED))
                 .append(literal("ity"))
-                .append(literal("A").withStyle(BLUE))
+                .append(literal("A").withColor(BLUE))
                 .append(literal("ddon")));
 
         private final Component displayName;

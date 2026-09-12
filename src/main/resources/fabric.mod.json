@@ -16,11 +16,13 @@
   ],
   "contact": {
     "homepage": "https://rettichlp.de/",
-    "sources": "https://github.com/UnicacityAddon/ucutils"
+    "sources": "https://github.com/UnicacityAddon/ucutils",
+    "issues": "https://github.com/UnicacityAddon/ucutils/issues",
+    "discord": "https://discord.gg/mZGAAwhPHu"
   },
   "license": "Apache-2.0",
   "icon": "assets/ucutils/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
       "de.rettichlp.ucutils.UCUtils"

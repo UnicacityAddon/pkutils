@@ -13,11 +13,11 @@ import static de.rettichlp.ucutils.UCUtils.player;
 import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.DARK_PURPLE;
-import static net.minecraft.ChatFormatting.LIGHT_PURPLE;
-import static net.minecraft.ChatFormatting.WHITE;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.DARK_PURPLE;
+import static net.minecraft.network.chat.TextColor.LIGHT_PURPLE;
+import static net.minecraft.network.chat.TextColor.WHITE;
 
 public class MessageService {
 
@@ -25,15 +25,15 @@ public class MessageService {
     public static final DateTimeFormatter TIME_FORMAT = ofPattern("HH:mm:ss");
 
     protected static final MutableComponent modMessagePrefix = Component.empty()
-            .append(literal("✦").withStyle(DARK_PURPLE))
+            .append(literal("✦").withColor(DARK_PURPLE))
             .append(literal(" "))
-            .append(literal("UCU").withStyle(LIGHT_PURPLE))
+            .append(literal("UCU").withColor(LIGHT_PURPLE))
             .append(literal(" "))
-            .append(literal("|").withStyle(DARK_GRAY))
+            .append(literal("|").withColor(DARK_GRAY))
             .append(literal(" "));
 
     public void sendModMessage(String message, boolean inActionbar) {
-        messageService.sendModMessage(literal(message).withStyle(WHITE), inActionbar);
+        messageService.sendModMessage(literal(message).withColor(WHITE), inActionbar);
     }
 
     public void sendModMessage(Component message, boolean inActionbar) {

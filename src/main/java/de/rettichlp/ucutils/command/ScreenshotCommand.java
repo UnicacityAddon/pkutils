@@ -22,12 +22,13 @@ import static java.lang.String.valueOf;
 import static java.nio.file.Files.list;
 import static java.util.Arrays.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
-import static net.minecraft.ChatFormatting.AQUA;
-import static net.minecraft.ChatFormatting.DARK_AQUA;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.GRAY;
 import static net.minecraft.commands.SharedSuggestionProvider.suggest;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
+import static net.minecraft.network.chat.TextColor.AQUA;
+import static net.minecraft.network.chat.TextColor.DARK_AQUA;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.GRAY;
 
 @UCUtilsCommand(label = "screenshot")
 public class ScreenshotCommand extends CommandBase {
@@ -56,13 +57,13 @@ public class ScreenshotCommand extends CommandBase {
                         }
 
                         messageService.sendModMessage(empty()
-                                .append(Component.literal(screenshotType.getDisplayName()).withStyle(GRAY))
-                                .append(Component.literal(":").withStyle(DARK_GRAY)).append(" ")
+                                .append(Component.literal(screenshotType.getDisplayName()).withColor(GRAY))
+                                .append(Component.literal(":").withColor(DARK_GRAY)).append(SPACE)
                                 .append(Component.literal(valueOf(fileCount)))
                                 .append(Component.literal(" ↗").withStyle(style -> style
                                         .withColor(AQUA)
                                         .withBold(true)
-                                        .withHoverEvent(new HoverEvent.ShowText(Component.literal("Ordner öffnen").withStyle(DARK_AQUA)))
+                                        .withHoverEvent(new HoverEvent.ShowText(Component.literal("Ordner öffnen").withColor(DARK_AQUA)))
                                         .withClickEvent(new ClickEvent.OpenFile(screenshotDirectory.getAbsolutePath())))), false);
                     }
 

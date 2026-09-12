@@ -22,6 +22,8 @@ public class NotificationOptionsScreen extends OptionsScreen {
     private static final Component NOTIFICATION_REPORT_TOOLTIP = translatable("ucutils.options.notifications.report.tooltip");
     private static final Component NOTIFICATION_BUILD_MODE_NAME = translatable("ucutils.options.notifications.build_mode.name");
     private static final Component NOTIFICATION_BUILD_MODE_TOOLTIP = translatable("ucutils.options.notifications.build_mode.tooltip");
+    private static final Component NOTIFICATION_JOB_COOLDOWN_NAME = translatable("ucutils.options.notifications.job_cooldown.name");
+    private static final Component NOTIFICATION_JOB_COOLDOWN_TOOLTIP = translatable("ucutils.options.notifications.job_cooldown.tooltip");
 
     public NotificationOptionsScreen(Screen parent) {
         super(parent, TEXT_NOTIFICATIONS);
@@ -54,6 +56,11 @@ public class NotificationOptionsScreen extends OptionsScreen {
         toggleButton4.setWidth(150);
         toggleButton4.setTooltip(Tooltip.create(NOTIFICATION_BUILD_MODE_TOOLTIP));
         gridLayoutRowHelper.addChild(toggleButton4);
+
+        ToggleButtonWidget toggleButton5 = new ToggleButtonWidget(NOTIFICATION_JOB_COOLDOWN_NAME, notificationOptions::jobCooldown, notificationOptions.jobCooldown());
+        toggleButton5.setWidth(150);
+        toggleButton5.setTooltip(Tooltip.create(NOTIFICATION_JOB_COOLDOWN_TOOLTIP));
+        gridLayoutRowHelper.addChild(toggleButton5);
 
         gridLayout.arrangeElements();
         gridLayout.visitWidgets(this::addRenderableWidget);

@@ -19,13 +19,13 @@ import static de.rettichlp.ucutils.UCUtils.configuration;
 import static de.rettichlp.ucutils.UCUtils.player;
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static java.util.Objects.requireNonNull;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.DARK_RED;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.RED;
-import static net.minecraft.ChatFormatting.YELLOW;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.DARK_RED;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.RED;
+import static net.minecraft.network.chat.TextColor.YELLOW;
 import static net.minecraft.world.entity.Entity.RemovalReason.DISCARDED;
 import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
@@ -65,26 +65,26 @@ public class ClientPacketListenerMixin {
                     case "Dealer" -> {
                         storage.setBlackMarketPosition(entityPos);
                         player.sendSystemMessage(empty()
-                                .append(literal("[").withStyle(DARK_GRAY))
-                                .append(literal("Dealer").withStyle(RED))
-                                .append(literal("] ").withStyle(DARK_GRAY))
-                                .append(literal("Der Dealer ist in der Nähe!").withStyle(GRAY)));
+                                .append(literal("[").withColor(DARK_GRAY))
+                                .append(literal("Dealer").withColor(RED))
+                                .append(literal("] ").withColor(DARK_GRAY))
+                                .append(literal("Der Dealer ist in der Nähe!").withColor(GRAY)));
                     }
                     case "Schwarzmarkt" -> {
                         storage.setDealerPosition(entityPos);
                         player.sendSystemMessage(empty()
-                                .append(literal("[").withStyle(DARK_GRAY))
-                                .append(literal("Schwarzmarkt").withStyle(RED))
-                                .append(literal("] ").withStyle(DARK_GRAY))
-                                .append(literal("Der Schwarzmarkt ist in der Nähe!").withStyle(GRAY)));
+                                .append(literal("[").withColor(DARK_GRAY))
+                                .append(literal("Schwarzmarkt").withColor(RED))
+                                .append(literal("] ").withColor(DARK_GRAY))
+                                .append(literal("Der Schwarzmarkt ist in der Nähe!").withColor(GRAY)));
                     }
                     case "Bluthändler" -> {
                         storage.setBloodDealerPosition(entityPos);
                         player.sendSystemMessage(empty()
-                                .append(literal("[").withStyle(DARK_GRAY))
-                                .append(literal("Bluthändler").withStyle(DARK_RED))
-                                .append(literal("] ").withStyle(DARK_GRAY))
-                                .append(literal("Der Bluthändler ist in der Nähe!").withStyle(GRAY)));
+                                .append(literal("[").withColor(DARK_GRAY))
+                                .append(literal("Bluthändler").withColor(DARK_RED))
+                                .append(literal("] ").withColor(DARK_GRAY))
+                                .append(literal("Der Bluthändler ist in der Nähe!").withColor(GRAY)));
                     }
                 }
             }
@@ -97,10 +97,10 @@ public class ClientPacketListenerMixin {
                 if (customNameString.equals("Sommerschatz")) {
                     storage.setSummerTreasurePosition(entityPos);
                     player.sendSystemMessage(empty()
-                            .append(literal("[").withStyle(DARK_GRAY))
-                            .append(literal("Schatzsuche").withStyle(YELLOW))
-                            .append(literal("] ").withStyle(DARK_GRAY))
-                            .append(literal("Der Sommerschatz ist in der Nähe!").withStyle(GRAY)));
+                            .append(literal("[").withColor(DARK_GRAY))
+                            .append(literal("Schatzsuche").withColor(YELLOW))
+                            .append(literal("] ").withColor(DARK_GRAY))
+                            .append(literal("Der Sommerschatz ist in der Nähe!").withColor(GRAY)));
                 }
             }
             default -> {

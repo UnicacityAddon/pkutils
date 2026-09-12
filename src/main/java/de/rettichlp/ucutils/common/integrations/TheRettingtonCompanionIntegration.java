@@ -6,6 +6,7 @@ import de.rettichlp.therettingtoncompanion.gui.widgets.base.AbstractTRCWidget;
 import de.rettichlp.therettingtoncompanion.models.Notification;
 import de.rettichlp.ucutils.common.gui.widgets.CarLockedWidget;
 import de.rettichlp.ucutils.common.gui.widgets.CorpseCountWidget;
+import de.rettichlp.ucutils.common.gui.widgets.MedicStatusWidget;
 import de.rettichlp.ucutils.common.gui.widgets.MoneyWidget;
 import de.rettichlp.ucutils.common.gui.widgets.PayDayWidget;
 import de.rettichlp.ucutils.common.gui.widgets.ServiceCountWidget;
@@ -32,6 +33,7 @@ public class TheRettingtonCompanionIntegration implements TheRettingtonCompanion
         return List.of(
                 new CarLockedWidget(),
                 new CorpseCountWidget(),
+                new MedicStatusWidget(),
                 new MoneyWidget(),
                 new PayDayWidget(),
                 new ServiceCountWidget()
@@ -71,7 +73,7 @@ public class TheRettingtonCompanionIntegration implements TheRettingtonCompanion
                 toHiddenMessage(compile("^\\[Küche] \uD83C\uDF73 Klicke das schwebende Item bevor es verschwindet!$")),
                 toHiddenMessage(compile("^\\[Küche] ✔ Erwischt! Qualität steigt\\.$")),
                 // lumberjack
-                toHiddenMessage(compile("^\\[Holzfäller] 3 Perk\\(s\\) geladen\\.$")),
+                toHiddenMessage(compile("^\\[Holzfäller] \\d Perk\\(s\\) geladen\\.$")),
                 // faction: medics
                 toHiddenMessage(compile("^\\[ʟᴀʙᴏʀ] \\d+ Kräuter-Rezept\\(e\\) ausgegeben \\(\\d+g Gras verbraucht · \\d+g verbleibend\\)\\.$")),
                 toHiddenMessage(compile("^\\[Tierarzt] Standort: -?\\d+ -?\\d+ -?\\d+ – behandle das Tier per Sneak-Rechtsklick\\.$"))

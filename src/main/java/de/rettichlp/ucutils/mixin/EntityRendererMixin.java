@@ -18,14 +18,14 @@ import static de.rettichlp.ucutils.UCUtils.configuration;
 import static de.rettichlp.ucutils.UCUtils.nameTagService;
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static net.minecraft.ChatFormatting.BOLD;
-import static net.minecraft.ChatFormatting.GOLD;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.GOLD;
 
 @Mixin(EntityRenderer.class)
 public abstract class EntityRendererMixin<T extends Entity, S extends EntityRenderState> {
 
     @Unique
-    private static final Component AFK_TAG = literal("ᴀꜰᴋ").withStyle(GOLD, BOLD);
+    private static final Component AFK_TAG = literal("ᴀꜰᴋ").withColor(GOLD).withStyle(BOLD);
 
     @Inject(method = "submitNameDisplay(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;I)V",
             at = @At(value = "INVOKE",

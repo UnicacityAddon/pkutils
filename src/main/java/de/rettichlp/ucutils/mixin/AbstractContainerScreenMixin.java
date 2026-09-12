@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static de.rettichlp.ucutils.UCUtils.LOGGER;
@@ -43,20 +44,23 @@ import static java.awt.Color.BLUE;
 import static java.lang.Integer.parseInt;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.DARK_GREEN;
-import static net.minecraft.ChatFormatting.DARK_RED;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.GREEN;
-import static net.minecraft.ChatFormatting.RED;
-import static net.minecraft.ChatFormatting.YELLOW;
 import static net.minecraft.core.component.DataComponents.LORE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.DARK_GREEN;
+import static net.minecraft.network.chat.TextColor.DARK_RED;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.GREEN;
+import static net.minecraft.network.chat.TextColor.RED;
+import static net.minecraft.network.chat.TextColor.YELLOW;
 import static net.minecraft.world.inventory.ContainerInput.PICKUP;
+import static net.minecraft.world.item.Items.FERN;
 import static net.minecraft.world.item.Items.PLAYER_HEAD;
+import static net.minecraft.world.item.Items.QUARTZ;
+import static net.minecraft.world.item.Items.SUGAR;
 
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> extends Screen implements MenuAccess<T> {
@@ -70,6 +74,8 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 
     @Shadow
     protected int topPos;
+
+    private static final Pattern DRUG_AMOUNT_PATTERN = compile("(?<amount>\\d+)g");
 
     protected AbstractContainerScreenMixin(Component title) {
         super(title);
@@ -118,8 +124,9 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
                     }
                 }
             }
+            case "Durchsuchung" -> extractTrunkHighlight(graphics, mouseX, mouseY, a);
             default -> {
-                if (commandService.isSuperUser()) {
+                if (commandService.isSuperUser() && player.isShiftKeyDown()) {
                     LOGGER.info("Screen opened: {}", title);
                 }
             }
@@ -172,41 +179,41 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
     private void extractStockMarketLegend(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         Stream<Component> legendComponents = Stream.of(
                 empty()
-                        .append(translatable("ucutils.legend").withStyle(GRAY))
-                        .append(literal(":").withStyle(DARK_GRAY)),
+                        .append(translatable("ucutils.legend").withColor(GRAY))
+                        .append(literal(":").withColor(DARK_GRAY)),
                 empty()
-                        .append(literal(" • ").withStyle(DARK_GRAY))
+                        .append(literal(" • ").withColor(DARK_GRAY))
                         .append(translatable("ucutils.minimum_price").withColor(BLUE.getRGB())),
                 empty()
-                        .append(literal(" • ").withStyle(DARK_GRAY))
-                        .append(translatable("ucutils.price_difference").withStyle(GRAY))
-                        .append(literal(": ").withStyle(DARK_GRAY))
-                        .append(literal("Δp ≥ 75$").withStyle(DARK_GREEN)),
+                        .append(literal(" • ").withColor(DARK_GRAY))
+                        .append(translatable("ucutils.price_difference").withColor(GRAY))
+                        .append(literal(": ").withColor(DARK_GRAY))
+                        .append(literal("Δp ≥ 75$").withColor(DARK_GREEN)),
                 empty()
-                        .append(literal(" • ").withStyle(DARK_GRAY))
-                        .append(translatable("ucutils.price_difference").withStyle(GRAY))
-                        .append(literal(": ").withStyle(DARK_GRAY))
-                        .append(literal("Δp ≥ 60$").withStyle(GREEN)),
+                        .append(literal(" • ").withColor(DARK_GRAY))
+                        .append(translatable("ucutils.price_difference").withColor(GRAY))
+                        .append(literal(": ").withColor(DARK_GRAY))
+                        .append(literal("Δp ≥ 60$").withColor(GREEN)),
                 empty()
-                        .append(literal(" • ").withStyle(DARK_GRAY))
-                        .append(translatable("ucutils.price_difference").withStyle(GRAY))
-                        .append(literal(": ").withStyle(DARK_GRAY))
-                        .append(literal("Δp ≥ 45$").withStyle(YELLOW)),
+                        .append(literal(" • ").withColor(DARK_GRAY))
+                        .append(translatable("ucutils.price_difference").withColor(GRAY))
+                        .append(literal(": ").withColor(DARK_GRAY))
+                        .append(literal("Δp ≥ 45$").withColor(YELLOW)),
                 empty()
-                        .append(literal(" • ").withStyle(DARK_GRAY))
-                        .append(translatable("ucutils.price_difference").withStyle(GRAY))
-                        .append(literal(": ").withStyle(DARK_GRAY))
-                        .append(literal("Δp ≥ 30$").withStyle(GOLD)),
+                        .append(literal(" • ").withColor(DARK_GRAY))
+                        .append(translatable("ucutils.price_difference").withColor(GRAY))
+                        .append(literal(": ").withColor(DARK_GRAY))
+                        .append(literal("Δp ≥ 30$").withColor(GOLD)),
                 empty()
-                        .append(literal(" • ").withStyle(DARK_GRAY))
-                        .append(translatable("ucutils.price_difference").withStyle(GRAY))
-                        .append(literal(": ").withStyle(DARK_GRAY))
-                        .append(literal("Δp ≥ 15$").withStyle(RED)),
+                        .append(literal(" • ").withColor(DARK_GRAY))
+                        .append(translatable("ucutils.price_difference").withColor(GRAY))
+                        .append(literal(": ").withColor(DARK_GRAY))
+                        .append(literal("Δp ≥ 15$").withColor(RED)),
                 empty()
-                        .append(literal(" • ").withStyle(DARK_GRAY))
-                        .append(translatable("ucutils.price_difference").withStyle(GRAY))
-                        .append(literal(": ").withStyle(DARK_GRAY))
-                        .append(literal("Δp < 15$").withStyle(DARK_RED)));
+                        .append(literal(" • ").withColor(DARK_GRAY))
+                        .append(translatable("ucutils.price_difference").withColor(GRAY))
+                        .append(literal(": ").withColor(DARK_GRAY))
+                        .append(literal("Δp < 15$").withColor(DARK_RED)));
 
         List<ClientTooltipComponent> legendClientTooltipComponents = legendComponents
                 .map(Component::getVisualOrderText)
@@ -214,6 +221,33 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
                 .toList();
 
         graphics.tooltip(this.minecraft.font, legendClientTooltipComponents, this.leftPos + this.imageWidth + 2, this.topPos, new CompanyShareTooltipPositioner(), null);
+    }
+
+    @Unique
+    private void extractTrunkHighlight(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        for (Slot slot : player.containerMenu.slots) {
+            ItemStack itemStack = slot.getItem();
+            ItemLore itemLore = itemStack.get(LORE);
+
+            if (itemStack.isEmpty() || itemStack.getCustomName() == null || itemLore == null || itemLore.lines().isEmpty()) {
+                continue;
+            }
+
+            Matcher matcher = DRUG_AMOUNT_PATTERN.matcher(itemLore.lines().getFirst().getString());
+            if (matcher.find()) {
+                int amount = parseInt(matcher.group("amount"));
+                if (amount == 0) {
+                    continue;
+                }
+
+                int x = this.leftPos + slot.x;
+                int y = this.topPos + slot.y;
+
+                Color color = (itemStack.is(SUGAR) || itemStack.is(FERN) || itemStack.is(QUARTZ)) ? Color.RED : Color.GREEN;
+                int argb = (0x80 << 24) | (color.getRGB() & 0x00FFFFFF);
+                graphics.fill(x, y, x + 16, y + 16, argb);
+            }
+        }
     }
 
     @Unique

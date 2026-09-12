@@ -20,13 +20,13 @@ import static de.rettichlp.ucutils.UCUtils.player;
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static java.awt.Color.WHITE;
 import static java.util.Optional.ofNullable;
-import static net.minecraft.ChatFormatting.BLUE;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.YELLOW;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
+import static net.minecraft.network.chat.TextColor.BLUE;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.YELLOW;
 import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 @Mixin(ClientPacketListener.class)
@@ -34,21 +34,21 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
     @Unique
     private static final MutableComponent A_DUTY_PREFIX = empty()
-            .append(literal("[").withStyle(DARK_GRAY)
-                    .append(literal("UC").withStyle(BLUE))
-                    .append(literal("]").withStyle(DARK_GRAY)));
+            .append(literal("[").withColor(DARK_GRAY)
+                    .append(literal("UC").withColor(BLUE))
+                    .append(literal("]").withColor(DARK_GRAY)));
 
     @Unique
     private static final MutableComponent BUILD_MODE_PREFIX = empty()
-            .append(literal("[").withStyle(DARK_GRAY)
-                    .append(literal("B").withStyle(YELLOW))
-                    .append(literal("]").withStyle(DARK_GRAY)));
+            .append(literal("[").withColor(DARK_GRAY)
+                    .append(literal("B").withColor(YELLOW))
+                    .append(literal("]").withColor(DARK_GRAY)));
 
     @Unique
     private static final MutableComponent REPORT_PREFIX = empty()
-            .append(literal("[").withStyle(DARK_GRAY)
-                    .append(literal("R").withStyle(GOLD))
-                    .append(literal("]").withStyle(DARK_GRAY)));
+            .append(literal("[").withColor(DARK_GRAY)
+                    .append(literal("R").withColor(GOLD))
+                    .append(literal("]").withColor(DARK_GRAY)));
 
     @Inject(method = "handlePlayerInfoRemove",
             at = @At(value = "INVOKE",

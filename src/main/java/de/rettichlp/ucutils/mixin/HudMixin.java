@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.InputStream;
@@ -41,13 +42,25 @@ import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 public abstract class HudMixin {
 
     @Unique
-    private static final Identifier HYDRATION_EMPTY_TEXTURE = fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_empty.png");
+    private static final Identifier[] HYDRATION_DEFAULT_TEXTURES = {
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_1_empty.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_1_half.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_1_full.png")
+    };
 
     @Unique
-    private static final Identifier HYDRATION_HALF_TEXTURE = fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_half.png");
+    private static final Identifier[] HYDRATION_STYLE_2_TEXTURES = {
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_2_empty.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_2_half.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_2_full.png")
+    };
 
     @Unique
-    private static final Identifier HYDRATION_FULL_TEXTURE = fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_full.png");
+    private static final Identifier[] HYDRATION_STYLE_3_TEXTURES = {
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_3_empty.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_3_half.png"),
+            fromNamespaceAndPath(MOD_ID, "textures/hud/hydration_style_3_full.png")
+    };
 
     @Unique
     private static final Identifier CAPTCHA_IDENTIFIER = fromNamespaceAndPath(MOD_ID, "captcha");
@@ -110,33 +123,52 @@ public abstract class HudMixin {
         Profiler.get().pop();
     }
 
+    @ModifyArg(method = "extractPlayerHealth",
+               at = @At(value = "INVOKE",
+                        target = "Lnet/minecraft/client/gui/Hud;extractAirBubbles(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/world/entity/player/Player;III)V"),
+               index = 3)
+    private int ucutils$shiftAirBubblesForHydration(int yLineAir) {
+        if (!storage.isUnicaCity()) {
+            return yLineAir;
+        }
+
+        if (!configuration.getOptions().miscellaneous().showHydration() || storage.getHydration() < 0) {
+            return yLineAir;
+        }
+
+        // move the air bubbles one row up so the hydration bar can take their usual spot
+        return yLineAir - 10;
+    }
+
     @Unique
     private void renderHydration(GuiGraphicsExtractor context, int yLineAir, int xRight) {
         double maxHydrated = 20;
         long round = round(storage.getHydration());
         int hydration = (int) clamp(round, 0, maxHydrated);
 
-        if (player.isUnderWater() || player.getAirSupply() < player.getMaxAirSupply()) {
-            yLineAir -= 10;
-        }
-
         if (player.getVehicle() instanceof LivingEntity livingEntity) {
             int hearthRows = (int) ceil(livingEntity.getHealth() / 20.0);
             yLineAir -= hearthRows * 10;
         }
 
+        Identifier[] textures = switch (configuration.getOptions().miscellaneous().hydrationTextureType()) {
+            case STYLE_1 -> HYDRATION_DEFAULT_TEXTURES;
+            case STYLE_2 -> HYDRATION_STYLE_2_TEXTURES;
+            case STYLE_3 -> HYDRATION_STYLE_3_TEXTURES;
+        };
+
         for (int n = 0; n < 10; n++) {
             int o = xRight - 9 - n * 8;
 
             // always render empty hydration
-            context.blit(GUI_TEXTURED, HYDRATION_EMPTY_TEXTURE, o, yLineAir, 0, 0, 9, 9, 9, 9);
+            context.blit(GUI_TEXTURED, textures[0], o, yLineAir, 0, 0, 9, 9, 9, 9);
 
             // render texture depending on hydration
             int hydrationLeft = hydration - (n * 2);
             if (hydrationLeft >= 2.0) {
-                context.blit(GUI_TEXTURED, HYDRATION_FULL_TEXTURE, o, yLineAir, 0, 0, 9, 9, 9, 9);
+                context.blit(GUI_TEXTURED, textures[2], o, yLineAir, 0, 0, 9, 9, 9, 9);
             } else if (hydrationLeft >= 1.0) {
-                context.blit(GUI_TEXTURED, HYDRATION_HALF_TEXTURE, o, yLineAir, 0, 0, 9, 9, 9, 9);
+                context.blit(GUI_TEXTURED, textures[1], o, yLineAir, 0, 0, 9, 9, 9, 9);
             }
         }
     }

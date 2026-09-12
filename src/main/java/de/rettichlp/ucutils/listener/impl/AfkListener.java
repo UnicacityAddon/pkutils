@@ -17,12 +17,12 @@ import static java.time.LocalDate.now;
 import static java.time.LocalTime.parse;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.regex.Pattern.compile;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.RED;
 
 @UCUtilsListener
 public class AfkListener implements IMessageReceiveListener {
@@ -52,11 +52,11 @@ public class AfkListener implements IMessageReceiveListener {
             String durationString = (hours > 0 ? hoursString + " " : "") + minutesString;
 
             MutableComponent modifiedText = empty()
-                    .append(literal("Name: " + playerName + " | AFK-Modus seit " + timeString).withStyle(GRAY))
+                    .append(literal("Name: " + playerName + " | AFK-Modus seit " + timeString).withColor(GRAY))
                     .append(SPACE)
-                    .append(literal("(").withStyle(DARK_GRAY))
-                    .append(literal(durationString).withStyle(RED))
-                    .append(literal(")").withStyle(DARK_GRAY));
+                    .append(literal("(").withColor(DARK_GRAY))
+                    .append(literal(durationString).withColor(RED))
+                    .append(literal(")").withColor(DARK_GRAY));
 
             player.sendSystemMessage(modifiedText);
             return false;

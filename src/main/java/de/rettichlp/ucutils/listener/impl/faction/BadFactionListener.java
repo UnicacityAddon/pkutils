@@ -15,8 +15,8 @@ import static de.rettichlp.ucutils.UCUtils.storage;
 import static java.lang.Integer.parseInt;
 import static java.util.regex.Pattern.compile;
 import static net.minecraft.ChatFormatting.BOLD;
-import static net.minecraft.ChatFormatting.DARK_RED;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.DARK_RED;
 
 @UCUtilsListener
 public class BadFactionListener implements IMessageReceiveListener {
@@ -46,7 +46,7 @@ public class BadFactionListener implements IMessageReceiveListener {
             Vec3 extractedPosition = new Vec3(parseInt(locationPieces[0]), parseInt(locationPieces[1]), parseInt(locationPieces[2]));
 
             if ((blackMarketPosition != null && extractedPosition.distanceToSqr(blackMarketPosition) < 5) || (dealerPosition != null && extractedPosition.distanceToSqr(dealerPosition) < 5)) {
-                MutableComponent text1 = text.copy().append(literal(" ⯐").withStyle(DARK_RED, BOLD));
+                MutableComponent text1 = text.copy().append(literal(" ⯐").withColor(DARK_RED).withStyle(BOLD));
                 player.sendSystemMessage(text1);
                 return false;
             }

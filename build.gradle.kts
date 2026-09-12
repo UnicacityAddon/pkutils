@@ -37,8 +37,8 @@ dependencies {
     implementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
 
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
-    compileOnly("org.projectlombok:lombok:1.18.46")
-    annotationProcessor("org.projectlombok:lombok:1.18.46")
+    compileOnly("org.projectlombok:lombok:1.18.48")
+    annotationProcessor("org.projectlombok:lombok:1.18.48")
 
     // https://github.com/TerraformersMC/ModMenu
     compileOnly("com.terraformersmc:modmenu:${providers.gradleProperty("modmenu_version").get()}")
@@ -48,7 +48,7 @@ dependencies {
     implementation("org.atteo.classindex:classindex:3.13")
     annotationProcessor("org.atteo.classindex:classindex:3.13")
 
-    compileOnly("maven.modrinth:the-rettington-companion:2.4.0")
+    compileOnly("maven.modrinth:the-rettington-companion:2.5.0")
 }
 
 tasks.processResources {

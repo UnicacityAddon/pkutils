@@ -25,12 +25,12 @@ import static java.lang.Math.max;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.RED;
 import static net.minecraft.ChatFormatting.UNDERLINE;
 import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.RED;
 
 @UCUtilsListener
 public class EconomyListener implements IMessageReceiveListener {
@@ -44,6 +44,7 @@ public class EconomyListener implements IMessageReceiveListener {
     private static final Pattern BANK_NEW_BALANCE_BANK_PATTERN = compile("^Neuer Bankkontostand: (?<amount>\\d+)\\$$");
     private static final Pattern BANK_NEW_BALANCE_CASH_PATTERN = compile("^Neuer Bargeldbestand: (?<amount>\\d+)\\$$");
     private static final Pattern BANK_DEPOSIT_ATM_TOO_MUCH_PATTERN = compile("^Du versuchst (?<amount>\\d+)\\$ einzuzahlen, der Bankautomat hat aber nur Platz für (?<availableAmount>\\d+)\\$\\. Fortfahren\\? \\[Bestätigen]$");
+    private static final Pattern BANK_DAILY_REWARD_PATTERN = compile("^• \\+ (?<amount>\\d+)\\$ \\(auf die Bank\\)$");
 
     // cash
     private static final Pattern CASH_GIVE_PATTERN = compile("^Du hast (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+) (?<amount>\\d+)\\$ gegeben!$");
@@ -56,6 +57,7 @@ public class EconomyListener implements IMessageReceiveListener {
     private static final Pattern CASH_GET_COMBO_PATTERN = compile("^\\[Combo] x\\d+ Fang-Combo! \\+(?<amount>\\d+)\\$$");
     private static final Pattern CASH_REMOVE_PATTERN = compile("^-(?<amount>\\d+)\\$$");
     private static final Pattern CASH_STATS_PATTERN = compile("^- Geld: (?<amount>\\d+)\\$$");
+    private static final Pattern CASH_DAILY_REWARD_PATTERN = compile("^• \\+ (?<amount>\\d+)\\$ \\(bar\\)$");
 
     // payday
     private static final Pattern PAYDAY_TIME_PATTERN = compile("^- Zeit seit PayDay: (?<minutes>\\d+)/60 Minuten$");
@@ -65,12 +67,12 @@ public class EconomyListener implements IMessageReceiveListener {
 
     // stock market
     private static final Pattern STOCK_MARKET_BUY_PATTERN = compile("^\\[Aktien] Du hast (?<amount>\\d+)x (?<company>.+) für (?<price>\\d+)\\$ gekauft\\. \\(Gebühr: (?<fee>\\d+)\\$\\)$");
-    private static final Pattern STOCK_MARKET_SELL_PATTERN = compile("^\\[Aktien] (?<amount>\\d+)x (?<company>.+) verkauft für (?<price>\\d+)\\$\\. \\(Gebühr: (?<fee>\\d+)\\$, Steuer: (?<tax>\\d+)\\$\\) (?<brutto>[+-]\\d+)\\$ Brutto / (?<netto>[+-]\\d+)\\$ Netto$");
+    private static final Pattern STOCK_MARKET_SELL_PATTERN = compile("^\\[Aktien] (?<amount>\\d+)x (?<company>.+) verkauft für (?<price>\\d+)\\$\\. \\(Gebühr: (?<fee>\\d+)\\$(, Steuer: (?<tax>\\d+)\\$)?\\) (?<brutto>[+-]\\d+)\\$ Brutto / (?<netto>[+-]\\d+)\\$ Netto$");
 
     // other
     private static final Pattern ATM_MONEY_AMOUNT_PATTERN = compile("ATM \\d+: (?<moneyAtmAmount>\\d+)\\$/100000\\$");
     private static final Pattern BUSINESS_CASH_PATTERN = compile("^Kasse: (\\d+)\\$$");
-    private static final Pattern EXP_PATTERN = compile("(?<amount>[+-]\\d+) Exp!( \\(x(?<multiplier>\\d)\\))?$");
+    private static final Pattern EXP_PATTERN = compile("^(?<amount>[+-]\\d+) Exp!( \\(x(?<multiplier>\\d)\\))?$");
     private static final Pattern MAX_EXP_REACHED_PATTERN = compile("^Du hast die maximale Exp erreicht! Benutze /buylevel um ein Level aufzusteigen\\.$");
     private static final Pattern LOTTO_WIN_PATTERN = compile("^\\[Lotto] Du hast im Lotto gewonnen! \\((?<amount>\\d+)\\$\\)$");
     private static final Pattern BATTLEPASS_REWARD_PATTERN = compile("\\[.+ Pass] \\+(?<amount>\\d+)\\$ erhalten\\.$");
@@ -78,7 +80,7 @@ public class EconomyListener implements IMessageReceiveListener {
     private static final Pattern MEDIC_REVIVE_PATTERN = compile("^Du wirst von (?:\\[UC])?(?<playerName>[a-zA-Z0-9_]+) wiederbelebt\\.$");
     private static final Pattern REVIVE_ADMIN_PATTERN = compile("^Du wurdest von \\[UC](?<playerName>[a-zA-Z0-9_]+) wiederbelebt\\.$");
     private static final Pattern BACK_IN_LIFE_PATTERN = compile("^\\[Friedhof] Du lebst nun wieder\\.$");
-    private static final Pattern LUMBERJACK_SELL_PATTERN = compile("^\\[Holzfäller] Du hast (\\d+x .+|dein ganzes Inventar abgeladen: \\d+ Items) für §6(?<amount>\\d+)\\$§a( §6\\(\\+\\d+% Bonus\\))?( verkauft)?\\.$");
+    private static final Pattern LUMBERJACK_SELL_PATTERN = compile("^\\[Holzfäller] Du hast (\\d+x .+|dein ganzes Inventar abgeladen: \\d+ Items|dein Inventar und Rucksack abgeladen: \\d+ Items) für §6(?<amount>\\d+)\\$§a( §6\\(\\+\\d+% Bonus\\))?( verkauft)?\\.$");
 
     private long lastMedicReviveAction = 0;
     private boolean maxExperiencePerLevelReached = false;
@@ -160,11 +162,18 @@ public class EconomyListener implements IMessageReceiveListener {
                     .append(literal("[" + availableAmount + "$ einzahlen]").withStyle(style -> style
                             .withColor(GOLD)
                             .withClickEvent(new ClickEvent.RunCommand("/bank einzahlen " + availableAmount))
-                            .withHoverEvent(new HoverEvent.ShowText(literal("Nur " + availableAmount + "$ einzahlen").withStyle(GOLD)))));
+                            .withHoverEvent(new HoverEvent.ShowText(literal("Nur " + availableAmount + "$ einzahlen").withColor(GOLD)))));
 
             player.sendSystemMessage(modified);
 
             return false;
+        }
+
+        Matcher bankDailyRewardMatcher = BANK_DAILY_REWARD_PATTERN.matcher(message);
+        if (bankDailyRewardMatcher.find()) {
+            int amount = parseInt(bankDailyRewardMatcher.group("amount"));
+            configuration.setMoneyBankAmount(configuration.getMoneyBankAmount() + amount);
+            return true;
         }
 
         Matcher cashGiveMatcher = CASH_GIVE_PATTERN.matcher(message);
@@ -249,6 +258,13 @@ public class EconomyListener implements IMessageReceiveListener {
             return true;
         }
 
+        Matcher cashDailyRewardMatcher = CASH_DAILY_REWARD_PATTERN.matcher(message);
+        if (cashDailyRewardMatcher.find()) {
+            int amount = parseInt(cashDailyRewardMatcher.group("amount"));
+            configuration.setMoneyCashAmount(configuration.getMoneyCashAmount() + amount);
+            return true;
+        }
+
         Matcher paydayTimeMatcher = PAYDAY_TIME_PATTERN.matcher(message);
         if (paydayTimeMatcher.find()) {
             int minutesSinceLastPayDay = parseInt(paydayTimeMatcher.group("minutes"));
@@ -319,8 +335,8 @@ public class EconomyListener implements IMessageReceiveListener {
         if (businessCashMatcher.find()) {
             String amountString = businessCashMatcher.group(1);
 
-            MutableComponent appendedText = text.copy().append(" ")
-                    .append(literal("Geld entnehmen").withStyle(GRAY, UNDERLINE))
+            MutableComponent appendedText = text.copy().append(SPACE)
+                    .append(literal("Geld entnehmen").withColor(GRAY).withStyle(UNDERLINE))
                     .withStyle(style -> style
                             .withClickEvent(new ClickEvent.RunCommand("/biz kasse get " + amountString))
                             .withHoverEvent(new HoverEvent.ShowText(literal("Klicke, um " + amountString + "$ aus der Kasse zu nehmen.")))
@@ -342,7 +358,7 @@ public class EconomyListener implements IMessageReceiveListener {
                 MutableComponent modifiedMessage = text.copy()
                         .append(SPACE)
                         .append(literal("↑").withStyle(style -> style
-                                .withHoverEvent(new HoverEvent.ShowText(literal("Du hast die maximale Exp erreicht! Benutze /buylevel um ein Level aufzusteigen.").withStyle(RED)))
+                                .withHoverEvent(new HoverEvent.ShowText(literal("Du hast die maximale Exp erreicht! Benutze /buylevel um ein Level aufzusteigen.").withColor(RED)))
                                 .withColor(RED)
                                 .withBold(true)));
                 player.sendSystemMessage(modifiedMessage);

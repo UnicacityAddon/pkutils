@@ -1,9 +1,9 @@
 package de.rettichlp.ucutils.common.services;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,25 +14,26 @@ import static de.rettichlp.ucutils.UCUtils.networkHandler;
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
-import static net.minecraft.ChatFormatting.BLUE;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.DARK_GREEN;
-import static net.minecraft.ChatFormatting.DARK_RED;
-import static net.minecraft.ChatFormatting.GOLD;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.GREEN;
-import static net.minecraft.ChatFormatting.RED;
-import static net.minecraft.ChatFormatting.YELLOW;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.TextColor.BLUE;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.DARK_GREEN;
+import static net.minecraft.network.chat.TextColor.DARK_RED;
+import static net.minecraft.network.chat.TextColor.GOLD;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.GREEN;
+import static net.minecraft.network.chat.TextColor.RED;
+import static net.minecraft.network.chat.TextColor.YELLOW;
 import static net.minecraft.world.scores.Team.CollisionRule.NEVER;
 
 public class NameTagService {
 
     private static final Component A_DUTY_PREFIX = empty()
-            .append(literal("[").withStyle(DARK_GRAY))
-            .append(literal("UC").withStyle(BLUE))
-            .append(literal("]").withStyle(DARK_GRAY));
+            .append(literal("[").withColor(DARK_GRAY))
+            .append(literal("UC").withColor(BLUE))
+            .append(literal("]").withColor(DARK_GRAY));
 
     public boolean isAfk(String targetName) {
         PlayerInfo playerInfo = networkHandler.getPlayerInfo(targetName);
@@ -44,13 +45,8 @@ public class NameTagService {
         return team != null && !isADuty(playerInfo) && team.getCollisionRule() == NEVER;
     }
 
-    private boolean isADuty(@NotNull PlayerInfo playerInfo) {
-        Component displayName = playerInfo.getTabListDisplayName();
-        return displayName != null && displayName.contains(A_DUTY_PREFIX);
-    }
-
-    public @NotNull ChatFormatting getWantedPointColor(int wantedPointAmount) {
-        ChatFormatting color;
+    public @NotNull TextColor getWantedPointColor(int wantedPointAmount) {
+        TextColor color;
 
         if (wantedPointAmount >= 60) {
             color = DARK_RED;
@@ -75,8 +71,8 @@ public class NameTagService {
         Duration bandageExpirationDuration = between(now(), bandageCooldownExpiration);
         if (bandageExpirationDuration.isPositive()) {
             text
-                    .append(literal("Bandage").withStyle(GRAY))
-                    .append(literal(": ").withStyle(DARK_GRAY))
+                    .append(literal("Bandage").withColor(GRAY))
+                    .append(literal(": ").withColor(DARK_GRAY))
                     .append(literal(bandageExpirationDuration.toSeconds() + "s"));
         }
 
@@ -84,15 +80,20 @@ public class NameTagService {
         Duration pillExpirationDuration = between(now(), pillCooldownExpiration);
         if (pillExpirationDuration.isPositive()) {
             if (!text.getSiblings().isEmpty()) {
-                text.append(" ");
+                text.append(SPACE);
             }
 
             text
-                    .append(literal("Schmerzpille").withStyle(GRAY))
-                    .append(literal(": ").withStyle(DARK_GRAY))
+                    .append(literal("Schmerzpille").withColor(GRAY))
+                    .append(literal(": ").withColor(DARK_GRAY))
                     .append(literal(pillExpirationDuration.toSeconds() + "s"));
         }
 
         return text;
+    }
+
+    private boolean isADuty(@NotNull PlayerInfo playerInfo) {
+        Component displayName = playerInfo.getTabListDisplayName();
+        return displayName != null && displayName.contains(A_DUTY_PREFIX);
     }
 }

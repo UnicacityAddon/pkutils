@@ -21,10 +21,11 @@ import static de.rettichlp.ucutils.UCUtils.syncService;
 import static de.rettichlp.ucutils.UCUtils.utilService;
 import static java.net.URI.create;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
-import static net.minecraft.ChatFormatting.DARK_GRAY;
-import static net.minecraft.ChatFormatting.GRAY;
-import static net.minecraft.ChatFormatting.WHITE;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
+import static net.minecraft.network.chat.TextColor.DARK_GRAY;
+import static net.minecraft.network.chat.TextColor.GRAY;
+import static net.minecraft.network.chat.TextColor.WHITE;
 
 @UCUtilsCommand(label = "ucutils")
 public class ModCommand extends CommandBase {
@@ -55,28 +56,28 @@ public class ModCommand extends CommandBase {
                     messageService.sendModMessage("UCUtils Version " + version, false);
 
                     messageService.sendModMessage(empty()
-                            .append(Component.literal("Authors").withStyle(GRAY))
-                            .append(Component.literal(":").withStyle(DARK_GRAY)).append(" ")
-                            .append(Component.literal(authors).withStyle(WHITE)), false);
+                            .append(Component.literal("Authors").withColor(GRAY))
+                            .append(Component.literal(":").withColor(DARK_GRAY)).append(SPACE)
+                            .append(Component.literal(authors).withColor(WHITE)), false);
 
                     messageService.sendModMessage(empty()
-                            .append(Component.literal("Discord").withStyle(GRAY))
-                            .append(Component.literal(":").withStyle(DARK_GRAY)).append(" ")
+                            .append(Component.literal("Discord").withColor(GRAY))
+                            .append(Component.literal(":").withColor(DARK_GRAY)).append(SPACE)
                             .append(Component.literal("https://discord.gg/mZGAAwhPHu").withStyle(style -> style
                                     .withColor(WHITE)
                                     .withClickEvent(new ClickEvent.OpenUrl(create("https://discord.gg/mZGAAwhPHu"))))), false);
 
                     messageService.sendModMessage(empty()
-                            .append(Component.literal("GitHub").withStyle(GRAY))
-                            .append(Component.literal(":").withStyle(DARK_GRAY)).append(" ")
+                            .append(Component.literal("GitHub").withColor(GRAY))
+                            .append(Component.literal(":").withColor(DARK_GRAY)).append(SPACE)
                             .append(Component.literal("https://github.com/UnicacityAddon/ucutils").withStyle(style -> style
                                     .withColor(WHITE)
                                     .withClickEvent(new ClickEvent.OpenUrl(create("https://github.com/UnicacityAddon/ucutils"))))), false);
 
                     messageService.sendModMessage(empty()
-                            .append(Component.literal("Contributors").withStyle(GRAY))
-                            .append(Component.literal(":").withStyle(DARK_GRAY)).append(" ")
-                            .append(Component.literal(contributors).withStyle(WHITE)), false);
+                            .append(Component.literal("Contributors").withColor(GRAY))
+                            .append(Component.literal(":").withColor(DARK_GRAY)).append(SPACE)
+                            .append(Component.literal(contributors).withColor(WHITE)), false);
 
                     player.sendSystemMessage(empty());
 
