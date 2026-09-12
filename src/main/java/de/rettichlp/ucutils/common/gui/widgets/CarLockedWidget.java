@@ -18,6 +18,7 @@ import static de.rettichlp.ucutils.UCUtils.storage;
 import static de.rettichlp.ucutils.common.gui.widgets.CarLockedWidget.Style.MINIMALISTIC;
 import static java.util.Arrays.asList;
 import static net.minecraft.client.gui.components.Tooltip.create;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
@@ -34,7 +35,7 @@ public class CarLockedWidget extends AbstractTRCTextWidget<CarLockedWidget.Confi
                 ? (storage.isCarLocked() ? literal("🔒").withColor(GREEN) : literal("🔓").withColor(GOLD))
                 : empty()
                 .append(translatable("ucutils.options.widgets.car_locked.label").withColor(GRAY))
-                .append(literal(":").withColor(DARK_GRAY)).append(" ")
+                .append(literal(":").withColor(DARK_GRAY)).append(SPACE)
                 .append(storage.isCarLocked()
                         ? translatable("ucutils.options.widgets.car_locked.locked").withColor(GREEN)
                         : translatable("ucutils.options.widgets.car_locked.unlocked").withColor(GOLD));

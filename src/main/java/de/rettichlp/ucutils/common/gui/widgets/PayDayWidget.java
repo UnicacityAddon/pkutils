@@ -19,6 +19,7 @@ import static java.awt.Color.RED;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static net.minecraft.client.gui.components.Tooltip.create;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
@@ -34,11 +35,11 @@ public class PayDayWidget extends AbstractTRCTextWidget<PayDayWidget.Configurati
                 .append(literal("60")));
 
         if (getWidgetConfiguration().isShowSalary()) {
-            payDayInfoText.append(" ").append(keyValue(translatable("ucutils.options.widgets.payday.label_salary"), configuration.getPredictedPayDaySalary() + "$"));
+            payDayInfoText.append(SPACE).append(keyValue(translatable("ucutils.options.widgets.payday.label_salary"), configuration.getPredictedPayDaySalary() + "$"));
         }
 
         if (getWidgetConfiguration().isShowExperience()) {
-            payDayInfoText.append(" ").append(keyValue(translatable("ucutils.options.widgets.payday.label_exp"), valueOf(configuration.getPredictedPayDayExp())));
+            payDayInfoText.append(SPACE).append(keyValue(translatable("ucutils.options.widgets.payday.label_exp"), valueOf(configuration.getPredictedPayDayExp())));
         }
 
         Color fontColor = configuration.getMinutesSinceLastPayDay() >= 55 && configuration.getMoneyBankAmount() > 100000 && (currentTimeMillis() / 500 % 2 == 0)

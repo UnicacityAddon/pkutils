@@ -16,6 +16,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static de.rettichlp.ucutils.UCUtils.configuration;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.DARK_GRAY;
@@ -75,7 +76,7 @@ public class RenderService {
     public static @NonNull MutableComponent keyValue(@NonNull MutableComponent key, Component value) {
         return empty()
                 .append(key.withColor(GRAY))
-                .append(literal(":").withColor(DARK_GRAY)).append(" ")
+                .append(literal(":").withColor(DARK_GRAY)).append(SPACE)
                 .append(value);
     }
 }

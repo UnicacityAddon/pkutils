@@ -23,6 +23,7 @@ import static java.nio.file.Files.list;
 import static java.util.Arrays.stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
 import static net.minecraft.commands.SharedSuggestionProvider.suggest;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.TextColor.AQUA;
 import static net.minecraft.network.chat.TextColor.DARK_AQUA;
@@ -57,7 +58,7 @@ public class ScreenshotCommand extends CommandBase {
 
                         messageService.sendModMessage(empty()
                                 .append(Component.literal(screenshotType.getDisplayName()).withColor(GRAY))
-                                .append(Component.literal(":").withColor(DARK_GRAY)).append(" ")
+                                .append(Component.literal(":").withColor(DARK_GRAY)).append(SPACE)
                                 .append(Component.literal(valueOf(fileCount)))
                                 .append(Component.literal(" ↗").withStyle(style -> style
                                         .withColor(AQUA)

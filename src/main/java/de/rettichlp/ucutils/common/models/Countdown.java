@@ -13,6 +13,7 @@ import static de.rettichlp.ucutils.UCUtils.storage;
 import static de.rettichlp.ucutils.UCUtils.utilService;
 import static java.time.Duration.between;
 import static java.time.LocalDateTime.now;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.GRAY;
@@ -36,7 +37,7 @@ public class Countdown {
 
                     return empty()
                             .append(literal(this.title).withColor(WHITE))
-                            .append(literal(":").withColor(GRAY)).append(" ")
+                            .append(literal(":").withColor(GRAY)).append(SPACE)
                             .append(literal(millisToFriendlyString));
                 })
                 .displayDuration(duration)

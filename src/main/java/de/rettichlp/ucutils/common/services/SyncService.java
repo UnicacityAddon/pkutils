@@ -16,6 +16,7 @@ import static de.rettichlp.ucutils.common.models.Faction.NULL;
 import static java.awt.Color.MAGENTA;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
@@ -74,9 +75,9 @@ public class SyncService {
             if (nonNull(latestVersion) && !currentVersion.equals(latestVersion) && !currentVersion.equals("0.0.0") && latestVersion.matches("^\\d+\\.\\d+\\.\\d+$")) {
                 notificationService.sendNotification(empty()
                         .append(translatable("ucutils.notification.info.new_version").withColor(GRAY))
-                        .append(literal(":").withColor(DARK_GRAY)).append(" ")
-                        .append(literal(currentVersion).withColor(RED)).append(" ")
-                        .append(literal("→").withColor(GRAY)).append(" ")
+                        .append(literal(":").withColor(DARK_GRAY)).append(SPACE)
+                        .append(literal(currentVersion).withColor(RED)).append(SPACE)
+                        .append(literal("→").withColor(GRAY)).append(SPACE)
                         .append(literal(latestVersion).withColor(GREEN)), MAGENTA, MINUTES.toMillis(5));
             }
         });

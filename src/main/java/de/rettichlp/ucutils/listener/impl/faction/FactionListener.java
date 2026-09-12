@@ -51,18 +51,18 @@ public class FactionListener implements IMessageReceiveListener, IMessageSendLis
     private static final Pattern FACTION_CHAT_PATTERN = compile("^(?<playerPrefix>[\\p{L} ]+) (?:\\[UC])?(?<senderPlayerName>[a-zA-Z0-9_]+): (?<message>.+)$");
 
     private static final ReinforcementConsumer<String, String, String, String> REINFORCEMENT = (type, sender, naviPoint, distance) -> empty()
-            .append(literal(type).withColor(RED).withStyle(BOLD)).append(" ")
-            .append(literal(sender).withColor(AQUA)).append(" ")
-            .append(literal("-").withColor(GRAY)).append(" ")
-            .append(literal(naviPoint).withColor(AQUA)).append(" ")
-            .append(literal("-").withColor(GRAY)).append(" ")
+            .append(literal(type).withColor(RED).withStyle(BOLD)).append(SPACE)
+            .append(literal(sender).withColor(AQUA)).append(SPACE)
+            .append(literal("-").withColor(GRAY)).append(SPACE)
+            .append(literal(naviPoint).withColor(AQUA)).append(SPACE)
+            .append(literal("-").withColor(GRAY)).append(SPACE)
             .append(literal(distance + "m").withColor(DARK_AQUA));
 
     private static final ReinforcementOnTheWayConsumer<String, String, String> REINFORCEMENT_ON_THE_WAY = (sender, target, distance) -> empty()
-            .append(literal("➥").withColor(GRAY)).append(" ")
-            .append(literal(sender).withColor(AQUA)).append(" ")
-            .append(literal("➡").withColor(GRAY)).append(" ")
-            .append(literal(target).withColor(DARK_AQUA)).append(" ")
+            .append(literal("➥").withColor(GRAY)).append(SPACE)
+            .append(literal(sender).withColor(AQUA)).append(SPACE)
+            .append(literal("➡").withColor(GRAY)).append(SPACE)
+            .append(literal(target).withColor(DARK_AQUA)).append(SPACE)
             .append(literal("- (").withColor(GRAY))
             .append(literal(distance + "m").withColor(DARK_AQUA))
             .append(literal(")").withColor(GRAY));

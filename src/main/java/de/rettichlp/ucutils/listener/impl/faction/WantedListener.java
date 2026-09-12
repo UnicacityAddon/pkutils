@@ -304,14 +304,14 @@ public class WantedListener implements IMessageReceiveListener {
 
             if (commandService.showCommandOutputMessage("wanteds")) {
                 Component modifiedMessage = empty()
-                        .append(literal("➥").withColor(GRAY)).append(" ")
-                        .append(literal(playerName).withColor(color)).append(" ")
-                        .append(literal("-").withColor(GRAY)).append(" ")
-                        .append(literal(reason).withColor(color)).append(" ")
+                        .append(literal("➥").withColor(GRAY)).append(SPACE)
+                        .append(literal(playerName).withColor(color)).append(SPACE)
+                        .append(literal("-").withColor(GRAY)).append(SPACE)
+                        .append(literal(reason).withColor(color)).append(SPACE)
                         .append(literal("(").withColor(GRAY))
                         .append(literal(valueOf(wantedPointAmount)).withColor(BLUE))
-                        .append(literal(")").withColor(GRAY)).append(" ")
-                        .append(literal(isAfk ? "|" : "").withColor(DARK_GRAY)).append(" ")
+                        .append(literal(")").withColor(GRAY)).append(SPACE)
+                        .append(literal(isAfk ? "|" : "").withColor(DARK_GRAY)).append(SPACE)
                         .append(literal(isAfk ? "AFK" : "").withColor(GRAY));
 
                 player.sendSystemMessage(modifiedMessage);

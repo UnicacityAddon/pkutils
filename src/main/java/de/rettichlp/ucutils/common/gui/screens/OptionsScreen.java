@@ -13,6 +13,7 @@ import static net.minecraft.client.gui.layouts.LinearLayout.horizontal;
 import static net.minecraft.client.gui.screens.ConfirmLinkScreen.confirmLink;
 import static net.minecraft.network.chat.CommonComponents.GUI_BACK;
 import static net.minecraft.network.chat.CommonComponents.GUI_DONE;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
@@ -26,19 +27,19 @@ public abstract class OptionsScreen extends UCUtilsScreen {
 
     public OptionsScreen(Screen parent) {
         super(empty()
-                .append(MOD_NAME).append(" ")
+                .append(MOD_NAME).append(SPACE)
                 .append(translatable("options.title")), parent);
     }
 
     public OptionsScreen(Screen parent, Component subTitle) {
         super(empty()
-                .append(MOD_NAME).append(" ")
+                .append(MOD_NAME).append(SPACE)
                 .append(translatable("options.title")), subTitle, parent);
     }
 
     public OptionsScreen(Screen parent, Component subTitel, boolean renderBackground) {
         super(empty()
-                .append(MOD_NAME).append(" ")
+                .append(MOD_NAME).append(SPACE)
                 .append(translatable("options.title")), subTitel, parent, renderBackground);
     }
 

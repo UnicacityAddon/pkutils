@@ -24,6 +24,7 @@ import static java.lang.Runtime.getRuntime;
 import static java.lang.System.getProperty;
 import static java.time.Duration.ofMinutes;
 import static java.util.regex.Pattern.compile;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.GRAY;
@@ -162,8 +163,8 @@ public class PlayerListener implements IMessageReceiveListener {
 
         Connection connection = player.connection.getConnection();
         connection.disconnect(empty()
-                .append(literal("Der PC wird in").withColor(GRAY)).append(" ")
-                .append(literal(SHUTDOWN_TIMEOUT + " Sekunden").withColor(RED)).append(" ")
+                .append(literal("Der PC wird in").withColor(GRAY)).append(SPACE)
+                .append(literal(SHUTDOWN_TIMEOUT + " Sekunden").withColor(RED)).append(SPACE)
                 .append(literal("durch UCUtils heruntergefahren...").withColor(GRAY)));
 
         if (command.length == 0) {

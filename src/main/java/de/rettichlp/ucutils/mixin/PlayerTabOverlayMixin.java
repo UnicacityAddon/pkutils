@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static net.minecraft.ChatFormatting.BOLD;
+import static net.minecraft.network.chat.CommonComponents.SPACE;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.TextColor.RED;
 
@@ -36,7 +37,7 @@ public abstract class PlayerTabOverlayMixin {
         }
 
         if (text != null) {
-            cir.setReturnValue(originText.copy().append(" ").append(text));
+            cir.setReturnValue(originText.copy().append(SPACE).append(text));
         }
     }
 }

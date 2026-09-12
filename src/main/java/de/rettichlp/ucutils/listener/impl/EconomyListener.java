@@ -335,7 +335,7 @@ public class EconomyListener implements IMessageReceiveListener {
         if (businessCashMatcher.find()) {
             String amountString = businessCashMatcher.group(1);
 
-            MutableComponent appendedText = text.copy().append(" ")
+            MutableComponent appendedText = text.copy().append(SPACE)
                     .append(literal("Geld entnehmen").withColor(GRAY).withStyle(UNDERLINE))
                     .withStyle(style -> style
                             .withClickEvent(new ClickEvent.RunCommand("/biz kasse get " + amountString))
