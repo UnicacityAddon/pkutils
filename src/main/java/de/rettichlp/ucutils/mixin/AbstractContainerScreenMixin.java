@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static de.rettichlp.ucutils.UCUtils.LOGGER;
@@ -40,7 +41,6 @@ import static de.rettichlp.ucutils.UCUtils.player;
 import static de.rettichlp.ucutils.UCUtils.storage;
 import static de.rettichlp.ucutils.common.models.StockMarketEntry.fromItemStack;
 import static java.awt.Color.BLUE;
-import static java.awt.Color.MAGENTA;
 import static java.lang.Integer.parseInt;
 import static java.util.Optional.ofNullable;
 import static java.util.regex.Pattern.compile;
@@ -57,7 +57,10 @@ import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
 import static net.minecraft.world.inventory.ContainerInput.PICKUP;
+import static net.minecraft.world.item.Items.FERN;
 import static net.minecraft.world.item.Items.PLAYER_HEAD;
+import static net.minecraft.world.item.Items.QUARTZ;
+import static net.minecraft.world.item.Items.SUGAR;
 
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> extends Screen implements MenuAccess<T> {
@@ -71,6 +74,8 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 
     @Shadow
     protected int topPos;
+
+    private static final Pattern DRUG_AMOUNT_PATTERN = compile("(?<amount>\\d+)g");
 
     protected AbstractContainerScreenMixin(Component title) {
         super(title);
@@ -224,24 +229,24 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
             ItemStack itemStack = slot.getItem();
             ItemLore itemLore = itemStack.get(LORE);
 
-            if (itemStack.isEmpty() || itemStack.getCustomName() == null || itemLore == null) {
+            if (itemStack.isEmpty() || itemStack.getCustomName() == null || itemLore == null || itemLore.lines().isEmpty()) {
                 continue;
             }
 
-            List<Component> lines = itemLore.lines();
-            boolean amountZeroOrNotMatching = lines.stream()
-                    .map(Component::getString)
-                    .anyMatch(loreLineString -> loreLineString.equals("0g") || !loreLineString.matches("^\\d+g$"));
+            Matcher matcher = DRUG_AMOUNT_PATTERN.matcher(itemLore.lines().getFirst().getString());
+            if (matcher.find()) {
+                int amount = parseInt(matcher.group("amount"));
+                if (amount == 0) {
+                    continue;
+                }
 
-            if (amountZeroOrNotMatching) {
-                continue;
+                int x = this.leftPos + slot.x;
+                int y = this.topPos + slot.y;
+
+                Color color = (itemStack.is(SUGAR) || itemStack.is(FERN) || itemStack.is(QUARTZ)) ? Color.RED : Color.GREEN;
+                int argb = (0x80 << 24) | (color.getRGB() & 0x00FFFFFF);
+                graphics.fill(x, y, x + 16, y + 16, argb);
             }
-
-            int x = this.leftPos + slot.x;
-            int y = this.topPos + slot.y;
-
-            int argb = (0x80 << 24) | (MAGENTA.getRGB() & 0x00FFFFFF);
-            graphics.fill(x, y, x + 16, y + 16, argb);
         }
     }
 
