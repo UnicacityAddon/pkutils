@@ -121,7 +121,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
             }
             case "Durchsuchung" -> extractTrunkHighlight(graphics, mouseX, mouseY, a);
             default -> {
-                if (commandService.isSuperUser()) {
+                if (commandService.isSuperUser() && player.isShiftKeyDown()) {
                     LOGGER.info("Screen opened: {}", title);
                 }
             }
